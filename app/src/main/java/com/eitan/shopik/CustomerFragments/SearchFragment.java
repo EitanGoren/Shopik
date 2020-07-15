@@ -162,11 +162,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initViews() {
-        listContainer = Objects.requireNonNull(getView()).findViewById(R.id.search_list);
-        search_card = Objects.requireNonNull(getView()).findViewById(R.id.search_card);
+        listContainer = requireView().findViewById(R.id.search_list);
+        search_card = requireView().findViewById(R.id.search_card);
         searchView2 = getView().findViewById(R.id.search_bar);
-        down_arrow = Objects.requireNonNull(getView()).findViewById(R.id.see_items_below);
-        searchAdapter = new SearchAdapter(Objects.requireNonNull(getActivity()), R.layout.list_item, allItemsModel.getItems().getValue());
+        down_arrow = requireView().findViewById(R.id.see_items_below);
+        searchAdapter = new SearchAdapter(requireActivity(), R.layout.list_item, allItemsModel.getItems().getValue());
         listContainer.setAdapter(searchAdapter);
 
         initFab();
@@ -185,7 +185,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
     private void initFab(){
 
-        main = Objects.requireNonNull(getView()).findViewById(R.id._main_fab);
+        main = requireView().findViewById(R.id._main_fab);
         search = getView().findViewById(R.id._search_icon);
         more = getView().findViewById(R.id._more_icon);
         clear = getView().findViewById(R.id._clear_search);
@@ -279,7 +279,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     }
 
     private void closeKeyboard(){
-        View view = Objects.requireNonNull(getActivity()).getCurrentFocus();
+        View view = requireActivity().getCurrentFocus();
         if( view != null ){
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             assert imm != null;

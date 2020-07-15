@@ -87,7 +87,6 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     private static final int ITEMS_PER_PAGE = 72;
     private GridView gridContainer;
     private TextView count;
-    private int page;
     private boolean isOpened = false;
     private boolean isSearchOpened = false;
     private OvershootInterpolator overshootInterpolator = new OvershootInterpolator();
@@ -117,7 +116,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
         GenderModel model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         OutletsModel outletsModel = new ViewModelProvider(requireActivity()).get(OutletsModel.class);
         gender = model.getGender().getValue();
-        TextView header = Objects.requireNonNull(getView()).findViewById(R.id.best_sellers2);
+        TextView header = requireView().findViewById(R.id.best_sellers2);
         count = getView().findViewById(R.id.items_count);
 
         String header_text = "Save on Outlet";
@@ -132,10 +131,10 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        gridAdapter = new E3GridAdapter(Objects.requireNonNull(getActivity()), R.layout.grid_item, outletsModel.getOutlets().getValue());
-        gridContainer = Objects.requireNonNull(getView()).findViewById(R.id.grid_view);
+        gridAdapter = new E3GridAdapter(requireActivity(), R.layout.grid_item, outletsModel.getOutlets().getValue());
+        gridContainer = requireView().findViewById(R.id.grid_view);
         outletsModel.getOutlets().observe(requireActivity(), recyclerItems -> {
-            for(int i=0; i<recyclerItems.size(); ++i){
+            for(int i=1; i<recyclerItems.size()+1; ++i){
                 String text = "(" + i + " items)";
                 count.setText(text);
             }
@@ -161,7 +160,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
         });
 
-        search_card = Objects.requireNonNull(getView()).findViewById(R.id.search_card);
+        search_card = requireView().findViewById(R.id.search_card);
         searchView2 = getView().findViewById(R.id.search_bar);
     }
 
@@ -179,7 +178,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
 
     private void initFab(){
 
-        main = Objects.requireNonNull(getView()).findViewById(R.id.main_fab);
+        main = requireView().findViewById(R.id.main_fab);
         search = getView().findViewById(R.id.search_icon);
         more = getView().findViewById(R.id.more_icon);
         clear = getView().findViewById(R.id.clear_search);
@@ -276,7 +275,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     }
 
     private void closeKeyboard(){
-        View view = Objects.requireNonNull(getActivity()).getCurrentFocus();
+        View view = requireActivity().getCurrentFocus();
         if( view != null ){
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             assert imm != null;

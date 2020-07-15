@@ -67,21 +67,12 @@ public class FavoritesFragment extends Fragment {
 
         initOnCreate();
         MobileAds.initialize(getContext());
-
-        genderModel.getType().observe(getViewLifecycleOwner(), s -> item_type = s );
-        genderModel.getSub_category().observe(getViewLifecycleOwner(), s -> item_sub_category = s);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_favorites, container, false);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -177,9 +168,11 @@ public class FavoritesFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void init(){
+        genderModel.getType().observe(getViewLifecycleOwner(), s -> item_type = s );
+        genderModel.getSub_category().observe(getViewLifecycleOwner(), s -> item_sub_category = s);
         mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
-        down_arrow = Objects.requireNonNull(getView()).findViewById(R.id.see_items_below);
-        listContainer = Objects.requireNonNull(getView()).findViewById(R.id.favorites_list);
+        down_arrow = requireView().findViewById(R.id.see_items_below);
+        listContainer = requireView().findViewById(R.id.favorites_list);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

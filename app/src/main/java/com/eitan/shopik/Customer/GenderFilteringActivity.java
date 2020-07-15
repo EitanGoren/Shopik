@@ -147,12 +147,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
         fetchData fetchData = new fetchData();
         fetchData.execute();
 
-        fetchData2 fetchData2 = new fetchData2();
-        fetchData2.execute();
-
-        getLikedItems getLikedItems = new getLikedItems();
-        getLikedItems.execute();
-
         setMarquee();
     }
 
@@ -317,23 +311,151 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
     private class fetchData extends AsyncTask<Void,Integer,Void> {
 
-        String data = "";
+        String outlet_data = "";
+        String new_items_data = "";
+        Map map;
 
         @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
         protected Void doInBackground(Void... voids) {
+
             try {
+                //liked items
+                for (String type : Macros.Items.getAllItemTypes()) {
+                    FirebaseDatabase.getInstance().getReference().
+                            child(Macros.ITEMS).
+                            child(gender).
+                            child(type).
+                            orderByChild(Macros.CustomerMacros.LIKED).
+                            addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        if (gender.equals(Macros.CustomerMacros.WOMEN))
+                                            getWomenItem(type, dataSnapshot);
+                                        else
+                                            getMenItem(type, dataSnapshot);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.d(Macros.TAG, "getLikedItems()::doInBackground() " + databaseError.getMessage());
+                                }
+
+                            });
+                }
+
+                //Outlet Items
                 int num = gender.equals(Macros.CustomerMacros.WOMEN) ? WOMEN_OUTLET_NUM : MEN_OUTLET_NUM;
                 int cur_page = page;
-                for( int i=cur_page; i < cur_page + BULK; ++i ) {
+                for (int i = cur_page; i < cur_page + BULK; ++i) {
                     page++;
-                    getOutletItems(i,num);
+                    getOutletItems(i, num);
                 }
+
+                //New Items
+                map = new HashMap<>();
+                if(gender.equals(Macros.CustomerMacros.WOMEN)){
+                    for(int cat_num : Macros.Arrays.WOMEN_CLOTHES_TYPES) {
+                        getWomenItems(cat_num);
+                    }
+                }
+                else {
+                    for (int cat_num : Macros.Arrays.MEN_CLOTHES_TYPES) {
+                        getMenItems(cat_num);
+                    }
+                }
+
             }
-            catch (Exception e){
-                Log.d(Macros.TAG, "e3fragment-getItems: " + Objects.requireNonNull(e.getMessage()));
+            catch (IOException e) {
+                Log.d(Macros.TAG,"GenderFilteringActivity::fetchData(): " + e.getMessage());
             }
             return null;
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        private void getWomenItem(final String type, DataSnapshot dataSnapshot){
+            entranceModel.removeAllType(type,gender);
+            long count = 0;
+            long max = 0;
+            String item_id = "";
+            for(DataSnapshot data : dataSnapshot.getChildren()){
+                Map<String,Object> map = (Map) data.getValue();
+                if( map != null && map.get(Macros.CustomerMacros.LIKED) != null ) {
+                    Map<String, Object> map2 = (Map<String, Object>) map.get(Macros.CustomerMacros.LIKED);
+                    assert map2 != null;
+                    count = map2.size();
+                }
+                if(count > max) {
+                    max = count;
+                    item_id = data.getKey();
+                }
+            }
+
+            RecyclerItem recyclerItem = new RecyclerItem(max + " Likes",null);
+            recyclerItem.setGender(gender);
+            recyclerItem.setType(type);
+            recyclerItem.setId(item_id);
+            recyclerItem.setLikes(max);
+
+            Database connection = new Database();
+            ArrayList<String> list = new ArrayList<>();
+            list.add(connection.getASOSimageUrl(2, null, item_id));
+            list.add(connection.getASOSimageUrl(4, null, item_id));
+            list.add(connection.getASOSimageUrl(3, null, item_id));
+            list.add(connection.getASOSimageUrl(2, null, item_id));
+
+            recyclerItem.setImages(list);
+
+            entranceModel.addWomenLikedItem(recyclerItem);
+            entranceModel.setLiked_items(gender);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        private void getMenItem(final String type, DataSnapshot dataSnapshot){
+           /* entranceModel.removeAllType(type,gender);
+            List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
+            int counter = 0;
+            for(DocumentSnapshot item : documentSnapshots) {
+                RecyclerItem recyclerItem = initItem(type);
+                entranceModel.addMenLikedItem(recyclerItem);
+                counter++;
+            }
+            entranceModel.setLiked_items(gender);*/
+            entranceModel.removeAllType(type,gender);
+            long count = 0;
+            long max = 0;
+            String item_id = "";
+            for(DataSnapshot data : dataSnapshot.getChildren()){
+                Map<String,Object> map = (Map) data.getValue();
+                if( map != null && map.get(Macros.CustomerMacros.LIKED) != null ) {
+                    Map<String, Object> map2 = (Map<String, Object>) map.get(Macros.CustomerMacros.LIKED);
+                    assert map2 != null;
+                    count = map2.size();
+                }
+                if(count > max) {
+                    max = count;
+                    item_id = data.getKey();
+                }
+            }
+
+            RecyclerItem recyclerItem = new RecyclerItem(max + " Likes",null);
+            recyclerItem.setGender(gender);
+            recyclerItem.setType(type);
+            recyclerItem.setId(item_id);
+            recyclerItem.setLikes(max);
+
+            Database connection = new Database();
+            ArrayList<String> list = new ArrayList<>();
+            list.add(connection.getASOSimageUrl(2, null, item_id));
+            list.add(connection.getASOSimageUrl(4, null, item_id));
+            list.add(connection.getASOSimageUrl(3, null, item_id));
+            list.add(connection.getASOSimageUrl(2, null, item_id));
+
+            recyclerItem.setImages(list);
+
+            entranceModel.addMenLikedItem(recyclerItem);
+            entranceModel.setLiked_items(gender);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.N)
@@ -348,10 +470,10 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 String line = "";
                 while (line != null) {
                     line = bufferedReader.readLine();
-                    data = data + line;
+                    outlet_data = outlet_data + line;
                 }
 
-                String[] data_split = data.split("\"products\":", 2);
+                String[] data_split = outlet_data.split("\"products\":", 2);
                 String koko = data_split[1];
                 koko = koko.replaceAll("u002F", "").
                         replaceAll("urban", ".urban").
@@ -362,9 +484,9 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         replaceAll("uncommon", ".uncommon").
                         replaceAll("uoh",".uoh");
 
-                data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
+                outlet_data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
 
-                JSONArray JA = new JSONArray(data);
+                JSONArray JA = new JSONArray(outlet_data);
                 int total_items =  JA.length();
                 for (int i = 0; i < total_items; ++i) {
 
@@ -432,125 +554,8 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 httpURLConnection.disconnect();
             }
         }
-    }
-
-    private class getLikedItems extends AsyncTask<Void,Integer,Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
-        protected Void doInBackground(Void... voids) {
-            for( String type : Macros.Items.getAllItemTypes() ) {
-                FirebaseDatabase.getInstance().getReference().
-                        child(Macros.ITEMS).
-                        child(gender).
-                        child(type).
-                        orderByChild(Macros.CustomerMacros.LIKED).
-                        addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                long count = 0;
-                                long max = 0;
-                                String item_id = "";
-                                System.out.println(type + " : " + System.lineSeparator());
-                                if(dataSnapshot.exists()) {
-                                    for(DataSnapshot data : dataSnapshot.getChildren()){
-                                        Map<String,Object> map = (Map)data.getValue();
-                                        if( map != null && map.get(Macros.CustomerMacros.LIKED) != null ) {
-                                            Map<String, Object> map2 = (Map<String, Object>) map.get(Macros.CustomerMacros.LIKED);
-                                            assert map2 != null;
-                                            count = map2.size();
-                                        }
-                                        if(count > max) {
-                                            max = count;
-                                            item_id = data.getKey();
-                                        }
-                                    }
-                                    System.out.println(max + ", " + item_id + System.lineSeparator());
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.d(Macros.TAG,"getLikedItems()::doInBackground() " + databaseError.getMessage());
-                            }
-                        });
-            }
-            return null;
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        private void getWomenItem(final String type, QuerySnapshot queryDocumentSnapshots){
-            entranceModel.removeAllType(type,gender);
-            List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
-            int counter = 0;
-            for (DocumentSnapshot item : documentSnapshots){
-                RecyclerItem recyclerItem = initItem(type);
-                entranceModel.addWomenLikedItem(recyclerItem);
-                counter++;
-            }
-            entranceModel.setLiked_items(gender);
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        private void getMenItem(final String type, QuerySnapshot queryDocumentSnapshots){
-            entranceModel.removeAllType(type,gender);
-            List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
-            int counter = 0;
-            for(DocumentSnapshot item : documentSnapshots) {
-                RecyclerItem recyclerItem = initItem(type);
-                entranceModel.addMenLikedItem(recyclerItem);
-                counter++;
-            }
-            entranceModel.setLiked_items(gender);
-        }
-    }
-
-    private RecyclerItem initItem(final String type) {
-        final ShoppingItem shoppingItem = new ShoppingItem();
-        shoppingItem.setAd(false);
-
-        RecyclerItem recyclerItem = new RecyclerItem(shoppingItem.getLikes() + " Likes", shoppingItem.getSite_link());
-        recyclerItem.setGender(shoppingItem.getGender());
-        recyclerItem.setType(type);
-        recyclerItem.setLikes(shoppingItem.getLikes());
-
-        Database connection = new Database();
-        ArrayList<String> list = new ArrayList<>();
-        list.add(connection.getASOSimageUrl(1, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-        list.add(connection.getASOSimageUrl(2, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-        list.add(connection.getASOSimageUrl(3, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-        list.add(connection.getASOSimageUrl(4, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-
-        recyclerItem.setImages(list);
-
-        return recyclerItem;
-    }
-
-    public class fetchData2 extends AsyncTask<Void,Integer,Void> {
-
-        String data = "";
-        Map map;
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                map = new HashMap<>();
-                if(gender.equals(Macros.CustomerMacros.WOMEN)){
-                    for(int cat_num : Macros.Arrays.WOMEN_CLOTHES_TYPES) {
-                        getWomenItems(cat_num);
-                    }
-                }
-                else {
-                    for (int cat_num : Macros.Arrays.MEN_CLOTHES_TYPES) {
-                        getMenItems(cat_num);
-                    }
-                }
-            }
-            catch (Exception e){
-                Log.d(Macros.TAG, "E1fragment::getItems() " + Objects.requireNonNull(e.getMessage()));
-            }
-            return null;
-        }
-
         private void getMenItems(int cat_num) throws IOException {
             URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + 1);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -575,10 +580,10 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 String line = "";
                 while (line != null) {
                     line = bufferedReader.readLine();
-                    data = data + line;
+                    new_items_data = new_items_data + line;
                 }
 
-                String[] data_split = data.split("\"products\":", 2);
+                String[] data_split = new_items_data.split("\"products\":", 2);
                 String koko = data_split[1];
                 koko = koko.replaceAll("u002F", "").
                         replaceAll("urban", ".urban").
@@ -589,9 +594,9 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         replaceAll("uncommon", ".uncommon").
                         replaceAll("uoh",".uoh");
 
-                data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
+                new_items_data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
 
-                JSONArray JA = new JSONArray(data);
+                JSONArray JA = new JSONArray(new_items_data);
                 int total_items =  JA.length();
                 for (int i = 0; i < total_items; ++i) {
                     JSONObject JO = (JSONObject) JA.get(i);
@@ -642,7 +647,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     }
 
                     entranceModel.addMenItem(recyclerItem);
-                    publishProgress(i,total_items);
+                    entranceModel.setList(gender);
                 }
             }
             catch (Exception e ) {
@@ -653,6 +658,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
             }
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         private void getWomenItems(int cat_num) throws IOException {
 
             URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + 1);
@@ -679,10 +685,10 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 String line = "";
                 while (line != null) {
                     line = bufferedReader.readLine();
-                    data = data + line;
+                    new_items_data = new_items_data + line;
                 }
 
-                String[] data_split = data.split("\"products\":", 2);
+                String[] data_split = new_items_data.split("\"products\":", 2);
                 String koko = data_split[1];
                 koko = koko.replaceAll("u002F", "").
                         replaceAll("urban", ".urban").
@@ -693,9 +699,9 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         replaceAll("uncommon", ".uncommon").
                         replaceAll("uoh",".uoh");
 
-                data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
+                new_items_data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
 
-                JSONArray JA = new JSONArray(data);
+                JSONArray JA = new JSONArray(new_items_data);
                 int total_items =  JA.length();
                 for (int i = 0; i < total_items; ++i) {
                     JSONObject JO = (JSONObject) JA.get(i);
@@ -754,7 +760,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
 
                     entranceModel.addWomenItem(recyclerItem);
-                    publishProgress(i,total_items);
+                    entranceModel.setList(gender);
                 }
             }
             catch (Exception e ) {

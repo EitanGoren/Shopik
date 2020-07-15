@@ -59,24 +59,29 @@ public class EntranceViewModel extends ViewModel {
     public LiveData<ArrayList<RecyclerItem>> getRecentLikedItems(){
         return liked_items;
     }
-    
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setNewLikedItems(MutableLiveData<ArrayList<RecyclerItem>> likedItems){
         clearLiked();
         Objects.requireNonNull(liked_items.getValue()).addAll(Objects.requireNonNull(likedItems.getValue()));
-        sortNewLikedItems();
+        ArrayList<RecyclerItem> temp = liked_items.getValue();
+        temp.sort((o1, o2) -> Integer.parseInt(String.valueOf(o2.getLikes() - o1.getLikes())));
+        liked_items.postValue(temp);
     }
-
     public void clearLiked(){
         Objects.requireNonNull(liked_items.getValue()).clear();
     }
-
     public void addMenLikedItem(RecyclerItem recyclerItem){
         Objects.requireNonNull(men_liked_items.getValue()).add(0, recyclerItem);
     }
-
     public void addWomenLikedItem(RecyclerItem recyclerItem){
         Objects.requireNonNull(women_liked_items.getValue()).add(0, recyclerItem);
+    }
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void setLiked_items(String gender){
+        if(gender.equals(Macros.CustomerMacros.WOMEN))
+            setNewLikedItems(this.women_liked_items);
+        else
+            setNewLikedItems(this.men_liked_items);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -88,42 +93,29 @@ public class EntranceViewModel extends ViewModel {
             Objects.requireNonNull(women_liked_items.getValue()).removeIf(item -> item.getType().equals(type));
         }
     }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void sortNewLikedItems(){
-        Objects.requireNonNull(liked_items.getValue()).sort((o1, o2) -> Integer.parseInt(String.valueOf(o2.getLikes() - o1.getLikes())));
-    }
-
     public LiveData<ArrayList<RecyclerItem>> getItems(){
         return new_items;
     }
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setNew_items(MutableLiveData<ArrayList<RecyclerItem>> items) {
         Objects.requireNonNull(this.new_items.getValue()).clear();
         this.new_items.getValue().addAll(Objects.requireNonNull(items.getValue()));
+        ArrayList<RecyclerItem> temp = new_items.getValue();
+        new_items.postValue(temp);
     }
-
     public void addMenItem(RecyclerItem recyclerItem){
         Objects.requireNonNull(men_new_items.getValue()).add(recyclerItem);
     }
     public void addWomenItem(RecyclerItem recyclerItem){
         Objects.requireNonNull(women_new_items.getValue()).add(recyclerItem);
     }
-
     public void addMen_new_num(String key, Integer value) {
         Objects.requireNonNull(this.men_new_num.getValue()).put(key,value);
     }
-
     public void addWomen_new_num(String key,Integer value) {
         Objects.requireNonNull(this.women_new_num.getValue()).put(key,value);
     }
-
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void setLiked_items(String gender){
-        if(gender.equals(Macros.CustomerMacros.WOMEN))
-            setNewLikedItems(this.women_liked_items);
-        else
-            setNewLikedItems(this.men_liked_items);
-    }
     public void setList(String gender){
         if(gender.equals(Macros.CustomerMacros.WOMEN))
             setNew_items(this.women_new_items);

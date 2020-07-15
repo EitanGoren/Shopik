@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,12 +69,12 @@ public class E1Fragment extends Fragment {
 
     private String gender;
     private RecyclerAdapter recyclerAdapter;
-    private EntranceViewModel viewModel;
+    private EntranceViewModel entranceViewModel;
     private GenderModel model;
     private Dialog dialog;
     private DialogGridAdapter gridAdapter;
     private ProgressBar dialogProgressBar;
-    private ArrayList<RecyclerItem> recyclerItems;
+    private ArrayList<RecyclerItem> new_items;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -99,12 +100,12 @@ public class E1Fragment extends Fragment {
 
         init();
 
-        TextView liked_counter = getView().findViewById(R.id.best_sellers_count);
+        TextView liked_counter = requireView().findViewById(R.id.best_sellers_count);
         model.getGender().observe(getViewLifecycleOwner(), s -> {
             if(!gender.equals(s)) {
                 gender = s;
 
-                viewModel.setLiked_items(gender);
+                entranceViewModel.setLiked_items(gender);
                 recyclerAdapter.notifyDataSetChanged();
                 liked_counter.setText("Loading...");
 
@@ -115,41 +116,46 @@ public class E1Fragment extends Fragment {
             }
         });
 
-        RelativeLayout relativeLayout1 = Objects.requireNonNull(getView()).findViewById(R.id.layout2);
-        RelativeLayout relativeLayout2 = Objects.requireNonNull(getView()).findViewById(R.id.layout3);
-        RelativeLayout relativeLayout3 = Objects.requireNonNull(getView()).findViewById(R.id.layout4);
+        RelativeLayout relativeLayout1 = requireView().findViewById(R.id.layout2);
+        RelativeLayout relativeLayout2 = requireView().findViewById(R.id.layout3);
+        RelativeLayout relativeLayout3 = requireView().findViewById(R.id.layout4);
+
         relativeLayout1.setOnClickListener(v -> showNewItemsDialog(Macros.Items.NEW_CLOTHING));
         relativeLayout2.setOnClickListener(v -> showNewItemsDialog(Macros.Items.NEW_SHOES));
         relativeLayout3.setOnClickListener(v -> showNewItemsDialog(Macros.Items.NEW_TRENDING));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL,false);
+        RecyclerView recyclerView = requireView().findViewById(R.id.recycler);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setScrollbarFadingEnabled(true);
+
+        entranceViewModel = new ViewModelProvider(requireActivity()).get(EntranceViewModel.class);
+        recyclerAdapter = new RecyclerAdapter(entranceViewModel.getRecentLikedItems().getValue(),"Item");
+        entranceViewModel.getRecentLikedItems().observe(requireActivity(), recyclerItems -> {
+            for(int i=1; i<recyclerItems.size()+1; ++i) {
+               liked_counter.setText("(" + i + " items)");
+            }
+            recyclerAdapter.notifyDataSetChanged();
+            recyclerView.setAdapter(recyclerAdapter);
+        });
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         model.getGender().removeObservers(getViewLifecycleOwner());
-      //  recyclerAdapter = null;
-      //  dialog = null;
-       // gridAdapter = null;
+        entranceViewModel.getRecentLikedItems().removeObservers(getViewLifecycleOwner());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void init() {
 
+        new_items = new ArrayList<>();
         model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         gender = model.getGender().getValue();
-        viewModel = new ViewModelProvider(requireActivity()).get(EntranceViewModel.class);
-        recyclerAdapter = new RecyclerAdapter(viewModel.getRecentLikedItems().getValue(),"Item");
-        dialog = new Dialog(Objects.requireNonNull(getContext()));
+        dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.new_items_grid_dialog);
-        recyclerItems = new ArrayList<>();
-        gridAdapter = new DialogGridAdapter(dialog.getContext(), R.layout.e3_grid_item, recyclerItems);
         dialogProgressBar = dialog.findViewById(R.id.progressBar);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL,false);
-        RecyclerView recyclerView = Objects.requireNonNull(getView()).findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerView.setScrollbarFadingEnabled(true);
 
         if(gender.equals(Macros.CustomerMacros.WOMEN))
             setWomenEntrance();
@@ -157,391 +163,27 @@ public class E1Fragment extends Fragment {
             setMenEntrance();
     }
 
-    private class getLikedItems extends AsyncTask<Void,Integer,Void> {
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        protected Void doInBackground(Void... voids) {
-            for( String type : Macros.Items.getAllItemTypes() ) {
-                FirebaseDatabase.getInstance().getReference().
-                        child(Macros.ITEMS).
-                        child(gender).
-                        child(type).
-                        orderByChild(Macros.CustomerMacros.LIKED).
-                        addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                long count = 0;
-                                long max = 0;
-                                String item_id = "";
-                                System.out.println(type + " : " + System.lineSeparator());
-                                if(dataSnapshot.exists()) {
-                                    for(DataSnapshot data : dataSnapshot.getChildren()){
-                                        Map<String,Object> map = (Map)data.getValue();
-                                        if( map != null && map.get(Macros.CustomerMacros.LIKED) != null ) {
-                                            Map<String, Object> map2 = (Map<String, Object>) map.get(Macros.CustomerMacros.LIKED);
-                                            assert map2 != null;
-                                            count = map2.size();
-                                        }
-                                        if(count > max) {
-                                            max = count;
-                                            item_id = data.getKey();
-                                        }
-                                    }
-                                    System.out.println(max + ", " + item_id + System.lineSeparator());
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.d(Macros.TAG,"getLikedItems()::doInBackground() " + databaseError.getMessage());
-                            }
-                        });
-               }
-            return null;
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        private void getWomenItem(final String type, QuerySnapshot queryDocumentSnapshots){
-            viewModel.removeAllType(type,gender);
-            List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
-            int counter = 0;
-            for (DocumentSnapshot item : documentSnapshots){
-                RecyclerItem recyclerItem = initItem(type);
-                viewModel.addWomenLikedItem(recyclerItem);
-                counter++;
-                //publishProgress(counter, documentSnapshots.size());
-            }
-            viewModel.setLiked_items(gender);
-            recyclerAdapter.notifyDataSetChanged();
-           // liked_counter.setText("(" + recyclerAdapter.getItemCount() + " items)");
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        private void getMenItem(final String type, QuerySnapshot queryDocumentSnapshots){
-            viewModel.removeAllType(type,gender);
-            List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
-            int counter = 0;
-            for(DocumentSnapshot item : documentSnapshots) {
-                RecyclerItem recyclerItem = initItem(type);
-                viewModel.addMenLikedItem(recyclerItem);
-                counter++;
-               // publishProgress(counter, documentSnapshots.size());
-            }
-            viewModel.setLiked_items(gender);
-            recyclerAdapter.notifyDataSetChanged();
-           // liked_counter.setText("(" + recyclerAdapter.getItemCount() + " items)");
-        }
-    }
-
-    public class fetchData extends AsyncTask<Void,Integer,Void> {
-
-        String data = "";
-        Map map;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialogProgressBar.setVisibility(View.VISIBLE);
-            dialogProgressBar.setProgress(0);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                map = new HashMap<>();
-                if(gender.equals(Macros.CustomerMacros.WOMEN)){
-                    for(int cat_num : Macros.Arrays.WOMEN_CLOTHES_TYPES) {
-                        getWomenItems(cat_num);
-                    }
-                }
-                else {
-                    for (int cat_num : Macros.Arrays.MEN_CLOTHES_TYPES) {
-                        getMenItems(cat_num);
-                    }
-                }
-            }
-            catch (Exception e){
-                Log.d(Macros.TAG, "E1fragment::getItems() " + Objects.requireNonNull(e.getMessage()));
-            }
-            return null;
-        }
-
-        private void getMenItems(int cat_num) throws IOException {
-            URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + 1);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-
-            try {
-                String cat = "";
-                switch (cat_num){
-                    case 17184:
-                        cat = Macros.Items.NEW_SHOES;
-                        break;
-                    case 27441:
-                        cat = Macros.Items.NEW_CLOTHING;
-                        break;
-                    case 13500:
-                        cat = Macros.Items.NEW_TRENDING;
-                }
-                viewModel.addMen_new_num(cat,0);
-
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line = "";
-                while (line != null) {
-                    line = bufferedReader.readLine();
-                    data = data + line;
-                }
-
-                String[] data_split = data.split("\"products\":", 2);
-                String koko = data_split[1];
-                koko = koko.replaceAll("u002F", "").
-                        replaceAll("urban", ".urban").
-                        replaceAll("gg-", "").
-                        replaceAll("under", ".under").
-                        replaceAll("ufluff", ".ufluff").
-                        replaceAll("upper", ".upper").
-                        replaceAll("uncommon", ".uncommon").
-                        replaceAll("uoh",".uoh");
-
-                data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
-
-                JSONArray JA = new JSONArray(data);
-                int total_items =  JA.length();
-                for (int i = 0; i < total_items; ++i) {
-                    JSONObject JO = (JSONObject) JA.get(i);
-                    String imageUrl = "https://" + JO.get("image").toString().
-                            replace(".com", ".com/").
-                            replace("products", "products/");
-                    int opop = imageUrl.lastIndexOf("-");
-
-                    String color = imageUrl.substring(opop + 1);
-                    String id = JO.get("id").toString();
-                    String link = "https://www.asos.com/" + JO.get("url").toString().
-                            replace("prd","/prd/").
-                            replace("asos-designasos","asos-design/asos");
-
-                    String price = JO.get("price").toString();
-                    String branda = "ASOS";
-
-                    Currency shekel = Currency.getInstance("ILS");
-                    String currency_symbol = shekel.getSymbol();
-                    Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
-                    price = new DecimalFormat("##.##").format(current) + currency_symbol;
-
-                    RecyclerItem recyclerItem = new RecyclerItem(branda, link);
-                    recyclerItem.setPrice(price);
-                    recyclerItem.setLink(link);
-                    recyclerItem.setType(cat);
-
-                    if((boolean) JO.get("isOutlet")){
-                        recyclerItem.setOutlet(true);
-                        recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                    }
-                    else
-                        recyclerItem.setOutlet(false);
-
-                    if((boolean) JO.get("isSale") ){
-                        recyclerItem.setSale(true);
-                        recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                    }
-                    else
-                        recyclerItem.setSale(false);
-
-                    Database connection = new Database();
-
-                    if (JO.get("url").toString().contains("prd")) {
-                        recyclerItem.setImages(connection.getASOSRecyclerImage("product", color, id));
-                    } else {
-                        recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
-                    }
-
-                    viewModel.addMenItem(recyclerItem);
-                    publishProgress(i,total_items);
-                }
-            }
-            catch (Exception e ) {
-                Log.d(Macros.TAG, "E1::getMenItems() " + Objects.requireNonNull(e.getMessage()));
-            }
-            finally {
-                httpURLConnection.disconnect();
-            }
-        }
-
-        private void getWomenItems(int cat_num) throws IOException {
-
-            URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + 1);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-
-            try {
-
-                String cat = "";
-                switch (cat_num){
-                    case 6992:
-                        cat = Macros.Items.NEW_SHOES;
-                        break;
-                    case 2623:
-                        cat = Macros.Items.NEW_CLOTHING;
-                        break;
-                    case 13497:
-                        cat = Macros.Items.NEW_TRENDING;
-                }
-
-                viewModel.addWomen_new_num(cat,0);
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line = "";
-                while (line != null) {
-                    line = bufferedReader.readLine();
-                    data = data + line;
-                }
-
-                String[] data_split = data.split("\"products\":", 2);
-                String koko = data_split[1];
-                koko = koko.replaceAll("u002F", "").
-                        replaceAll("urban", ".urban").
-                        replaceAll("gg-", "").
-                        replaceAll("under", ".under").
-                        replaceAll("ufluff", ".ufluff").
-                        replaceAll("upper", ".upper").
-                        replaceAll("uncommon", ".uncommon").
-                        replaceAll("uoh",".uoh");
-
-                data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
-
-                JSONArray JA = new JSONArray(data);
-                int total_items =  JA.length();
-                for (int i = 0; i < total_items; ++i) {
-                    JSONObject JO = (JSONObject) JA.get(i);
-                    String imageUrl = "https://" + JO.get("image").toString().
-                            replace(".com", ".com/").
-                            replace("products", "products/");
-
-                    int opop = imageUrl.lastIndexOf("-");
-
-                    String color = imageUrl.substring(opop + 1);
-                    String id = JO.get("id").toString();
-                    String link = "https://www.asos.com/" + JO.get("url").toString().
-                            replace("prd","/prd/").
-                            replace("asos-designasos", "asos-design/asos");
-
-                    String price = JO.get("price").toString();
-
-                    ArrayList<String> list = new ArrayList<>();
-                    String[] name = JO.get("description").toString().split(" ");
-                    for(String word : name){
-                        if (!word.equals("")) {
-                            list.add(word.toLowerCase());
-                        }
-                    }
-
-                    Currency shekel = Currency.getInstance("ILS");
-                    String currency_symbol = shekel.getSymbol();
-                    Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
-
-                    price = new DecimalFormat("##.##").format(current) + currency_symbol;
-                    RecyclerItem recyclerItem = new RecyclerItem(cat, link);
-                    recyclerItem.setPrice(price);
-                    recyclerItem.setLink(link);
-                    recyclerItem.setType(cat);
-                    recyclerItem.setDescription(list);
-
-                    if((boolean) JO.get("isOutlet")){
-                        recyclerItem.setOutlet(true);
-                        recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                    }
-                    else
-                        recyclerItem.setOutlet(false);
-
-                    if((boolean) JO.get("isSale") ){
-                        recyclerItem.setSale(true);
-                        recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                    }
-                    else
-                        recyclerItem.setSale(false);
-
-                    Database connection = new Database();
-
-                    if (JO.get("url").toString().contains("prd"))
-                        recyclerItem.setImages(connection.getASOSRecyclerImage("product", color, id));
-                    else
-                        recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
-
-                    viewModel.addWomenItem(recyclerItem);
-                    publishProgress(i,total_items);
-                }
-            }
-            catch (Exception e ) {
-                Log.d(Macros.TAG,"E1::getWomenItems() " +  Objects.requireNonNull(e.getMessage()));
-            }
-            finally {
-                httpURLConnection.disconnect();
-            }
-        }
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            dialogProgressBar.setProgress((values[0]/values[1])*100);
-            viewModel.setList(gender);
-            gridAdapter.notifyDataSetChanged();
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            viewModel.setList(gender);
-            gridAdapter.notifyDataSetChanged();
-            dialogProgressBar.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private RecyclerItem initItem(final String type) {
-        final ShoppingItem shoppingItem = new ShoppingItem();
-        shoppingItem.setAd(false);
-
-        RecyclerItem recyclerItem = new RecyclerItem(shoppingItem.getLikes() + " Likes", shoppingItem.getSite_link());
-        recyclerItem.setGender(shoppingItem.getGender());
-        recyclerItem.setType(type);
-        recyclerItem.setLikes(shoppingItem.getLikes());
-
-        Database connection = new Database();
-        ArrayList<String> list = new ArrayList<>();
-        list.add(connection.getASOSimageUrl(1, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-        list.add(connection.getASOSimageUrl(2, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-        list.add(connection.getASOSimageUrl(3, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-        list.add(connection.getASOSimageUrl(4, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-
-        recyclerItem.setImages(list);
-
-        return recyclerItem;
-    }
-
-    private void zeroAll(final String type,QuerySnapshot queryDocumentSnapshots) {
-        List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
-        for (DocumentSnapshot item : documentSnapshots) {
-
-            HashMap map = new HashMap();
-            map.put(Macros.Items.LIKES_NUM, 0);
-            map.put(Macros.Items.LIKED, null);
-            map.put(Macros.Items.UNLIKES_NUM, 0);
-            map.put(Macros.Items.UNLIKED, null);
-
-        /*    itemsFS.document(gender).
-                    collection(type).
-                    document(item.getId()).
-                    update(map); */
-        }
-    }
-
     private void showNewItemsDialog(String type) {
 
-        recyclerItems.clear();
-        for(RecyclerItem item : Objects.requireNonNull(viewModel.getItems().getValue())) {
-            if (type.equals(item.getType())) {
-                recyclerItems.add(item);
-                gridAdapter.notifyDataSetChanged();
+        gridAdapter = new DialogGridAdapter(dialog.getContext(), R.layout.e3_grid_item, new_items);
+        GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
+        gridAdapter.notifyDataSetChanged();
+        gridContainer.setAdapter(gridAdapter);
+
+        TextView txt = dialog.findViewById(R.id.items_count);
+
+        new_items.clear();
+        dialogProgressBar.setVisibility(View.VISIBLE);
+        int i=0;
+        for( RecyclerItem recyclerItem : Objects.requireNonNull(entranceViewModel.getItems().getValue())) {
+            dialogProgressBar.setProgress(i);
+            if(recyclerItem.getType().equals(type)){
+                new_items.add(recyclerItem);
+                ++i;
+                txt.setText("(" + i + "items)");
             }
         }
+        dialogProgressBar.setVisibility(View.INVISIBLE);
 
         String text_header ="";
         if(type.equals(Macros.Items.NEW_TRENDING)){
@@ -558,9 +200,6 @@ public class E1Fragment extends Fragment {
             header.setText(text_header);
         }
 
-        GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
-        gridContainer.setAdapter(gridAdapter);
-
         Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().setGravity(Gravity.BOTTOM);
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
@@ -570,7 +209,7 @@ public class E1Fragment extends Fragment {
     private void setAnimation() {
         Animation fading = AnimationUtils.loadAnimation(getActivity(),R.anim.fade_in);
 
-        RelativeLayout layout1 = Objects.requireNonNull(getView()).findViewById(R.id.layout2);
+        RelativeLayout layout1 = requireView().findViewById(R.id.layout2);
         RelativeLayout layout2 = getView().findViewById(R.id.layout3);
         RelativeLayout layout3 = getView().findViewById(R.id.layout4);
 
@@ -585,11 +224,11 @@ public class E1Fragment extends Fragment {
         String third_header = "MOST TRENDING NOW";
 
 
-        TextView textView1 = Objects.requireNonNull(getView()).findViewById(R.id.text_btn1);
-        TextView textView2 = Objects.requireNonNull(getView()).findViewById(R.id.text_btn2);
-        TextView textView3 = Objects.requireNonNull(getView()).findViewById(R.id.text_btn3);
+        TextView textView1 = requireView().findViewById(R.id.text_btn1);
+        TextView textView2 = requireView().findViewById(R.id.text_btn2);
+        TextView textView3 = requireView().findViewById(R.id.text_btn3);
 
-        TextView text_header1 = Objects.requireNonNull(getView()).findViewById(R.id.text_header1);
+        TextView text_header1 = requireView().findViewById(R.id.text_header1);
         text_header1.setText(first_header);
         Glide.with(this).asDrawable().load(Macros.WOMEN_FIRST_PIC).into(new CustomTarget<Drawable>() {
             @Override
@@ -635,8 +274,8 @@ public class E1Fragment extends Fragment {
 
         setAnimation();
 
-        final TextView textView1 = Objects.requireNonNull(getView()).findViewById(R.id.text_btn1);
-        TextView text_header1 = getView().findViewById(R.id.text_header1);
+        final TextView textView1 = requireView().findViewById(R.id.text_btn1);
+        TextView text_header1 = requireView().findViewById(R.id.text_header1);
         text_header1.setText(first_header);
         Glide.with(this).asDrawable().load(Macros.MEN_FIRST_PIC).into(new CustomTarget<Drawable>() {
             @Override

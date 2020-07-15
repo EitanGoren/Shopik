@@ -5,13 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-   <!--  <com.eitan.shopik.Adapters.NonSwipeableViewPager
-            android:id="@+id/image_viewPager"
-            android:layout_width="wrap_content"
-            android:layout_height="435dp"
-            android:background="@drawable/top_border_line"
-            android:paddingTop="2dp"/> -->
-
         <RelativeLayout
             android:id="@+id/image_viewPager"
             android:layout_width="wrap_content"

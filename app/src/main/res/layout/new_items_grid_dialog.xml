@@ -24,7 +24,7 @@
         <TextView
             android:id="@+id/new_items_header"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/nunito_bold"
             android:layout_alignParentTop="true"
             android:layout_marginTop="7dp"
@@ -33,6 +33,20 @@
             android:textColor="#000000"
             android:textAlignment="center"
             android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:id="@+id/items_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/new_items_header"
+            android:fontFamily="@font/nunito_bold"
+            android:layout_alignBottom="@id/new_items_header"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="7dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:textAlignment="center"/>
 
         <GridView
             android:id="@+id/new_items_grid"

@@ -182,17 +182,4 @@ public class Database {
                 document(item_id).
                 update(_action);
     }
-
-    public void decrementItemLikes(final String gender, final String type, final String item_id) {
-
-        Map<String, Object> decrementLikes = new HashMap<>();
-        decrementLikes.put(Macros.Items.LIKES_NUM, FieldValue.increment(-1));
-
-        FirebaseFirestore.getInstance().
-                collection(Macros.ITEMS).
-                document(gender).
-                collection(type).
-                document(item_id).
-                update(decrementLikes);
-    }
 }

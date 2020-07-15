@@ -1,5 +1,6 @@
 package com.eitan.shopik.explanation;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ExpandableListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -55,6 +57,7 @@ public class E2Fragment extends Fragment {
         return inflater.inflate(R.layout.fragment_e2, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -79,9 +82,9 @@ public class E2Fragment extends Fragment {
             viewModel.setList(gender);
         }
 
-        adapter = new ItemsCatagoriesListAdapter(Objects.requireNonNull(getActivity()), categories, imageUrl);
+        adapter = new ItemsCatagoriesListAdapter(requireActivity(), categories, imageUrl);
         adapter.notifyDataSetChanged();
-        ExpandableListView listContainer = Objects.requireNonNull(getView()).findViewById(R.id.e2_list);
+        ExpandableListView listContainer = requireView().findViewById(R.id.e2_list);
         listContainer.setAdapter(adapter);
         listContainer.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 
