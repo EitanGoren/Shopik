@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "260470087065",
+    "firebase_url": "https://shopik-2448f.firebaseio.com",
+    "project_id": "shopik-2448f",
+    "storage_bucket": "shopik-2448f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260470087065:android:c689b76695ad0a240f4708",
+        "android_client_info": {
+          "package_name": "com.eitan.shopik"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "260470087065-t4aveuro8si1e9ch05d89jcgsl31umip.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eitan.shopik",
+            "certificate_hash": "5a70b5f771a7c08c02c688243e9201445e2668f4"
+          }
+        },
+        {
+          "client_id": "260470087065-dqg3c0ne29lsgq5dki20q8jvi49bvtut.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-NCcR_U7gBNm1BN3lXKTS8wC1W-VC9fE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "260470087065-6p3h3eq7mlhikie7a7v08enqi05kd7vn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-5843605953860340~8335398516"
+    }
+  ],
+  "configuration_version": "1"
+}

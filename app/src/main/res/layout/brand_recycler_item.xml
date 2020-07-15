@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="150dp"
+    android:layout_height="45dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="8dp"
+    android:translationZ="8dp"
+    android:layout_centerInParent="true"
+    android:background="#00FFFFFF">
+
+    <TextView
+        android:id="@+id/slider_brand"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:fontFamily="@font/nunito_bold"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:background="#00FFFFFF"
+        android:padding="5dp"
+        android:textColor="#000000"
+        android:layout_gravity="bottom|center_horizontal" />
+
+</androidx.cardview.widget.CardView>
+

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".CustomerFragments.SearchFragment">
+
+    <ListView
+        android:id="@+id/search_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="15dp"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
+        android:layout_alignParentTop="true"
+        android:divider="@color/card_background"/>
+
+    <LinearLayout
+        android:id="@+id/_more_options_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_above="@id/_main_fab"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_marginBottom="10dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/_clear_search"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="4dp"
+            app:backgroundTint="#FFFFFF"
+            app:fabSize="mini"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:tint="#2196F3"
+            app:rippleColor="#2196F3"
+            android:tooltipText="Clear search"
+            app:srcCompat="@drawable/ic_close_black" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/_more_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="4dp"
+            app:backgroundTint="#FFFFFF"
+            app:fabSize="mini"
+            app:tint="#2196F3"
+            app:rippleColor="#2196F3"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:tooltipText="Load 5 more pages"
+            app:srcCompat="@drawable/ic_baseline_add" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/_search_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="4dp"
+            app:backgroundTint="#FFFFFF"
+            app:fabSize="mini"
+            app:tint="#2196F3"
+            app:rippleColor="#2196F3"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:tooltipText="Filter items"
+            app:srcCompat="@drawable/ic_search" />
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/_main_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        app:backgroundTint="#FFFFFF"
+        app:fabCustomSize="54dp"
+        app:iconTint="#2196F3"
+        android:text="Options"
+        android:textAllCaps="true"
+        app:strokeColor="#2196F3"
+        android:textColor="#000000"
+        android:tooltipText="More options"
+        app:icon="@drawable/ic_baseline_expand_less"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/search_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="22dp"
+        app:cardUseCompatPadding="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/_main_fab"
+        app:cardElevation="8dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginStart="5dp"
+            android:visibility="gone"
+            android:backgroundTint="#BFFFFFFF"
+            tools:visibility="visible"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/see_items_below"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:paddingBottom="3dp"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_arrow_downward_white"
+        android:background="@drawable/arrow_background"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
+
+</RelativeLayout>

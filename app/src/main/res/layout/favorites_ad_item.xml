@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.gms.ads.formats.UnifiedNativeAdView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_gravity="top"
+        android:background="@drawable/top_border_line">
+
+        <com.google.android.gms.ads.formats.MediaView
+            android:id="@+id/ad_media"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/item_info_social"
+            android:layout_below="@id/ad_body"
+            android:background="#ffffff"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/ad_brand_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="#555555"
+            android:fontFamily="@font/nunito_semibold"
+            android:paddingStart="8dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="5dp"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/ad_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ad_brand_name"
+            android:layout_alignParentStart="true"
+            android:padding="8dp"
+            android:background="#ffffff"
+            android:textColor="#000000"
+            android:textAlignment="center"
+            android:fontFamily="@font/nunito_semibold"
+            android:textSize="16sp" />
+
+        <RatingBar
+            android:id="@+id/ad_stars"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ad_media"
+            android:layout_marginStart="20dp"
+            android:layout_toStartOf="@id/ad_card_seller_logo"
+            android:layout_centerHorizontal="true"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.5" />
+
+        <TextView
+            android:id="@+id/ad_store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:layout_alignBottom="@id/ad_media"
+            android:layout_alignStart="@id/ad_media"/>
+
+        <RelativeLayout
+            android:id="@+id/item_info_social"
+            android:layout_width="match_parent"
+            android:layout_height="105dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/textview_border_line">
+
+            <Button
+                android:id="@+id/ad_action_button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/nunito_bold"
+                android:text="click"
+                android:textColor="#ffffff" />
+
+            <TextView
+                android:id="@+id/ad_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/ad_sponsored"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="10dp"
+                android:padding="3dp"
+                android:layout_toEndOf="@id/ad_sponsored"
+                android:fontFamily="@font/nunito_bold"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ad_card_seller_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/nunito_semibold"
+                android:padding="5dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ad_sponsored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/nunito_semibold"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp"
+                android:text="Sponsored"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="italic" />
+
+        </RelativeLayout>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ad_card_seller_logo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_alignBottom="@id/ad_media"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="-50dp"
+            android:padding="5dp"
+            app:civ_border_color="#000000"
+            app:civ_border_width="3.5dp" />
+
+    </RelativeLayout>
+
+</com.google.android.gms.ads.formats.UnifiedNativeAdView>

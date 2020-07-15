@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".explanation.E2Fragment">
+
+    <ExpandableListView
+        android:id="@+id/e2_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="0.7dp"
+        android:clickable="true"
+        android:background="#ffffff"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
+        android:divider="#8F8F8F"
+        android:focusable="true"
+        tools:ignore="RtlSymmetry" />
+
+</RelativeLayout>

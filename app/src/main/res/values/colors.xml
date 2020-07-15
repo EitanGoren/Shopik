@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#BF000000</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorTransparentWhite">#00FFFFFF</color>
+    <color name="TabNotChosen">#FFFFFF</color>
+    <color name="TabChosen">#000000</color>
+    <color name="activeDot">#F44336</color>
+    <color name="inactiveDot">#ffffff</color>
+    <color name="iconBackground">@color/icon_bacground</color>
+    <color name="navigationBar">#BF438ECA</color>
+    <color name="textColorSecondary">#000000</color>
+    <color name="fav_info_background">#5F5F5F</color>
+    <color name="card_background">#979696</color>
+    <color name="borderLine">#000000</color>
+    <color name="bottomLineText">#2196F3</color>
+    <color name="fragmentBackground">#FFFFFF</color> <!-- FFFDED -->
+    <color name="womenColor">#E91E63</color>
+    <color name="menColor">#17578A</color>
+    <color name="womenColorLight">#FFFFFF</color>
+    <color name="menColorLight">#FFFFFF</color>
+    <color name="customerProfileBackground">#FFFFFF</color>
+    <color name="SplashScreenBackground">#FFFFFF</color>  <!--489A93-->
+    <color name="GenderScreenTheme">#555555</color>
+    <color name="SignInColor">#FFFFFF</color>
+    <color name="CollapsedBackground">#FFFFFF</color>
+    <color name="EditTextLine">#000000</color>
+    <color name="CompanyProfileScrim">#292929</color>
+    <color name="EditTexrHintColor">#EF3232</color>
+    <color name="SnackbarBackground">#FFFAD7</color>
+
+</resources>

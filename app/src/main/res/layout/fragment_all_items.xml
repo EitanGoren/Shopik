@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#ffffff">
+
+    <GridView
+        android:id="@+id/grid_view"
+        android:gravity="center"
+        android:numColumns="2"
+        android:columnWidth="240dp"
+        android:padding="2dp"
+        android:background="#00FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+
+        android:id="@+id/_more_options_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_above="@id/_main_icon"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_marginBottom="10dp">
+
+        <LinearLayout
+            android:id="@+id/match_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/match_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:visibility="invisible"
+                app:cardCornerRadius="20dp"
+                app:cardUseCompatPadding="true">
+
+                <TextView
+                    android:id="@+id/match_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:text="Sort by Match Percentage"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </androidx.cardview.widget.CardView>
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/_match_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="4dp"
+                app:backgroundTint="#FFFFFF"
+                app:fabSize="mini"
+                app:tint="#000000"
+                app:rippleColor="#000000"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:tooltipText="Match"
+                app:srcCompat="@drawable/ic_baseline_thumbs_up_down" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/price_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/price_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:visibility="invisible"
+                app:cardCornerRadius="20dp"
+                app:cardUseCompatPadding="true">
+
+                <TextView
+                    android:id="@+id/price_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:text="Sort by Price"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </androidx.cardview.widget.CardView>
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/_price_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="4dp"
+                app:backgroundTint="#FFFFFF"
+                app:fabSize="mini"
+                app:tint="#000000"
+                app:rippleColor="#000000"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:tooltipText="Price"
+                app:srcCompat="@drawable/ic_baseline_attach_money" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/sale_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/sale_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:visibility="invisible"
+                app:cardCornerRadius="20dp"
+                app:cardUseCompatPadding="true">
+
+                <TextView
+                    android:id="@+id/sale_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:text="Sort by Sale"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/_sale_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="4dp"
+                app:backgroundTint="#FFFFFF"
+                app:fabSize="mini"
+                app:tint="#000000"
+                app:rippleColor="#000000"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:tooltipText="Sale"
+                app:srcCompat="@drawable/ic_baseline_money_off" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/clear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/clear_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:visibility="invisible"
+                app:cardCornerRadius="20dp"
+                app:cardUseCompatPadding="true">
+
+                <TextView
+                    android:id="@+id/clear_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:paddingStart="5dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="5dp"
+                    android:paddingBottom="4dp"
+                    android:text="Clear Sorting"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_gravity="center"
+                app:backgroundTint="#FFFFFF"
+                app:fabSize="mini"
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:tint="#000000"
+                app:rippleColor="#000000"
+                android:tooltipText="Clear sorting"
+                app:srcCompat="@drawable/ic_close_black" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/_main_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        app:backgroundTint="#FFFFFF"
+        app:fabCustomSize="54dp"
+        app:iconTint="#000000"
+        android:text="Sort"
+        android:textAllCaps="true"
+        app:strokeColor="#000000"
+        android:textColor="#000000"
+        android:tooltipText="Sort"
+        app:icon="@drawable/ic_baseline_expand_less" />
+
+
+    <ImageView
+        android:id="@+id/see_items_below"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:paddingBottom="3dp"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_arrow_downward_white"
+        android:background="@drawable/arrow_background"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
+
+</RelativeLayout>

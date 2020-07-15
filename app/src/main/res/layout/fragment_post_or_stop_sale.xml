@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorTransparentWhite">
+
+    <RelativeLayout
+        android:id="@+id/sale_exists_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_above="@id/discount_layout">
+        <TextView
+            android:id="@+id/sale_exists_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:textSize="28sp"
+            android:visibility="invisible"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/discount_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="25dp"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/discount_amount_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawableStart="@drawable/ic_attach_money_black_24dp"
+            android:fontFamily="casual"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="Discount Amount:"
+            android:textSize="28sp"
+            android:textStyle="italic" />
+
+        <EditText
+            android:id="@+id/sale_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/discount_amount_label"
+            android:layout_marginTop="10dp"
+            android:hint="Come on be large.."
+            android:inputType="numberDecimal"
+            android:padding="10dp" />
+
+        <TextView
+            android:id="@+id/discount_days_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sale_amount"
+            android:layout_marginTop="10dp"
+            android:drawableStart="@drawable/ic_touch_app_black"
+            android:fontFamily="casual"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="Days for discount:"
+            android:textSize="28sp"
+            android:textStyle="italic" />
+
+        <EditText
+            android:id="@+id/sale_ending_days"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/discount_days_label"
+            android:layout_marginTop="10dp"
+            android:hint="Days till ending.. "
+            android:inputType="numberDecimal"
+            android:padding="10dp" />
+
+        <TextView
+            android:id="@+id/discount_hours_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sale_ending_days"
+            android:layout_marginTop="10dp"
+            android:drawableStart="@drawable/ic_thumb_down_purple"
+            android:fontFamily="casual"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="Hours till ending"
+            android:textSize="28sp"
+            android:textStyle="italic" />
+
+        <EditText
+            android:id="@+id/sale_hours_till_finish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/discount_hours_label"
+            android:layout_marginTop="10dp"
+            android:hint="Hours till ending.."
+            android:inputType="numberDecimal"
+            android:padding="10dp" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/publish_sale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:padding="10dp"
+        android:soundEffectsEnabled="true"
+        android:text="publish sale"/>
+
+    <ImageView
+        android:id="@+id/sale_close_x"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ic_close_black_24dp" />
+
+
+</RelativeLayout>

@@ -1,0 +1,97 @@
+package com.eitan.shopik.Adapters;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+
+import com.bumptech.glide.Glide;
+import com.eitan.shopik.Company.CompanyProfileActivity;
+import com.eitan.shopik.Customer.FullscreenImageActivity;
+import com.eitan.shopik.Database;
+import com.eitan.shopik.Items.ShoppingItem;
+import com.eitan.shopik.LikedUser;
+import com.eitan.shopik.Macros;
+import com.eitan.shopik.R;
+import com.google.android.gms.ads.formats.MediaView;
+import com.google.android.gms.ads.formats.UnifiedNativeAd;
+import com.google.android.gms.ads.formats.UnifiedNativeAdView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
+import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class LikesListAdapter extends ArrayAdapter<LikedUser> implements Serializable {
+
+    public LikesListAdapter(@NonNull Context context, int resource, List<LikedUser> items) {
+        super(context, resource, items);
+    }
+
+    @NonNull
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @SuppressLint("SetTextI18n")
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
+
+        LikedUser user = getItem(position);
+
+        if(convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.likes_list_item, parent, false);
+        }
+
+        CircleImageView user_icon = convertView.findViewById(R.id.user_icon);
+        TextView seller_name = convertView.findViewById(R.id.user_name);
+        Button visit = convertView.findViewById(R.id.visit_profile);
+        ImageView fav_icon = convertView.findViewById(R.id.fav_sign);
+
+        assert user != null;
+        seller_name.setText(user.getFirst_name() + " " + user.getLast_name());
+        Glide.with(getContext()).load(user.getProfile_image()).into(user_icon);
+        visit.setOnClickListener(v -> Toast.makeText(getContext(), "under construction...", Toast.LENGTH_SHORT).show());
+        fav_icon.setImageDrawable(getContext().getDrawable(R.drawable.ic_favorite_black_24dp));
+
+        if (user.isFavorite()) {
+            fav_icon.setVisibility(View.VISIBLE);
+            fav_icon.bringToFront();
+        }
+        else {
+            fav_icon.setVisibility(View.INVISIBLE);
+        }
+
+        return convertView;
+    }
+
+    @Nullable
+    @Override
+    public LikedUser getItem(int position) {
+        return super.getItem(position);
+    }
+}

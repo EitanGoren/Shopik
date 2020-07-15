@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.gms.ads.formats.UnifiedNativeAdView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#00FFFFFF">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="3dp"
+        android:paddingLeft="3dp"
+        android:background="#00FFFFFF">
+
+        <com.google.android.gms.ads.formats.MediaView
+            android:id="@+id/ad_media"
+            android:layout_width="match_parent"
+            android:layout_height="270dp"
+            android:layout_below="@id/ad_brand_name"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="0dp"
+            android:background="#ffffff"
+            android:scaleType="fitXY" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ad_card_seller_logo"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignStart="@id/ad_media"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="20sp"
+            android:layout_above="@id/ad_card_seller_name"
+            app:civ_border_color="#000000"
+            app:civ_border_width="1dp" />
+
+        <TextView
+            android:id="@+id/ad_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ad_brand_name"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="5dp"
+            android:padding="2dp"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:background="#ffffff"
+            android:textSize="13sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/ad_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_above="@id/ad_card_seller_name"
+            android:textColor="#8F2727"
+            android:textSize="14sp"
+            android:layout_alignParentStart="true"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/ad_card_seller_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ad_media"
+            android:layout_toStartOf="@id/ad_sponsored"
+            android:fontFamily="@font/nunito_semibold"
+            android:textAlignment="center"
+            android:layout_marginBottom="5dp"
+            android:padding="2dp"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/ad_sponsored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@id/ad_media"
+            android:fontFamily="@font/nunito_semibold"
+            android:padding="2dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="3dp"
+            android:text="Sponsored"
+            android:textAlignment="center"
+            android:textSize="11sp"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/ad_brand_name"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:fontFamily="@font/nunito_semibold"
+            android:textAlignment="center"
+            android:layout_marginTop="5dp"
+            android:layout_alignStart="@id/ad_media"
+            android:layout_alignEnd="@id/ad_media"
+            android:background="#72000000"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/ad_store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/ad_body"
+            android:background="@drawable/brand_background"
+            android:fontFamily="@font/nunito_semibold"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <RatingBar
+            android:id="@+id/ad_stars"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@id/ad_sponsored"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.5" />
+
+    </RelativeLayout>
+
+</com.google.android.gms.ads.formats.UnifiedNativeAdView>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="220dp"
+    android:layout_height="275dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="25dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="25dp"
+    android:layout_marginBottom="25dp"
+    android:elevation="15dp"
+    android:translationZ="15dp"
+    android:layout_centerInParent="true"
+    app:cardCornerRadius="25dp"
+    android:focusable="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/sub_category_image"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/sub_category_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:layout_alignParentBottom="true"
+            android:textStyle="bold"
+            android:layout_below="@id/sub_category_image"
+            android:textSize="19sp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:background="#2E2E2E"
+            android:textColor="#ffffff"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
+

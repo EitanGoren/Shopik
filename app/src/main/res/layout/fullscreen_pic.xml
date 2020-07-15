@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+        <RelativeLayout
+            android:id="@+id/video_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/video"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="505dp"
+                    android:background="@drawable/textview_border_line"
+                    android:layout_marginTop="100dp">
+
+                        <VideoView
+                            android:id="@+id/item_video"
+                            android:layout_width="match_parent"
+                            android:layout_height="500dp"
+                            android:layout_marginTop="2.5dp"
+                            android:visibility="visible"/>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/fullscreen_item_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/comfortaa"
+                    android:layout_below="@id/video"
+                    android:textSize="16sp"
+                    android:textAlignment="center"
+                    android:padding="10dp"
+                    android:textColor="#000000"
+                    android:visibility="visible"/>
+
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="150dp"
+            android:layout_height="100dp"
+            android:padding="15dp"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            android:indeterminate="true"
+            android:layout_centerInParent="true">
+        </ProgressBar>
+
+        <ImageView
+            android:id="@+id/fullscreen_image_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            android:id="@+id/No_video_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/comfortaa"
+            android:textSize="30sp"
+            android:padding="10dp"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:layout_alignBottom="@id/fullscreen_image_item"
+            android:layout_marginBottom="140dp"
+            android:visibility="invisible"
+            tools:visibility="visible"/>
+
+</RelativeLayout>

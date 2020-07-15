@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    tools:menu="@menu/menu_customer_toolbar">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/swipe_cardView"
+        android:layout_width="wrap_content"
+        android:layout_height="525dp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:elevation="10dp"
+        android:translationZ="8dp"
+        android:padding="8dp"
+        app:cardCornerRadius="15dp"
+        android:background="@drawable/top_border_line">
+
+        <RelativeLayout
+            android:id="@+id/card_info"
+            android:layout_width="match_parent"
+            android:layout_height="95dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bottom_info_border_line">
+
+            <TextView
+                android:id="@+id/updated_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_toEndOf="@id/like"
+                android:fontFamily="@font/nunito_semibold"
+                android:padding="5dp"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="22sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/old_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="3dp"
+                android:layout_toEndOf="@id/updated_price"
+                android:fontFamily="@font/nunito_semibold"
+                android:padding="5dp"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                tools:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/brand_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/nunito_bold"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/like"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toEndOf="@id/unlike"
+                android:drawableStart="@drawable/ic_thumb_up_seleste"
+                android:drawablePadding="5dp"
+                android:elevation="5dp"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textColor="#ffffff"
+                android:theme="@style/Buttons"
+                android:translationZ="5dp" />
+
+            <TextView
+                android:id="@+id/unlike"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:drawableStart="@drawable/ic_thumb_down_pink"
+                android:drawablePadding="5dp"
+                android:elevation="5dp"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textColor="#ffffff"
+                android:theme="@style/Buttons"
+                android:translationZ="5dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/info_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top">
+
+            <ImageView
+                android:id="@+id/swipe_image"
+                android:layout_width="match_parent"
+                android:layout_height="430dp"
+                android:layout_centerVertical="true"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/exclusive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/brand_background"
+                android:fontFamily="@font/nunito_semibold"
+                android:paddingStart="15dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="5dp"
+                android:elevation="10dp"
+                android:translationZ="10dp"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/fullscreen_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignBottom="@id/swipe_image"
+                android:layout_alignEnd="@id/swipe_image"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_fullscreen_black" />
+
+            <TextView
+                android:id="@+id/swipe_discount"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:fontFamily="@font/baloo"
+                android:padding="7dp"
+                android:layout_marginTop="5dp"
+                android:textColor="#FF0000"
+                android:textSize="26sp"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@id/customer_toolbar"
+                android:translationZ="5dp"
+                android:elevation="5dp"
+                android:background="@color/colorTransparentWhite"/>
+
+            <View
+                android:id="@+id/item_swipe_right_indicator"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="end"
+                android:layout_margin="10dp"
+                android:alpha="0" />
+
+            <View
+                android:id="@+id/item_swipe_left_indicator"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="start"
+                android:layout_margin="10dp"
+                android:alpha="0"
+                android:fontFamily="@font/nunito_semibold" />
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/customer_toolbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/swipe_image"
+                android:layout_alignEnd="@id/swipe_image"
+                android:background="#00FFFFFF"
+                app:menu="@menu/menu_swipe_item"
+                app:titleTextColor="#000000" />
+
+        </RelativeLayout>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/card_seller_logo"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_marginEnd="50dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="55dp"
+            app:civ_border_color="@color/borderLine"
+            android:translationZ="10dp"
+            android:elevation="10dp"
+            app:civ_border_width="2dp" />
+
+        <ImageView
+            android:id="@+id/swipe_favorite_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:elevation="5dp"
+            android:translationZ="5dp"
+            android:src="@drawable/ic_favorite_black_24dp" />
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

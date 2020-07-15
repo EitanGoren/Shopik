@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape
+            android:shape="rectangle">
+            <stroke android:width="10dp" android:color="@color/bottomLineText" />
+            <solid android:color="@color/fragmentBackground" />
+        </shape>
+    </item>
+
+    <item android:top="0dp" android:bottom="1.5dp">
+        <shape
+            android:shape="rectangle">
+            <stroke android:width="0dp" android:color="@color/fragmentBackground" />
+            <solid android:color="@color/fragmentBackground" />
+        </shape>
+    </item>
+
+</layer-list>

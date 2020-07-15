@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/nav_my_profile"
+        android:title="My Profile"/>
+    <item
+        android:id="@+id/nav_all_items"
+        android:title="All Items"/>
+    <item
+        android:id="@+id/nav_sold_items"
+        android:title="Sold Items"/>
+    <item
+        android:id="@+id/nav_suggested"
+        android:title="For you"/>
+    <item
+        android:id="@+id/nav_messages"
+        android:title="Messages"/>
+
+</menu>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    tools:context=".CustomerFragments.FavoritesFragment">
+
+    <ProgressBar
+        android:id="@+id/favorite_progress_bar"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:padding="30dp"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        tools:visibility="visible"
+        android:visibility="invisible"
+        android:background="@color/fui_transparent"
+        style="@android:style/Widget.ProgressBar.Large.Inverse"
+        android:indeterminateDrawable="@drawable/my_progress_indeterminate" />
+
+        <ListView
+            android:id="@+id/favorites_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dividerHeight="15dp"
+            android:footerDividersEnabled="true"
+            android:headerDividersEnabled="true"
+            android:divider="@color/card_background"/>
+
+    <ImageView
+        android:id="@+id/see_items_below"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:paddingBottom="3dp"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_arrow_downward_white"
+        android:background="@drawable/arrow_background"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
+
+</RelativeLayout>

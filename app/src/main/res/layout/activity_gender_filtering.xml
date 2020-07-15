@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Customer.GenderFilteringActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/gender_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/menu_customer_toolbar"
+        android:background="@color/fragmentBackground"
+        android:elevation="5dp"
+        android:translationZ="5dp"
+        android:paddingBottom="7dp"
+        android:paddingTop="7dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingTop="5dp">
+
+            <TextView
+                android:id="@+id/company_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="cursive"
+                android:layout_gravity="center"
+                android:text="Shopik"
+                android:textAllCaps="false"
+                android:textColor="#000000"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:textAlignment="center"/>
+
+            <Spinner
+                android:id="@+id/gender_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:textAlignment="center"/>
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/gender_top_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/fragmentBackground"
+        android:soundEffectsEnabled="true"
+        android:layout_below="@id/gender_toolbar"
+        app:tabGravity="fill"
+        android:scrollbars="horizontal"
+        app:tabIndicatorHeight="2dp"
+        app:tabMode="fixed"
+        android:elevation="5dp"
+        android:translationZ="5dp">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/top_home"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="home"
+            android:tag="home"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/top_categories"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:tag="categories"
+            android:text="categories"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/top_new_in"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="new in"
+            android:tag="new_in"/>
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <RelativeLayout
+        android:id="@+id/brands_roller"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#00FFFFFF"
+        android:elevation="15dp"
+        android:translationZ="15dp"
+        android:layout_below="@id/gender_top_nav">
+
+        <TextView
+            android:id="@+id/marquee"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:elevation="15dp"
+            android:translationZ="15dp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:singleLine="true" />
+
+    </RelativeLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/gender_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/brands_roller"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar_landing"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:indeterminate="true"
+        android:layout_centerInParent="true">
+    </ProgressBar>
+
+</RelativeLayout>

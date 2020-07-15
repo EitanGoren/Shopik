@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Customer.CustomerMainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/customer_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/fragmentBackground"
+        android:elevation="5dp"
+        android:translationZ="5dp"
+        android:paddingBottom="7dp"
+        android:paddingTop="7dp"
+        app:menu="@menu/menu_customer_toolbar"
+        app:titleTextColor="#000000">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingTop="5dp">
+
+            <TextView
+                android:id="@+id/company_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="cursive"
+                android:text="Shopik"
+                android:textAllCaps="false"
+                android:textColor="#000000"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textAlignment="center"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_profile"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:src="@drawable/ic_account_circle_black_24dp"/>
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/comfortaa"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/top_nav"
+        style="@style/MyTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/customer_toolbar"
+        android:background="@color/fragmentBackground"
+        android:elevation="5dp"
+        app:tabIndicatorHeight="2dp"
+        android:translationZ="5dp"
+        android:scrollbars="horizontal"
+        app:tabMode="fixed">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/bottom_swipe"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:tag="swipe" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/bottom_favorites"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:tag="favorites" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/bottom_suggested"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:tag="suggested" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/bottom_search"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:tag="search" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/customer_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_nav"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="410dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="-10dp"
+        android:visibility="gone"
+        android:layout_below="@id/top_nav"
+        tools:visibility="visible"
+        android:fitsSystemWindows="true"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:indeterminate="true">
+    </ProgressBar>
+
+</RelativeLayout>
