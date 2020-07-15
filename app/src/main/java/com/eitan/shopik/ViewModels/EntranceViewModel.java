@@ -11,7 +11,6 @@ import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

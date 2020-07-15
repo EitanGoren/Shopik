@@ -793,5 +793,4 @@ public class GenderFilteringActivity extends AppCompatActivity {
         model.getGender().removeObservers(this);
         model.getSub_category().removeObservers(this);
     }
-
 }

@@ -86,7 +86,6 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     private static final int BULK = 5;
     private static final int ITEMS_PER_PAGE = 72;
     private GridView gridContainer;
-    private TextView count;
     private boolean isOpened = false;
     private boolean isSearchOpened = false;
     private OvershootInterpolator overshootInterpolator = new OvershootInterpolator();
@@ -117,7 +116,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
         OutletsModel outletsModel = new ViewModelProvider(requireActivity()).get(OutletsModel.class);
         gender = model.getGender().getValue();
         TextView header = requireView().findViewById(R.id.best_sellers2);
-        count = getView().findViewById(R.id.items_count);
+        TextView count = getView().findViewById(R.id.items_count);
 
         String header_text = "Save on Outlet";
         header.setText(header_text);
@@ -236,6 +235,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
 
     private void setSearch() {
 
+        TextView count = getView().findViewById(R.id.items_count);
         //open search view
         if (!isSearchOpened) {
 

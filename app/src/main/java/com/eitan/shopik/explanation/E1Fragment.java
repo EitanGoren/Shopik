@@ -180,7 +180,7 @@ public class E1Fragment extends Fragment {
             if(recyclerItem.getType().equals(type)){
                 new_items.add(recyclerItem);
                 ++i;
-                txt.setText("(" + i + "items)");
+                txt.setText("(" + i + " items)");
             }
         }
         dialogProgressBar.setVisibility(View.INVISIBLE);
