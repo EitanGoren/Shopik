@@ -63,7 +63,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -101,8 +103,6 @@ public class CustomerMainActivity extends AppCompatActivity {
     private androidx.appcompat.widget.Toolbar.OnMenuItemClickListener topNavListener;
     private SuggestedModel suggestedModel;
     private ValueEventListener valueEventListener;
-    private UnifiedNativeAd tempAd;
-    private static final int NUM_OF_ADS = 15;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,11 +111,7 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         init();
 
-        MobileAds.initialize(this,"ca-app-pub-3940256099942544~3347511713");
-
-        for(int i=0;i<NUM_OF_ADS;++i) {
-            loadAds();
-        }
+        showInterstitialAd();
 
         valueEventListener = new ValueEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -201,43 +197,43 @@ public class CustomerMainActivity extends AppCompatActivity {
         setToolbar();
     }
 
-    private void loadAds() {
+    private void showInterstitialAd (){
+        MobileAds.initialize(this, Macros.INTERSTITIAL_AD_DEBUG_CODE);
+        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
+        RequestConfiguration configuration =
+                new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+        MobileAds.setRequestConfiguration(configuration);
 
-        VideoOptions videoOptions = new VideoOptions.Builder().
-                setStartMuted(false).
-                setClickToExpandRequested(true).
-                build();
+        InterstitialAd mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(Macros.INTERSTITIAL_AD_DEBUG_CODE);
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.setAdListener(new AdListener() {
 
-        NativeAdOptions nativeAdOptions = new NativeAdOptions.Builder().
-                setAdChoicesPlacement(ADCHOICES_TOP_LEFT).
-                setVideoOptions(videoOptions).
-                build();
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                switch (i){
+                    case ERROR_CODE_INTERNAL_ERROR:
+                        Log.d(Macros.TAG,"Something happened internally; for instance, an invalid response was received from the ad server.");
+                        break;
+                    case ERROR_CODE_INVALID_REQUEST:
+                        Log.d(Macros.TAG,"The ad request was invalid; for instance, the ad unit ID was incorrect.");
+                        break;
+                    case ERROR_CODE_NETWORK_ERROR:
+                        Log.d(Macros.TAG,"The ad request was unsuccessful due to network connectivity.");
+                        break;
+                    case ERROR_CODE_NO_FILL:
+                        Log.d(Macros.TAG,"The ad request was successful, but no ad was returned due to lack of ad inventory.");
+                        break;
+                }
+            }
 
-        AdLoader adLoader = new AdLoader.Builder(Objects.requireNonNull(this),"ca-app-pub-3940256099942544/2247696110")
-                .forUnifiedNativeAd(unifiedNativeAd -> {
-                    // Show the ad.
-                    tempAd = unifiedNativeAd;
-                })
-                .withAdListener(new AdListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void onAdLoaded() {
-                        super.onAdLoaded();
-                        ShoppingItem dummy = new ShoppingItem();
-                        dummy.setAd(true);
-                        dummy.setNativeAd(tempAd);
-                        mainModel.addAd(dummy);
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad ( int errorCode ) {
-                        Log.d(Macros.TAG,"Failed to load native ad: " + errorCode);
-                    }
-                })
-                .withNativeAdOptions(nativeAdOptions)
-                .build();
-
-        adLoader.loadAd(new PublisherAdRequest.Builder().build());
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                mInterstitialAd.show();
+            }
+        });
     }
 
     private void setToolbarColor() {
@@ -729,42 +725,6 @@ public class CustomerMainActivity extends AppCompatActivity {
                 mainModel.addItemId(pair);
             });
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        InterstitialAd mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(Macros.INTERSTITIAL_AD_DEBUG_CODE);
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        mInterstitialAd.setAdListener(new AdListener() {
-
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                switch (i){
-                    case ERROR_CODE_INTERNAL_ERROR:
-                        Log.d(Macros.TAG,"Something happened internally; for instance, an invalid response was received from the ad server.");
-                        break;
-                    case ERROR_CODE_INVALID_REQUEST:
-                        Log.d(Macros.TAG,"The ad request was invalid; for instance, the ad unit ID was incorrect.");
-                        break;
-                    case ERROR_CODE_NETWORK_ERROR:
-                        Log.d(Macros.TAG,"The ad request was unsuccessful due to network connectivity.");
-                        break;
-                    case ERROR_CODE_NO_FILL:
-                        Log.d(Macros.TAG,"The ad request was successful, but no ad was returned due to lack of ad inventory.");
-                        break;
-                }
-            }
-
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                mInterstitialAd.show();
-            }
-        });
-
-        finish();
     }
 
     @Override

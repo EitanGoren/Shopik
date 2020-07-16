@@ -33,7 +33,7 @@ public class GetAsosItemsService extends JobIntentService {
     String data2 = "";
 
     public static void koko(Context context, Intent work){
-            enqueueWork(context,GetAsosItemsService.class,1,work);
+        enqueueWork(context,GetAsosItemsService.class,1,work);
     }
 
     @Override
@@ -49,10 +49,10 @@ public class GetAsosItemsService extends JobIntentService {
         ArrayList<RecyclerItem> recyclerItems = new ArrayList<>();
         ArrayList<RecyclerItem> recyclerItems2 = new ArrayList<>();
 
-        assert intent != null;
         String gender = intent.getStringExtra("gender");
         try {
             int catagory_num = 0;
+            assert gender != null;
             switch (gender){
                 case Macros.CustomerMacros.WOMEN:
                     catagory_num = 27108;

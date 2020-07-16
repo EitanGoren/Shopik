@@ -62,6 +62,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
     private static final int MEN_OUTLET_NUM = 27396;
     private static final int BULK = 5;
     private int page;
+    private int color;
     private Spinner gender_spinner;
     private TabLayout tabLayout;
     private String name,imageUrl;
@@ -70,7 +71,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
     private String gender;
     private androidx.appcompat.widget.Toolbar toolbar;
     private ViewPager mMainPager;
-    private int color;
     private androidx.appcompat.widget.Toolbar.OnMenuItemClickListener topNavListener;
     private OutletsModel outletsModel;
     private EntranceViewModel entranceModel;
@@ -413,15 +413,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         private void getMenItem(final String type, DataSnapshot dataSnapshot){
-           /* entranceModel.removeAllType(type,gender);
-            List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
-            int counter = 0;
-            for(DocumentSnapshot item : documentSnapshots) {
-                RecyclerItem recyclerItem = initItem(type);
-                entranceModel.addMenLikedItem(recyclerItem);
-                counter++;
-            }
-            entranceModel.setLiked_items(gender);*/
             entranceModel.removeAllType(type,gender);
             long count = 0;
             long max = 0;
@@ -580,7 +571,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 String line = "";
                 while (line != null) {
                     line = bufferedReader.readLine();
-                    new_items_data = new_items_data + line;
+                    new_items_data += line;
                 }
 
                 String[] data_split = new_items_data.split("\"products\":", 2);

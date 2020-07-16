@@ -23,8 +23,7 @@ public class MainRegistrationActivity extends AppCompatActivity {
 
     private boolean isCompany = false;
     private Switch is_company;
-    String id, first_name, last_name, imageUrl, address, gender,email,provider,token;
-    DatabaseReference companyDB, customerDB;
+    String id, first_name, last_name, imageUrl,email,provider,token;
     CircleImageView imageView;
     TextView welcome;
     FirebaseUser user;
@@ -37,7 +36,6 @@ public class MainRegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_registration);
 
         is_company = findViewById(R.id.is_company);
-     //   customerDB = FirebaseDatabase.getInstance().getReference().child("Customers");
         imageView = findViewById(R.id.image_profile);
         welcome = findViewById(R.id.welcome_signed_in);
         user = FirebaseAuth.getInstance().getCurrentUser();

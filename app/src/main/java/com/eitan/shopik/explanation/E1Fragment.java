@@ -72,7 +72,6 @@ public class E1Fragment extends Fragment {
     private EntranceViewModel entranceViewModel;
     private GenderModel model;
     private Dialog dialog;
-    private DialogGridAdapter gridAdapter;
     private ProgressBar dialogProgressBar;
     private ArrayList<RecyclerItem> new_items;
 
@@ -165,7 +164,7 @@ public class E1Fragment extends Fragment {
 
     private void showNewItemsDialog(String type) {
 
-        gridAdapter = new DialogGridAdapter(dialog.getContext(), R.layout.e3_grid_item, new_items);
+        DialogGridAdapter gridAdapter = new DialogGridAdapter(dialog.getContext(), R.layout.e3_grid_item, new_items);
         GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
         gridAdapter.notifyDataSetChanged();
         gridContainer.setAdapter(gridAdapter);

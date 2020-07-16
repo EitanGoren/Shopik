@@ -97,6 +97,8 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     private SearchView searchView2;
     private String gender;
     private E3GridAdapter gridAdapter;
+    private GenderModel model;
+    private OutletsModel outletsModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,8 +114,8 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        GenderModel model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
-        OutletsModel outletsModel = new ViewModelProvider(requireActivity()).get(OutletsModel.class);
+        model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
+        outletsModel = new ViewModelProvider(requireActivity()).get(OutletsModel.class);
         gender = model.getGender().getValue();
         TextView header = requireView().findViewById(R.id.best_sellers2);
         TextView count = requireView().findViewById(R.id.items_count);
@@ -166,7 +168,10 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
+        model.getGender().removeObservers(getViewLifecycleOwner());
+        outletsModel.getOutlets().removeObservers(getViewLifecycleOwner());
+        search_card = null;
+        searchView2 = null;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
