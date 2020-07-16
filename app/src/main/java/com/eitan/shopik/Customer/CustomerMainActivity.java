@@ -113,7 +113,7 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         MobileAds.initialize(this,"ca-app-pub-3940256099942544~3347511713");
 
-        for(int i=0;i<NUM_OF_ADS;++i){
+        for(int i=0;i<NUM_OF_ADS;++i) {
             loadAds();
         }
 
@@ -210,7 +210,6 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         NativeAdOptions nativeAdOptions = new NativeAdOptions.Builder().
                 setAdChoicesPlacement(ADCHOICES_TOP_LEFT).
-                setMediaAspectRatio(NATIVE_MEDIA_ASPECT_RATIO_LANDSCAPE).
                 setVideoOptions(videoOptions).
                 build();
 
@@ -231,10 +230,9 @@ public class CustomerMainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onAdFailedToLoad(int errorCode) {
-                        Toast.makeText(CustomerMainActivity.this, "Failed to load native ad: " + errorCode, Toast.LENGTH_SHORT).show();
+                    public void onAdFailedToLoad ( int errorCode ) {
+                        Log.d(Macros.TAG,"Failed to load native ad: " + errorCode);
                     }
-
                 })
                 .withNativeAdOptions(nativeAdOptions)
                 .build();
@@ -552,9 +550,7 @@ public class CustomerMainActivity extends AppCompatActivity {
                     shoppingItem.setSub_category(item_sub_category);
 
                     getLikes(shoppingItem);
-                  //  getVideo(id,shoppingItem);
                 }
-
             }
             catch (Exception e) {
                 Log.d(Macros.TAG, "MainCustomerActivity::getAllItems() " + e.getMessage());
@@ -722,7 +718,7 @@ public class CustomerMainActivity extends AppCompatActivity {
         }
         else {
             FirebaseFirestore.getInstance().collection(Macros.COMPANIES).document(shoppingItem.getSellerId()).get().addOnSuccessListener(documentSnapshot -> {
-                Map map = new HashMap<>();
+                Map<String,Object> map = new HashMap<>();
                 map.put("seller", Objects.requireNonNull(documentSnapshot.get("name")).toString());
                 map.put("logo_url", Objects.requireNonNull(documentSnapshot.get("logo_url")).toString());
                 mainModel.setCompanies_info(shoppingItem.getSellerId(), map);

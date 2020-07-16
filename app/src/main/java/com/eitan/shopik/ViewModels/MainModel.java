@@ -65,16 +65,12 @@ public class MainModel extends ViewModel {
 
     public void add_item(ShoppingItem item) {
         Objects.requireNonNull(this.all_items.getValue()).add(item);
-        postAllItems();
-    }
-    public void postAllItems(){
         CopyOnWriteArrayList<ShoppingItem> koko = this.all_items.getValue();
         all_items.postValue(koko);
     }
     public LiveData<CopyOnWriteArrayList<ShoppingItem>> getAll_items() {
         return all_items;
     }
-
     public LiveData<CopyOnWriteArrayList<Pair<String,ShoppingItem>>> getAll_items_ids() {
         return all_items_ids;
     }
@@ -82,20 +78,9 @@ public class MainModel extends ViewModel {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addItemId(Pair<String,ShoppingItem> pair) {
         Objects.requireNonNull(this.all_items_ids.getValue()).add(pair);
-        postAllItemsIds();
-    }
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void postAllItemsIds(){
         CopyOnWriteArrayList<Pair<String,ShoppingItem>> koko = this.all_items_ids.getValue();
-        assert koko != null;
-        koko.sort((o1, o2) -> {
-            assert o1.first != null;
-            assert o2.first != null;
-            return o1.first.compareTo(o2.first);
-        });
         all_items_ids.postValue(koko);
     }
-
     public void addAd(ShoppingItem shoppingItem){
         this.shoppingAdsArray.add(shoppingItem);
     }

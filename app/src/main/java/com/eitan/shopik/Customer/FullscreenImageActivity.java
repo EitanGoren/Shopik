@@ -95,14 +95,8 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
         assert bundle != null;
         Object item = bundle.getSerializable("item");
-        if(item instanceof ShoppingItem){
-              //object = (ShoppingItem)item;
+        if(item instanceof ShoppingItem)
               isFavorite = ((ShoppingItem) item).isFavorite();
-        }
-        else if(item instanceof RecyclerItem){
-            //object = (RecyclerItem)item;
-            isFavorite = false;
-        }
 
         mDot1 = findViewById(R.id.fullscreen_dot_1);
         mDot2 = findViewById(R.id.fullscreen_dot_2);
@@ -201,6 +195,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
         }
 
         class PicsViewHolder extends RecyclerView.ViewHolder{
+
             public PicsViewHolder(@NonNull View view) {
                 super(view);
                 photoView = view.findViewById(R.id.fullscreen_image_item);
@@ -218,7 +213,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
             private void setData(int position){
                 textView.setText(text);
-                String no_video_text = "No video for this item" + System.lineSeparator() + text;
+                String no_video_text = "No video for this item";
                 no_video.setText(no_video_text);
 
                 if (position != 4) {

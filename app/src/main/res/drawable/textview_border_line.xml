@@ -4,15 +4,15 @@
         <shape
             android:shape="rectangle">
             <stroke android:width="10dp" android:color="@color/borderLine" />
-            <solid android:color="#FFFDED" />
+            <solid android:color="@color/FavoritesInfoLine" />
         </shape>
     </item>
 
     <item android:top="2.5dp" android:bottom="2.5dp">
         <shape
             android:shape="rectangle">
-            <stroke android:width="10dp" android:color="#FFFDED" />
-            <solid android:color="#FFFDED" />
+            <stroke android:width="10dp" android:color="@color/FavoritesInfoLine" />
+            <solid android:color="@color/FavoritesInfoLine" />
         </shape>
     </item>
 

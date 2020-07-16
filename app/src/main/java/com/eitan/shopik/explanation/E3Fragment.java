@@ -116,7 +116,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
         OutletsModel outletsModel = new ViewModelProvider(requireActivity()).get(OutletsModel.class);
         gender = model.getGender().getValue();
         TextView header = requireView().findViewById(R.id.best_sellers2);
-        TextView count = getView().findViewById(R.id.items_count);
+        TextView count = requireView().findViewById(R.id.items_count);
 
         String header_text = "Save on Outlet";
         header.setText(header_text);
@@ -160,7 +160,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
         });
 
         search_card = requireView().findViewById(R.id.search_card);
-        searchView2 = getView().findViewById(R.id.search_bar);
+        searchView2 = requireView().findViewById(R.id.search_bar);
     }
 
     @Override
@@ -178,10 +178,10 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     private void initFab(){
 
         main = requireView().findViewById(R.id.main_fab);
-        search = getView().findViewById(R.id.search_icon);
-        more = getView().findViewById(R.id.more_icon);
-        clear = getView().findViewById(R.id.clear_search);
-        options = getView().findViewById(R.id.more_options_layout);
+        search = requireView().findViewById(R.id.search_icon);
+        more = requireView().findViewById(R.id.more_icon);
+        clear = requireView().findViewById(R.id.clear_search);
+        options = requireView().findViewById(R.id.more_options_layout);
 
         options.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.floating));
         main.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.floating));
@@ -235,7 +235,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
 
     private void setSearch() {
 
-        TextView count = getView().findViewById(R.id.items_count);
+        TextView count = requireView().findViewById(R.id.items_count);
         //open search view
         if (!isSearchOpened) {
 
@@ -277,7 +277,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     private void closeKeyboard(){
         View view = requireActivity().getCurrentFocus();
         if( view != null ){
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             assert imm != null;
             imm.hideSoftInputFromWindow(view.getWindowToken(),0);
         }

@@ -52,9 +52,11 @@ public class SwipesModel extends AndroidViewModel {
     public void setItems(CopyOnWriteArrayList<ShoppingItem> items) {
         this.items.postValue(items);
     }
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void addToItems(ShoppingItem shoppingItem){
         Objects.requireNonNull(this.items.getValue()).add(shoppingItem);
+    }
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void sortItems(){
         items.getValue().sort((o1, o2) -> {
             if(!o1.isAd() && !o2.isAd())
                 return o1.getId().compareTo(o2.getId());

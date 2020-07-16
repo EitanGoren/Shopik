@@ -56,7 +56,6 @@ public class CustomerHomeFragment extends Fragment {
     private Dialog dialog;
     private static final int DELAY_MILLIS = 2500;
     private SwipeFlingAdapterView flingContainer;
-    private android.util.Pair<Integer, Integer> cat_num;
     private MainModel mainModel;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -70,16 +69,14 @@ public class CustomerHomeFragment extends Fragment {
         item_type = genderModel.getType().getValue();
         item_sub_category = genderModel.getSub_category().getValue();
 
-        cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
+        android.util.Pair<Integer, Integer> cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
 
         getLastSwipedItem();
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_customer_home, container, false);
     }
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
@@ -125,7 +122,6 @@ public class CustomerHomeFragment extends Fragment {
 
         });
     }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -139,28 +135,37 @@ public class CustomerHomeFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void fillSwipeItemsModel(CopyOnWriteArrayList<Pair<String, ShoppingItem>> pairs) {
         swipesModel.clearAllItems();
+        pairs.sort((o1, o2) -> {
+            assert o1.first != null;
+            assert o2.first != null;
+            return o1.first.compareTo(o2.first);
+        });
         int count = 0;
         for (Pair<String, ShoppingItem> pair : pairs) {
             assert pair.first != null;
             if (swipesModel.getLast_item_id().getValue() == null || Objects.requireNonNull(swipesModel.getLast_item_id().getValue()).compareTo(pair.first) < 0) {
                 swipesModel.addToItems(pair.second);
+                flingContainer.setAdapter(arrayAdapter);
+                arrayAdapter.notifyDataSetChanged();
                 count++;
                 if( (count%Macros.SWIPES_TO_AD == 0) && count > 0 ) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                    if(shoppingItemAd != null)
+                    if(shoppingItemAd != null) {
                         swipesModel.addToItems(shoppingItemAd);
+                    }
                 }
             }
         }
-        if ((cat_num.second > 1 && (pairs.size() >= (cat_num.second - 1) * 72)) || (cat_num.second == 1)) {
-            flingContainer.setAdapter(arrayAdapter);
-            arrayAdapter.notifyDataSetChanged();
-        }
+        swipesModel.sortItems();
+      //  if ((cat_num.second > 1 && (pairs.size() >= (cat_num.second - 1) * 72)) || (cat_num.second == 1)) {
+      //      flingContainer.setAdapter(arrayAdapter);
+      //      arrayAdapter.notifyDataSetChanged();
+      //  }
     }
 
     private void init() {
-        tabLayout = Objects.requireNonNull(getActivity()).findViewById(R.id.top_nav);
-        flingContainer = Objects.requireNonNull(getActivity()).findViewById(R.id.frame);
+        tabLayout = requireActivity().findViewById(R.id.top_nav);
+        flingContainer = requireActivity().findViewById(R.id.frame);
     }
 
     private void updateBadge() {
@@ -186,7 +191,7 @@ public class CustomerHomeFragment extends Fragment {
                 boolean isFavorite = arrayAdapter.isFavorite();
                 shoppingItem.setFavorite(isFavorite);
                 if (isFavorite) {
-                    dialog = new Dialog(Objects.requireNonNull(getContext()));
+                    dialog = new Dialog(requireContext());
                     String imageUrl = connection.getASOSimageUrl(1, shoppingItem.getColor(), shoppingItem.getId_in_seller());
                     showFavoritesDialog(imageUrl);
                 }
@@ -285,10 +290,14 @@ public class CustomerHomeFragment extends Fragment {
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.exists()) {
                                             for (Object item_id : ((Map) Objects.requireNonNull(dataSnapshot.getValue())).keySet()) {
-                                                swipesModel.setLast_item_id(item_id.toString().
-                                                        compareTo(Objects.requireNonNull(swipesModel.getLast_item_id().getValue())) > 0 ?
-                                                        item_id.toString() :
-                                                        swipesModel.getLast_item_id().getValue());
+                                                if (swipesModel.getLast_item_id().getValue() != null) {
+                                                    swipesModel.setLast_item_id(item_id.toString().
+                                                            compareTo(Objects.requireNonNull(swipesModel.getLast_item_id().getValue())) > 0 ?
+                                                            item_id.toString() :
+                                                            swipesModel.getLast_item_id().getValue());
+                                                }
+                                                else
+                                                    swipesModel.setLast_item_id(item_id.toString());
                                             }
                                         }
                                     }
