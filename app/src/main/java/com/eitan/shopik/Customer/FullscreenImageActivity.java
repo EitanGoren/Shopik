@@ -1,6 +1,7 @@
 package com.eitan.shopik.Customer;
 
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +31,7 @@ import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.VideoController;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -254,6 +256,8 @@ public class FullscreenImageActivity extends AppCompatActivity {
                                 mVideoView.requestFocus();
                                 mVideoView.start();
                             });
+
+                            mVideoView.setOnCompletionListener(MediaPlayer::start);
                         }
                         else
                             photoView.setOnLongClickListener(v -> {
@@ -337,19 +341,19 @@ public class FullscreenImageActivity extends AppCompatActivity {
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
                     if(video_path != null) {
-                            videoLayout.setVisibility(View.VISIBLE);
-                            path = Macros.VIDEO_LINK + video_path;
-                            mVideoView.setVideoPath(path);
-                            mVideoView.setMediaController(videoMediaController);
-                            no_video.setVisibility(View.INVISIBLE);
-                        }
+                        videoLayout.setVisibility(View.VISIBLE);
+                        path = Macros.VIDEO_LINK + video_path;
+                        mVideoView.setVideoPath(path);
+                        mVideoView.setMediaController(videoMediaController);
+                        no_video.setVisibility(View.INVISIBLE);
+                    }
                     else {
-                            videoLayout.setVisibility(View.INVISIBLE);
-                            photoView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                            photoView.setImageResource(R.drawable.animal1);
-                            photoView.setPadding(25,0,25,0);
-                            no_video.setVisibility(View.VISIBLE);
-                        }
+                        videoLayout.setVisibility(View.INVISIBLE);
+                        photoView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        photoView.setImageResource(R.drawable.animal1);
+                        photoView.setPadding(25,0,25,0);
+                        no_video.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         }

@@ -348,7 +348,7 @@ public class Macros {
                 "Missguided","Hollister","Napapijri Box","DKNY","FitBit","The Couture Club","Diesel","Fiorucci",
                 "Rip Curl","Volcom Stone","Ellesse","Dr Denim","Public Desire","Champion","Chinatown Market",
                 "Fred Perry","Abercrombie & Fitch","Daisy Street","South Beach","NA-KD","Reebok","Barbour",
-                "Crooked Tongues",
+                "Crooked Tongues","Casio","Rolex","Swatch","Michael Kors",
         };
 
         public static final String[] cuts = {

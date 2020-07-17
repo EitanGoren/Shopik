@@ -5,19 +5,17 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -33,15 +31,10 @@ import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.eitan.shopik.ViewModels.SuggestedModel;
 import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
-import com.google.android.gms.ads.VideoOptions;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
-import com.google.android.gms.ads.formats.NativeAdOptions;
-import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -56,14 +49,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -79,10 +70,6 @@ import static com.google.android.gms.ads.AdRequest.ERROR_CODE_INTERNAL_ERROR;
 import static com.google.android.gms.ads.AdRequest.ERROR_CODE_INVALID_REQUEST;
 import static com.google.android.gms.ads.AdRequest.ERROR_CODE_NETWORK_ERROR;
 import static com.google.android.gms.ads.AdRequest.ERROR_CODE_NO_FILL;
-import static com.google.android.gms.ads.RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE;
-import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_LEFT;
-import static com.google.android.gms.ads.formats.NativeAdOptions.NATIVE_MEDIA_ASPECT_RATIO_LANDSCAPE;
-import static com.google.android.gms.ads.formats.NativeAdOptions.NATIVE_MEDIA_ASPECT_RATIO_SQUARE;
 
 public class CustomerMainActivity extends AppCompatActivity {
 
@@ -103,11 +90,17 @@ public class CustomerMainActivity extends AppCompatActivity {
     private androidx.appcompat.widget.Toolbar.OnMenuItemClickListener topNavListener;
     private SuggestedModel suggestedModel;
     private ValueEventListener valueEventListener;
+    private CountDownTimer countDownTimer;
+    private InterstitialAd mInterstitialAd;
+    private boolean isTimeForAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initialize the Mobile Ads SDK.
+        MobileAds.initialize(this, initializationStatus -> {});
 
         init();
 
@@ -198,13 +191,15 @@ public class CustomerMainActivity extends AppCompatActivity {
     }
 
     private void showInterstitialAd (){
-        MobileAds.initialize(this, Macros.INTERSTITIAL_AD_DEBUG_CODE);
+
         List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
-        RequestConfiguration configuration =
-                new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+        RequestConfiguration configuration = new RequestConfiguration.Builder().
+                setTestDeviceIds(testDeviceIds).build();
+
         MobileAds.setRequestConfiguration(configuration);
 
-        InterstitialAd mInterstitialAd = new InterstitialAd(this);
+        // Create the InterstitialAd and set the adUnitId.
+        mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(Macros.INTERSTITIAL_AD_DEBUG_CODE);
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
         mInterstitialAd.setAdListener(new AdListener() {
@@ -231,9 +226,53 @@ public class CustomerMainActivity extends AppCompatActivity {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
-                mInterstitialAd.show();
+                // Show the ad if it's ready.
+                if (isTimeForAd && mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                }
+            }
+
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                createTimer();
+                mInterstitialAd.loadAd(new AdRequest.Builder().build());
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        createTimer();
+        countDownTimer.start();
+    }
+
+    @Override
+    public void onPause() {
+        // Cancel the timer if the game is paused.
+        countDownTimer.cancel();
+        super.onPause();
+    }
+
+    private void createTimer() {
+
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+
+        countDownTimer = new CountDownTimer(60000,50) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                isTimeForAd = false;
+            }
+
+            @Override
+            public void onFinish() {
+                isTimeForAd = true;
+            }
+        };
     }
 
     private void setToolbarColor() {

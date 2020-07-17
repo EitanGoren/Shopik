@@ -62,6 +62,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -87,7 +88,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
         final ShoppingItem shoppingItem = getItem(position);
 
         assert shoppingItem != null;
-        if(shoppingItem.isAd() && shoppingItem.getNativeAd() != null){
+        if(shoppingItem.isAd() && shoppingItem.getNativeAd() != null) {
             UnifiedNativeAdView adView = (UnifiedNativeAdView) LayoutInflater.from(getContext()).inflate(R.layout.native_card_ad_template,null);
             // Set the media view.
             adView.setMediaView((MediaView) adView.findViewById(R.id.ad_media));
@@ -168,31 +169,19 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             // Get the video controller for the ad. One will always be provided, even if the ad doesn't
             // have a video asset.
             VideoController vc = nativeAd.getVideoController();
-            if(vc.hasVideoContent()){
+
+            if(vc.hasVideoContent()) {
                 vc.mute(false);
                 vc.play();
             }
-            /* Updates the UI to say whether or not this ad has a video asset.
-            if (vc.hasVideoContent()) {
-                // Create a new VideoLifecycleCallbacks object and pass it to the VideoController. The
-                // VideoController will call methods on this object when events occur in the video
-                // lifecycle.
-                vc.setVideoLifecycleCallbacks(new VideoController.VideoLifecycleCallbacks() {
-                    @Override
-                    public void onVideoEnd() {
-                        // Publishers should allow native ads to complete video playback before
-                        // refreshing or replacing them with another ad in the same UI location.
-                        super.onVideoEnd();
-                    }
-                });
-            }*/
+
             convertView = adView;
             final float scale = getContext().getResources().getDisplayMetrics().density;
             int pixels = (int) (570 * scale + 0.5f);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT,pixels, Gravity.CENTER );
             convertView.setLayoutParams(params);
         }
-        else if(!shoppingItem.isAd()){
+        else if(!shoppingItem.isAd()) {
 
             final ArrayList<String> imagesUrl = new ArrayList<>();
             setImagesArray(shoppingItem,imagesUrl);
