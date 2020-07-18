@@ -298,6 +298,7 @@ public class Macros {
     public static final String INTERSTITIAL_AD_DEBUG_CODE = "ca-app-pub-3940256099942544/8691691433";
     public static final String TEST_DEVICE_ID = "7255B1C36174A2C33091060576730302";
     public static final String NATIVE_VIDEO_TEST_AD = "ca-app-pub-3940256099942544/1044960115";
+    public static final String NATIVE_ADVANCED_AD = "ca-app-pub-3940256099942544/2247696110";
     public static final String YOUTUBE_API = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet";
     public static final String VIDEO_LINK = "https://video.asos-media.com/products/ASOS/_media_";
     public static final double POUND_TO_ILS = 5.2482;

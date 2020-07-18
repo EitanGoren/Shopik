@@ -82,7 +82,7 @@ public class CustomerHomeFragment extends Fragment {
         RequestConfiguration configuration =
                 new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
         MobileAds.setRequestConfiguration(configuration);
-        MobileAds.initialize(requireActivity(), Macros.NATIVE_VIDEO_TEST_AD);
+        MobileAds.initialize(requireActivity(), Macros.NATIVE_ADVANCED_AD);
 
         for( int i=0; i < NUM_OF_ADS; ++i ){
             loadAds();
@@ -197,15 +197,12 @@ public class CustomerHomeFragment extends Fragment {
 
         NativeAdOptions nativeAdOptions = new NativeAdOptions.Builder().
                 setAdChoicesPlacement(ADCHOICES_TOP_LEFT).
-                setVideoOptions(videoOptions).
+              //  setVideoOptions(videoOptions).
                 build();
 
         AdLoader adLoader = new AdLoader
-                .Builder(Objects.requireNonNull(requireActivity()),Macros.NATIVE_VIDEO_TEST_AD)
-                .forUnifiedNativeAd(unifiedNativeAd -> {
-                    // Show the ad.
-                    tempAd = unifiedNativeAd;
-                })
+                .Builder(Objects.requireNonNull(requireActivity()), Macros.NATIVE_ADVANCED_AD)
+                .forUnifiedNativeAd(unifiedNativeAd -> tempAd = unifiedNativeAd)
                 .withAdListener(new AdListener() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
