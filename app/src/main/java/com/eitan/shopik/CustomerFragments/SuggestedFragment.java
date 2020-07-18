@@ -104,7 +104,7 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
     }
 
     private void showArrow(){
-        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.floating);
+        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.blink_anim);
         down_arrow.startAnimation(animation);
         down_arrow.setVisibility(View.VISIBLE);
     }
@@ -156,30 +156,30 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
     }
 
     private void init() {
-        gridContainer = Objects.requireNonNull(getView()).findViewById(R.id.grid_view);
-        gridAdapter = new GridAdapter(Objects.requireNonNull(getContext()),R.layout.grid_item,suggestedModel.getAllItems().getValue());
+        gridContainer = requireView().findViewById(R.id.grid_view);
+        gridAdapter = new GridAdapter(requireContext(),R.layout.grid_item,suggestedModel.getAllItems().getValue());
         gridContainer.setAdapter(gridAdapter);
-        down_arrow = Objects.requireNonNull(getView()).findViewById(R.id.see_items_below);
+        down_arrow = requireView().findViewById(R.id.see_items_below);
 
         initFab();
     }
 
     private void initFab(){
 
-        main = Objects.requireNonNull(getView()).findViewById(R.id._main_icon);
-        price = getView().findViewById(R.id._price_icon);
-        sale = getView().findViewById(R.id._sale_icon);
-        match = getView().findViewById(R.id._match_icon);
-        clear = getView().findViewById(R.id._clear);
-        options = getView().findViewById(R.id._more_options_layout);
-        clear_txt = getView().findViewById(R.id.clear_text);
-        price_txt = getView().findViewById(R.id.price_text);
-        sale_txt = getView().findViewById(R.id.sale_text);
-        match_txt = getView().findViewById(R.id.match_text);
-        clear_card = getView().findViewById(R.id.clear_card);
-        price_card = getView().findViewById(R.id.price_card);
-        sale_card = getView().findViewById(R.id.sale_card);
-        match_card = getView().findViewById(R.id.match_card);
+        main = requireView().findViewById(R.id._main_icon);
+        price = requireView().findViewById(R.id._price_icon);
+        sale = requireView().findViewById(R.id._sale_icon);
+        match = requireView().findViewById(R.id._match_icon);
+        clear = requireView().findViewById(R.id._clear);
+        options = requireView().findViewById(R.id._more_options_layout);
+        clear_txt = requireView().findViewById(R.id.clear_text);
+        price_txt = requireView().findViewById(R.id.price_text);
+        sale_txt = requireView().findViewById(R.id.sale_text);
+        match_txt = requireView().findViewById(R.id.match_text);
+        clear_card = requireView().findViewById(R.id.clear_card);
+        price_card = requireView().findViewById(R.id.price_card);
+        sale_card = requireView().findViewById(R.id.sale_card);
+        match_card = requireView().findViewById(R.id.match_card);
 
         options.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.floating));
         main.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.floating));

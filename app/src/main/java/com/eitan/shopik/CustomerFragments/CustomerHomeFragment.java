@@ -191,7 +191,7 @@ public class CustomerHomeFragment extends Fragment {
     private void loadAds() {
 
         VideoOptions videoOptions = new VideoOptions.Builder().
-                setStartMuted(false).
+                setStartMuted(true).
                 setClickToExpandRequested(true).
                 build();
 

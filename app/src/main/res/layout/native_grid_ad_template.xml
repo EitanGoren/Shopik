@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.gms.ads.formats.UnifiedNativeAdView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#00FFFFFF">
+    android:layout_height="290dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#00FFFFFF"
+    app:cardCornerRadius="15dp"
+    app:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingRight="3dp"
-        android:paddingLeft="3dp"
+        android:layout_height="match_parent"
         android:background="#00FFFFFF">
 
         <com.google.android.gms.ads.formats.MediaView
@@ -93,7 +94,7 @@
         <TextView
             android:id="@+id/ad_brand_name"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/nunito_semibold"
             android:textAlignment="center"
             android:layout_marginTop="5dp"
@@ -110,11 +111,10 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/ad_body"
-            android:background="@drawable/brand_background"
             android:fontFamily="@font/nunito_semibold"
-            android:padding="5dp"
+            android:padding="2dp"
             android:textAlignment="center"
-            android:textColor="#ffffff"
+            android:textColor="#000000"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -131,4 +131,4 @@
 
     </RelativeLayout>
 
-</com.google.android.gms.ads.formats.UnifiedNativeAdView>
+</com.google.android.material.card.MaterialCardView>

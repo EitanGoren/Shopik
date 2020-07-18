@@ -161,19 +161,23 @@ public class FullscreenImageActivity extends AppCompatActivity {
             if(o instanceof ShoppingItem){
                 imagesUrl = ((ShoppingItem) o).getImages();
                 StringBuilder description = new StringBuilder();
-                for(String word : ((ShoppingItem) o).getName()) {
-                    description.append(word.toLowerCase().concat(" "));
+                if(((ShoppingItem) o).getName() != null) {
+                    for (String word : ((ShoppingItem) o).getName()) {
+                        description.append(word.toLowerCase().concat(" "));
+                    }
+                    text = description.toString();
                 }
-                text = description.toString();
                 item_id = ((ShoppingItem) o).getId();
             }
             else {
                 imagesUrl = ((RecyclerItem) o).getImages();
-                StringBuilder description = new StringBuilder();
-                for(String word : ((RecyclerItem) o).getDescription()) {
-                    description.append(word.toLowerCase().concat(" "));
+                if(((RecyclerItem) o).getDescription() != null) {
+                    StringBuilder description = new StringBuilder();
+                    for (String word : ((RecyclerItem) o).getDescription()) {
+                        description.append(word.toLowerCase().concat(" "));
+                    }
+                    text = description.toString();
                 }
-                text = description.toString();
                 item_id = ((RecyclerItem) o).getId();
             }
         }

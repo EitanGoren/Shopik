@@ -101,6 +101,12 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         // Initialize the Mobile Ads SDK.
         MobileAds.initialize(this, initializationStatus -> {});
+        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
+        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+        MobileAds.setRequestConfiguration(configuration);
+        // Create the InterstitialAd and set the adUnitId.
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(Macros.INTERSTITIAL_AD_DEBUG_CODE);
 
         init();
 
@@ -192,18 +198,8 @@ public class CustomerMainActivity extends AppCompatActivity {
 
     private void showInterstitialAd (){
 
-        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
-        RequestConfiguration configuration = new RequestConfiguration.Builder().
-                setTestDeviceIds(testDeviceIds).build();
-
-        MobileAds.setRequestConfiguration(configuration);
-
-        // Create the InterstitialAd and set the adUnitId.
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(Macros.INTERSTITIAL_AD_DEBUG_CODE);
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
         mInterstitialAd.setAdListener(new AdListener() {
-
             @Override
             public void onAdFailedToLoad(int i) {
                 super.onAdFailedToLoad(i);
@@ -229,13 +225,13 @@ public class CustomerMainActivity extends AppCompatActivity {
                 // Show the ad if it's ready.
                 if (isTimeForAd && mInterstitialAd != null && mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
+                    createTimer();
                 }
             }
 
             @Override
             public void onAdClosed() {
                 super.onAdClosed();
-                createTimer();
                 mInterstitialAd.loadAd(new AdRequest.Builder().build());
             }
         });
@@ -257,19 +253,19 @@ public class CustomerMainActivity extends AppCompatActivity {
 
     private void createTimer() {
 
-        if (countDownTimer != null) {
+        if (countDownTimer != null){
             countDownTimer.cancel();
         }
 
-        countDownTimer = new CountDownTimer(60000,50) {
+        countDownTimer = new CountDownTimer(60000,50){
 
             @Override
-            public void onTick(long millisUntilFinished) {
+            public void onTick(long millisUntilFinished){
                 isTimeForAd = false;
             }
 
             @Override
-            public void onFinish() {
+            public void onFinish(){
                 isTimeForAd = true;
             }
         };
