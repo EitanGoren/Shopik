@@ -1,10 +1,9 @@
 package com.eitan.shopik;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,21 +12,16 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.eitan.shopik.Company.CompanyMainActivity;
 import com.eitan.shopik.Customer.GenderFilteringActivity;
-import com.eitan.shopik.Items.RecyclerItem;
-import com.eitan.shopik.ViewModels.EntranceViewModel;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.firebase.ui.auth.AuthMethodPickerLayout;
@@ -36,33 +30,16 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Currency;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -84,7 +61,18 @@ public class LandingPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_landing_page);
 
         init();
-       // FirebaseAuth.getInstance().signOut();
+
+        if(!isConnectedToInternet()){
+            RelativeLayout LandingLayout = findViewById(R.id.LandingLayout);
+            Macros.Functions.showSnackbar (
+                     LandingLayout,
+                    "No Internet connection",
+                    this,
+                     R.drawable.ic_baseline_signal_cellular
+            );
+        }
+
+        // FirebaseAuth.getInstance().signOut();
         currentApiVersion = android.os.Build.VERSION.SDK_INT;
 
         // This work only for android 4.4+
@@ -392,6 +380,31 @@ public class LandingPageActivity extends AppCompatActivity {
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+
+    private boolean isConnectedToInternet(){
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+        assert connectivityManager != null;
+        //we are connected to a network
+        if(Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)).getState() == NetworkInfo.State.CONNECTED ||
+                Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)).getState() == NetworkInfo.State.CONNECTED){
+
+            return internetIsConnected();
+        }
+        else
+            return false;
+
+    }
+
+    public boolean internetIsConnected() {
+        try {
+            String command = "ping -c 1 google.com";
+            return (Runtime.getRuntime().exec(command).waitFor() == 0);
+        }
+        catch (Exception e) {
+            return false;
         }
     }
 }

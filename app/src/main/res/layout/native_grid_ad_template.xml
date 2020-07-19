@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.google.android.gms.ads.formats.UnifiedNativeAdView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.gms.ads.formats.UnifiedNativeAdView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#00FFFFFF">
@@ -83,19 +81,11 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/ad_sponsored"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignBottom="@id/ad_media"
-                android:fontFamily="@font/nunito_semibold"
-                android:padding="2dp"
-                android:layout_marginBottom="5dp"
                 android:layout_marginEnd="3dp"
-                android:text="Sponsored"
-                android:textAlignment="center"
-                android:textSize="11sp"
-                android:textStyle="italic" />
+                style="@style/AppTheme.AdAttribution"
+                android:layout_marginBottom="5dp" />
 
             <TextView
                 android:id="@+id/ad_brand_name"

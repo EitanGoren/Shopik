@@ -2,6 +2,8 @@ package com.eitan.shopik.Customer;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,14 +23,12 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.RecyclerItem;
-import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LandingPageActivity;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.EntranceViewModel;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.OutletsModel;
-import com.eitan.shopik.explanation.E3Fragment;
 import com.eitan.shopik.explanation.ExplanationPagerViewAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,8 +36,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,7 +50,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -79,6 +76,16 @@ public class GenderFilteringActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gender_filtering);
+
+        if(!isConnectedToInternet()){
+            ViewPager MainPager = findViewById(R.id.gender_pager);
+            Macros.Functions.showSnackbar (
+                    MainPager,
+                    "No Internet connection",
+                    this,
+                    R.drawable.ic_baseline_signal_cellular
+            );
+        }
 
         init();
 
@@ -783,5 +790,30 @@ public class GenderFilteringActivity extends AppCompatActivity {
         super.onDestroy();
         model.getGender().removeObservers(this);
         model.getSub_category().removeObservers(this);
+    }
+
+    private boolean isConnectedToInternet(){
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+        assert connectivityManager != null;
+        //we are connected to a network
+        if(Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)).getState() == NetworkInfo.State.CONNECTED ||
+                Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)).getState() == NetworkInfo.State.CONNECTED){
+
+            return internetIsConnected();
+        }
+        else
+            return false;
+
+    }
+
+    public boolean internetIsConnected() {
+        try {
+            String command = "ping -c 1 google.com";
+            return (Runtime.getRuntime().exec(command).waitFor() == 0);
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 }

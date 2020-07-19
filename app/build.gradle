@@ -91,7 +91,6 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-ads:19.2.0'
 
-    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     def work_version = "2.3.4"
     implementation "androidx.work:work-runtime:$work_version"
     implementation fileTree(dir: 'libs', include: ['*.jar'])

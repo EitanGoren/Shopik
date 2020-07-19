@@ -1,6 +1,5 @@
 package com.eitan.shopik;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,8 +9,6 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.eitan.shopik.Company.CompanyProfileActivity;
 import com.eitan.shopik.Customer.CustomerMainActivity;
 import com.eitan.shopik.Customer.FullscreenImageActivity;
@@ -20,11 +17,34 @@ import com.eitan.shopik.Items.ShoppingItem;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Macros {
+
+    public static final int SEARCH_TO_AD = 10;
+
+    public static final String TAG = "com.eitan.shopik";
+    public static final String COPYRIGHT_TEXT = "Shopik - developed by Eitan Goren";
+    public static final String COMPANIES = "Companies";
+    public static final String DEFAULT_DESCRIPTION = "Write something here...";
+    public static final String DEFAULT_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=oQbh5Kvet04";
+    public static final String DEFAULT_COVER_PHOTO = "https://i.pinimg.com/originals/10/50/61/1050612a07b764970e4df8227caf8e1c.jpg";
+    public static final String DEFAULT_PROFILE_IMAGE = "https://clipartart.com/images/account-profile-clipart-4.png";
+    public static final String CUSTOMERS = "Customers";
+    public static final String COMPANY = "Company";
+    public static final String CUSTOMER = "Customer";
+    public static final String ITEMS = "Items";
+    public static final String API_KEY = "AIzaSyA-NCcR_U7gBNm1BN3lXKTS8wC1W-VC9fE";
+    public static final String INTERSTITIAL_AD_DEBUG_CODE = "ca-app-pub-3940256099942544/8691691433";
+    public static final String TEST_DEVICE_ID = "7255B1C36174A2C33091060576730302";
+    public static final String NATIVE_VIDEO_TEST_AD = "ca-app-pub-3940256099942544/1044960115";
+    public static final String NATIVE_ADVANCED_AD = "ca-app-pub-3940256099942544/2247696110";
+    public static final String YOUTUBE_API = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet";
+    public static final String VIDEO_LINK = "https://video.asos-media.com/products/ASOS/_media_";
+    public static final double POUND_TO_ILS = 5.2482;
+    public static final int SWIPES_TO_AD = 5;
+    public static final int FAV_TO_AD = 10;
+    public static final int SUGGESTED_TO_AD = 10;
 
     public static class Functions {
 
@@ -33,7 +53,7 @@ public class Macros {
             View snackbarLayout = snackbar.getView();
             TextView textView = snackbarLayout.findViewById(com.google.android.material.R.id.snackbar_text);
             textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, drawableRes, 0);
-            textView.setCompoundDrawablePadding(context.getResources().getDimensionPixelOffset(R.dimen.bottom_ellipsis_height));
+           // textView.setCompoundDrawablePadding(context.getResources().getDimensionPixelOffset(R.dimen.bottom_ellipsis_height));
             textView.setAllCaps(true);
             textView.setBackgroundColor(Color.TRANSPARENT);
             snackbarLayout.setBackgroundColor(context.getColor(R.color.SnackbarBackground));
@@ -282,30 +302,6 @@ public class Macros {
             }
         }
     }
-
-    public static final String TAG = "com.eitan.shopik";
-    public static final String COPYRIGHT_TEXT = "Shopik - developed by Eitan Goren";
-    public static final String COMPANIES = "Companies";
-    public static final String DEFAULT_DESCRIPTION = "Write something here...";
-    public static final String DEFAULT_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=oQbh5Kvet04";
-    public static final String DEFAULT_COVER_PHOTO = "https://i.pinimg.com/originals/10/50/61/1050612a07b764970e4df8227caf8e1c.jpg";
-    public static final String DEFAULT_PROFILE_IMAGE = "https://clipartart.com/images/account-profile-clipart-4.png";
-    public static final String CUSTOMERS = "Customers";
-    public static final String COMPANY = "Company";
-    public static final String CUSTOMER = "Customer";
-    public static final String ITEMS = "Items";
-    public static final String API_KEY = "AIzaSyA-NCcR_U7gBNm1BN3lXKTS8wC1W-VC9fE";
-    public static final String INTERSTITIAL_AD_DEBUG_CODE = "ca-app-pub-3940256099942544/8691691433";
-    public static final String TEST_DEVICE_ID = "7255B1C36174A2C33091060576730302";
-    public static final String NATIVE_VIDEO_TEST_AD = "ca-app-pub-3940256099942544/1044960115";
-    public static final String NATIVE_ADVANCED_AD = "ca-app-pub-3940256099942544/2247696110";
-    public static final String YOUTUBE_API = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet";
-    public static final String VIDEO_LINK = "https://video.asos-media.com/products/ASOS/_media_";
-    public static final double POUND_TO_ILS = 5.2482;
-    public static final int SWIPES_TO_AD = 5;
-    public static final int FAV_TO_AD = 10;
-    public static final int SEARCH_TO_AD = 20;
-    public static final int SUGGESTED_TO_AD = 20;
 
     public static final String WOMEN_FIRST_PIC = "https://img.freepik.com/free-photo/portrait-beautiful-caucasian-sunbathed-woman-model-transparent-white-blouse-sitting-summer-beach-blue-ocean-background_158538-9730.jpg?size=626&ext=jpg";
     public static final String WOMEN_SECOND_PIC = "https://media.gettyimages.com/photos/female-hands-lacing-running-shoes-closeup-picture-id531912454?b=1&k=6&m=531912454&s=612x612&w=0&h=U0OPbVWYvR4XkM_0uOslKgx8yg3TWGUP_99j-KOMUHk=";

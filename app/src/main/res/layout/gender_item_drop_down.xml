@@ -6,13 +6,11 @@
     android:singleLine="true"
     android:layout_width="130dp"
     android:layout_height="wrap_content"
-    android:drawablePadding="15dp"
     android:textAllCaps="true"
     android:textColor="#000000"
     android:textStyle="bold"
     android:textAlignment="viewStart"
-    android:textSize="18dp"
-    android:fontFamily="@font/comfortaa"
     android:padding="5dp"
-    android:ellipsize="marquee">
+    android:fontFamily="@font/comfortaa"
+    android:textSize="16dp">
 </TextView>

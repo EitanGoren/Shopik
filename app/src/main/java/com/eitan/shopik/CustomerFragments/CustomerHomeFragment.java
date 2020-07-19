@@ -42,12 +42,10 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +67,7 @@ public class CustomerHomeFragment extends Fragment {
     private static final int DELAY_MILLIS = 2500;
     private SwipeFlingAdapterView flingContainer;
     private MainModel mainModel;
-    private static final int NUM_OF_ADS = 15;
+    private static final int NUM_OF_ADS = 10;
     private UnifiedNativeAd tempAd;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -167,10 +165,10 @@ public class CustomerHomeFragment extends Fragment {
         int count = 0;
         for (Pair<String, ShoppingItem> pair : pairs) {
             assert pair.first != null;
-            if (swipesModel.getLast_item_id().getValue() == null || Objects.requireNonNull(swipesModel.getLast_item_id().getValue()).compareTo(pair.first) < 0) {
+            if (swipesModel.getLast_item_id().getValue() == null ||
+                    Objects.requireNonNull(swipesModel.getLast_item_id().getValue()).
+                            compareTo(pair.first) < 0 ) {
                 swipesModel.addToItems(pair.second);
-                flingContainer.setAdapter(arrayAdapter);
-                arrayAdapter.notifyDataSetChanged();
                 count++;
                 if( (count%Macros.SWIPES_TO_AD == 0) && count > 0 ) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
@@ -178,9 +176,10 @@ public class CustomerHomeFragment extends Fragment {
                         swipesModel.addToItems(shoppingItemAd);
                     }
                 }
+                flingContainer.setAdapter(arrayAdapter);
+                arrayAdapter.notifyDataSetChanged();
             }
         }
-        swipesModel.sortItems();
     }
 
     private void init() {

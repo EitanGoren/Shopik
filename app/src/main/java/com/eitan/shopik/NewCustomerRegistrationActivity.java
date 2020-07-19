@@ -1,6 +1,5 @@
 package com.eitan.shopik;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -37,7 +36,7 @@ public class NewCustomerRegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_customer_registration);
-/*
+        /*
         mBack = findViewById(R.id.back);
         mAgreeSwitch = findViewById(R.id.terms_of_Use);
         mTerms = findViewById(R.id.terms_text);

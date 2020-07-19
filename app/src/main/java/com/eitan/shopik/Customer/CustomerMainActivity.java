@@ -2,6 +2,8 @@ package com.eitan.shopik.Customer;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -98,6 +101,16 @@ public class CustomerMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(!isConnectedToInternet()){
+            RelativeLayout LandingLayout = findViewById(R.id.mainLayout);
+            Macros.Functions.showSnackbar (
+                    LandingLayout,
+                    "No Internet connection",
+                    this,
+                    R.drawable.ic_baseline_signal_cellular
+            );
+        }
 
         // Initialize the Mobile Ads SDK.
         MobileAds.initialize(this, initializationStatus -> {});
@@ -773,5 +786,30 @@ public class CustomerMainActivity extends AppCompatActivity {
         mainModel.clearAds();
         suggestedModel.getPreferred().removeObservers(this);
         progressBar = null;
+    }
+
+    private boolean isConnectedToInternet(){
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+        assert connectivityManager != null;
+        //we are connected to a network
+        if(Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)).getState() == NetworkInfo.State.CONNECTED ||
+                Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)).getState() == NetworkInfo.State.CONNECTED){
+
+            return internetIsConnected();
+        }
+        else
+            return false;
+
+    }
+
+    public boolean internetIsConnected() {
+        try {
+            String command = "ping -c 1 google.com";
+            return (Runtime.getRuntime().exec(command).waitFor() == 0);
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 }
