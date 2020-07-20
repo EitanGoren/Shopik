@@ -42,9 +42,10 @@ public class Macros {
     public static final String YOUTUBE_API = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet";
     public static final String VIDEO_LINK = "https://video.asos-media.com/products/ASOS/_media_";
     public static final double POUND_TO_ILS = 5.2482;
-    public static final int SWIPES_TO_AD = 5;
-    public static final int FAV_TO_AD = 10;
-    public static final int SUGGESTED_TO_AD = 10;
+    public static final int SWIPES_TO_AD = 8;
+    public static final int FAV_TO_AD = 15;
+    public static final int SUGGESTED_TO_AD = 15;
+    public static final int NUM_OF_ADS = 15;
 
     public static class Functions {
 

@@ -82,7 +82,7 @@ public class FavoritesFragment extends Fragment {
 
         init();
 
-        arrayAdapter = new FavouritesListAdapter(Objects.requireNonNull(getActivity()), R.layout.list_item, model.getItems().getValue());
+        arrayAdapter = new FavouritesListAdapter(requireActivity(), R.layout.list_item, model.getItems().getValue());
         mainModel.getAll_items().observe(getViewLifecycleOwner(), shoppingItems -> {
             model.clearItems();
             int count = 0;
@@ -188,6 +188,7 @@ public class FavoritesFragment extends Fragment {
         favs = new HashMap<>();
 
         currentUId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        assert item_gender != null;
         itemsDB = FirebaseDatabase.getInstance().getReference().
                 child(Macros.ITEMS).
                 child(item_gender).
@@ -264,7 +265,8 @@ public class FavoritesFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String,String> liked_users, Map<String,String> unliked_users) {
+    private void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String,String> liked_users,
+                                        Map<String,String> unliked_users) {
 
         ArrayList<String> list = new ArrayList<>(liked_users.keySet());
         for(String customer_id : list) {
@@ -302,7 +304,8 @@ public class FavoritesFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String,String> unlikes_list) {
+    private void getUnlikedUserInfo(final ShoppingItem shoppingItem,
+                                        Map<String,String> unlikes_list) {
         assert unlikes_list != null;
         ArrayList<String> list = new ArrayList<>(unlikes_list.keySet());
         for(String customer_id : list) {

@@ -7,7 +7,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -34,10 +33,14 @@ import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.eitan.shopik.ViewModels.SuggestedModel;
 import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.formats.NativeAdOptions;
+import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -73,6 +76,7 @@ import static com.google.android.gms.ads.AdRequest.ERROR_CODE_INTERNAL_ERROR;
 import static com.google.android.gms.ads.AdRequest.ERROR_CODE_INVALID_REQUEST;
 import static com.google.android.gms.ads.AdRequest.ERROR_CODE_NETWORK_ERROR;
 import static com.google.android.gms.ads.AdRequest.ERROR_CODE_NO_FILL;
+import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_LEFT;
 
 public class CustomerMainActivity extends AppCompatActivity {
 
@@ -93,9 +97,8 @@ public class CustomerMainActivity extends AppCompatActivity {
     private androidx.appcompat.widget.Toolbar.OnMenuItemClickListener topNavListener;
     private SuggestedModel suggestedModel;
     private ValueEventListener valueEventListener;
-    private CountDownTimer countDownTimer;
     private InterstitialAd mInterstitialAd;
-    private boolean isTimeForAd;
+    private UnifiedNativeAd tempAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,18 +115,15 @@ public class CustomerMainActivity extends AppCompatActivity {
             );
         }
 
-        // Initialize the Mobile Ads SDK.
-        MobileAds.initialize(this, initializationStatus -> {});
-        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
-        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-        MobileAds.setRequestConfiguration(configuration);
-        // Create the InterstitialAd and set the adUnitId.
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(Macros.INTERSTITIAL_AD_DEBUG_CODE);
+        initInterstitial();
 
         init();
 
         showInterstitialAd();
+
+        for( int i=0; i < Macros.NUM_OF_ADS; ++i ){
+            loadAds();
+        }
 
         valueEventListener = new ValueEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -209,6 +209,19 @@ public class CustomerMainActivity extends AppCompatActivity {
         setToolbar();
     }
 
+    private void initInterstitial() {
+
+        // Initialize the Mobile Ads SDK.
+        MobileAds.initialize(this, initializationStatus -> {});
+        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
+        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+        MobileAds.setRequestConfiguration(configuration);
+
+        // Create the InterstitialAd and set the adUnitId.
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(Macros.INTERSTITIAL_AD_DEBUG_CODE);
+    }
+
     private void showInterstitialAd (){
 
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
@@ -236,35 +249,15 @@ public class CustomerMainActivity extends AppCompatActivity {
             public void onAdLoaded() {
                 super.onAdLoaded();
                 // Show the ad if it's ready.
-                if (isTimeForAd && mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+                if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
-                    createTimer();
+                    //createTimer();
                 }
-            }
-
-            @Override
-            public void onAdClosed() {
-                super.onAdClosed();
-                mInterstitialAd.loadAd(new AdRequest.Builder().build());
             }
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        createTimer();
-        countDownTimer.start();
-    }
-
-    @Override
-    public void onPause() {
-        // Cancel the timer if the game is paused.
-        countDownTimer.cancel();
-        super.onPause();
-    }
-
-    private void createTimer() {
+   /* private void createTimer() {
 
         if (countDownTimer != null){
             countDownTimer.cancel();
@@ -282,7 +275,7 @@ public class CustomerMainActivity extends AppCompatActivity {
                 isTimeForAd = true;
             }
         };
-    }
+    } */
 
     private void setToolbarColor() {
         if (item_gender.equals(Macros.CustomerMacros.WOMEN))
@@ -778,6 +771,7 @@ public class CustomerMainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         customerDB.removeEventListener(valueEventListener);
         mainModel.getAll_items().removeObservers(this);
         mainModel.getAll_items().removeObservers(this);
@@ -811,5 +805,36 @@ public class CustomerMainActivity extends AppCompatActivity {
         catch (Exception e) {
             return false;
         }
+    }
+
+    private void loadAds() {
+
+        NativeAdOptions nativeAdOptions = new NativeAdOptions.Builder().
+                setAdChoicesPlacement(ADCHOICES_TOP_LEFT).
+                build();
+
+        AdLoader adLoader = new AdLoader
+                .Builder(this, Macros.NATIVE_ADVANCED_AD)
+                .forUnifiedNativeAd(unifiedNativeAd -> tempAd = unifiedNativeAd)
+                .withAdListener(new AdListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onAdLoaded() {
+                        super.onAdLoaded();
+                        ShoppingItem dummy = new ShoppingItem();
+                        dummy.setAd(true);
+                        dummy.setNativeAd(tempAd);
+                        mainModel.addAd(dummy);
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad ( int errorCode ) {
+                        Log.d(Macros.TAG,"Failed to load native ad: " + errorCode);
+                    }
+                })
+                .withNativeAdOptions(nativeAdOptions)
+                .build();
+
+        adLoader.loadAd(new PublisherAdRequest.Builder().build());
     }
 }

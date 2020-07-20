@@ -23,7 +23,6 @@
             android:id="@+id/info_layout"
             android:layout_width="match_parent"
             android:layout_height="525dp"
-            android:layout_gravity="top"
             android:background="#00FFFFFF">
 
             <TextView
@@ -45,10 +44,20 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
+            <com.google.android.gms.ads.formats.MediaView
+                android:id="@+id/ad_media"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/ad_bottom_info_layout"
+                android:layout_below="@id/ad_brand_name"
+                android:layout_marginTop="7dp"
+                android:background="#ffffff"
+                android:scaleType="centerCrop" />
+
             <RelativeLayout
                 android:id="@+id/ad_bottom_info_layout"
                 android:layout_width="match_parent"
-                android:layout_height="115dp"
+                android:layout_height="100dp"
                 android:layout_alignParentBottom="true"
                 android:background="@drawable/bottom_info_border_line">
 
@@ -61,9 +70,9 @@
                     android:layout_marginStart="7dp"
                     android:layout_marginTop="7dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:text="click"
+                    android:layout_marginBottom="3dp"
                     android:fontFamily="@font/nunito_bold"
+                    android:text="click"
                     android:textColor="#ffffff" />
 
                 <TextView
@@ -85,33 +94,31 @@
 
                 <TextView
                     android:id="@+id/ad_card_seller_name"
-                    android:layout_width="230dp"
-                    android:layout_height="57dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_above="@id/ad_sponsored"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginLeft="3dp"
+                    android:layout_marginStart="7dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginEnd="3dp"
-                    android:layout_marginRight="3dp"
                     android:layout_marginBottom="3dp"
                     android:fontFamily="@font/nunito_semibold"
-                    android:padding="3dp"
                     android:textAlignment="center"
                     android:textColor="#FFFFFF"
-                    android:textSize="18sp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/ad_sponsored"
-                    android:layout_width="135dp"
+                    android:layout_width="145dp"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/AD"
                     android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="10dp"
                     android:fontFamily="@font/nunito_semibold"
                     android:padding="5dp"
                     android:text="Sponsored"
+                    android:layout_toEndOf="@id/AD"
                     android:textAlignment="center"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
@@ -122,20 +129,10 @@
                     style="@style/AppTheme.AdAttribution"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginBottom="7dp" />
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp" />
 
             </RelativeLayout>
-
-            <com.google.android.gms.ads.formats.MediaView
-                android:id="@+id/ad_media"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@id/ad_bottom_info_layout"
-                android:layout_below="@id/ad_brand_name"
-                android:layout_marginTop="7dp"
-                android:background="#ffffff"
-                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/ad_store"
@@ -162,7 +159,7 @@
 
             <RatingBar
                 android:id="@+id/ad_stars"
-                style="?android:attr/ratingBarStyleSmall"
+                style="?android:attr/ratingBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ad_body"
@@ -173,8 +170,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ad_card_seller_logo"
-                android:layout_width="95dp"
-                android:layout_height="95dp"
+                android:layout_width="105dp"
+                android:layout_height="105dp"
                 android:layout_alignEnd="@id/ad_media"
                 android:layout_alignBottom="@id/ad_media"
                 android:layout_marginEnd="35dp"
@@ -186,7 +183,7 @@
                 android:id="@+id/item_swipe_right_indicator"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
                 android:layout_margin="10dp"
                 android:alpha="0" />
 
@@ -194,7 +191,7 @@
                 android:id="@+id/item_swipe_left_indicator"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:layout_margin="10dp"
                 android:alpha="0"
                 android:fontFamily="@font/nunito_semibold" />
@@ -202,6 +199,5 @@
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
-
 
 </com.google.android.gms.ads.formats.UnifiedNativeAdView>

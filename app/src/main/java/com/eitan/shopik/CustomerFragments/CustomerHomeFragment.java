@@ -30,14 +30,6 @@ import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.eitan.shopik.ViewModels.SwipesModel;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
-import com.google.android.gms.ads.VideoOptions;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
-import com.google.android.gms.ads.formats.NativeAdOptions;
-import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -46,14 +38,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_LEFT;
 
 public class CustomerHomeFragment extends Fragment {
 
@@ -67,47 +54,20 @@ public class CustomerHomeFragment extends Fragment {
     private static final int DELAY_MILLIS = 2500;
     private SwipeFlingAdapterView flingContainer;
     private MainModel mainModel;
-    private static final int NUM_OF_ADS = 10;
-    private UnifiedNativeAd tempAd;
+    private SwipeFlingAdapterView.onFlingListener flingListener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //TODO: REMOVE IN PRODUCTION
-        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
-        RequestConfiguration configuration =
-                new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-        MobileAds.setRequestConfiguration(configuration);
-        MobileAds.initialize(requireActivity(), Macros.NATIVE_ADVANCED_AD);
-
-        for( int i=0; i < NUM_OF_ADS; ++i ){
-            loadAds();
-        }
-
+        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
         swipesModel = new ViewModelProvider(requireActivity()).get(SwipesModel.class);
         GenderModel genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         item_gender = genderModel.getGender().getValue();
         item_type = genderModel.getType().getValue();
         item_sub_category = genderModel.getSub_category().getValue();
-
-        getLastSwipedItem();
-
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_customer_home, container, false);
-    }
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        init();
-        arrayAdapter = new CardsAdapter(getActivity(), R.layout.swipe_item, swipesModel.getItems().getValue());
-        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
-        mainModel.getAll_items_ids().observe(getViewLifecycleOwner(), this::fillSwipeItemsModel);
-        flingContainer.setFlingListener( new SwipeFlingAdapterView.onFlingListener() {
+        flingListener = new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
                 if (Objects.requireNonNull(swipesModel.getItems().getValue()).get(0).isAd()) {
@@ -142,86 +102,68 @@ public class CustomerHomeFragment extends Fragment {
                 }
             }
 
-        });
+        };
+
+        getLastSwipedItem();
     }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_customer_home, container, false);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        init();
+
+        arrayAdapter = new CardsAdapter(requireContext(), R.layout.swipe_item, swipesModel.getItems().getValue());
+        mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
+            swipesModel.clearAllItems();
+            pairs.sort((o1, o2) -> {
+                assert o1.first != null;
+                assert o2.first != null;
+                return o1.first.compareTo(o2.first);
+            });
+            int count = 0;
+            for (Pair<String, ShoppingItem> pair : pairs) {
+                assert pair.first != null;
+                if ( swipesModel.getLast_item_id().getValue() == null ||
+                        Objects.requireNonNull(swipesModel.getLast_item_id().getValue()).compareTo(pair.first) < 0 ) {
+
+                    swipesModel.addToItems(pair.second);
+                    count++;
+                    if( ( count % Macros.SWIPES_TO_AD == 0 ) && count > 0 ) {
+                        ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                        if(shoppingItemAd != null) {
+                            swipesModel.addToItems(shoppingItemAd);
+                        }
+                    }
+                    flingContainer.setAdapter(arrayAdapter);
+                    arrayAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        flingContainer.setFlingListener(flingListener);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
         tabLayout = null;
+        flingContainer.setFlingListener(null);
+        flingListener = null;
         flingContainer = null;
         mainModel.getAll_items_ids().removeObservers(getViewLifecycleOwner());
         arrayAdapter.clear();
         arrayAdapter = null;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void fillSwipeItemsModel(CopyOnWriteArrayList<Pair<String, ShoppingItem>> pairs) {
-        swipesModel.clearAllItems();
-        pairs.sort((o1, o2) -> {
-            assert o1.first != null;
-            assert o2.first != null;
-            return o1.first.compareTo(o2.first);
-        });
-        int count = 0;
-        for (Pair<String, ShoppingItem> pair : pairs) {
-            assert pair.first != null;
-            if (swipesModel.getLast_item_id().getValue() == null ||
-                    Objects.requireNonNull(swipesModel.getLast_item_id().getValue()).
-                            compareTo(pair.first) < 0 ) {
-                swipesModel.addToItems(pair.second);
-                count++;
-                if( (count%Macros.SWIPES_TO_AD == 0) && count > 0 ) {
-                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                    if(shoppingItemAd != null) {
-                        swipesModel.addToItems(shoppingItemAd);
-                    }
-                }
-                flingContainer.setAdapter(arrayAdapter);
-                arrayAdapter.notifyDataSetChanged();
-            }
-        }
-    }
-
     private void init() {
         tabLayout = requireActivity().findViewById(R.id.top_nav);
         flingContainer = requireActivity().findViewById(R.id.frame);
-    }
-
-    private void loadAds() {
-
-        VideoOptions videoOptions = new VideoOptions.Builder().
-                setStartMuted(true).
-                setClickToExpandRequested(true).
-                build();
-
-        NativeAdOptions nativeAdOptions = new NativeAdOptions.Builder().
-                setAdChoicesPlacement(ADCHOICES_TOP_LEFT).
-              //  setVideoOptions(videoOptions).
-                build();
-
-        AdLoader adLoader = new AdLoader
-                .Builder(Objects.requireNonNull(requireActivity()), Macros.NATIVE_ADVANCED_AD)
-                .forUnifiedNativeAd(unifiedNativeAd -> tempAd = unifiedNativeAd)
-                .withAdListener(new AdListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void onAdLoaded() {
-                        super.onAdLoaded();
-                        ShoppingItem dummy = new ShoppingItem();
-                        dummy.setAd(true);
-                        dummy.setNativeAd(tempAd);
-                        mainModel.addAd(dummy);
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad ( int errorCode ) {
-                        Log.d(Macros.TAG,"Failed to load native ad: " + errorCode);
-                    }
-                })
-                .withNativeAdOptions(nativeAdOptions)
-                .build();
-
-        adLoader.loadAd(new PublisherAdRequest.Builder().build());
     }
 
     private void updateBadge() {
@@ -236,7 +178,7 @@ public class CustomerHomeFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void onItemLiked(Object dataObject) {
-        final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.swipe);
+        final MediaPlayer mp = MediaPlayer.create(requireContext(), R.raw.swipe);
         mp.start();
         final ShoppingItem shoppingItem = (ShoppingItem) dataObject;
         Database connection = new Database();

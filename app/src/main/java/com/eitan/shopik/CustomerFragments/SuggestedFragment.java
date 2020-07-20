@@ -14,15 +14,12 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.eitan.shopik.Adapters.GridAdapter;
@@ -31,15 +28,10 @@ import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.eitan.shopik.ViewModels.SuggestedModel;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SuggestedFragment extends Fragment implements View.OnClickListener{
 
@@ -73,6 +65,7 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
     private void initOnCreate() {
         suggestedModel = new ViewModelProvider(requireActivity()).get(SuggestedModel.class);
         mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
+        while (mainModel.getAdsContainerSize() !=  Macros.NUM_OF_ADS);
     }
 
     @Override

@@ -1,28 +1,18 @@
 package com.eitan.shopik.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.eitan.shopik.Customer.CustomerMainActivity;
 import com.eitan.shopik.Items.Catagory;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Items.SubCategory;
@@ -31,21 +21,18 @@ import com.eitan.shopik.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
 
-    private Context context;
     private List<Catagory> items;
     private String imageUrl;
     private TextView main_header;
     private RecyclerView recyclerView;
     private TextView mLayout;
 
-    public ItemsCatagoriesListAdapter(@NonNull final Context context, List<Catagory> items, String imageUrl) {
-        this.context = context;
+    public ItemsCatagoriesListAdapter(List<Catagory> items, String imageUrl) {
         this.items = items;
         this.imageUrl = imageUrl;
     }
@@ -91,7 +78,7 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
         final Catagory catagory = getGroup(groupPosition);
 
         if(convertView == null){
-            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             assert layoutInflater != null;
             convertView = layoutInflater.inflate(R.layout.category_group,null);
         }
@@ -100,7 +87,7 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
         main_header = convertView.findViewById(R.id.main_header);
         TextView sub_header = convertView.findViewById(R.id.sub_header);
 
-        setHeaderColor(catagory.getGender(), isExpanded);
+        setHeaderColor(parent.getContext(), catagory.getGender(), isExpanded);
 
         StringBuilder sub_header_text = new StringBuilder();
         main_header.setText(setMainHeader(catagory.getName()).toUpperCase());
@@ -117,12 +104,12 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
         sub_header.setText(sub_header_text.toString());
 
         String icon = setmButtonIcon(catagory.getGender(),catagory.getName());
-        Glide.with(context).load(icon).into(mImage);
+        Glide.with(parent.getContext()).load(icon).into(mImage);
 
         return convertView;
     }
 
-    private void setHeaderColor(String gender, boolean isExpanded) {
+    private void setHeaderColor(Context context, String gender, boolean isExpanded) {
         int color;
         if(isExpanded)
             color = gender.equals(Macros.CustomerMacros.MEN) ? context.getColor(R.color.menColor) : context.getColor(R.color.womenColor);
@@ -212,12 +199,12 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
         }
 
         if(convertView == null){
-            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             assert layoutInflater != null;
             convertView = layoutInflater.inflate(R.layout.category_item,null);
         }
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(parent.getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView = convertView.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(layoutManager);
         RecyclerAdapter recyclerAdapter = new RecyclerAdapter(recyclerItems, "SubCategory");
@@ -226,12 +213,12 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
 
         mLayout = convertView.findViewById(R.id.text_layout);
 
-        setLayoutColors(gender);
+        setLayoutColors(parent.getContext(), gender);
 
         return convertView;
     }
 
-    private void setLayoutColors(String gender) {
+    private void setLayoutColors(Context context, String gender) {
         if(gender.equals(Macros.CustomerMacros.WOMEN)){
             recyclerView.setBackground(context.getDrawable(R.drawable.women_category_background));
             mLayout.setBackground(context.getDrawable(R.drawable.women_category_background));

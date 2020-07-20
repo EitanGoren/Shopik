@@ -82,7 +82,7 @@ public class E2Fragment extends Fragment {
             viewModel.setList(gender);
         }
 
-        adapter = new ItemsCatagoriesListAdapter(requireActivity(), categories, imageUrl);
+        adapter = new ItemsCatagoriesListAdapter(categories, imageUrl);
         adapter.notifyDataSetChanged();
         ExpandableListView listContainer = requireView().findViewById(R.id.e2_list);
         listContainer.setAdapter(adapter);

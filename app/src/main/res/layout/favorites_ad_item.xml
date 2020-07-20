@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/info_layout"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="525dp"
         android:layout_gravity="top"
         android:background="@drawable/top_border_line">
 
@@ -77,7 +77,7 @@
         <RelativeLayout
             android:id="@+id/item_info_social"
             android:layout_width="match_parent"
-            android:layout_height="105dp"
+            android:layout_height="90dp"
             android:layout_alignParentBottom="true"
             android:background="@drawable/textview_border_line">
 
@@ -130,7 +130,7 @@
                 android:id="@+id/ad_sponsored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
+                android:layout_toEndOf="@id/AD"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="5dp"
                 android:layout_marginStart="5dp"
@@ -142,20 +142,28 @@
                 android:textSize="16sp"
                 android:textStyle="italic" />
 
+            <TextView
+                android:id="@+id/AD"
+                style="@style/AppTheme.AdAttribution"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="7dp"
+                android:layout_marginBottom="7dp" />
+
+
         </RelativeLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ad_card_seller_logo"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
             android:layout_alignBottom="@id/ad_media"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="40dp"
             android:layout_marginBottom="-50dp"
-            android:padding="5dp"
+            android:padding="10dp"
             app:civ_border_color="#000000"
-            app:civ_border_width="3.5dp" />
-
+            app:civ_border_width="2.5dp" />
     </RelativeLayout>
 
 </com.google.android.gms.ads.formats.UnifiedNativeAdView>

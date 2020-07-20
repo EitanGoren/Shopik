@@ -8,13 +8,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
-import com.eitan.shopik.Macros;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -92,6 +89,9 @@ public class MainModel extends ViewModel {
         }
         else
             return null;
+    }
+    public int getAdsContainerSize(){
+        return shoppingAdsArray.size();
     }
 
     public void clearAds(){
