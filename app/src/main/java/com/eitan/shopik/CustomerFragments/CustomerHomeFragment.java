@@ -54,7 +54,6 @@ public class CustomerHomeFragment extends Fragment {
     private static final int DELAY_MILLIS = 2500;
     private SwipeFlingAdapterView flingContainer;
     private MainModel mainModel;
-    private SwipeFlingAdapterView.onFlingListener flingListener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -67,14 +66,59 @@ public class CustomerHomeFragment extends Fragment {
         item_gender = genderModel.getGender().getValue();
         item_type = genderModel.getType().getValue();
         item_sub_category = genderModel.getSub_category().getValue();
-        flingListener = new SwipeFlingAdapterView.onFlingListener() {
+
+        getLastSwipedItem();
+    }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_customer_home, container, false);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        init();
+
+        arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item, swipesModel.getItems().getValue());
+        mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
+            swipesModel.clearAllItems();
+            arrayAdapter.notifyDataSetChanged();
+            pairs.sort((o1, o2) -> {
+                assert o1.first != null;
+                assert o2.first != null;
+                return Integer.parseInt(o1.first) - Integer.parseInt(o2.first);
+            });
+
+            int count = 0;
+            for (Pair<String, ShoppingItem> pair : pairs) {
+                assert pair.first != null;
+                if (swipesModel.getLast_item_id().getValue() == null || Objects.requireNonNull(Long.parseLong(swipesModel.getLast_item_id().getValue()) < Long.parseLong(pair.first))) {
+
+                    swipesModel.addToItems(pair.second);
+                    arrayAdapter.notifyDataSetChanged();
+                    count++;
+                    if ((count % Macros.SWIPES_TO_AD == 0) && count > 0) {
+                        ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                        if (shoppingItemAd != null) {
+                            swipesModel.addToItems(shoppingItemAd);
+                            count++;
+                            arrayAdapter.notifyDataSetChanged();
+                        }
+                    }
+                    flingContainer.setAdapter(arrayAdapter);
+                    arrayAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                if (Objects.requireNonNull(swipesModel.getItems().getValue()).get(0).isAd()) {
-                    swipesModel.getItems().getValue().get(0).getNativeAd().destroy();
+                if (!Objects.requireNonNull(Objects.requireNonNull(arrayAdapter.getItem(0)).isDummyLastItem())) {
+                    swipesModel.removeFromItems();
+                    arrayAdapter.notifyDataSetChanged();
                 }
-                swipesModel.removeFromItems();
-                arrayAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -91,6 +135,12 @@ public class CustomerHomeFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
+                if(itemsInAdapter == 0){
+                    ShoppingItem DummyLastItem = new ShoppingItem();
+                    DummyLastItem.setDummyLastItem(true);
+                    swipesModel.addToItems(DummyLastItem);
+                    arrayAdapter.notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -102,50 +152,7 @@ public class CustomerHomeFragment extends Fragment {
                 }
             }
 
-        };
-
-        getLastSwipedItem();
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_customer_home, container, false);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        init();
-
-        arrayAdapter = new CardsAdapter(requireContext(), R.layout.swipe_item, swipesModel.getItems().getValue());
-        mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
-            swipesModel.clearAllItems();
-            pairs.sort((o1, o2) -> {
-                assert o1.first != null;
-                assert o2.first != null;
-                return o1.first.compareTo(o2.first);
-            });
-            int count = 0;
-            for (Pair<String, ShoppingItem> pair : pairs) {
-                assert pair.first != null;
-                if ( swipesModel.getLast_item_id().getValue() == null ||
-                        Objects.requireNonNull(swipesModel.getLast_item_id().getValue()).compareTo(pair.first) < 0 ) {
-
-                    swipesModel.addToItems(pair.second);
-                    count++;
-                    if( ( count % Macros.SWIPES_TO_AD == 0 ) && count > 0 ) {
-                        ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                        if(shoppingItemAd != null) {
-                            swipesModel.addToItems(shoppingItemAd);
-                        }
-                    }
-                    flingContainer.setAdapter(arrayAdapter);
-                    arrayAdapter.notifyDataSetChanged();
-                }
-            }
         });
-        flingContainer.setFlingListener(flingListener);
     }
 
     @Override
@@ -154,7 +161,6 @@ public class CustomerHomeFragment extends Fragment {
 
         tabLayout = null;
         flingContainer.setFlingListener(null);
-        flingListener = null;
         flingContainer = null;
         mainModel.getAll_items_ids().removeObservers(getViewLifecycleOwner());
         arrayAdapter.clear();

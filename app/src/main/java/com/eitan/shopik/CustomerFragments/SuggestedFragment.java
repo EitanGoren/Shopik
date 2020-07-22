@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -109,43 +110,44 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
         //initialize views
         init();
 
-        mainModel.getAll_items().observe(requireActivity(), shoppingItems -> {
+        mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
             suggestedModel.clearItems();
             int count = 0;
-            for(ShoppingItem item : shoppingItems){
+            for (Pair<String,ShoppingItem> item : pairs) {
                 int match = 0;
                 if(suggestedModel.getPreferred().getValue() != null ) {
-                    match = Objects.requireNonNull(suggestedModel.getPreferred().getValue()).calculateMatchingPercentage(item);
+                    match = Objects.requireNonNull(suggestedModel.getPreferred().getValue()).calculateMatchingPercentage(item.second);
                 }
-                item.setPercentage(match);
+                assert item.second != null;
+                item.second.setPercentage(match);
                 if(match >= Macros.CustomerMacros.SUGGESTION_PERCENTAGE) {
                     gridContainer.setAdapter(gridAdapter);
-                    suggestedModel.addToAllItems(item);
+                    suggestedModel.addToAllItems(item.second);
                     count++;
                     if( (count % Macros.SUGGESTED_TO_AD == 0) && count > 0 ) {
                         suggestedModel.addToAllItems((ShoppingItem) mainModel.getNextAd());
+                        count++;
                     }
                     gridAdapter.notifyDataSetChanged();
                 }
             }
             gridAdapter.setAllItems(Objects.requireNonNull(suggestedModel.getAllItems().getValue()));
         });
-        gridContainer.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if(view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)){
-                    showArrow();
-                }
-                else if( (scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)){
-                    hideArrow();
-                }
-            }
+                gridContainer.setOnScrollListener(new AbsListView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(AbsListView view, int scrollState) {
+                        if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)) {
+                            showArrow();
+                        } else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
+                            hideArrow();
+                        }
+                    }
 
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    @Override
+                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-            }
-        });
+                    }
+                });
     }
 
     private void init() {

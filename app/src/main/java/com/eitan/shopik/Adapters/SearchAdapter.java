@@ -321,7 +321,7 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
             for(RecyclerItem item : (Collection<? extends RecyclerItem>) results.values) {
                 ItemsList.add(item);
                 count++;
-                if ((count % 20 == 0) && count > 0) {
+                if ((count % Macros.SEARCH_TO_AD == 0) && count > 0) {
                     ShoppingItem shoppingItem = (ShoppingItem) mainModel.getNextAd();
                     RecyclerItem recyclerItem = new RecyclerItem(null,null);
                     recyclerItem.setAd(true);
@@ -366,7 +366,7 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
             for(RecyclerItem item : (Collection<? extends RecyclerItem>) results.values) {
                 ItemsList.add(item);
                 count++;
-                if ((count % 20 == 0) && count > 0) {
+                if ((count % Macros.SEARCH_TO_AD == 0) && count > 0) {
                     ShoppingItem shoppingItem = (ShoppingItem) mainModel.getNextAd();
                     RecyclerItem recyclerItem = new RecyclerItem(null,null);
                     recyclerItem.setAd(true);

@@ -4,10 +4,8 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,36 +30,13 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.eitan.shopik.Adapters.DialogGridAdapter;
 import com.eitan.shopik.Adapters.RecyclerAdapter;
-import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.RecyclerItem;
-import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.EntranceViewModel;
 import com.eitan.shopik.ViewModels.GenderModel;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class E1Fragment extends Fragment {
@@ -100,7 +74,7 @@ public class E1Fragment extends Fragment {
         init();
 
         TextView liked_counter = requireView().findViewById(R.id.best_sellers_count);
-        model.getGender().observe(getViewLifecycleOwner(), s -> {
+        model.getGender().observe(requireActivity(), s -> {
             if(!gender.equals(s)) {
                 gender = s;
 

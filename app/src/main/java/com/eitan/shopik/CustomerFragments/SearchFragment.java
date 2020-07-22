@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -81,29 +82,30 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         initViews();
 
-        mainModel.getAll_items().observe(requireActivity(), shoppingItems -> {
+        mainModel.getAll_items_ids().observe(getViewLifecycleOwner(), pairs -> {
             allItemsModel.clearItems();
             int count = 0;
-            for (ShoppingItem item : shoppingItems) {
+            for (Pair<String,ShoppingItem> item : pairs) {
                 final ArrayList<String> imagesUrl = new ArrayList<>();
                 Database connection = new Database();
-                imagesUrl.add(connection.getASOSimageUrl(1,item.getColor(),item.getId_in_seller()));
-                imagesUrl.add(connection.getASOSimageUrl(2,item.getColor(),item.getId_in_seller()));
-                imagesUrl.add(connection.getASOSimageUrl(3,item.getColor(),item.getId_in_seller()));
-                imagesUrl.add(connection.getASOSimageUrl(4,item.getColor(),item.getId_in_seller()));
+                assert item.second != null;
+                imagesUrl.add(connection.getASOSimageUrl(1,item.second.getColor(),item.second.getId_in_seller()));
+                imagesUrl.add(connection.getASOSimageUrl(2,item.second.getColor(),item.second.getId_in_seller()));
+                imagesUrl.add(connection.getASOSimageUrl(3,item.second.getColor(),item.second.getId_in_seller()));
+                imagesUrl.add(connection.getASOSimageUrl(4,item.second.getColor(),item.second.getId_in_seller()));
 
-                RecyclerItem recyclerItem = new RecyclerItem(item.getBrand(), item.getSite_link());
-                recyclerItem.setPrice(item.getPrice());
-                recyclerItem.setLink(item.getSite_link());
-                recyclerItem.setDescription(item.getName());
-                recyclerItem.setType(item.getType());
-                recyclerItem.setId(item.getId());
-                recyclerItem.setSale(item.isOn_sale());
-                recyclerItem.setVideo_link(item.getVideo_link());
-                recyclerItem.setOutlet(item.isOutlet());
-                recyclerItem.setReduced_price(item.getReduced_price());
+                RecyclerItem recyclerItem = new RecyclerItem(item.second.getBrand(), item.second.getSite_link());
+                recyclerItem.setPrice(item.second.getPrice());
+                recyclerItem.setLink(item.second.getSite_link());
+                recyclerItem.setDescription(item.second.getName());
+                recyclerItem.setType(item.second.getType());
+                recyclerItem.setId(item.second.getId());
+                recyclerItem.setSale(item.second.isOn_sale());
+                recyclerItem.setVideo_link(item.second.getVideo_link());
+                recyclerItem.setOutlet(item.second.isOutlet());
+                recyclerItem.setReduced_price(item.second.getReduced_price());
                 recyclerItem.setImages(imagesUrl);
-                recyclerItem.setSellerImageUrl(item.getSellerLogoUrl());
+                recyclerItem.setSellerImageUrl(item.second.getSellerLogoUrl());
 
                 allItemsModel.addItem(recyclerItem);
                 count++;
@@ -114,6 +116,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                         adItem.setNativeAd(shoppingItemAd.getNativeAd());
                         adItem.setAd(true);
                         allItemsModel.addItem(adItem);
+                        count++;
                     }
                 }
                 searchAdapter.notifyDataSetChanged();

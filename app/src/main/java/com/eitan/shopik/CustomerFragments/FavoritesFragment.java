@@ -15,7 +15,9 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.eitan.shopik.Adapters.FavouritesListAdapter;
@@ -43,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FavoritesFragment extends Fragment {
 
@@ -58,13 +61,12 @@ public class FavoritesFragment extends Fragment {
     private String currentUId;
     private MainModel mainModel;
     private Map<String,String> favs;
-    private ChildEventListener Fav_Listener;
+    private ChildEventListener childEventListener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         initOnCreate();
         MobileAds.initialize(getContext());
     }
@@ -83,18 +85,21 @@ public class FavoritesFragment extends Fragment {
         init();
 
         arrayAdapter = new FavouritesListAdapter(requireActivity(), R.layout.list_item, model.getItems().getValue());
-        mainModel.getAll_items().observe(getViewLifecycleOwner(), shoppingItems -> {
+        mainModel.getAll_items_ids().observe(requireActivity(), (Observer<CopyOnWriteArrayList<Pair<String, ShoppingItem>>>) pairs -> {
             model.clearItems();
             int count = 0;
-            for (ShoppingItem item : shoppingItems) {
-                if (favs.containsKey(item.getId())) {
-                    item.setFavorite(Objects.equals(favs.get(item.getId()), Macros.CustomerMacros.FAVOURITE));
-                    model.addToItems(item);
+            for (Pair<String,ShoppingItem> item : pairs) {
+                assert item.second != null;
+                if (favs.containsKey(item.first)) {
+                    item.second.setFavorite(Objects.equals(favs.get(item.first), Macros.CustomerMacros.FAVOURITE));
+                    model.addToItems(item.second);
                     count++;
                     if( (count%Macros.FAV_TO_AD == 0) && count > 0 ) {
                         ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                        if(shoppingItemAd != null)
+                        if(shoppingItemAd != null) {
                             model.addToItems(shoppingItemAd);
+                            count++;
+                        }
                     }
                 }
             }
@@ -102,33 +107,30 @@ public class FavoritesFragment extends Fragment {
             arrayAdapter.notifyDataSetChanged();
         });
 
-        AbsListView.OnScrollListener onScrollListener = new AbsListView.OnScrollListener() {
+        listContainer.setOnScrollListener( new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)) {
                     showArrow();
-                }
-                else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
+                } else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
                     hideArrow();
                 }
             }
-
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) { }
+        });
 
-        };
-        listContainer.setOnScrollListener(onScrollListener);
-
-        Fav_Listener = new ChildEventListener() {
+        childEventListener = new ChildEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists() && !favs.containsKey(dataSnapshot.getKey())) {
                     favs.put(dataSnapshot.getKey(), Objects.requireNonNull(dataSnapshot.getValue()).toString());
-                    for (ShoppingItem shoppingItem : Objects.requireNonNull(mainModel.getAll_items().getValue())) {
-                        if (Objects.equals(dataSnapshot.getKey(), shoppingItem.getId())) {
-                            shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
-                            getLikes(shoppingItem);
+                    for (Pair<String,ShoppingItem> pair : Objects.requireNonNull(mainModel.getAll_items_ids().getValue())) {
+                        if (Objects.equals(dataSnapshot.getKey(), pair.first)) {
+                            assert pair.second != null;
+                            pair.second.setFavorite(Objects.equals(favs.get(pair.first), Macros.CustomerMacros.FAVOURITE));
+                            getLikes(pair.second);
                         }
                     }
                 }
@@ -150,7 +152,7 @@ public class FavoritesFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         };
-        customerDB.addChildEventListener(Fav_Listener);
+        customerDB.addChildEventListener(childEventListener);
     }
 
     @Override
@@ -163,7 +165,7 @@ public class FavoritesFragment extends Fragment {
         mainModel.getAll_items().removeObservers(getViewLifecycleOwner());
         listContainer = null;
         down_arrow = null;
-        customerDB.removeEventListener(Fav_Listener);
+        customerDB.removeEventListener(childEventListener);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -265,8 +267,7 @@ public class FavoritesFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String,String> liked_users,
-                                        Map<String,String> unliked_users) {
+    private void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String,String> liked_users, Map<String,String> unliked_users) {
 
         ArrayList<String> list = new ArrayList<>(liked_users.keySet());
         for(String customer_id : list) {
@@ -304,8 +305,7 @@ public class FavoritesFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getUnlikedUserInfo(final ShoppingItem shoppingItem,
-                                        Map<String,String> unlikes_list) {
+    private void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String,String> unlikes_list) {
         assert unlikes_list != null;
         ArrayList<String> list = new ArrayList<>(unlikes_list.keySet());
         for(String customer_id : list) {

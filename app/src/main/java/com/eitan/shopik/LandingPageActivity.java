@@ -361,7 +361,7 @@ public class LandingPageActivity extends AppCompatActivity {
         user_layout.setAnimation(image_anim);
 
         TextView copyright = findViewById(R.id.copyright_text);
-        copyright.setText(Macros.COPYRIGHT_TEXT);
+       // copyright.setText(Macros.COPYRIGHT_TEXT);
         copyright.setAnimation(bottom_anim);
 
         RelativeLayout middle_layout = findViewById(R.id.middle_layout);

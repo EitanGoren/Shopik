@@ -5,7 +5,6 @@ import com.google.android.gms.ads.formats.UnifiedNativeAd;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ShoppingItem implements Serializable {
 
@@ -16,7 +15,7 @@ public class ShoppingItem implements Serializable {
     private ArrayList<String> name,images;
     private ArrayList<LikedUser> likedUsers,unlikedUsers;
 
-    private boolean on_sale,isAd,isFavorite,isOutlet,isExclusive;
+    private boolean on_sale,isAd,isFavorite,isOutlet,isExclusive,isDummyLastItem;
     private int percentage,page_num,catagory_num;
     private long likes,unlikes;
     private transient UnifiedNativeAd nativeAd;
@@ -29,6 +28,12 @@ public class ShoppingItem implements Serializable {
                  long likes, long unlikes, ArrayList<LikedUser> likedUsers,ArrayList<LikedUser> unlikedUsers,
                  String style,String fit, String cut) {
 
+        this.setAd(false);
+        this.setLikes(0);
+        this.setUnlikes(0);
+        this.setLikedUsers(null);
+        this.setUnlikedUsers(null);
+        this.isDummyLastItem = false;
         this.id = id;
         this.brand = brand;
         this.color = color;
@@ -189,6 +194,9 @@ public class ShoppingItem implements Serializable {
     public UnifiedNativeAd getNativeAd() {
         return nativeAd;
     }
+    public void destroyAd(){
+        this.nativeAd.destroy();
+    }
 
     public boolean isFavorite() {
         return isFavorite;
@@ -298,5 +306,13 @@ public class ShoppingItem implements Serializable {
     }
     public void setSub_category(String sub_category) {
         this.sub_category = sub_category;
+    }
+
+    public boolean isDummyLastItem() {
+        return isDummyLastItem;
+    }
+
+    public void setDummyLastItem(boolean dummyLastItem) {
+        isDummyLastItem = dummyLastItem;
     }
 }

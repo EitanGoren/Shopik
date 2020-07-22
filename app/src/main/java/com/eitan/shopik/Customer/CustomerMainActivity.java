@@ -32,12 +32,15 @@ import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.eitan.shopik.ViewModels.SuggestedModel;
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdError;
+import com.facebook.ads.AdSettings;
+import com.facebook.ads.AudienceNetworkAds;
+import com.facebook.ads.CacheFlag;
+import com.facebook.ads.InterstitialAdListener;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
@@ -62,8 +65,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -72,10 +75,7 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.google.android.gms.ads.AdRequest.ERROR_CODE_INTERNAL_ERROR;
-import static com.google.android.gms.ads.AdRequest.ERROR_CODE_INVALID_REQUEST;
-import static com.google.android.gms.ads.AdRequest.ERROR_CODE_NETWORK_ERROR;
-import static com.google.android.gms.ads.AdRequest.ERROR_CODE_NO_FILL;
+import static com.facebook.ads.AdSettings.IntegrationErrorMode.INTEGRATION_ERROR_CRASH_DEBUG_MODE;
 import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_LEFT;
 
 public class CustomerMainActivity extends AppCompatActivity {
@@ -99,13 +99,29 @@ public class CustomerMainActivity extends AppCompatActivity {
     private ValueEventListener valueEventListener;
     private InterstitialAd mInterstitialAd;
     private UnifiedNativeAd tempAd;
+    private Pair<Integer,Integer> cat_num;
+    private int counter = 0;
+    private ArrayList<ShoppingItem> allItems;
+    private com.facebook.ads.InterstitialAd interstitialAd;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // If you call AudienceNetworkAds.buildInitSettings(Context).initialize()
+        // in Application.onCreate() this call is not really necessary.
+        // Otherwise call initialize() onCreate() of all Activities that contain ads or
+        // from onCreate() of your Splash Activity.
+        AdSettings.addTestDevice("a0e31a81-5e54-4e90-80c9-e76b9820ba80");
+        AdSettings.setIntegrationErrorMode(INTEGRATION_ERROR_CRASH_DEBUG_MODE);
+        AudienceNetworkAds.initialize(this);
+
         setContentView(R.layout.activity_main);
 
-        if(!isConnectedToInternet()){
+        counter = 0;
+
+        if(!isConnectedToInternet()) {
             RelativeLayout LandingLayout = findViewById(R.id.mainLayout);
             Macros.Functions.showSnackbar (
                     LandingLayout,
@@ -115,11 +131,9 @@ public class CustomerMainActivity extends AppCompatActivity {
             );
         }
 
-        initInterstitial();
+        initFBInterstitial();
 
         init();
-
-        showInterstitialAd();
 
         for( int i=0; i < Macros.NUM_OF_ADS; ++i ){
             loadAds();
@@ -209,74 +223,6 @@ public class CustomerMainActivity extends AppCompatActivity {
         setToolbar();
     }
 
-    private void initInterstitial() {
-
-        // Initialize the Mobile Ads SDK.
-        MobileAds.initialize(this, initializationStatus -> {});
-        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
-        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-        MobileAds.setRequestConfiguration(configuration);
-
-        // Create the InterstitialAd and set the adUnitId.
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(Macros.INTERSTITIAL_AD_DEBUG_CODE);
-    }
-
-    private void showInterstitialAd (){
-
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                switch (i){
-                    case ERROR_CODE_INTERNAL_ERROR:
-                        Log.d(Macros.TAG,"Something happened internally; for instance, an invalid response was received from the ad server.");
-                        break;
-                    case ERROR_CODE_INVALID_REQUEST:
-                        Log.d(Macros.TAG,"The ad request was invalid; for instance, the ad unit ID was incorrect.");
-                        break;
-                    case ERROR_CODE_NETWORK_ERROR:
-                        Log.d(Macros.TAG,"The ad request was unsuccessful due to network connectivity.");
-                        break;
-                    case ERROR_CODE_NO_FILL:
-                        Log.d(Macros.TAG,"The ad request was successful, but no ad was returned due to lack of ad inventory.");
-                        break;
-                }
-            }
-
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                // Show the ad if it's ready.
-                if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                    //createTimer();
-                }
-            }
-        });
-    }
-
-   /* private void createTimer() {
-
-        if (countDownTimer != null){
-            countDownTimer.cancel();
-        }
-
-        countDownTimer = new CountDownTimer(60000,50){
-
-            @Override
-            public void onTick(long millisUntilFinished){
-                isTimeForAd = false;
-            }
-
-            @Override
-            public void onFinish(){
-                isTimeForAd = true;
-            }
-        };
-    } */
-
     private void setToolbarColor() {
         if (item_gender.equals(Macros.CustomerMacros.WOMEN))
             color = getColor(R.color.womenColor);
@@ -347,6 +293,7 @@ public class CustomerMainActivity extends AppCompatActivity {
         mUserName = findViewById(R.id.user_name);
         mUserProfile = findViewById(R.id.user_profile);
         progressBar = findViewById(R.id.progressBar);
+        allItems = new ArrayList<>();
 
         Bundle bundle = getIntent().getBundleExtra("bundle");
 
@@ -456,158 +403,46 @@ public class CustomerMainActivity extends AppCompatActivity {
         }
     }
 
-    private class getItems extends AsyncTask<Void, Integer, Void> {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void getCompanyInfo(final ShoppingItem shoppingItem) {
 
-        String data = "";
-        Pair<Integer,Integer> cat_num;
+        counter++;
+        final String company_id = shoppingItem.getSellerId();
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.setProgress(0);
+        if (Objects.requireNonNull(mainModel.getCompanies_info().getValue()).containsKey(company_id)) {
+            shoppingItem.setSeller(Objects.requireNonNull((Objects.requireNonNull(mainModel.getCompanies_info().getValue().get(company_id))).get("seller")).toString());
+            shoppingItem.setSellerLogoUrl(Objects.requireNonNull((Objects.requireNonNull(mainModel.getCompanies_info().getValue().get(company_id))).get("logo_url")).toString());
+
+           // mainModel.add_item(shoppingItem);
+            androidx.core.util.Pair<String, ShoppingItem> pair = new androidx.core.util.Pair<>(shoppingItem.getId(), shoppingItem);
+            mainModel.addItemId(pair);
+
+            if(shoppingItem.getPage_num() == cat_num.second && allItems.size() == counter){
+                mainModel.postAllItemsIds();
+              //  mainModel.postAllItems();
+            }
         }
+        else {
+            FirebaseFirestore.getInstance().collection(Macros.COMPANIES).
+                    document(shoppingItem.getSellerId()).
+                    get().addOnSuccessListener(documentSnapshot -> {
 
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
-                for (int i = 1; i < cat_num.second + 1; ++i) {
-                    getAllItems(i);
+                Map<String,Object> map = new HashMap<>();
+                map.put("seller", Objects.requireNonNull(documentSnapshot.get("name")).toString());
+                map.put("logo_url", Objects.requireNonNull(documentSnapshot.get("logo_url")).toString());
+                mainModel.setCompanies_info(shoppingItem.getSellerId(), map);
+                shoppingItem.setSeller(Objects.requireNonNull(documentSnapshot.get("name")).toString());
+                shoppingItem.setSellerLogoUrl(Objects.requireNonNull(documentSnapshot.get("logo_url")).toString());
+
+              //  mainModel.add_item(shoppingItem);
+                androidx.core.util.Pair<String, ShoppingItem> pair = new androidx.core.util.Pair<>(shoppingItem.getId(), shoppingItem);
+                mainModel.addItemId(pair);
+
+                if(shoppingItem.getPage_num() == cat_num.second && allItems.size() == counter){
+                    mainModel.postAllItemsIds();
+                  //  mainModel.postAllItems();
                 }
-            } catch (Exception e) {
-                Log.d(Macros.TAG, "MainCustomerActivity::getItems() " + e.getMessage());
-            }
-            return null;
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        private void getAllItems(int page_num) throws IOException {
-
-            URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num.first + "&page=" + page_num);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-
-            try {
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line = "";
-                while (line != null) {
-                    line = bufferedReader.readLine();
-                    data = data + line;
-                }
-
-                String[] data_split = data.split("\"products\":", 2);
-                String koko = data_split[1];
-                koko = koko.replaceAll("u002F", "").
-                        replaceAll("urban", ".urban").
-                        replaceAll("gg-", "").
-                        replaceAll("under", ".under").
-                        replaceAll("ufluff", ".ufluff").
-                        replaceAll("upper", ".upper").
-                        replaceAll("uncommon", ".uncommon").
-                        replaceAll("uoh", ".uoh");
-
-                data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
-
-                JSONArray JA = new JSONArray(data);
-                int total_items = JA.length();
-                for (int i = 0; i < total_items; ++i) {
-
-                    publishProgress(i, total_items);
-
-                    JSONObject JO = (JSONObject) JA.get(i);
-                    String imageUrl = "https://" + JO.get("image").toString().
-                            replace(".com", ".com/").
-                            replace("products", "products/");
-
-                    int opop = imageUrl.lastIndexOf("-");
-                    String id = JO.get("id").toString();
-
-                    String color = imageUrl.substring(opop + 1);
-
-                    String link = "https://www.asos.com/" + JO.get("url").toString().
-                            replace("prd", "/prd/").
-                            replace("asos-designasos", "asos-design/asos");
-
-                    String seller_name = "ASOS";
-                    String price = JO.get("price").toString();
-                    String branda = "";
-                    String seller_id = "gxGB5zUoNed0rizltWVC9y8FceA3";
-
-                    ShoppingItem shoppingItem = new ShoppingItem();
-
-                    boolean isExclusive = JO.get("description").toString().toLowerCase().contains("exclusive");
-                    shoppingItem.setExclusive(isExclusive);
-
-                    ArrayList<String> list = new ArrayList<>();
-                    String[] name = JO.get("description").toString().split(" ");
-                    for (String word : name) {
-                        if (!word.equals("")) {
-                            list.add(word.toLowerCase());
-                        }
-                    }
-
-                    for (String brand : Macros.Items.brands) {
-                        if (JO.get("description").toString().toLowerCase().contains(brand.toLowerCase()))
-                            branda = brand;
-                    }
-
-                    if ((boolean) JO.get("isOutlet")) {
-                        shoppingItem.setOutlet(true);
-                        shoppingItem.setReduced_price(JO.get("reducedPrice").toString());
-                    } else
-                        shoppingItem.setOutlet(false);
-
-                    if ((boolean) JO.get("isSale")) {
-                        shoppingItem.setOn_sale(true);
-                        shoppingItem.setReduced_price(JO.get("reducedPrice").toString());
-                    } else
-                        shoppingItem.setOn_sale(false);
-
-                    shoppingItem.setId_in_seller(id);
-                    shoppingItem.setColor(color);
-                    shoppingItem.setType(item_type);
-                    shoppingItem.setBrand(branda);
-                    shoppingItem.setName(list);
-                    shoppingItem.setPrice(price);
-                    shoppingItem.setSeller(seller_name);
-                    shoppingItem.setSellerId(seller_id);
-                    shoppingItem.setSite_link(link);
-                    shoppingItem.setPage_num(page_num);
-                    shoppingItem.setCatagory_num(cat_num.first);
-                    shoppingItem.setGender(item_gender);
-                    shoppingItem.setId(id);
-                    shoppingItem.setAd(false);
-                    shoppingItem.setLikes(0);
-                    shoppingItem.setUnlikes(0);
-                    shoppingItem.setLikedUsers(null);
-                    shoppingItem.setUnlikedUsers(null);
-                    shoppingItem.setSub_category(item_sub_category);
-
-                    getLikes(shoppingItem);
-                }
-            }
-            catch (Exception e) {
-                Log.d(Macros.TAG, "MainCustomerActivity::getAllItems() " + e.getMessage());
-            }
-            finally {
-                httpURLConnection.disconnect();
-            }
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            progressBar.setProgress((values[0] / values[1]) * 100);
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            progressBar.setVisibility(View.GONE);
+            });
         }
     }
 
@@ -741,37 +576,10 @@ public class CustomerMainActivity extends AppCompatActivity {
         getCompanyInfo(shoppingItem);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getCompanyInfo(final ShoppingItem shoppingItem) {
-
-        final String company_id = shoppingItem.getSellerId();
-
-        if (Objects.requireNonNull(mainModel.getCompanies_info().getValue()).containsKey(company_id)) {
-            shoppingItem.setSeller(Objects.requireNonNull((Objects.requireNonNull(mainModel.getCompanies_info().getValue().get(company_id))).get("seller")).toString());
-            shoppingItem.setSellerLogoUrl(Objects.requireNonNull((Objects.requireNonNull(mainModel.getCompanies_info().getValue().get(company_id))).get("logo_url")).toString());
-            mainModel.add_item(shoppingItem);
-            androidx.core.util.Pair<String, ShoppingItem> pair = new androidx.core.util.Pair<>(shoppingItem.getId(), shoppingItem);
-            mainModel.addItemId(pair);
-        }
-        else {
-            FirebaseFirestore.getInstance().collection(Macros.COMPANIES).document(shoppingItem.getSellerId()).get().addOnSuccessListener(documentSnapshot -> {
-                Map<String,Object> map = new HashMap<>();
-                map.put("seller", Objects.requireNonNull(documentSnapshot.get("name")).toString());
-                map.put("logo_url", Objects.requireNonNull(documentSnapshot.get("logo_url")).toString());
-                mainModel.setCompanies_info(shoppingItem.getSellerId(), map);
-                shoppingItem.setSeller(Objects.requireNonNull(documentSnapshot.get("name")).toString());
-                shoppingItem.setSellerLogoUrl(Objects.requireNonNull(documentSnapshot.get("logo_url")).toString());
-                mainModel.add_item(shoppingItem);
-                androidx.core.util.Pair<String, ShoppingItem> pair = new androidx.core.util.Pair<>(shoppingItem.getId(), shoppingItem);
-                mainModel.addItemId(pair);
-            });
-        }
-    }
-
     @Override
     protected void onDestroy() {
-        super.onDestroy();
 
+        mInterstitialAd = null;
         customerDB.removeEventListener(valueEventListener);
         mainModel.getAll_items().removeObservers(this);
         mainModel.getAll_items().removeObservers(this);
@@ -780,6 +588,65 @@ public class CustomerMainActivity extends AppCompatActivity {
         mainModel.clearAds();
         suggestedModel.getPreferred().removeObservers(this);
         progressBar = null;
+
+        if (interstitialAd != null) {
+            interstitialAd.destroy();
+            interstitialAd = null;
+        }
+
+        super.onDestroy();
+    }
+
+    private void initFBInterstitial() {
+        if (interstitialAd != null) {
+            interstitialAd.destroy();
+            interstitialAd = null;
+        }
+
+        // Create the interstitial unit with a placement ID (generate your own on the Facebook app settings).
+        // Use different ID for each ad placement in your app.
+        interstitialAd = new com.facebook.ads.InterstitialAd(this, Macros.FB_PLACEMENT_ID);
+
+        // Set a listener to get notified on changes or when the user interact with the ad.
+        interstitialAd.setAdListener(new InterstitialAdListener() {
+            @Override
+            public void onInterstitialDisplayed(Ad ad) {}
+
+            @Override
+            public void onInterstitialDismissed(Ad ad) {
+                // Cleanup.
+                interstitialAd.destroy();
+                interstitialAd = null;
+            }
+
+            @Override
+            public void onError(Ad ad, AdError adError) {
+                if(ad == interstitialAd)
+                    Log.d(Macros.TAG, adError.getErrorMessage());
+            }
+
+            @Override
+            public void onAdLoaded(Ad ad) {
+                if (interstitialAd != null && interstitialAd.isAdLoaded()) {
+                    // Ad was loaded, show it!
+                    interstitialAd.show();
+                }
+            }
+
+            @Override
+            public void onAdClicked(Ad ad) {
+                //Toast.makeText(CustomerMainActivity.this,"Interstitial Clicked", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLoggingImpression(Ad ad) {
+                Log.d(Macros.TAG,"onLoggingImpression");
+            }
+
+        });
+
+        // Load a new interstitial.
+        interstitialAd.loadAd(EnumSet.of(CacheFlag.VIDEO));
     }
 
     private boolean isConnectedToInternet(){
@@ -837,4 +704,161 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         adLoader.loadAd(new PublisherAdRequest.Builder().build());
     }
+
+    private class getItems extends AsyncTask<Void, Integer, Void> {
+
+        String data = "";
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(0);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
+                for (int i = 1; i < cat_num.second + 1; ++i) {
+                    getAllItems(i);
+                }
+                for(ShoppingItem item : allItems){
+                    getLikes(item);
+                }
+            }
+            catch (Exception e) {
+                Log.d(Macros.TAG, "MainCustomerActivity::getItems() " + e.getMessage());
+            }
+            return null;
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        private void getAllItems(int page_num) throws IOException {
+
+            URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num.first + "&page=" + page_num);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+            try {
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line = "";
+                while (line != null) {
+                    line = bufferedReader.readLine();
+                    data = data + line;
+                }
+
+                String[] data_split = data.split("\"products\":", 2);
+                String koko = data_split[1];
+                koko = koko.replaceAll("u002F", "").
+                        replaceAll("urban", ".urban").
+                        replaceAll("gg-", "").
+                        replaceAll("under", ".under").
+                        replaceAll("ufluff", ".ufluff").
+                        replaceAll("upper", ".upper").
+                        replaceAll("uncommon", ".uncommon").
+                        replaceAll("uoh", ".uoh");
+
+                data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
+
+                JSONArray JA = new JSONArray(data);
+                int total_items = JA.length();
+                for (int i = 0; i < total_items; ++i) {
+
+                    publishProgress(i, total_items);
+
+                    JSONObject JO = (JSONObject) JA.get(i);
+                    String imageUrl = "https://" + JO.get("image").toString().
+                            replace(".com", ".com/").
+                            replace("products", "products/");
+
+                    int opop = imageUrl.lastIndexOf("-");
+                    String id = JO.get("id").toString();
+
+                    String color = imageUrl.substring(opop + 1);
+
+                    String link = "https://www.asos.com/" + JO.get("url").toString().
+                            replace("prd", "/prd/").
+                            replace("asos-designasos", "asos-design/asos");
+
+                    String seller_name = "ASOS";
+                    String price = JO.get("price").toString();
+                    String branda = "";
+                    String seller_id = "gxGB5zUoNed0rizltWVC9y8FceA3";
+
+                    ShoppingItem shoppingItem = new ShoppingItem();
+
+                    boolean isExclusive = JO.get("description").toString().toLowerCase().contains("exclusive");
+                    shoppingItem.setExclusive(isExclusive);
+
+                    ArrayList<String> list = new ArrayList<>();
+                    String[] name = JO.get("description").toString().split(" ");
+                    for (String word : name) {
+                        if (!word.equals("")) {
+                            list.add(word.toLowerCase());
+                        }
+                    }
+
+                    for (String brand : Macros.Items.brands) {
+                        if (JO.get("description").toString().toLowerCase().contains(brand.toLowerCase()))
+                            branda = brand;
+                    }
+
+                    if ((boolean) JO.get("isOutlet")) {
+                        shoppingItem.setOutlet(true);
+                        shoppingItem.setReduced_price(JO.get("reducedPrice").toString());
+                    }
+                    else
+                        shoppingItem.setOutlet(false);
+
+                    if ((boolean) JO.get("isSale")) {
+                        shoppingItem.setOn_sale(true);
+                        shoppingItem.setReduced_price(JO.get("reducedPrice").toString());
+                    }
+                    else
+                        shoppingItem.setOn_sale(false);
+
+                    shoppingItem.setId_in_seller(id);
+                    shoppingItem.setColor(color);
+                    shoppingItem.setType(item_type);
+                    shoppingItem.setBrand(branda);
+                    shoppingItem.setName(list);
+                    shoppingItem.setPrice(price);
+                    shoppingItem.setSeller(seller_name);
+                    shoppingItem.setSellerId(seller_id);
+                    shoppingItem.setSite_link(link);
+                    shoppingItem.setPage_num(page_num);
+                    shoppingItem.setCatagory_num(cat_num.first);
+                    shoppingItem.setGender(item_gender);
+                    shoppingItem.setId(id);
+                    shoppingItem.setSub_category(item_sub_category);
+
+                    //getLikes(shoppingItem);
+                    allItems.add(shoppingItem);
+                }
+            }
+            catch (Exception e) {
+                Log.d(Macros.TAG, "MainCustomerActivity::getAllItems() " + e.getMessage());
+            }
+            finally {
+                httpURLConnection.disconnect();
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            progressBar.setProgress((values[0] / values[1]) * 100);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
 }

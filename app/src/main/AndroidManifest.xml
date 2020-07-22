@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.eitan.shopik">
 
+    <!-- Include required permissions for Google Mobile Ads to run. -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
@@ -17,14 +17,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/farts">
+
+        <!--
+        This is the sample AdMob App ID. Insert your own AdMob App ID in quotes
+        https://googlemobileadssdk.page.link/admob-android-update-manifest
+        -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+
         <activity android:name=".Company.CompanyProfileActivity" />
         <activity
             android:name=".Customer.CustomerSettingsActivity"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop" />
         <activity
             android:name=".Customer.GenderFilteringActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop" />
         <activity android:name=".Adapters.MultipleItemsList" />
         <activity android:name=".MainRegistrationActivity" />
         <activity
@@ -48,7 +57,7 @@
         <activity
             android:name=".Customer.CustomerMainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop" />
         <activity
             android:name=".LandingPageActivity"
             android:theme="@style/AppTheme">
@@ -123,20 +132,21 @@
             android:value="@string/app_name" />
         <meta-data
             android:name="com.facebook.accountkit.ClientToken"
-            android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" /> <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5843605953860340~8335398516" />
+            android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <uses-library android:name="android.test.runner"
+        <uses-library
+            android:name="android.test.runner"
             android:required="false" />
-        <uses-library android:name="android.test.base"
+        <uses-library
+            android:name="android.test.base"
             android:required="false" />
-        <uses-library android:name="android.test.mock"
+        <uses-library
+            android:name="android.test.mock"
             android:required="false" />
+
         <meta-data
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />

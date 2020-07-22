@@ -4,20 +4,15 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -29,23 +24,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.eitan.shopik.Company.CompanyProfileActivity;
-import com.eitan.shopik.Customer.FullscreenImageActivity;
-import com.eitan.shopik.CustomerFragments.CustomerHomeFragment;
 import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
@@ -62,7 +50,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -76,8 +63,9 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
         return super.getPosition(shoppingItem);
     }
 
-    public CardsAdapter(Context context, int resourceId, List<ShoppingItem> bags){
-        super(context,resourceId,bags);
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public CardsAdapter(Context context, int resourceId, List<ShoppingItem> items){
+        super(context,resourceId,items);
     }
 
     @NonNull
@@ -88,7 +76,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
         final ShoppingItem shoppingItem = getItem(position);
 
         assert shoppingItem != null;
-        if(shoppingItem.isAd() && shoppingItem.getNativeAd() != null) {
+        if(shoppingItem.isAd() && shoppingItem.getNativeAd() != null && !shoppingItem.isDummyLastItem()) {
             UnifiedNativeAdView adView = (UnifiedNativeAdView) LayoutInflater.from(getContext()).inflate(R.layout.native_card_ad_template,null);
             // Set the media view.
             adView.setMediaView((MediaView) adView.findViewById(R.id.ad_media));
@@ -181,10 +169,15 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT,pixels, Gravity.CENTER );
             convertView.setLayoutParams(params);
         }
-        else if(!shoppingItem.isAd()) {
+        else if(!shoppingItem.isAd() && !shoppingItem.isDummyLastItem()) {
 
             final ArrayList<String> imagesUrl = new ArrayList<>();
-            setImagesArray(shoppingItem,imagesUrl);
+            Database connection = new Database();
+
+            imagesUrl.add(connection.getASOSimageUrl(1,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
+            imagesUrl.add(connection.getASOSimageUrl(2,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
+            imagesUrl.add(connection.getASOSimageUrl(3,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
+            imagesUrl.add(connection.getASOSimageUrl(4,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
 
             isFavorite[0] = false;
 
@@ -231,9 +224,6 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.like_swing);
                             favorite.startAnimation(animation);
                             isFavorite[0] = !isFavorite[0];
-                        //    final Handler handler = new Handler();
-                        //    final Runnable r = () -> swipeFlingAdapterView.getTopCardListener().selectRight();
-                         //   handler.postDelayed(r, 1050);
                             swipeFlingAdapterView.getTopCardListener().selectRight();
                         }
                         break;
@@ -350,89 +340,21 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),shoppingItem));
 
             Glide.with(getContext()).load(imagesUrl.get(0)).into(image);
-            final RelativeLayout[] card_info = {convertView.findViewById(R.id.card_info)};
-            Glide.with(getContext()).asBitmap().load(imagesUrl.get(0)).into(new CustomTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                    image.setImageBitmap(resource);
-                    Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
 
-                    int height = bitmap.getHeight();
-                    int width = bitmap.getWidth();
+        }
+        else if(shoppingItem.isDummyLastItem()){
 
-                    checkToolbarColor(bitmap,width,toolbar);
-                    checkFullscreenColor(bitmap,width,height,fullscreen);
-                    checkBottomLayoutColor(bitmap,height, card_info[0],seller_logo);
-                }
-                @Override
-                public void onLoadCleared(@Nullable Drawable placeholder) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.swipe_item, parent, false);
 
-                }
+            final ImageView image = convertView.findViewById(R.id.swipe_image);
+            Glide.with(getContext()).load(getContext().getDrawable(R.drawable.ic_baseline_trending_up)).into(image);
 
-                @Override
-                public void onDestroy() {
-                    super.onDestroy();
-                    card_info[0] = null;
-                }
-            });
         }
         return convertView;
     }
 
     private void setBrandName(ShoppingItem shoppingItem, TextView brand_name) {
         brand_name.setText(shoppingItem.getBrand());
-    }
-
-    private void setImagesArray(ShoppingItem shoppingItem, ArrayList<String> imagesUrl) {
-
-        Database connection = new Database();
-
-        imagesUrl.add(connection.getASOSimageUrl(1,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
-        imagesUrl.add(connection.getASOSimageUrl(2,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
-        imagesUrl.add(connection.getASOSimageUrl(3,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
-        imagesUrl.add(connection.getASOSimageUrl(4,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
-    }
-
-    private void checkToolbarColor(Bitmap bitmap, int width, Toolbar toolbar){
-
-        int pixel_top_right = bitmap.getPixel(width - 15,70 );
-        int red = Color.red(pixel_top_right);
-        int blue = Color.blue(pixel_top_right);
-        int green = Color.green(pixel_top_right);
-
-        if( (red < 115 && blue < 115) || (green < 115 && red < 115)  || (green < 115 && blue < 115) )
-            Objects.requireNonNull(toolbar.getOverflowIcon()).setTint(Color.rgb(255, 255, 255));
-        else
-            Objects.requireNonNull(toolbar.getOverflowIcon()).setTint(Color.rgb(0, 0, 0));
-    }
-
-    private void checkFullscreenColor(Bitmap bitmap, int width, int height, ImageButton fullscreen){
-        int pixel_bottom_right = bitmap.getPixel(width - 15,height - 50 );
-        int red_bottom_right = Color.red(pixel_bottom_right);
-        int blue_bottom_right  = Color.blue(pixel_bottom_right);
-        int green_bottom_right  = Color.green(pixel_bottom_right);
-
-        if( (red_bottom_right < 115 && blue_bottom_right < 115) || (green_bottom_right < 115 && red_bottom_right < 115) || (green_bottom_right < 115 && blue_bottom_right < 115) )
-            fullscreen.getBackground().setTint(Color.rgb(255, 255, 255));
-        else
-            fullscreen.getBackground().setTint(Color.rgb(0, 0, 0));
-    }
-
-    private void checkBottomLayoutColor(Bitmap bitmap, int height, RelativeLayout card_info, CircleImageView seller_logo){
-
-        int pixel_bottom_left = bitmap.getPixel(15,height - 50 );
-        int red_bottom = Color.red(pixel_bottom_left);
-        int blue_bottom  = Color.blue(pixel_bottom_left);
-        int green_bottom  = Color.green(pixel_bottom_left);
-
-        if( (red_bottom < 115 && blue_bottom < 115) || (green_bottom < 115 && red_bottom < 115) || (green_bottom < 115 && blue_bottom < 115) ) {
-            card_info.setBackground(getContext().getDrawable(R.drawable.white_border_background));
-            seller_logo.setBorderColor(Color.WHITE);
-        }
-        else {
-            card_info.setBackground(getContext().getDrawable(R.drawable.bottom_info_border_line));
-            seller_logo.setBorderColor(Color.BLACK);
-        }
     }
 
     public boolean isFavorite(){

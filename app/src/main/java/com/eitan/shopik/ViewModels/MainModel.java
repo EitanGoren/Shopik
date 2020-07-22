@@ -62,8 +62,6 @@ public class MainModel extends ViewModel {
 
     public void add_item(ShoppingItem item) {
         Objects.requireNonNull(this.all_items.getValue()).add(item);
-        CopyOnWriteArrayList<ShoppingItem> koko = this.all_items.getValue();
-        all_items.postValue(koko);
     }
     public LiveData<CopyOnWriteArrayList<ShoppingItem>> getAll_items() {
         return all_items;
@@ -75,9 +73,17 @@ public class MainModel extends ViewModel {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addItemId(Pair<String,ShoppingItem> pair) {
         Objects.requireNonNull(this.all_items_ids.getValue()).add(pair);
+    }
+
+    public void postAllItems(){
+        CopyOnWriteArrayList<ShoppingItem> koko = this.all_items.getValue();
+        all_items.postValue(koko);
+    }
+    public void postAllItemsIds(){
         CopyOnWriteArrayList<Pair<String,ShoppingItem>> koko = this.all_items_ids.getValue();
         all_items_ids.postValue(koko);
     }
+
     public void addAd(ShoppingItem shoppingItem){
         this.shoppingAdsArray.add(shoppingItem);
     }
@@ -96,7 +102,7 @@ public class MainModel extends ViewModel {
 
     public void clearAds(){
         for(ShoppingItem item : shoppingAdsArray) {
-            item.getNativeAd().destroy();
+            item.destroyAd();
         }
         shoppingAdsArray.clear();
     }

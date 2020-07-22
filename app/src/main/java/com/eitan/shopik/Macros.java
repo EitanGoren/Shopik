@@ -21,7 +21,7 @@ import java.util.Objects;
 
 public class Macros {
 
-    public static final int SEARCH_TO_AD = 10;
+    public static final int SEARCH_TO_AD = 15;
 
     public static final String TAG = "com.eitan.shopik";
     public static final String COPYRIGHT_TEXT = "Shopik - developed by Eitan Goren";
@@ -35,10 +35,11 @@ public class Macros {
     public static final String CUSTOMER = "Customer";
     public static final String ITEMS = "Items";
     public static final String API_KEY = "AIzaSyA-NCcR_U7gBNm1BN3lXKTS8wC1W-VC9fE";
-    public static final String INTERSTITIAL_AD_DEBUG_CODE = "ca-app-pub-3940256099942544/8691691433";
+    public static final String AD_MOB_INTERSTITIAL_AD_DEBUG_CODE = "ca-app-pub-3940256099942544/8691691433";
     public static final String TEST_DEVICE_ID = "7255B1C36174A2C33091060576730302";
     public static final String NATIVE_VIDEO_TEST_AD = "ca-app-pub-3940256099942544/1044960115";
     public static final String NATIVE_ADVANCED_AD = "ca-app-pub-3940256099942544/2247696110";
+    public static final String FB_PLACEMENT_ID = "555191575133910_605556963430704";
     public static final String YOUTUBE_API = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet";
     public static final String VIDEO_LINK = "https://video.asos-media.com/products/ASOS/_media_";
     public static final double POUND_TO_ILS = 5.2482;
@@ -135,11 +136,11 @@ public class Macros {
                 case "jeggings":
                     return new Pair<>(19057,1);
                 case "slim":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(15157,1) : new Pair<>(5054,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(15157,2) : new Pair<>(5054,1);
                 case "straight":
                     return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(3630,1) : new Pair<>(5052,1);
                 case "ripped":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(19823,1) : new Pair<>(16463,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(19823,3) : new Pair<>(16463,1);
                 case "high-waist":
                     return new Pair<>(15159,6);
                 default:

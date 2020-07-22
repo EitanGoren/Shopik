@@ -120,11 +120,10 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
-        android:drawableStart="@drawable/ic_copyright_black"
-        android:drawablePadding="5dp"
         android:fontFamily="@font/nunito_semibold"
         android:textAlignment="center"
         android:textColor="#000000"
+        android:text="@string/copy_right"
         android:textSize="12sp" />
 
     <RelativeLayout

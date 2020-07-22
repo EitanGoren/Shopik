@@ -30,8 +30,6 @@ import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.VideoController;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -75,8 +73,6 @@ public class FullscreenImageActivity extends AppCompatActivity {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.TRANSPARENT);
-
-        MobileAds.initialize(this, initializationStatus -> {});
 
         setDecoreView();
 
