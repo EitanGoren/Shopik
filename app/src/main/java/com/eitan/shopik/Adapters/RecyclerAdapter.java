@@ -47,6 +47,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 selected = new RecyclerAdapter.RecyclerViewHolder(LayoutInflater.from(parent.getContext()).
                         inflate(R.layout.recycler_sub_category_item,parent,false));
                 break;
+            case "Market":
+                selected = new RecyclerAdapter.RecyclerViewHolder(LayoutInflater.from(parent.getContext()).
+                        inflate(R.layout.market_item,parent,false));
+                break;
         }
         assert selected != null;
         return selected;
@@ -69,14 +73,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     class RecyclerViewHolder extends RecyclerView.ViewHolder{
 
         private ImageView imageView;
-        private TextView sub_cat, brand,price;
-        private Button link,full_screen;
+        private TextView sub_cat, brand, price, text;
+        private Button link, full_screen;
 
         public RecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
             if(type.equals("SubCategory")){
                 imageView = itemView.findViewById(R.id.sub_category_image);
                 sub_cat = itemView.findViewById(R.id.sub_category_button);
+            }
+            else if(type.equals("Market")){
+                imageView = itemView.findViewById(R.id.image_market);
+                text = itemView.findViewById(R.id.name_market);
             }
             else if(type.equals("Item") || type.equals("New-Item")) {
                 imageView = itemView.findViewById(R.id.image_slider);
@@ -102,6 +110,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                     final ArrayList<String> imagesUrl = item.getImages();
                     Glide.with(imageView.getContext()).load(imagesUrl.get(0)).into(imageView);
                     full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(full_screen.getContext(),item));
+                    break;
+                }
+                case "Market": {
+                    Glide.with(imageView.getContext()).load(item.getImage_resource()).into(imageView);
+                    text.setText(item.getText());
                     break;
                 }
                 case "New-Item": {

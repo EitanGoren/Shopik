@@ -53,10 +53,6 @@
 
     </style>
 
-    <style name="butbut" parent="Theme.AppCompat.Light">
-        <item name="android:drawable">@drawable/mens_jeans2</item>
-    </style>
-
     <style name="MainActivity" parent="Theme.AppCompat">
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="android:windowLightStatusBar">true</item>
