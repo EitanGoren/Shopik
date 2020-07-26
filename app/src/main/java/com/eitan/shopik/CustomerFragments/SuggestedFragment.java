@@ -66,7 +66,7 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
     private void initOnCreate() {
         suggestedModel = new ViewModelProvider(requireActivity()).get(SuggestedModel.class);
         mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
-        while (mainModel.getAdsContainerSize() !=  Macros.NUM_OF_ADS);
+       // while (mainModel.getAdsContainerSize() !=  Macros.NUM_OF_ADS);
     }
 
     @Override

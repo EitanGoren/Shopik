@@ -130,9 +130,7 @@ public class E2Fragment extends Fragment {
 
         if(gender.equals(Macros.CustomerMacros.MEN)){
 
-            addJacketsSubCategory("jacket", Macros.Items.MEN_PUFFER_JACKETS_RES, Macros.CustomerMacros.MEN);
-            addJacketsSubCategory("coat", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
-            addJacketsSubCategory("teddy", Macros.Items.MEN_LEATHER_JACKETS_RES, Macros.CustomerMacros.MEN);
+            addJacketsSubCategory("overcoat", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
             addJacketsSubCategory("biker", Macros.Items.MEN_TRENCH_JACKETS_RES, Macros.CustomerMacros.MEN);
             addJacketsSubCategory("leather", Macros.Items.MEN_BOMBER_JACKETS_RES, Macros.CustomerMacros.MEN);
             addJacketsSubCategory("denim", Macros.Items.MEN_LEATHER_JACKETS_RES, Macros.CustomerMacros.MEN);
@@ -159,11 +157,11 @@ public class E2Fragment extends Fragment {
             addShoesSubCategory("sandals",Macros.Items.MEN_SANDALS_RES,Macros.CustomerMacros.MEN);
             addShoesSubCategory("sliders",Macros.Items.MEN_SLIDERS_RES,Macros.CustomerMacros.MEN);
 
-            addShirtsSubCategory("long", Macros.Items.MEN_LONG_RES,Macros.CustomerMacros.MEN);
-            addShirtsSubCategory("tank", Macros.Items.MEN_TANK_RES,Macros.CustomerMacros.MEN);
+            addShirtsSubCategory("denim", Macros.Items.MEN_LONG_RES,Macros.CustomerMacros.MEN);
+            addShirtsSubCategory("check", Macros.Items.MEN_TANK_RES,Macros.CustomerMacros.MEN);
             addShirtsSubCategory("t-shirt", Macros.Items.MEN_TSHIRT_RES,Macros.CustomerMacros.MEN);
             addShirtsSubCategory("oxford", Macros.Items.MEN_OXFORD_RES,Macros.CustomerMacros.MEN);
-            addShirtsSubCategory("muscle", Macros.Items.MEN_MUSCLE_RES, Macros.CustomerMacros.MEN);
+            addShirtsSubCategory("slim-fit", Macros.Items.MEN_MUSCLE_RES, Macros.CustomerMacros.MEN);
 
             addWatchesSubCategory("smart",Macros.Items.MEN_SMART_WATCH_RES,Macros.CustomerMacros.MEN);
             addWatchesSubCategory("leather",Macros.Items.MEN_LEATHER_WATCH_RES,Macros.CustomerMacros.MEN);
@@ -175,7 +173,6 @@ public class E2Fragment extends Fragment {
             addSwimwearSubCategory("shorts", Macros.Items.MEN_SHORTS_SWIM_RES,Macros.CustomerMacros.MEN);
             addSwimwearSubCategory("co-ord", Macros.Items.MEN_CO_ORD_SWIM_RES,Macros.CustomerMacros.MEN);
             addSwimwearSubCategory("oversized", Macros.Items.MEN_PLUS_SWIM_RES,Macros.CustomerMacros.MEN);
-
         }
         else {
             addBagsSubCategory("leather",Macros.Items.LEATHER_RES);
@@ -237,21 +234,21 @@ public class E2Fragment extends Fragment {
             addSwimwearSubCategory("bikini", Macros.Items.WOMEN_BIKINI_RES,Macros.CustomerMacros.WOMEN);
             addSwimwearSubCategory("swimsuit", Macros.Items.WOMEN_SWIMSUIT_RES,Macros.CustomerMacros.WOMEN);
 
-            Catagory bags = new Catagory(Macros.Items.BAG, gender, sub_bags);
-            Catagory dresses = new Catagory(Macros.Items.DRESS, gender, sub_dress);
+            Catagory bags = new Catagory(Macros.BAG, gender, sub_bags);
+            Catagory dresses = new Catagory(Macros.DRESS, gender, sub_dress);
 
             categories.add(bags);
             categories.add(dresses);
         }
 
-        jackets = new Catagory(Macros.Items.JACKETS,gender,sub_jackets);
-        shoes = new Catagory(Macros.Items.SHOES,gender,sub_shoes);
-        jeans = new Catagory(Macros.Items.JEANS,gender,sub_jeans);
-        shirts = new Catagory(Macros.Items.SHIRT,gender,sub_shirts);
-        watches = new Catagory(Macros.Items.WATCH,gender,sub_watches);
-        sunglasses = new Catagory(Macros.Items.SUNGLASSES,gender,sub_glasses);
-        jewellery = new Catagory(Macros.Items.JEWELLERY,gender,sub_jewellery);
-        swimwear = new Catagory(Macros.Items.SWIMWEAR,gender,sub_swim);
+        jackets = new Catagory(Macros.JACKETS,gender,sub_jackets);
+        shoes = new Catagory(Macros.SHOES,gender,sub_shoes);
+        jeans = new Catagory(Macros.JEANS,gender,sub_jeans);
+        shirts = new Catagory(Macros.SHIRT,gender,sub_shirts);
+        watches = new Catagory(Macros.WATCH,gender,sub_watches);
+        sunglasses = new Catagory(Macros.SUNGLASSES,gender,sub_glasses);
+        jewellery = new Catagory(Macros.JEWELLERY,gender,sub_jewellery);
+        swimwear = new Catagory(Macros.SWIMWEAR,gender,sub_swim);
 
        fillCategories();
 

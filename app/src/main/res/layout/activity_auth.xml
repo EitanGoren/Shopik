@@ -109,6 +109,32 @@
 
     </androidx.cardview.widget.CardView>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/email_card"
+        android:layout_width="280dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/facebook_card"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="20dp">
+
+        <Button
+            android:id="@+id/email_sign_in"
+            style="@style/FirebaseUI.Button.AccountChooser.EmailButton"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="0dp"
+            android:fontFamily="@font/comfortaa"
+            android:gravity="center"
+            android:text="Signin with Email"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:theme="@style/FirebaseUI.Button.AccountChooser.EmailButton" />
+
+    </androidx.cardview.widget.CardView>
+
     <RelativeLayout
         android:id="@+id/hello_layout"
         android:layout_width="wrap_content"

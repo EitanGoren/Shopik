@@ -123,16 +123,16 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
     private String setMainHeader(String catagory) {
         String name = catagory;
         switch (name) {
-            case Macros.Items.BAG:
+            case Macros.BAG:
                 name = "BAGS";
                 break;
-            case Macros.Items.SHIRT:
+            case Macros.SHIRT:
                 name = "SHIRTS";
                 break;
-            case Macros.Items.DRESS:
+            case Macros.DRESS:
                 name = "DRESSES";
                 break;
-            case Macros.Items.WATCH:
+            case Macros.WATCH:
                 name = "WATCHES";
                 break;
         }
@@ -142,34 +142,34 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
     private String setmButtonIcon(String gender, String category){
         String icon = "";
         switch (category) {
-            case Macros.Items.BAG:
+            case Macros.BAG:
                 icon = Macros.Items.BAGS_IC;
                 break;
-            case Macros.Items.SHIRT:
+            case Macros.SHIRT:
                 icon = gender.equals(Macros.CustomerMacros.MEN) ? Macros.Items.MENS_SHIRTS_IC : Macros.Items.WOMENS_SHIRTS_IC;
                 break;
-            case Macros.Items.DRESS:
+            case Macros.DRESS:
                 icon = Macros.Items.DRESS_IC;
                 break;
-            case Macros.Items.WATCH:
+            case Macros.WATCH:
                 icon = gender.equals(Macros.CustomerMacros.MEN) ? Macros.Items.MEN_WATCH_IC : Macros.Items.WOMEN_WATCH_IC;
                 break;
-            case Macros.Items.JACKETS:
+            case Macros.JACKETS:
                 icon = gender.equals(Macros.CustomerMacros.MEN) ? Macros.Items.MEN_JACKET_IC : Macros.Items.WOMEN_JACKET_IC ;
                 break;
-            case Macros.Items.JEANS:
+            case Macros.JEANS:
                 icon = Macros.Items.JEANS_IC;
                 break;
-            case Macros.Items.SUNGLASSES:
+            case Macros.SUNGLASSES:
                 icon = gender.equals(Macros.CustomerMacros.MEN) ? Macros.Items.MEN_GLASSES_IC : Macros.Items.WOMEN_GLASSES_IC ;
                 break;
-            case Macros.Items.SWIMWEAR:
+            case Macros.SWIMWEAR:
                 icon = gender.equals(Macros.CustomerMacros.MEN) ? Macros.Items.MENS_SWIM_IC : Macros.Items.WOMENS_SWIM_IC;
                 break;
-            case Macros.Items.JEWELLERY:
+            case Macros.JEWELLERY:
                 icon = gender.equals(Macros.CustomerMacros.MEN) ? Macros.Items.MEN_JEWELLERY_IC : Macros.Items.WOMEN_JEWELLERY_IC;
                 break;
-            case Macros.Items.SHOES:
+            case Macros.SHOES:
                 icon = gender.equals(Macros.CustomerMacros.MEN) ? Macros.Items.MENS_SHOES_IC : Macros.Items.WOMENS_SHOES_IC;
                 break;
         }

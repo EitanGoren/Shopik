@@ -161,10 +161,13 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
 
             final int[] i = {0};
-            final ArrayList<String> images = new ArrayList<>();
-            setImagesArray(item, images);
-
-            item.setImages(images);
+            ArrayList<String> images = new ArrayList<>();
+            if(item.getSeller().equals("ASOS")) {
+                setImagesArray(item, images);
+                item.setImages(images);
+            }
+            else
+                images = item.getImages();
 
             CircleImageView seller_logo2 = convertView.findViewById(R.id.seller_logo2);
             TextView seller_name = convertView.findViewById(R.id.seller_name);
@@ -179,7 +182,15 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
             TextView old_price = convertView.findViewById(R.id.old_price_text);
 
             final ImageView imageView = convertView.findViewById(R.id.image_item);
-            Glide.with(getContext()).load(images.get(0)).into(imageView);
+            String image = "";
+            for(String img : images){
+                if(img != null && !img.equals("")) {
+                    image = img;
+                    break;
+                }
+            }
+            Glide.with(getContext()).load(image).into(imageView);
+
             Button mNext = convertView.findViewById(R.id.next);
             Button mPrev = convertView.findViewById(R.id.previous);
 
@@ -187,7 +198,7 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 Animation fadeout = AnimationUtils.loadAnimation(getContext(),R.anim.fadeout);
                 Animation fadein = AnimationUtils.loadAnimation(getContext(),R.anim.fadein);
                 imageView.startAnimation(fadeout);
-                Glide.with(getContext()).load(images.get(((Math.abs(i[0]) + 1) % 4))).into(imageView);
+                Glide.with(getContext()).load(item.getImages().get(((Math.abs(i[0]) + 1) % 4))).into(imageView);
                 i[0]++;
                 imageView.startAnimation(fadein);
             });
@@ -195,7 +206,7 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 Animation fadeout = AnimationUtils.loadAnimation(getContext(),R.anim.fadeout);
                 Animation fadein = AnimationUtils.loadAnimation(getContext(),R.anim.fadein);
                 imageView.startAnimation(fadeout);
-                Glide.with(getContext()).load((images.get((Math.abs(i[0]) + 1) % 4))).into(imageView);
+                Glide.with(getContext()).load((item.getImages().get((Math.abs(i[0]) + 1) % 4))).into(imageView);
                 --i[0];
                 imageView.startAnimation(fadein);
             });
@@ -247,9 +258,16 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 Macros.Functions.showSnackbar(listContainer, "Removed Successfully", Objects.requireNonNull(getContext()),R.drawable.ic_thumb_down_pink);
             });
 
-            String cur_price = new DecimalFormat("##.##").
-                    format(Double.parseDouble(item.getPrice())*Macros.POUND_TO_ILS) +
+            String cur_price;
+            if(item.getSeller().equals("ASOS"))
+               cur_price = new DecimalFormat("##.##").
+                       format(Double.parseDouble(item.getPrice())*Macros.POUND_TO_ILS) +
+                        Currency.getInstance("ILS").getSymbol();
+            else
+                cur_price = new DecimalFormat("##.##").
+                    format(Double.parseDouble(item.getPrice())) +
                     Currency.getInstance("ILS").getSymbol();
+
 
             if(item.isOutlet() || item.isOn_sale()) {
                 int discount = (int) (100 - Math.ceil(100*(Double.parseDouble(item.getReduced_price())/Double.parseDouble(item.getPrice()))));
@@ -263,9 +281,15 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.blink_anim);
                 sale.startAnimation(animation);
 
-                String new_price = new DecimalFormat("##.##").
-                        format(Double.parseDouble(item.getReduced_price())*Macros.POUND_TO_ILS) +
-                        Currency.getInstance("ILS").getSymbol();
+                String new_price;
+                if(item.getSeller().equals("ASOS"))
+                    new_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(item.getPrice())*Macros.POUND_TO_ILS) +
+                            Currency.getInstance("ILS").getSymbol();
+                else
+                    new_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(item.getPrice())) +
+                            Currency.getInstance("ILS").getSymbol();
 
                 old_price.setVisibility(View.VISIBLE);
                 old_price.setText(cur_price);
@@ -285,8 +309,8 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
             TextView buy = convertView.findViewById(R.id.list_item_buy_button);
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(), item.getSite_link()));
 
-            seller_logo2.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),item));
-            seller_name.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),item));
+            seller_logo2.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),item.getSellerId()));
+            seller_name.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),item.getSellerId()));
         }
 
         return convertView;

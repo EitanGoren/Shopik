@@ -24,6 +24,7 @@ public class MainModel extends ViewModel {
     private MutableLiveData<Map<String, LikedUser>> customers_info;
     private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> all_items;
     private MutableLiveData<CopyOnWriteArrayList<Pair<String,ShoppingItem>>> all_items_ids;
+    private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> castro_items;
     private ArrayList<ShoppingItem> shoppingAdsArray;
 
     public MainModel(){
@@ -45,6 +46,10 @@ public class MainModel extends ViewModel {
         CopyOnWriteArrayList<Pair<String,ShoppingItem>> ids = new CopyOnWriteArrayList<>();
         this.all_items_ids = new MutableLiveData<>();
         all_items_ids.setValue(ids);
+
+        CopyOnWriteArrayList<ShoppingItem> castro = new CopyOnWriteArrayList<>();
+        this.castro_items = new MutableLiveData<>();
+        castro_items.setValue(castro);
     }
 
     public LiveData<Map<String, LikedUser>> getCustomers_info() {
@@ -60,9 +65,6 @@ public class MainModel extends ViewModel {
         Objects.requireNonNull(this.customers_info.getValue()).put(id,likedUser);
     }
 
-    public void add_item(ShoppingItem item) {
-        Objects.requireNonNull(this.all_items.getValue()).add(item);
-    }
     public LiveData<CopyOnWriteArrayList<ShoppingItem>> getAll_items() {
         return all_items;
     }
@@ -70,14 +72,21 @@ public class MainModel extends ViewModel {
         return all_items_ids;
     }
 
+    //castro
+    public void add_castro_item(ShoppingItem item) {
+        Objects.requireNonNull(this.castro_items.getValue()).add(item);
+    }
+    public LiveData<CopyOnWriteArrayList<ShoppingItem>> getAllCastroItems() {
+        return castro_items;
+    }
+    public void postAllCastroItemsIds(){
+        CopyOnWriteArrayList<ShoppingItem> koko = this.castro_items.getValue();
+        castro_items.postValue(koko);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addItemId(Pair<String,ShoppingItem> pair) {
         Objects.requireNonNull(this.all_items_ids.getValue()).add(pair);
-    }
-
-    public void postAllItems(){
-        CopyOnWriteArrayList<ShoppingItem> koko = this.all_items.getValue();
-        all_items.postValue(koko);
     }
     public void postAllItemsIds(){
         CopyOnWriteArrayList<Pair<String,ShoppingItem>> koko = this.all_items_ids.getValue();

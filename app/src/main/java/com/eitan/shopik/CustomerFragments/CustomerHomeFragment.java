@@ -81,21 +81,35 @@ public class CustomerHomeFragment extends Fragment {
 
         init();
 
-        arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item, swipesModel.getItems().getValue());
         mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
+
             swipesModel.clearAllItems();
             arrayAdapter.notifyDataSetChanged();
-            pairs.sort((o1, o2) -> {
-                assert o1.first != null;
-                assert o2.first != null;
-                return Integer.parseInt(o1.first) - Integer.parseInt(o2.first);
-            });
 
             int count = 0;
-            for (Pair<String, ShoppingItem> pair : pairs) {
+            for (Pair<String, ShoppingItem> pair : pairs){
                 assert pair.first != null;
-                if (swipesModel.getLast_item_id().getValue() == null || Objects.requireNonNull(Long.parseLong(swipesModel.getLast_item_id().getValue()) < Long.parseLong(pair.first))) {
+                assert pair.second != null;
+                flingContainer.setAdapter(arrayAdapter);
+                if (pair.second.getSeller().equals("ASOS")){
+                    if (swipesModel.getLast_item_id().getValue() == null ||
+                            Objects.requireNonNull(Long.parseLong(swipesModel.getLast_item_id().getValue()) < Long.parseLong(pair.first))) {
 
+                        swipesModel.addToItems(pair.second);
+                        arrayAdapter.notifyDataSetChanged();
+                        count++;
+                        if ((count % Macros.SWIPES_TO_AD == 0) && count > 0) {
+                            ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                            if (shoppingItemAd != null) {
+                                swipesModel.addToItems(shoppingItemAd);
+                                count++;
+                                arrayAdapter.notifyDataSetChanged();
+                            }
+                        }
+                        arrayAdapter.notifyDataSetChanged();
+                    }
+                }
+                else{
                     swipesModel.addToItems(pair.second);
                     arrayAdapter.notifyDataSetChanged();
                     count++;
@@ -107,7 +121,6 @@ public class CustomerHomeFragment extends Fragment {
                             arrayAdapter.notifyDataSetChanged();
                         }
                     }
-                    flingContainer.setAdapter(arrayAdapter);
                     arrayAdapter.notifyDataSetChanged();
                 }
             }
@@ -115,10 +128,8 @@ public class CustomerHomeFragment extends Fragment {
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                if (!Objects.requireNonNull(Objects.requireNonNull(arrayAdapter.getItem(0)).isDummyLastItem())) {
-                    swipesModel.removeFromItems();
-                    arrayAdapter.notifyDataSetChanged();
-                }
+                swipesModel.removeFromItems();
+                arrayAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -134,14 +145,7 @@ public class CustomerHomeFragment extends Fragment {
 
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
-            public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                if(itemsInAdapter == 0){
-                    ShoppingItem DummyLastItem = new ShoppingItem();
-                    DummyLastItem.setDummyLastItem(true);
-                    swipesModel.addToItems(DummyLastItem);
-                    arrayAdapter.notifyDataSetChanged();
-                }
-            }
+            public void onAdapterAboutToEmpty(int itemsInAdapter) {}
 
             @Override
             public void onScroll(float scrollProgressPercent) {
@@ -161,15 +165,14 @@ public class CustomerHomeFragment extends Fragment {
 
         tabLayout = null;
         flingContainer.setFlingListener(null);
-        flingContainer = null;
         mainModel.getAll_items_ids().removeObservers(getViewLifecycleOwner());
-        arrayAdapter.clear();
-        arrayAdapter = null;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void init() {
         tabLayout = requireActivity().findViewById(R.id.top_nav);
         flingContainer = requireActivity().findViewById(R.id.frame);
+        arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item, swipesModel.getItems().getValue());
     }
 
     private void updateBadge() {
@@ -196,7 +199,7 @@ public class CustomerHomeFragment extends Fragment {
                 shoppingItem.setFavorite(isFavorite);
                 if (isFavorite) {
                     dialog = new Dialog(requireContext());
-                    String imageUrl = connection.getASOSimageUrl(1, shoppingItem.getColor(), shoppingItem.getId_in_seller());
+                    String imageUrl = shoppingItem.getImages().get(0);//connection.getASOSimageUrl(1, shoppingItem.getColor(), shoppingItem.getId_in_seller());
                     showFavoritesDialog(imageUrl);
                 }
                 swipesModel.setLast_item_id(item_id);

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".CustomerFragments.WatchedItemsFragment">
 
     <ScrollView
@@ -17,10 +16,10 @@
             <LinearLayout
                 android:id="@+id/enter_info"
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
+                android:layout_height="230dp"
                 android:layout_alignParentTop="true"
                 android:orientation="vertical"
-                android:padding="30dp">
+                android:padding="20dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/enter_email"
@@ -74,7 +73,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_market"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="350dp"
                     android:layout_below="@id/progressBar_market"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="2dp"
@@ -124,6 +123,7 @@
             </RelativeLayout>
 
         </RelativeLayout>
+
     </ScrollView>
 
 </RelativeLayout>

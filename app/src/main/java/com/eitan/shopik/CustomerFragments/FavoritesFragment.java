@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.eitan.shopik.Adapters.FavouritesListAdapter;
@@ -45,7 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FavoritesFragment extends Fragment {
 
@@ -85,8 +83,9 @@ public class FavoritesFragment extends Fragment {
         init();
 
         arrayAdapter = new FavouritesListAdapter(requireActivity(), R.layout.list_item, model.getItems().getValue());
-        mainModel.getAll_items_ids().observe(requireActivity(), (Observer<CopyOnWriteArrayList<Pair<String, ShoppingItem>>>) pairs -> {
+        mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
             model.clearItems();
+            arrayAdapter.notifyDataSetChanged();
             int count = 0;
             for (Pair<String,ShoppingItem> item : pairs) {
                 assert item.second != null;
@@ -110,11 +109,10 @@ public class FavoritesFragment extends Fragment {
         listContainer.setOnScrollListener( new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)) {
+                if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE))
                     showArrow();
-                } else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
+                else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL))
                     hideArrow();
-                }
             }
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) { }
@@ -158,7 +156,6 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
         arrayAdapter = null;
         genderModel.getType().removeObservers(getViewLifecycleOwner());
         genderModel.getSub_category().removeObservers(getViewLifecycleOwner());

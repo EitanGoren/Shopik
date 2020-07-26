@@ -4,13 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -28,8 +21,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
-import com.eitan.shopik.Company.Company;
 import com.eitan.shopik.Database;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -221,7 +217,7 @@ public class NewItemFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 type = parent.getItemAtPosition(position).toString();
-                    if(type.equals(Macros.Items.SHOES)){
+                    if(type.equals(Macros.SHOES)){
                         classification_layout.setVisibility(View.GONE);
                         accessories_layout.setVisibility(View.GONE);
                         material_layout.setVisibility(View.GONE);
@@ -406,7 +402,7 @@ public class NewItemFragment extends Fragment {
                 newImage.put("onSale",false);
                 newImage.put("numSold", "0");
                 newImage.put("inStock", stock);
-                if(type.equals(Macros.Items.BAG)){
+                if(type.equals(Macros.BAG)){
                     newImage.put("animalFriendly", animal);
                     newImage.put("strapType", strap_type);
                     newImage.put("openingType", opening_type);

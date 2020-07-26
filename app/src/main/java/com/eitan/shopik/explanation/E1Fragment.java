@@ -1,6 +1,7 @@
 package com.eitan.shopik.explanation;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -53,6 +55,7 @@ public class E1Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        closeKeyboard();
     }
 
     @Override
@@ -93,9 +96,9 @@ public class E1Fragment extends Fragment {
         RelativeLayout relativeLayout2 = requireView().findViewById(R.id.layout3);
         RelativeLayout relativeLayout3 = requireView().findViewById(R.id.layout4);
 
-        relativeLayout1.setOnClickListener(v -> showNewItemsDialog(Macros.Items.NEW_CLOTHING));
-        relativeLayout2.setOnClickListener(v -> showNewItemsDialog(Macros.Items.NEW_SHOES));
-        relativeLayout3.setOnClickListener(v -> showNewItemsDialog(Macros.Items.NEW_TRENDING));
+        relativeLayout1.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_CLOTHING));
+        relativeLayout2.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_SHOES));
+        relativeLayout3.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_TRENDING));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL,false);
         RecyclerView recyclerView = requireView().findViewById(R.id.recycler);
@@ -159,7 +162,7 @@ public class E1Fragment extends Fragment {
         dialogProgressBar.setVisibility(View.INVISIBLE);
 
         String text_header ="";
-        if(type.equals(Macros.Items.NEW_TRENDING)){
+        if(type.equals(Macros.NEW_TRENDING)){
             text_header = "Trending Now";
             TextView header = dialog.findViewById(R.id.new_items_header);
             header.setText(text_header);
@@ -285,5 +288,13 @@ public class E1Fragment extends Fragment {
             @Override
             public void onLoadCleared(@Nullable Drawable placeholder) {}
         });
+    }
+    private void closeKeyboard(){
+        View view = requireActivity().getCurrentFocus();
+        if( view != null ){
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
     }
 }

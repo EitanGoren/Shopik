@@ -24,7 +24,8 @@
     <color name="womenColorLight">#FFFFFF</color>
     <color name="menColorLight">#FFFFFF</color>
     <color name="customerProfileBackground">#FFFFFF</color>
-    <color name="SplashScreenBackground">#FFFFFF</color>  <!--489A93-->
+    <color name="SplashScreenBackground">#006064</color>  <!--489A93-->
+    <color name="SplashScreenText">#FFFFFF</color>
     <color name="GenderScreenTheme">#555555</color>
     <color name="SignInColor">#FFFFFF</color>
     <color name="CollapsedBackground">#FFFFFF</color>

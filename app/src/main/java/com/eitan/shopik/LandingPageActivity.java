@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +51,6 @@ public class LandingPageActivity extends AppCompatActivity {
     private static FirebaseUser user;
     private FirebaseFirestore db;
     private int currentApiVersion;
-    private Switch is_company;
     private static final int DELAY_MILLIS = 5000;
 
     @Override
@@ -61,6 +59,8 @@ public class LandingPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_landing_page);
 
         init();
+
+        //FirebaseAuth.getInstance().signOut();
 
         if(!isConnectedToInternet()){
             RelativeLayout LandingLayout = findViewById(R.id.LandingLayout);
@@ -72,7 +72,6 @@ public class LandingPageActivity extends AppCompatActivity {
             );
         }
 
-        // FirebaseAuth.getInstance().signOut();
         currentApiVersion = android.os.Build.VERSION.SDK_INT;
 
         // This work only for android 4.4+
@@ -97,11 +96,12 @@ public class LandingPageActivity extends AppCompatActivity {
         }
 
         if(user == null){
-            //TODO SIGN IN SOMEONE NEW
+
             // Choose authentication providers
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.GoogleBuilder().build(),
-                    new AuthUI.IdpConfig.FacebookBuilder().build());
+                    new AuthUI.IdpConfig.FacebookBuilder().build(),
+                    new AuthUI.IdpConfig.EmailBuilder().build());
 
             // You must provide a custom layout XML resource and configure at least one
             // provider button ID. It's important that that you set the button ID for every provider
@@ -110,6 +110,7 @@ public class LandingPageActivity extends AppCompatActivity {
                     .Builder(R.layout.activity_auth)
                     .setGoogleButtonId(R.id.google_sign_in)
                     .setFacebookButtonId(R.id.facebook_sign_in)
+                    .setEmailButtonId(R.id.email_sign_in)
                     .build();
 
             // Create and launch sign-in intent
@@ -147,7 +148,7 @@ public class LandingPageActivity extends AppCompatActivity {
                     }
                 }
                 else {
-                    Log.d(Macros.TAG,"Failed with" + task.getException());
+                    Log.d(Macros.TAG,"Failed with " + task.getException());
                 }
             });
             company_document.get().addOnCompleteListener(task -> {
@@ -168,7 +169,7 @@ public class LandingPageActivity extends AppCompatActivity {
                     }
                 }
                 else {
-                    Log.d(Macros.TAG,"Failed with" + task.getException());
+                    Log.d(Macros.TAG,"Failed with " + task.getException());
                 }
             });
         }
@@ -294,44 +295,54 @@ public class LandingPageActivity extends AppCompatActivity {
                 User new_user = response.getUser();
                 token = response.getIdpToken();
                 user = FirebaseAuth.getInstance().getCurrentUser();
-                final String[] user_name = Objects.requireNonNull(new_user.getName()).split(" ",2);
-                String hi_txt = "Hi " + user_name[0];
-                welcome.setText(hi_txt);
-                provider = new_user.getProviderId();
                 email = new_user.getEmail();
+                provider = new_user.getProviderId();
+
+                String[] user_name;
+                if(new_user.getName() != null) {
+                     user_name = Objects.requireNonNull(new_user.getName()).split(" ", 2);
+                    String hi_txt = "Hi " + user_name[0];
+                    welcome.setText(hi_txt);
+                }
+                else welcome.setText("Hi " + email);
 
                 animateLayouts();
 
-                if (provider.equals(Macros.Providers.FACEBOOK)) {
-                    AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                    GraphRequest request = GraphRequest.newMeRequest(accessToken, (object, response1) -> {
+                switch (provider) {
+                    case Macros.Providers.FACEBOOK:
+                        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                        GraphRequest request = GraphRequest.newMeRequest(accessToken, (object, response1) -> {
+                            try {
+                                id_in_provider = object.getString("id");
+                                imageUrl = "http://graph.facebook.com/" + id_in_provider + "/picture?type=large&width=720&height=720";
+                                Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
+                                isCustomerOrCompany(user.getUid());
+                            } catch (JSONException e) {
+                                Log.d(Macros.TAG, "facebook failed: " + e.getMessage());
+                            }
+                        });
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id,name");
+                        request.setParameters(parameters);
+                        request.executeAsync();
+                        break;
+                    case Macros.Providers.GOOGLE:
+                        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
                         try {
-                            id_in_provider = object.getString("id");
-                            imageUrl = "http://graph.facebook.com/" + id_in_provider + "/picture?type=large&width=720&height=720";
-                            Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
-                            isCustomerOrCompany(user.getUid());
+                            if (acct != null) {
+                                id_in_provider = acct.getId();
+                                imageUrl = Objects.requireNonNull(acct.getPhotoUrl()).toString().split("=", 2)[0].concat("=s700-c");
+                                Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
+                                isCustomerOrCompany(user.getUid());
+                            }
+                        } catch (Exception e) {
+                            Log.d(Macros.TAG, "googleAuth failed: " + e.getMessage());
                         }
-                        catch (JSONException e) {
-                            Log.d(Macros.TAG,"facebook failed: " + e.getMessage());
-                        }
-                    });
-                    Bundle parameters = new Bundle();
-                    parameters.putString("fields", "id,name");
-                    request.setParameters(parameters);
-                    request.executeAsync();
-                }
-                else if (provider.equals(Macros.Providers.GOOGLE)) {
-                    GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
-                    try {
-                        if (acct != null) {
-                            id_in_provider = acct.getId();
-                            imageUrl = Objects.requireNonNull(acct.getPhotoUrl()).toString().split("=", 2)[0].concat("=s700-c");
-                            Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
-                            isCustomerOrCompany(user.getUid());
-                        }
-                    } catch (Exception e) {
-                        Log.d(Macros.TAG,"googleAuth failed: " + e.getMessage());
-                    }
+                        break;
+                    case Macros.Providers.PASSWORD:
+                       // Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
+                        isCustomerOrCompany(user.getUid());
+                        break;
                 }
             }
             else {
@@ -346,22 +357,14 @@ public class LandingPageActivity extends AppCompatActivity {
 
     private void animateLayouts() {
 
-        Animation top_anim = AnimationUtils.loadAnimation(this, R.anim.top_lines_animation);
         Animation middle_anim = AnimationUtils.loadAnimation(this, R.anim.middle_line_animation);
         Animation bottom_anim = AnimationUtils.loadAnimation(this, R.anim.bottom_line_animation);
         Animation image_anim = AnimationUtils.loadAnimation(this, R.anim.user_image_animation);
-
-        RelativeLayout lines = findViewById(R.id.lines_layout);
-        lines.setAnimation(top_anim);
-
-        RelativeLayout bot_lines = findViewById(R.id.bot_lines);
-        bot_lines.setAnimation(bottom_anim);
 
         RelativeLayout user_layout = findViewById(R.id.hello_layout);
         user_layout.setAnimation(image_anim);
 
         TextView copyright = findViewById(R.id.copyright_text);
-       // copyright.setText(Macros.COPYRIGHT_TEXT);
         copyright.setAnimation(bottom_anim);
 
         RelativeLayout middle_layout = findViewById(R.id.middle_layout);

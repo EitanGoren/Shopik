@@ -86,14 +86,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             allItemsModel.clearItems();
             int count = 0;
             for (Pair<String,ShoppingItem> item : pairs) {
-                final ArrayList<String> imagesUrl = new ArrayList<>();
-                Database connection = new Database();
                 assert item.second != null;
-                imagesUrl.add(connection.getASOSimageUrl(1,item.second.getColor(),item.second.getId_in_seller()));
-                imagesUrl.add(connection.getASOSimageUrl(2,item.second.getColor(),item.second.getId_in_seller()));
-                imagesUrl.add(connection.getASOSimageUrl(3,item.second.getColor(),item.second.getId_in_seller()));
-                imagesUrl.add(connection.getASOSimageUrl(4,item.second.getColor(),item.second.getId_in_seller()));
-
                 RecyclerItem recyclerItem = new RecyclerItem(item.second.getBrand(), item.second.getSite_link());
                 recyclerItem.setPrice(item.second.getPrice());
                 recyclerItem.setLink(item.second.getSite_link());
@@ -104,7 +97,22 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 recyclerItem.setVideo_link(item.second.getVideo_link());
                 recyclerItem.setOutlet(item.second.isOutlet());
                 recyclerItem.setReduced_price(item.second.getReduced_price());
-                recyclerItem.setImages(imagesUrl);
+                recyclerItem.setSeller(item.second.getSeller());
+                recyclerItem.setBrand(item.second.getBrand());
+                recyclerItem.setSeller_id(item.second.getSellerId());
+
+                if(item.second.getSeller().equals("ASOS")) {
+                    final ArrayList<String> imagesUrl = new ArrayList<>();
+                    Database connection = new Database();
+                    imagesUrl.add(connection.getASOSimageUrl(1, item.second.getColor(), item.second.getId_in_seller()));
+                    imagesUrl.add(connection.getASOSimageUrl(2, item.second.getColor(), item.second.getId_in_seller()));
+                    imagesUrl.add(connection.getASOSimageUrl(3, item.second.getColor(), item.second.getId_in_seller()));
+                    imagesUrl.add(connection.getASOSimageUrl(4, item.second.getColor(), item.second.getId_in_seller()));
+                    recyclerItem.setImages(imagesUrl);
+                }
+                else
+                    recyclerItem.setImages(item.second.getImages());
+
                 recyclerItem.setSellerImageUrl(item.second.getSellerLogoUrl());
 
                 allItemsModel.addItem(recyclerItem);
@@ -123,26 +131,25 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             }
             searchAdapter.setAllItems(Objects.requireNonNull(allItemsModel.getItems().getValue()));
         });
+
         listContainer.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if(view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)){
+                if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)) {
                     showArrow();
-                }
-                else if( (scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)){
+                } else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
                     hideArrow();
                 }
                 // were mot moving
-                if(scrollState == SCROLL_STATE_IDLE && !isOpened && !isSearchOpened)
+                if (scrollState == SCROLL_STATE_IDLE && !isOpened && !isSearchOpened)
                     main.extend();
-                    // were scrolling
+                // were scrolling
                 else
                     main.shrink();
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
-
         });
     }
 

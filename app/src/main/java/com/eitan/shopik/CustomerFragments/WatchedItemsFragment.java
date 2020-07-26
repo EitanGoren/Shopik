@@ -63,8 +63,16 @@ public class WatchedItemsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         init();
-
         check_circle.setVisibility(View.INVISIBLE);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL,false);
+        recyclerView = requireView().findViewById(R.id.recycler_market);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setScrollbarFadingEnabled(true);
+
+        recyclerAdapter = new RecyclerAdapter(list,"Market");
+        recyclerView.setAdapter(recyclerAdapter);
+
         mLoginBtn.setOnClickListener(v -> {
             mEmail = Objects.requireNonNull(email.getText()).toString();
             mPass = Objects.requireNonNull(pass.getText()).toString();
@@ -79,17 +87,12 @@ public class WatchedItemsFragment extends Fragment {
         mSearchBtn.setOnClickListener(v -> {
             mSearch = Objects.requireNonNull(search.getText()).toString();
 
+            list.clear();
+            recyclerAdapter.notifyDataSetChanged();
+
             searchProduct search = new searchProduct(mSearch);
             search.execute();
         });
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL,false);
-        recyclerView = requireView().findViewById(R.id.recycler_market);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setScrollbarFadingEnabled(true);
-
-        recyclerAdapter = new RecyclerAdapter(list,"Market");
-        recyclerView.setAdapter(recyclerAdapter);
     }
 
     private void init() {
@@ -158,8 +161,12 @@ public class WatchedItemsFragment extends Fragment {
         @Override
         protected void onPostExecute(String status) {
             super.onPostExecute(status);
+            check_circle.setVisibility(View.VISIBLE);
             if(status.equals("OK"))
-                check_circle.setVisibility(View.VISIBLE);
+                check_circle.setImageResource(R.drawable.ic_check_circle_green);
+            else{
+                check_circle.setImageResource(R.drawable.ic_baseline_not_interested_24);
+            }
         }
     }
 
@@ -182,6 +189,7 @@ public class WatchedItemsFragment extends Fragment {
                 Elements elements = document.getElementsByAttributeValueContaining("class","SEARCH tileBlock miglog-prod miglog-sellingmethod-by_unit");
                 for (Element elem : elements){
                     RecyclerItem recyclerItem = new RecyclerItem(elem.attributes().get("data-product-name"),null);
+                    recyclerItem.setPrice(elem.attributes().get("data-product-price"));
                     String img = elem.childNode(1).childNode(5).childNode(1).attributes().get("src");
                     recyclerItem.setImage_resource(img);
                     list.add(recyclerItem);

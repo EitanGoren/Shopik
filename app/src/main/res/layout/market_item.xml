@@ -3,8 +3,8 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="220dp"
-    android:layout_height="225dp"
+    android:layout_width="200dp"
+    android:layout_height="245dp"
     android:layout_centerInParent="true"
     android:layout_marginStart="25dp"
     android:layout_marginTop="25dp"
@@ -22,7 +22,7 @@
         <ImageView
             android:id="@+id/image_market"
             android:layout_width="match_parent"
-            android:layout_height="190dp"
+            android:layout_height="195dp"
             android:layout_alignParentTop="true"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -39,8 +39,23 @@
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:textAlignment="center"
             android:textColor="#ffffff"
-            android:textSize="14sp"
-            android:textStyle="normal"/>
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/price_market"
+            android:layout_width="65dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:background="#2E2E2E"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

@@ -33,17 +33,14 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
-import com.eitan.shopik.Company.CompanyProfileActivity;
 import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.google.android.gms.ads.VideoController;
-import com.google.android.gms.ads.formats.MediaView;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.ads.formats.UnifiedNativeAdView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.text.DecimalFormat;
@@ -79,7 +76,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
         if(shoppingItem.isAd() && shoppingItem.getNativeAd() != null && !shoppingItem.isDummyLastItem()) {
             UnifiedNativeAdView adView = (UnifiedNativeAdView) LayoutInflater.from(getContext()).inflate(R.layout.native_card_ad_template,null);
             // Set the media view.
-            adView.setMediaView((MediaView) adView.findViewById(R.id.ad_media));
+            adView.setMediaView(adView.findViewById(R.id.ad_media));
 
             // Set other ad assets.
             adView.setHeadlineView(adView.findViewById(R.id.ad_brand_name));
@@ -166,23 +163,29 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             convertView = adView;
             final float scale = getContext().getResources().getDisplayMetrics().density;
             int pixels = (int) (570 * scale + 0.5f);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT,pixels, Gravity.CENTER );
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT,
+                    pixels,
+                    Gravity.CENTER
+            );
             convertView.setLayoutParams(params);
         }
-        else if(!shoppingItem.isAd() && !shoppingItem.isDummyLastItem()) {
-
-            final ArrayList<String> imagesUrl = new ArrayList<>();
-            Database connection = new Database();
-
-            imagesUrl.add(connection.getASOSimageUrl(1,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
-            imagesUrl.add(connection.getASOSimageUrl(2,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
-            imagesUrl.add(connection.getASOSimageUrl(3,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
-            imagesUrl.add(connection.getASOSimageUrl(4,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
+        else if(!shoppingItem.isAd()) {
+            ArrayList<String> imagesUrl = new ArrayList<>();
+            if(shoppingItem.getSeller().equals("ASOS")) {
+                Database connection = new Database();
+                imagesUrl.add(connection.getASOSimageUrl(1, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
+                imagesUrl.add(connection.getASOSimageUrl(2, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
+                imagesUrl.add(connection.getASOSimageUrl(3, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
+                imagesUrl.add(connection.getASOSimageUrl(4, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
+                shoppingItem.setImages(imagesUrl);
+            }
+            else
+                imagesUrl = shoppingItem.getImages();
 
             isFavorite[0] = false;
 
             SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.swipe_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.swipe_item, parent,false);
 
             final ImageView favorite = convertView.findViewById(R.id.swipe_favorite_button);
             final ImageView image = convertView.findViewById(R.id.swipe_image);
@@ -214,10 +217,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                         Toast.makeText(getContext(), "info", Toast.LENGTH_SHORT).show();
                        break;
                     case R.id.card_seller:
-                        Intent intent = new Intent(getContext(), CompanyProfileActivity.class);
-                        intent.putExtra("id",shoppingItem.getSellerId());
-                        intent.putExtra("customer_id", Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
-                        getContext().startActivity(intent);
+                        Macros.Functions.sellerProfile(getContext(),shoppingItem.getSellerId());
                         break;
                     case R.id.card_favorites:
                         if(!isFavorite[0]) {
@@ -280,11 +280,19 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 handler.postDelayed(r, 1050);
             });
 
-            seller_logo.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),shoppingItem));
+            seller_logo.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),shoppingItem.getSellerId()));
 
-            String cur_price = new DecimalFormat("##.##").
-                    format(Double.parseDouble(shoppingItem.getPrice())*Macros.POUND_TO_ILS) +
-                    Currency.getInstance("ILS").getSymbol();
+            String cur_price;
+            if(shoppingItem.getSeller().equals("ASOS")) {
+                cur_price = new DecimalFormat("##.##").
+                        format(Double.parseDouble(shoppingItem.getPrice())*Macros.POUND_TO_ILS) +
+                        Currency.getInstance("ILS").getSymbol();
+            }
+            else {
+                cur_price = new DecimalFormat("##.##").
+                        format(Double.parseDouble(shoppingItem.getPrice())) +
+                        Currency.getInstance("ILS").getSymbol();
+            }
 
             if(shoppingItem.isOutlet() || shoppingItem.isOn_sale()) {
                 int discount = (int) (100 - Math.ceil(100*(Double.parseDouble(shoppingItem.getReduced_price())/Double.parseDouble(shoppingItem.getPrice()))));
@@ -298,9 +306,15 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.blink_anim);
                 sale.startAnimation(animation);
 
-                String new_price = new DecimalFormat("##.##").
-                        format(Double.parseDouble(shoppingItem.getReduced_price())*Macros.POUND_TO_ILS) +
-                        Currency.getInstance("ILS").getSymbol();
+                String new_price;
+                if(shoppingItem.getSeller().equals("ASOS"))
+                    new_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(shoppingItem.getReduced_price()) * Macros.POUND_TO_ILS) +
+                            Currency.getInstance("ILS").getSymbol();
+                else
+                    new_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(shoppingItem.getReduced_price())) +
+                            Currency.getInstance("ILS").getSymbol();
 
                 old_price.setVisibility(View.VISIBLE);
                 old_price.setText(cur_price);
@@ -315,7 +329,6 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 price.setText(cur_price);
                 price.setTextColor(Color.WHITE);
             }
-
             if(shoppingItem.isExclusive()) {
                 exclusive.setVisibility(View.VISIBLE);
                 exclusive.setText("EXCLUSIVE");
@@ -325,7 +338,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
             Glide.with(getContext()).load(shoppingItem.getSellerLogoUrl()).into(seller_logo);
 
-            setBrandName(shoppingItem, brand_name);
+            brand_name.setText(shoppingItem.getBrand());
 
             favorite.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.like_swing);
@@ -336,25 +349,12 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 handler.postDelayed(r, 1000);
             });
 
-            shoppingItem.setImages(imagesUrl);
             fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),shoppingItem));
 
-            Glide.with(getContext()).load(imagesUrl.get(0)).into(image);
-
-        }
-        else if(shoppingItem.isDummyLastItem()){
-
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.swipe_item, parent, false);
-
-            final ImageView image = convertView.findViewById(R.id.swipe_image);
-            Glide.with(getContext()).load(getContext().getDrawable(R.drawable.ic_baseline_trending_up)).into(image);
+            Glide.with(getContext()).load(shoppingItem.getImages().get(0)).into(image);
 
         }
         return convertView;
-    }
-
-    private void setBrandName(ShoppingItem shoppingItem, TextView brand_name) {
-        brand_name.setText(shoppingItem.getBrand());
     }
 
     public boolean isFavorite(){

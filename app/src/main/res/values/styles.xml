@@ -8,19 +8,19 @@
         <item name="colorControlActivated">#2B7BBD</item>
 
         <!-- to line of phone, clock... -->
-        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorPrimaryDark">@color/SplashScreenBackground</item>
 
-        <item name="colorAccent">#000000</item>
+        <item name="colorAccent">@color/SplashScreenBackground</item>
         <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
     </style>
 
     <style name="farts" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:statusBarColor">#292929</item>
+        <item name="android:statusBarColor">@color/SplashScreenBackground</item>
         <item name="android:windowLightStatusBar">false</item>
 
         <!-- navigation buttons etc.. -->
         <item name="colorPrimary">@color/colorAccent</item>
-        <item name="android:navigationBarColor">#292929</item>
+        <item name="android:navigationBarColor">@color/SplashScreenBackground</item>
         <item name="colorControlActivated">#2B7BBD</item>
 
         <!-- line of phone, clock... -->

@@ -21,10 +21,7 @@ import java.util.Objects;
 
 public class Macros {
 
-    public static final int SEARCH_TO_AD = 15;
-
     public static final String TAG = "com.eitan.shopik";
-    public static final String COPYRIGHT_TEXT = "Shopik - developed by Eitan Goren";
     public static final String COMPANIES = "Companies";
     public static final String DEFAULT_DESCRIPTION = "Write something here...";
     public static final String DEFAULT_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=oQbh5Kvet04";
@@ -42,294 +39,49 @@ public class Macros {
     public static final String FB_PLACEMENT_ID = "555191575133910_605556963430704";
     public static final String YOUTUBE_API = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet";
     public static final String VIDEO_LINK = "https://video.asos-media.com/products/ASOS/_media_";
-    public static final double POUND_TO_ILS = 5.2482;
-    public static final int SWIPES_TO_AD = 8;
-    public static final int FAV_TO_AD = 15;
-    public static final int SUGGESTED_TO_AD = 15;
-    public static final int NUM_OF_ADS = 15;
-
-    public static class Functions {
-
-        public static void showSnackbar(View view, String text, Context context, int drawableRes) {
-            Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
-            View snackbarLayout = snackbar.getView();
-            TextView textView = snackbarLayout.findViewById(com.google.android.material.R.id.snackbar_text);
-            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, drawableRes, 0);
-           // textView.setCompoundDrawablePadding(context.getResources().getDimensionPixelOffset(R.dimen.bottom_ellipsis_height));
-            textView.setAllCaps(true);
-            textView.setBackgroundColor(Color.TRANSPARENT);
-            snackbarLayout.setBackgroundColor(context.getColor(R.color.SnackbarBackground));
-            textView.setTextColor(Color.BLACK);
-            textView.setTextSize(16);
-            snackbar.show();
-        }
-
-        public static void buy(Context context, String site_link) {
-            if (site_link == null) return;
-            if (!site_link.startsWith("http://") && !site_link.startsWith("https://"))
-                site_link = ("http://" + site_link);
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(site_link));
-            context.startActivity(browserIntent);
-        }
-
-        public static void fullscreen(Context context, Object item) {
-            Intent intent = new Intent(context, FullscreenImageActivity.class);
-            Bundle bundle = new Bundle();
-            if(item instanceof RecyclerItem){
-                RecyclerItem recyclerItem = (RecyclerItem) item;
-                bundle.putSerializable("item",recyclerItem);
-            }
-            else if(item instanceof ShoppingItem){
-                ShoppingItem shoppingItem = (ShoppingItem) item;
-                bundle.putSerializable("item",shoppingItem);
-            }
-            intent.putExtra("bundle", bundle);
-            context.startActivity(intent);
-        }
-
-        public static void goToCustomerMain(Context context, RecyclerItem item){
-            Intent intent = new Intent(context, CustomerMainActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("gender", item.getGender());
-            bundle.putString("type", item.getType());
-            bundle.putString("imageUrl", item.getUserImageUrl());
-            bundle.putString("sub_category", item.getItem_sub_category());
-            intent.putExtra("bundle", bundle);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            context.startActivity(intent);
-        }
-
-        public static void sellerProfile(Context context, ShoppingItem item){
-            Intent intent = new Intent(context, CompanyProfileActivity.class);
-            intent.putExtra("id",item.getSellerId());
-            intent.putExtra("customer_id", Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
-            context.startActivity(intent);
-        }
-
-        public static Pair<Integer,Integer> getCategoryNum(String gender, String sub_cat, String item_type) {
-            switch (item_type) {
-                case Macros.Items.BAG:
-                    return getBag(sub_cat);
-                case Macros.Items.JEANS:
-                    return getJeans(gender,sub_cat);
-                case Macros.Items.SHOES:
-                    return getShoes(gender,sub_cat);
-                case Macros.Items.DRESS:
-                    return getDress(sub_cat);
-                case Macros.Items.SHIRT:
-                    return getShirt(gender,sub_cat);
-                case Macros.Items.WATCH:
-                    return getWatch(gender,sub_cat);
-                case Macros.Items.SUNGLASSES:
-                    return getSunglasses(gender,sub_cat);
-                case Macros.Items.JACKETS:
-                    return getJackets(gender,sub_cat);
-                case Macros.Items.JEWELLERY:
-                    return getJewellery(gender,sub_cat);
-                default:
-                    return getSwimwear(sub_cat);
-            }
-        }
-
-        private static Pair<Integer,Integer> getJeans(String gender, String sub_cat) {
-            switch (sub_cat) {
-                case "jeggings":
-                    return new Pair<>(19057,1);
-                case "slim":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(15157,2) : new Pair<>(5054,1);
-                case "straight":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(3630,1) : new Pair<>(5052,1);
-                case "ripped":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(19823,3) : new Pair<>(16463,1);
-                case "high-waist":
-                    return new Pair<>(15159,6);
-                default:
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(10769,1) : new Pair<>(5403,1);
-            }
-        }
-
-        private static Pair<Integer,Integer> getShoes(String gender, String sub_cat) {
-            switch (sub_cat) {
-                case "boots":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(6455,1) : new Pair<>(5774,1);
-                case "heels":
-                    return new Pair<>(6461,1);
-                case "sliders":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17170,1) : new Pair<>(17514,1);
-                case "loafers":
-                    return new Pair<>(11247,1);
-                default:
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17170,1) : new Pair<>(6593,1);
-                    //sandals
-            }
-        }
-
-        private static Pair<Integer,Integer> getDress(String sub_cat) {
-            switch (sub_cat) {
-                case "evening":
-                    return new Pair<>(8857, 25);
-                case "jumper":
-                    return new Pair<>(12686, 2);
-                case "party":
-                    return new Pair<>(11057, 25);
-                case "maxi":
-                    return new Pair<>(9979, 16);
-                case "midi":
-                    return new Pair<>(12899, 22);
-                default:
-                    return new Pair<>(13934, 22);
-            }
-        }
-
-        private static Pair<Integer,Integer> getShirt(String gender,String sub_cat) {
-            switch (sub_cat) {
-                case "hoodies":
-                    return  gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17426,3) : new Pair<>(15427,10);
-                case "sweatshirts":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17427,3) : new Pair<>(15426,10);
-                case "blouses":
-                    return new Pair<>(11318,13);
-                case "t-shirts":
-                    return new Pair<>(4718,22);
-                case "check":
-                    return new Pair<>(12299,2);
-                case "denim":
-                    return new Pair<>(13024,2);
-                case "oxford":
-                    return new Pair<>(14478,2);
-                case "camis":
-                    return new Pair<>(15202,3);
-                case "summer-top":
-                    return new Pair<>(28018,6);
-                default: //evening
-                    return new Pair<>(11320,3);
-            }
-        }
-
-        private static Pair<Integer,Integer> getWatch(String gender, String sub_cat) {
-            switch (sub_cat) {
-                case "smart":
-                    return new Pair<>(26217,1);
-                case "digital":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11328,1) : new Pair<>(29087,1);
-                default:
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(5088,2) : new Pair<>(19855,3);
-                    //All
-            }
-        }
-
-        private static Pair<Integer,Integer> getSunglasses(String gender, String sub_cat) {
-            switch (sub_cat) {
-                case "round":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17433,2) : new Pair<>(19271,2);
-                case "cat-eye":
-                    return new Pair<>(17432,1);
-                case "square":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(15192,2) : new Pair<>(21043,2);
-                default:
-                    return new Pair<>(15191,1); //"aviator"
-            }
-        }
-
-        private static Pair<Integer,Integer> getJackets(String gender, String sub_cat) {
-            switch (sub_cat) {
-                case "jacket":
-                    return new Pair<>(11894,7);
-                case "coat":
-                    return new Pair<>(11893,3);
-                case "teddy":
-                    return new Pair<>(29374,1);
-                case "leather":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11895,1) : new Pair<>(11760,1);
-                case "biker":
-                    return new Pair<>(12340,1);
-                case "trench":
-                    return new Pair<>(11902,1);
-                case "denim":
-                   return new Pair<>(11908,3);
-                case "winter":
-                    return new Pair<>(29375,1);
-                default :
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(28643,1) : new Pair<>(28642,1);
-                    //puffer
-            }
-        }
-
-        private static Pair<Integer,Integer> getJewellery(String gender, String sub_cat) {
-            switch (sub_cat) {
-                case "ring":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11407,2) : new Pair<>(13834,2);
-                case "anklet":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(29193,1) : new Pair<>(29194,1);
-                case "earrings":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11409,6) : new Pair<>(13837,1);
-                case "necklace":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11408,4) : new Pair<>(13836,3);
-                default:
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11410,1) : new Pair<>(13835,1);
-            }
-        }
-
-        private static Pair<Integer,Integer> getSwimwear(String sub_cat) {
-            switch (sub_cat) {
-                case "bikini":
-                    return new Pair<>(10117,20);
-                case "swimsuit":
-                    return new Pair<>(10118,4);
-                default:
-                    return new Pair<>(13210,10);
-                    //mens
-            }
-        }
-
-        private static Pair<Integer,Integer> getBag(String sub_cat) {
-            switch (sub_cat) {
-
-                case "purses":
-                    return new Pair<>(11304, 1);
-                case "clutches":
-                    return new Pair<>(11305, 1);
-                case "shoulder":
-                    return new Pair<>(11307, 1);
-                case "rucksacks":
-                    return new Pair<>(12496, 2);
-                case "crossbody":
-                    return new Pair<>(15121, 3);
-                case "beach":
-                    return new Pair<>(15122, 1);
-                case "bum":
-                    return new Pair<>(21804, 1);
-                default:
-                    return new Pair<>(15142, 1);
-            }
-        }
-    }
-
+    public static final String BAG = "Bag";
+    public static final String SHOES = "Shoes";
+    public static final String JEANS = "Jeans";
+    public static final String DRESS = "Dress";
+    public static final String SHIRT = "Shirt";
+    public static final String SUNGLASSES = "Sunglasses";
+    public static final String SWIMWEAR = "Swimwear";
+    public static final String JACKETS = "Jackets";
+    public static final String JEWELLERY = "Jewellery";
+    public static final String WATCH = "Watch";
+    public static final String NEW_SHOES = "Shoes";
+    public static final String NEW_TRENDING = "TrendingNow";
+    public static final String NEW_CLOTHING = "Clothing";
     public static final String WOMEN_FIRST_PIC = "https://img.freepik.com/free-photo/portrait-beautiful-caucasian-sunbathed-woman-model-transparent-white-blouse-sitting-summer-beach-blue-ocean-background_158538-9730.jpg?size=626&ext=jpg";
     public static final String WOMEN_SECOND_PIC = "https://media.gettyimages.com/photos/female-hands-lacing-running-shoes-closeup-picture-id531912454?b=1&k=6&m=531912454&s=612x612&w=0&h=U0OPbVWYvR4XkM_0uOslKgx8yg3TWGUP_99j-KOMUHk=";
     public static final String WOMEN_THIRD_PIC = "https://d356cpcjxoolwe.cloudfront.net/media/catalog/product/cache/3/image/533x704/72b4a3c89279b6295f5413414e9ad668/7/1/7110822.01.0500_d2_187982e.jpg";
-
     public static final String MEN_FIRST_PIC = "https://www.thefashionisto.com/wp-content/uploads/2015/07/Matt-Trethe-Matches-Fashion-Summer-Swimwear-Shoot-2015-Mens-Style-007.jpg";
     public static final String MEN_SECOND_PIC = "https://cdn.hiconsumption.com/wp-content/uploads/2019/08/Best-Mens-Sneakers-For-Summer-0-Hero.jpg";
     public static final String MEN_THIRD_PIC = "https://www.rankandstyle.com/media/products/e/eddie-bauer-2-mens-clothing-websites.jpg";
-
     public static final String YOUTUBE_IC = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1200px-YouTube_full-color_icon_%282017%29.svg.png";
     public static final String TWITTER_IC = "https://www.aps.edu/sapr/images/pnglot.comtwitterbirdlogopng139932.png/image";
     public static final String FACEBOOK_IC = "https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png";
     public static final String WEB_IC = "https://www.freepnglogos.com/uploads/logo-website-png/logo-website-world-wide-web-svg-png-icon-download-10.png";
     public static final String INSTAGRAM_IC = "https://www.kartisyarok.co.il/wp-content/uploads/2018/09/instagram-logo-png-7.png";
 
+    public static final double POUND_TO_ILS = 5.2482;
+    public static final int SWIPES_TO_AD = 8;
+    public static final int FAV_TO_AD = 15;
+    public static final int SEARCH_TO_AD = 15;
+    public static final int SUGGESTED_TO_AD = 15;
+    public static final int NUM_OF_ADS = 15;
+
     public static class Providers {
 
         public static final String FACEBOOK = "facebook.com";
         public static final String GOOGLE = "google.com";
-
+        public static final String PASSWORD = "password";
     }
 
     public static class Items {
 
         public static final String[] brands = {
-                "Asos","ASOS Design","American Eagle","Pull&Bear","In the style","The O Dolls Collection",
+              /*  "ASOS","ASOS Design","American Eagle","Pull&Bear","In the style","The O Dolls Collection","& Other Stories",
                 "Stradivarius","Bershka","Collusion","Mango","Valentino","Birkenstock","The North Face",
                 "French Connection","Topshop","Urban Bliss","River Island","Calvin Klein","FashionKilla",
                 "Tommy Jeans","New Look","AllSaints","Selected Femme","G-Star","Levi's","Sinead Gorey","New Girl Order",
@@ -347,8 +99,65 @@ public class Macros {
                 "Missguided","Hollister","Napapijri Box","DKNY","FitBit","The Couture Club","Diesel","Fiorucci",
                 "Rip Curl","Volcom Stone","Ellesse","Dr Denim","Public Desire","Champion","Chinatown Market",
                 "Fred Perry","Abercrombie & Fitch","Daisy Street","South Beach","NA-KD","Reebok","Barbour",
-                "Crooked Tongues","Casio","Rolex","Swatch","Michael Kors",
-        };
+                "Crooked Tongues","Casio","Rolex","Swatch","Michael Kors","Herschel","Dooper","Goorin","Vans",*/
+              //MENS BRANDS
+                "ASOS EDITION", "Chained & Able", "Classics 77", "DesignB London", "Icon Brand",
+                "Topman", "Uncommon Souls", "WFTW","AAPE BY A BATHING APE", "Abercrombie and Fitch",
+                "adidas", "AJ Morgan","Serge DeNimes", "Seven London",
+                "Albam Utility", "AllSaints", "American Crew", "American Eagle", "Anatomicals",
+                "Armani", "Armani Exchange", "Arnette", "Asics", "ASOS 4505", "ASOS Collection",
+                "ASOS DESIGN", "ASOS EDITION", "Bench", "Berghaus","Barbour", "Apothecary 87",
+                "ASOS MADE IN KENYA", "ASOS WHITE", "Avail London", "Aveda", "Babyliss", "Barber Pro",
+                "Barneys Originals", "Base London", "Beauty Kitchen", "Bellfield", "Ben Sherman",
+                "Bershka", "Billabong", "Birkenstock", "Bjorn Borg", "Bleach London", "Blood Brother",
+                "BOSS", "Bowlcut", "Bronx", "Brooklyn Supply Co.", "Buffalo", "Bulldog", "Bumble and bumble",
+                "Burton Menswear London", "Call it Spring", "Calvin Klein", "Camper", "Cantu",
+                "Carhartt WIP", "Carrots", "Casio", "Caudalie", "Celio", "CeraVe", "Chained & Able",
+                "Champion","Clinique","Criminal Damage","Bolongaro Trevor", "Edwin", "Element",
+                "Cheap Monday", "Chinatown Market", "Choose Love", "Clarks Originals", "Classics 77",
+                "COLLUSION", "Columbia", "Common People", "Converse","Creative Recreation", "Crep Protect",
+                "Crocs", "Crooked Tongues", "David Beckham", "DesignB", "Deus Ex Machina", "Dickies",
+                "Diesel", "DKNY", "Doers of London", "Dr Denim", "Dr Martens", "Dr. Jart+", "Dr. Oracle",
+                "Due Diligence", "Duke", "Dune London", "Dunlop", "DUSK TO DAWN", "EA7", "Eastpak",
+                "Elemis", "ellesse", "Emporio Armani", "Entente", "Esprit", "Estee Lauder", "Farah",
+                "Fila", "Fiorucci", "Fitbit", "Fossil", "Fred Perry", "French Connection","Friend Or Faux",
+                "G Star", "G.H. Bass & Co.", "Garnier", "Gianni Feraud", "Gift Republic", "Gillette",
+                "Grenson", "H by Hudson", "Hanz de Fuko", "Harry Brown", "Havaianas", "Heart & Dagger",
+                "Helly Hansen", "Hermano", "Herschel", "Hi-Tec", "HIIT", "Holika Holika", "Hollister",
+                "House 99","Hype", "Icon Brand", "Mennace", "Good For Nothing", "Aprex Supersoft",
+                "House of Hounds", "Hudson", "Huf", "HUGO", "Hugo Boss", "Hunter", "HXTN Supply",
+                "J.Crew Mercantile", "Jacamo", "Jack & Jones","Jack Wills", "Jaded London", "Jeepers Peepers",
+                "Jeffery West", "Johnnys Chop Shop", "Jordan", "Kangol", "Kappa", "Karl Kani",
+                "Karl Lagerfeld", "Kent Brushes", "Kickers", "Koi Footwear", "Kurt Geiger", "Lab Series",
+                "Lacoste", "Lambretta", "Laura Mercier", "LDN DNM", "Lee", "Lefrik", "Les (Art)ists",
+                "Levi's", "Limit", "Liquor N Poker", "Lock Stock", "Love Moschino","Lyle & Scott",
+                "L’Oreal Men Expert", "M.A.D Beauty", "MAC", "MasqueBAR", "matt & nat", "Mauvais",
+                "Mi-Pac", "Michael Kors", "Milk It", "Mitchell & Ness", "Moss London", "Mossimo", "Mr Natty",
+                "Murdock London", "Napapijri", "Native Youth", "NEOM", "New Balance", "New Era", "New Look",
+                "New Love Club", "Nicce", "Nike", "Noak", "Nokwol", "Nothing Is Sacred", "Nudie Jeans Co",
+                "Obey", "Office", "Oh K!", "Olaplex", "One Above Another", "Only & Sons", "Original Penguin",
+                "Origins", "Paddywax", "Palladium", "Parlez", "Paul Smith", "Paul Smith Jeans","Pepe Jeans",
+                "Peter Werth", "Pier One", "Polo Ralph Lauren", "PopSockets", "Pretty Green", "Produkt",
+                "PS Paul Smith", "Pull&Bear", "Puma", "Quiksilver", "RAINS", "Ray-Ban", "Reclaimed Vintage",
+                "Revolution", "Ringspun", "Rip N Dip", "River Island", "Rudie", "Russell Athletic",
+                "Sacred Hawk", "Santa Cruz", "Reebok", "Religion", "Replay","Protest", "Oakley",
+                "Schmidt's", "Schott", "Scotch & Soda", "Sekonda", "Selected Homme", "Serge DeNimes",
+                "Seven Jewellery", "Sex Skateboards", "Shay and Blue", "Shelby & Sons",
+                "Shiseido", "Sik Silk", "Sixth June", "Skechers", "skyn ICELAND", "Slydes", "Solid",
+                "Stan Ray", "Sunday Rain", "Superdry", "Superga", "Taka Original", "Ted Baker", "Teva",
+                "THE INKEY LIST", "The North Face", "The Ordinary", "The Ragged Priest", "Thumbs Up",
+                "Timberland", "Tom Tailor", "Tommy Hilfiger","The Couture Club", "The Fox Tan",
+                "Toms", "Tonymoly", "Topman", "True Religion", "Tux Till Dawn", "Twisted Tailor", "Typo",
+                "Ugg", "Uncommon Souls","Vans", "Versace Jeans Couture", "South Beach", "Spiral", "Spitfire",
+                "Under Armour", "United Colors of Benetton", "Uppercut Deluxe", "Valentino by Mario Valentino",
+                "Vibe + Carter", "Viggo", "Vintage Supply", "Voi", "Volcom", "Wahl", "Walk London",
+                "Weekday", "WeSC", "WFTW", "World Projects", "Wrangler", "31st State", "Castro","TERMINAL X",
+
+
+                //WOMENS BRANDS
+
+    };
+
 
         public static final String[] cuts = {
                 "Petite","Maternity","Curve","Tall","Plus","plus","tall","curve","maternity","petite","Super","super",
@@ -384,6 +193,8 @@ public class Macros {
                     return Arrays.SWIMSUIT;
                 case "ripped":
                     return Arrays.RIPPED;
+                case "slim-fit":
+                    return Arrays.SLIM;
                 case "jeggings":
                     return Arrays.JEGGINGS;
                 case "oversized":
@@ -519,6 +330,8 @@ public class Macros {
                     return Arrays.TEDDY;
                 case "jacket":
                     return Arrays.JACKET;
+                case "overcoat":
+                    return Arrays.OVERCOAT;
             }
             return null;
         }
@@ -526,20 +339,6 @@ public class Macros {
         public static String[] getAllItemTypes(){
             return new String[]{BAG,SHOES,JEANS,DRESS,SHIRT,SUNGLASSES,SWIMWEAR,JACKETS,JEWELLERY,WATCH};
         }
-
-        public static final String BAG = "Bag";
-        public static final String SHOES = "Shoes";
-        public static final String JEANS = "Jeans";
-        public static final String DRESS = "Dress";
-        public static final String SHIRT = "Shirt";
-        public static final String SUNGLASSES = "Sunglasses";
-        public static final String SWIMWEAR = "Swimwear";
-        public static final String JACKETS = "Jackets";
-        public static final String JEWELLERY = "Jewellery";
-        public static final String WATCH = "Watch";
-        public static final String NEW_SHOES = "Shoes";
-        public static final String NEW_TRENDING = "TrendingNow";
-        public static final String NEW_CLOTHING = "Clothing";
 
         public static final String MEN_JACKET_IC = "https://ae01.alicdn.com/kf/HTB1_6q2NXXXXXbGXVXXq6xXFXXXv/Men-s-suit-new-men-denim-jacket-spring-small-men-s-cultivate-one-s-morality-leisure.jpg";
         public static final String WOMEN_JACKET_IC = "https://www.dhresource.com/0x0/f2/albu/g9/M00/7A/63/rBVaWFwsnfSAGBQJAACzSfzciJg907.jpg";
@@ -753,5 +552,314 @@ public class Macros {
         public static final String[] WINTER = {"winter"};
         public static final String[] TEDDY = {"teddy"};
         public static final String[] JACKET = {"jacket","jackets"};
+        public static final String[] OVERCOAT = {"overcoat"};
+    }
+
+    public static class Functions {
+
+        public static String translateCategoryToCastro(String category){
+            switch (category){
+                case BAG:
+                    return "Bags-Wallets";
+                case DRESS:
+                    return "Dresses";
+                case SHIRT:
+                    return "Tops";
+                case JEANS:
+                    return "Jeans";
+                case SWIMWEAR:
+                    return "Swimwear";
+                case SHOES:
+                    return "Shoes";
+                case JACKETS:
+                    return "Blazers-Coats";
+                case JEWELLERY:
+                    return "Jewelry";
+                default:
+                    return "";
+            }
+        }
+
+        public static String translateCategoryToTerminalX(String category){
+            switch (category){
+                case BAG:
+                    return "accessories/bags";
+                case DRESS:
+                    return "dresses";
+                case SHIRT:
+                    return "tops";
+                case JEANS:
+                    return "pants-skirts/jeans";
+                case SWIMWEAR:
+                    return "swimsuit";
+                case SHOES:
+                    return "shoes";
+                case JACKETS:
+                    return "jackets-coats";
+                case JEWELLERY:
+                    return "accessories/jewellery";
+                case SUNGLASSES:
+                    return "accessories/sun-glasses";
+                default:
+                    return "";
+            }
+        }
+
+        public static void showSnackbar(View view, String text, Context context, int drawableRes) {
+            Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
+            View snackbarLayout = snackbar.getView();
+            TextView textView = snackbarLayout.findViewById(com.google.android.material.R.id.snackbar_text);
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, drawableRes, 0);
+            textView.setAllCaps(true);
+            textView.setBackgroundColor(Color.TRANSPARENT);
+            snackbarLayout.setBackgroundColor(context.getColor(R.color.SnackbarBackground));
+            textView.setTextColor(Color.BLACK);
+            textView.setTextSize(16);
+            snackbar.show();
+        }
+
+        public static void buy(Context context, String site_link) {
+            if (site_link == null) return;
+            if (!site_link.startsWith("http://") && !site_link.startsWith("https://"))
+                site_link = ("http://" + site_link);
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(site_link));
+            context.startActivity(browserIntent);
+        }
+
+        public static void fullscreen(Context context, Object item) {
+            Intent intent = new Intent(context, FullscreenImageActivity.class);
+            Bundle bundle = new Bundle();
+            if(item instanceof RecyclerItem){
+                RecyclerItem recyclerItem = (RecyclerItem) item;
+                bundle.putSerializable("item",recyclerItem);
+            }
+            else if(item instanceof ShoppingItem){
+                ShoppingItem shoppingItem = (ShoppingItem) item;
+                bundle.putSerializable("item",shoppingItem);
+            }
+            intent.putExtra("bundle", bundle);
+            context.startActivity(intent);
+        }
+
+        public static void goToCustomerMain(Context context, RecyclerItem item){
+            Intent intent = new Intent(context, CustomerMainActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("gender", item.getGender());
+            bundle.putString("type", item.getType());
+            bundle.putString("imageUrl", item.getUserImageUrl());
+            bundle.putString("sub_category", item.getItem_sub_category());
+            intent.putExtra("bundle", bundle);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(intent);
+        }
+
+        public static void sellerProfile(Context context, String sellerId){
+            Intent intent = new Intent(context, CompanyProfileActivity.class);
+            intent.putExtra("id",sellerId);
+            intent.putExtra("customer_id", Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+            context.startActivity(intent);
+        }
+
+        public static Pair<Integer,Integer> getCategoryNum(String gender, String sub_cat, String item_type) {
+            switch (item_type) {
+                case BAG:
+                    return getBag(sub_cat);
+                case JEANS:
+                    return getJeans(gender,sub_cat);
+                case SHOES:
+                    return getShoes(gender,sub_cat);
+                case DRESS:
+                    return getDress(sub_cat);
+                case SHIRT:
+                    return getShirt(gender,sub_cat);
+                case WATCH:
+                    return getWatch(gender,sub_cat);
+                case SUNGLASSES:
+                    return getSunglasses(gender,sub_cat);
+                case JACKETS:
+                    return getJackets(gender,sub_cat);
+                case JEWELLERY:
+                    return getJewellery(gender,sub_cat);
+                default:
+                    return getSwimwear(sub_cat);
+            }
+        }
+
+        private static Pair<Integer,Integer> getJeans(String gender, String sub_cat) {
+            switch (sub_cat) {
+                case "jeggings":
+                    return new Pair<>(19057,1);
+                case "slim":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(15157,2) : new Pair<>(5054,1);
+                case "straight":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(3630,1) : new Pair<>(5052,1);
+                case "ripped":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(19823,3) : new Pair<>(16463,1);
+                case "high-waist":
+                    return new Pair<>(15159,6);
+                default:
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(10769,1) : new Pair<>(5403,1);
+            }
+        }
+
+        private static Pair<Integer,Integer> getShoes(String gender, String sub_cat) {
+            switch (sub_cat) {
+                case "boots":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(6455,1) : new Pair<>(5774,1);
+                case "heels":
+                    return new Pair<>(6461,1);
+                case "sliders":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17170,1) : new Pair<>(17514,1);
+                case "loafers":
+                    return new Pair<>(11247,1);
+                default:
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17170,1) : new Pair<>(6593,1);
+                //sandals
+            }
+        }
+
+        private static Pair<Integer,Integer> getDress(String sub_cat) {
+            switch (sub_cat) {
+                case "evening":
+                    return new Pair<>(8857, 25);
+                case "jumper":
+                    return new Pair<>(12686, 2);
+                case "party":
+                    return new Pair<>(11057, 25);
+                case "maxi":
+                    return new Pair<>(9979, 16);
+                case "midi":
+                    return new Pair<>(12899, 22);
+                default:
+                    return new Pair<>(13934, 22);
+            }
+        }
+
+        private static Pair<Integer,Integer> getShirt(String gender,String sub_cat) {
+            switch (sub_cat) {
+                case "hoodies":
+                    return  gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17426,3) : new Pair<>(15427,10);
+                case "sweatshirts":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17427,3) : new Pair<>(15426,10);
+                case "blouses":
+                    return new Pair<>(11318,13);
+                case "t-shirts":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(4718,22) : new Pair<>(20778,20);
+                case "check":
+                    return new Pair<>(12299,1);
+                case "denim":
+                    return new Pair<>(13024,2);
+                case "oxford":
+                    return new Pair<>(14478,2);
+                case "camis":
+                    return new Pair<>(15202,3);
+                case "summer-top":
+                    return new Pair<>(28018,6);
+                case "slim-fit":
+                    return new Pair<>(21884,4);
+                default: //evening
+                    return new Pair<>(11320,3);
+            }
+        }
+
+        private static Pair<Integer,Integer> getWatch(String gender, String sub_cat) {
+            switch (sub_cat) {
+                case "smart":
+                    return new Pair<>(26217,1);
+                case "digital":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11328,1) : new Pair<>(29087,1);
+                default:
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(5088,2) : new Pair<>(19855,3);
+                //All
+            }
+        }
+
+        private static Pair<Integer,Integer> getSunglasses(String gender, String sub_cat) {
+            switch (sub_cat) {
+                case "round":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17433,2) : new Pair<>(19271,2);
+                case "cat-eye":
+                    return new Pair<>(17432,1);
+                case "square":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(15192,2) : new Pair<>(21043,2);
+                default:
+                    return new Pair<>(15191,1); //"aviator"
+            }
+        }
+
+        private static Pair<Integer,Integer> getJackets(String gender, String sub_cat) {
+            switch (sub_cat) {
+                case "jacket":
+                    return new Pair<>(11894,7);
+                case "coat":
+                    return new Pair<>(11893,3);
+                case "teddy":
+                    return new Pair<>(29374,1);
+                case "leather":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11895,1) : new Pair<>(11760,1);
+                case "biker":
+                    return new Pair<>(12340,1);
+                case "trench":
+                    return new Pair<>(11902,1);
+                case "denim":
+                    return new Pair<>(11908,3);
+                case "winter":
+                    return new Pair<>(29375,1);
+                case "overcoat":
+                    return new Pair<>(20990,1);
+                default :
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(28643,1) : new Pair<>(28642,1);
+                //puffer
+            }
+        }
+
+        private static Pair<Integer,Integer> getJewellery(String gender, String sub_cat) {
+            switch (sub_cat) {
+                case "ring":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11407,2) : new Pair<>(13834,3);
+                case "anklet":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(29193,1) : new Pair<>(29194,1);
+                case "earrings":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11409,6) : new Pair<>(13837,1);
+                case "necklace":
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11408,4) : new Pair<>(13836,3);
+                default:
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11410,1) : new Pair<>(13835,1);
+            }
+        }
+
+        private static Pair<Integer,Integer> getSwimwear(String sub_cat) {
+            switch (sub_cat) {
+                case "bikini":
+                    return new Pair<>(10117,20);
+                case "swimsuit":
+                    return new Pair<>(10118,4);
+                default:
+                    return new Pair<>(13210,10);
+                //mens
+            }
+        }
+
+        private static Pair<Integer,Integer> getBag(String sub_cat) {
+            switch (sub_cat) {
+
+                case "purses":
+                    return new Pair<>(11304, 1);
+                case "clutches":
+                    return new Pair<>(11305, 1);
+                case "shoulder":
+                    return new Pair<>(11307, 1);
+                case "rucksacks":
+                    return new Pair<>(12496, 2);
+                case "crossbody":
+                    return new Pair<>(15121, 3);
+                case "beach":
+                    return new Pair<>(15122, 1);
+                case "bum":
+                    return new Pair<>(21804, 1);
+                default:
+                    return new Pair<>(15142, 1);
+            }
+        }
     }
 }

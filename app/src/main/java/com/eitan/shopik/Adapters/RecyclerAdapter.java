@@ -85,6 +85,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
             else if(type.equals("Market")){
                 imageView = itemView.findViewById(R.id.image_market);
                 text = itemView.findViewById(R.id.name_market);
+                price = itemView.findViewById(R.id.price_market);
             }
             else if(type.equals("Item") || type.equals("New-Item")) {
                 imageView = itemView.findViewById(R.id.image_slider);
@@ -114,6 +115,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 }
                 case "Market": {
                     Glide.with(imageView.getContext()).load(item.getImage_resource()).into(imageView);
+                    price.setText(item.getPrice());
                     text.setText(item.getText());
                     break;
                 }

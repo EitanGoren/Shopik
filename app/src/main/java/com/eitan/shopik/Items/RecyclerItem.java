@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class RecyclerItem implements Serializable {
 
     private String link,text,type,gender,userImageUrl,item_sub_category,
-            price,reduced_price,id,video_link,sellerImageUrl;
+            price,reduced_price,id,video_link,sellerImageUrl,brand,seller,seller_id;
     private ArrayList<String> images;
     private ArrayList<String> description;
     private long likes;
@@ -19,6 +19,20 @@ public class RecyclerItem implements Serializable {
     public RecyclerItem(String text, String link){
         this.text = text;
         this.link = link;
+    }
+
+    public String getSeller() {
+        return seller;
+    }
+    public void setSeller(String seller) {
+        this.seller = seller;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getText() {
@@ -159,5 +173,12 @@ public class RecyclerItem implements Serializable {
     }
     public UnifiedNativeAd getNativeAd() {
         return nativeAd;
+    }
+
+    public String getSeller_id() {
+        return seller_id;
+    }
+    public void setSeller_id(String seller_id) {
+        this.seller_id = seller_id;
     }
 }

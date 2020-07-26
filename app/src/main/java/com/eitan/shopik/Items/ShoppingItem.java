@@ -311,7 +311,6 @@ public class ShoppingItem implements Serializable {
     public boolean isDummyLastItem() {
         return isDummyLastItem;
     }
-
     public void setDummyLastItem(boolean dummyLastItem) {
         isDummyLastItem = dummyLastItem;
     }

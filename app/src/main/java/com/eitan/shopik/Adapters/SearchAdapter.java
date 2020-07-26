@@ -63,6 +63,92 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
         this.ItemsList = items;
         this.AllItemsList = new CopyOnWriteArrayList<>();
     }
+    Filter filter = new Filter() {
+        //runs in background thread
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            Set<RecyclerItem> filteredList = new ArraySet<>();
+
+            if(constraint.equals("")){
+                filteredList.addAll(AllItemsList);
+            }
+            else {
+                for(RecyclerItem item : AllItemsList){
+                    if(item.getDescription() != null) {
+                        StringBuilder description = new StringBuilder();
+                        for(String word : item.getDescription()) {
+                            description.append(word.toLowerCase().concat(" "));
+                        }
+                        description.append(item.getId().toLowerCase().concat(" ")).
+                                append(item.getItem_sub_category().toLowerCase().concat(" ")).
+                                append(item.getBrand().toLowerCase().concat(" ")).
+                                append(item.getSeller().toLowerCase().concat(" "));
+
+                        if(description.toString().contains(constraint.toString().toLowerCase())){
+                            filteredList.add(item);
+                        }
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            filterResults.count = filteredList.size();
+
+            return filterResults;
+        }
+
+        //runs in UI thread
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if(results.values == null ) return;
+            MainModel mainModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(MainModel.class);
+
+            ItemsList.clear();
+            int count = 0;
+            for(RecyclerItem item : (Collection<? extends RecyclerItem>) results.values) {
+                ItemsList.add(item);
+                count++;
+                if ((count % Macros.SEARCH_TO_AD == 0) && count > 0) {
+                    ShoppingItem shoppingItem = (ShoppingItem) mainModel.getNextAd();
+                    RecyclerItem recyclerItem = new RecyclerItem(null,null);
+                    recyclerItem.setAd(true);
+                    recyclerItem.setNativeAd(shoppingItem.getNativeAd());
+                    ItemsList.add(recyclerItem);
+                }
+                notifyDataSetChanged();
+            }
+        }
+    };
+
+    @Nullable
+    @Override
+    public RecyclerItem getItem(int position) {
+        return ItemsList.get(position);
+    }
+
+    @Override
+    public int getCount() {
+        return ItemsList.size();
+    }
+
+    public void setAllItems(CopyOnWriteArrayList<RecyclerItem> allItems){
+        for(RecyclerItem item : allItems) {
+            if( item != null && !item.isAd() ) {
+                this.AllItemsList.add(item);
+            }
+        }
+    }
+
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+    public Filter getSortingFilter() {
+        return sorting;
+    }
+
     @NonNull
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("SetTextI18n")
@@ -177,9 +263,15 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
             TextView old_price = convertView.findViewById(R.id.old_price);
             TextView seller_name = convertView.findViewById(R.id.seller_name);
 
-            String cur_price = new DecimalFormat("##.##").
-                    format(Double.parseDouble(item.getPrice()) * Macros.POUND_TO_ILS) +
-                    Currency.getInstance("ILS").getSymbol();
+            String cur_price;
+            if(item.getSeller().equals("ASOS"))
+                cur_price = new DecimalFormat("##.##").
+                        format(Double.parseDouble(item.getPrice()) * Macros.POUND_TO_ILS) +
+                        Currency.getInstance("ILS").getSymbol();
+            else
+                cur_price = new DecimalFormat("##.##").
+                        format(Double.parseDouble(item.getPrice())) +
+                        Currency.getInstance("ILS").getSymbol();
 
             if (item.isOutlet() || item.isSale()) {
                 int discount = (int) (100 - Math.ceil(100 * (Double.parseDouble(item.getReduced_price()) / Double.parseDouble(item.getPrice()))));
@@ -193,9 +285,15 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.blink_anim);
                 sale.startAnimation(animation);
 
-                String new_price = new DecimalFormat("##.##").
-                        format(Double.parseDouble(item.getReduced_price()) * Macros.POUND_TO_ILS) +
-                        Currency.getInstance("ILS").getSymbol();
+                String new_price;
+                if(item.getSeller().equals("ASOS"))
+                    new_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(item.getReduced_price()) * Macros.POUND_TO_ILS) +
+                            Currency.getInstance("ILS").getSymbol();
+                else
+                    new_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(item.getReduced_price())) +
+                            Currency.getInstance("ILS").getSymbol();
 
                 old_price.setVisibility(View.VISIBLE);
                 old_price.setText(cur_price);
@@ -215,7 +313,15 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
             final ImageView imageView = convertView.findViewById(R.id.image_item);
             final int[] i = {0};
 
-            Glide.with(getContext()).load(images.get(0)).into(imageView);
+            String image = "";
+            for(String img : images){
+                if(img != null && !img.equals("")) {
+                    image = img;
+                    break;
+                }
+            }
+            Glide.with(getContext()).load(image).into(imageView);
+
             Button mNext = convertView.findViewById(R.id.next);
             Button mPrev = convertView.findViewById(R.id.previous);
 
@@ -244,94 +350,13 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(), item.getLink()));
 
             CircleImageView seller_logo = convertView.findViewById(R.id.seller_logo2);
+            seller_logo.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(), item.getSeller_id()));
             seller_name.setText(item.getText());
             Glide.with(getContext()).load(item.getSellerLogoUrl()).into(seller_logo);
         }
 
         return convertView;
     }
-
-    @Nullable
-    @Override
-    public RecyclerItem getItem(int position) {
-        return ItemsList.get(position);
-    }
-
-    @Override
-    public int getCount() {
-        return ItemsList.size();
-    }
-
-    public void setAllItems(CopyOnWriteArrayList<RecyclerItem> allItems){
-        for(RecyclerItem item : allItems) {
-            if( item != null && !item.isAd() ) {
-                this.AllItemsList.add(item);
-            }
-        }
-    }
-
-    @NonNull
-    @Override
-    public Filter getFilter() {
-        return filter;
-    }
-    public Filter getSortingFilter() {
-        return sorting;
-    }
-
-    Filter filter = new Filter() {
-        //runs in background thread
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            Set<RecyclerItem> filteredList = new ArraySet<>();
-
-            if(constraint.equals("")){
-                filteredList.addAll(AllItemsList);
-            }
-            else {
-                for(RecyclerItem item : AllItemsList){
-                    if(item.getDescription() != null) {
-                        StringBuilder description = new StringBuilder();
-                        for(String word : item.getDescription()) {
-                            description.append(word.toLowerCase().concat(" "));
-                        }
-                        if(description.toString().contains(constraint.toString().toLowerCase())){
-                            filteredList.add(item);
-                        }
-                    }
-                }
-            }
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            filterResults.count = filteredList.size();
-
-            return filterResults;
-        }
-
-        //runs in UI thread
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            if(results.values == null )
-                return;
-            MainModel mainModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(MainModel.class);
-
-            ItemsList.clear();
-            int count = 0;
-            for(RecyclerItem item : (Collection<? extends RecyclerItem>) results.values) {
-                ItemsList.add(item);
-                count++;
-                if ((count % Macros.SEARCH_TO_AD == 0) && count > 0) {
-                    ShoppingItem shoppingItem = (ShoppingItem) mainModel.getNextAd();
-                    RecyclerItem recyclerItem = new RecyclerItem(null,null);
-                    recyclerItem.setAd(true);
-                    recyclerItem.setNativeAd(shoppingItem.getNativeAd());
-                    ItemsList.add(recyclerItem);
-                }
-                notifyDataSetChanged();
-            }
-        }
-    };
     Filter sorting = new Filter() {
         //runs in background thread
         @RequiresApi(api = Build.VERSION_CODES.N)

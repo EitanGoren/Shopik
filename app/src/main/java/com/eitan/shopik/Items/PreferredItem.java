@@ -1,23 +1,16 @@
 package com.eitan.shopik.Items;
 
-import android.content.Intent;
 import android.os.Build;
-import android.util.ArraySet;
-import android.widget.Switch;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
 import com.eitan.shopik.Macros;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 public class PreferredItem implements Serializable {
@@ -36,20 +29,14 @@ public class PreferredItem implements Serializable {
    }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private ArrayList getAttributeSortedByPreferences2(){
+    private ArrayList<String> getAttributeSortedByPreferences2(){
 
-        ArrayList sorted_fields = new ArrayList(preferred.keySet());
+        ArrayList<String> sorted_fields = new ArrayList<String>(preferred.keySet());
 
-        Comparator<String> c = new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return Long.compare((long)(preferred.get(o2)), (long)(preferred.get(o1)));
-            }
-        };
+        Comparator<String> c = (o1, o2) -> Long.compare((long)(preferred.get(o2)), (long)(preferred.get(o1)));
 
-
-        ArraySet<String> set = new ArraySet<String>(preferred.keySet());
-        ArrayList sorted_prices = new ArrayList();
+        Set<String> set = preferred.keySet();
+        ArrayList<String> sorted_prices = new ArrayList<>();
         for (String field: set) {
             if(Arrays.asList(Macros.Arrays.PRICES).contains(field)) {
                 sorted_prices.add(field);

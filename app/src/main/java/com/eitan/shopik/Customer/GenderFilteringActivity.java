@@ -150,7 +150,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
         });
 
         outletsModel.clearAllOutlets();
-
         fetchData fetchData = new fetchData();
         fetchData.execute();
 
@@ -562,13 +561,13 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 String cat = "";
                 switch (cat_num){
                     case 17184:
-                        cat = Macros.Items.NEW_SHOES;
+                        cat = Macros.NEW_SHOES;
                         break;
                     case 27441:
-                        cat = Macros.Items.NEW_CLOTHING;
+                        cat = Macros.NEW_CLOTHING;
                         break;
                     case 13500:
-                        cat = Macros.Items.NEW_TRENDING;
+                        cat = Macros.NEW_TRENDING;
                 }
                 entranceModel.addMen_new_num(cat,0);
 
@@ -667,13 +666,13 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 String cat = "";
                 switch (cat_num){
                     case 6992:
-                        cat = Macros.Items.NEW_SHOES;
+                        cat = Macros.NEW_SHOES;
                         break;
                     case 2623:
-                        cat = Macros.Items.NEW_CLOTHING;
+                        cat = Macros.NEW_CLOTHING;
                         break;
                     case 13497:
-                        cat = Macros.Items.NEW_TRENDING;
+                        cat = Macros.NEW_TRENDING;
                 }
 
                 entranceModel.addWomen_new_num(cat,0);
@@ -767,21 +766,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
             finally {
                 httpURLConnection.disconnect();
             }
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        switch (mMainPager.getCurrentItem()){
-            case 0:
-                finish();
-                break;
-            case 1:
-                mMainPager.setCurrentItem(0);
-                break;
-            case 2:
-                mMainPager.setCurrentItem(1);
-                break;
         }
     }
 
