@@ -108,8 +108,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                     brand.setCompoundDrawablesWithIntrinsicBounds(brand.getContext().getDrawable(R.drawable.ic_thumb_up_blue), null, null, null);
                     brand.setCompoundDrawablePadding(20);
                     link.setOnClickListener(v -> Macros.Functions.buy(link.getContext(),item.getLink()));
-                    final ArrayList<String> imagesUrl = item.getImages();
-                    Glide.with(imageView.getContext()).load(imagesUrl.get(0)).into(imageView);
+                    Glide.with(imageView.getContext()).load(item.getImages().get(0)).into(imageView);
                     full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(full_screen.getContext(),item));
                     break;
                 }
@@ -123,8 +122,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                     brand.setText(item.getText());
                     price.setText(item.getPrice());
                     link.setOnClickListener(v -> Macros.Functions.buy(link.getContext(),item.getLink()));
-                    final ArrayList<String> imagesUrl = item.getImages();
-                    Glide.with(imageView.getContext()).load(imagesUrl.get(0)).into(imageView);
+                    Glide.with(imageView.getContext()).load(item.getImages().get(0)).into(imageView);
                     full_screen.setOnClickListener(v -> {
                        Macros.Functions.fullscreen(full_screen.getContext(),item);
                     });

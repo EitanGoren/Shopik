@@ -21,7 +21,6 @@ import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
@@ -55,9 +54,7 @@ public class DialogGridAdapter extends ArrayAdapter<RecyclerItem> {
         });
 
         assert item != null;
-        final ArrayList<String> imagesUrl = item.getImages();
-        item.setImages(imagesUrl);
-        Glide.with(getContext()).load(imagesUrl.get(0)).into(imageView);
+        Glide.with(getContext()).load(item.getImages().get(0)).into(imageView);
 
         if(item.isSale())
             sale.setVisibility(View.VISIBLE);

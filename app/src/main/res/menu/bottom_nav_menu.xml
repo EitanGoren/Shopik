@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottom_swipe"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:icon="@drawable/ic_touch_app_black"
+        android:tag="swipe"
+        android:title="Swipe"/>
+
+    <item
+        android:id="@+id/bottom_favorites"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:icon="@drawable/ic_favorite_black_24dp"
+        android:tag="favorites"
+        android:title="Favorites"/>
+
+    <item
+        android:id="@+id/bottom_suggested"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:icon="@drawable/ic_check_circle_green"
+        android:tag="suggested"
+        android:title="Suggested"/>
+
+    <item
+        android:id="@+id/bottom_search"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:icon="@drawable/ic_search"
+        android:tag="search"
+        android:title="All items"/>
+</menu>

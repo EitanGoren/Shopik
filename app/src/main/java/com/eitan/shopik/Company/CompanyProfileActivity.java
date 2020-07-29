@@ -28,10 +28,8 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -40,7 +38,6 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
@@ -67,13 +64,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CompanyProfileActivity extends YouTubeBaseActivity {
 
     private DocumentReference companyFS;
-    private String companyId,imageUrl,name,facebook,twitter,youtube,instagram,site,
-            cover,customer_id,description,slogan;
-    private static String youtube_link;
+    private String companyId,imageUrl,name,facebook,
+                    twitter,youtube,instagram,site,
+                    cover,customer_id,description,slogan;
+    private String youtube_link;
     private CircleImageView mProfile_image,toolbar_pic;
     private ImageView mFacebook,mTwitter,mSite,mInstagram,mYoutube,bgimage;
     private TextView mRaters,mDescription,mSlogan,mRatingNum;
-    private static TextView mVideoTitle;
+    private TextView mVideoTitle;
     private RatingBar ratingBar,smallRating;
     private Map rating_map;
     private Float current_rating;
@@ -226,7 +224,8 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
             site = data.get("site_link") != null ? Objects.requireNonNull(data.get("site_link")).toString() : null;
             cover = data.get("cover_image_url") != null ? Objects.requireNonNull(data.get("cover_image_url")).toString() : null;
             description = data.get("description") != null ? Objects.requireNonNull(data.get("description")).toString() : Macros.DEFAULT_DESCRIPTION;
-            youtube_link = data.get("youtube_link") != null ? Objects.requireNonNull(data.get("youtube_link")).toString() : null;
+            String youtube_key = data.get("youtube_link") != null ? Objects.requireNonNull(data.get("youtube_link")).toString() : null;
+            youtube_link = Macros.YOUTUBE_VIDEO + youtube_key;
             slogan = data.get("slogan") != null ? Objects.requireNonNull(data.get("slogan")).toString() : "Some slogan shit...";
 
             mDescription.setText(description);
@@ -307,45 +306,33 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(site));
             startActivity(browserIntent);
         });
-        mFacebook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(facebook == null) return;
-                if (!facebook.startsWith("http://") && !facebook.startsWith("https://"))
-                    facebook = "http://" + facebook;
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(facebook));
-                startActivity(browserIntent);
-            }
+        mFacebook.setOnClickListener(v -> {
+            if(facebook == null) return;
+            if (!facebook.startsWith("http://") && !facebook.startsWith("https://"))
+                facebook = "http://" + facebook;
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(facebook));
+            startActivity(browserIntent);
         });
-        mTwitter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(twitter == null) return;
-                if (!twitter.startsWith("http://") && !twitter.startsWith("https://"))
-                    twitter = "http://" + twitter;
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(twitter));
-                startActivity(browserIntent);
-            }
+        mTwitter.setOnClickListener(v -> {
+            if(twitter == null) return;
+            if (!twitter.startsWith("http://") && !twitter.startsWith("https://"))
+                twitter = "http://" + twitter;
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(twitter));
+            startActivity(browserIntent);
         });
-        mInstagram.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(instagram == null) return;
-                if (!facebook.startsWith("http://") && !instagram.startsWith("https://"))
-                    instagram = "http://" + instagram;
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(instagram));
-                startActivity(browserIntent);
-            }
+        mInstagram.setOnClickListener(v -> {
+            if(instagram == null) return;
+            if (!facebook.startsWith("http://") && !instagram.startsWith("https://"))
+                instagram = "http://" + instagram;
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(instagram));
+            startActivity(browserIntent);
         });
-        mYoutube.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(youtube == null) return;
-                if (!youtube.startsWith("http://") && !youtube.startsWith("https://"))
-                    youtube = "http://" + youtube;
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtube));
-                startActivity(browserIntent);
-            }
+        mYoutube.setOnClickListener(v -> {
+            if(youtube == null) return;
+            if (!youtube.startsWith("http://") && !youtube.startsWith("https://"))
+                youtube = "http://" + youtube;
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtube));
+            startActivity(browserIntent);
         });
 
         initializedListener = new YouTubePlayer.OnInitializedListener() {
@@ -364,11 +351,7 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
     }
 
     private void setYoutubeLink() {
-        if(youtube_link != null) {
-            String[] temp = youtube_link.split("=", 2);
-            youtube_link = temp[1];
-        }
-        else
+        if(youtube_link == null)
             youtube_link = Macros.DEFAULT_YOUTUBE_VIDEO;
 
         youTubePlayerView.initialize( Macros.API_KEY, initializedListener );
@@ -543,7 +526,11 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
         companyFS = FirebaseFirestore.getInstance().collection(Macros.COMPANIES).document(companyId);
     }
 
-    private static class getVideoTitle extends AsyncTask<Void,Void,String> {
+    private void setVideoTitle(String title){
+        mVideoTitle.setText(title);
+    }
+
+    private class getVideoTitle extends AsyncTask<Void,Void,String> {
 
         String data = "";
 
@@ -591,10 +578,6 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
             super.onPostExecute(s);
             setVideoTitle(s);
         }
-    }
-
-    private static void setVideoTitle(String title){
-        mVideoTitle.setText(title);
     }
 
     @Override

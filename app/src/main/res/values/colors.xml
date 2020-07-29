@@ -33,6 +33,6 @@
     <color name="CompanyProfileScrim">#292929</color>
     <color name="EditTexrHintColor">#EF3232</color>
     <color name="SnackbarBackground">#FFFAD7</color>
-    <color name="FavoritesInfoLine">#DCF4FF</color>
+    <color name="FavoritesInfoLine">#D8D8D8</color>
 
 </resources>

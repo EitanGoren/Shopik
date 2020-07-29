@@ -36,7 +36,7 @@ import java.util.Objects;
 
 public class SuggestedFragment extends Fragment implements View.OnClickListener{
 
-    private GridAdapter gridAdapter;
+    public static GridAdapter gridAdapter;
     private SuggestedModel suggestedModel;
     private MainModel mainModel;
     private GridView gridContainer;
@@ -74,7 +74,6 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
         super.onDestroyView();
         gridAdapter = null;
         gridContainer = null;
-        mainModel.getAll_items().removeObservers(getViewLifecycleOwner());
         down_arrow = null;
         main = null;
         price = null;
@@ -107,6 +106,7 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         //initialize views
         init();
 
@@ -115,16 +115,16 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
             int count = 0;
             for (Pair<String,ShoppingItem> item : pairs) {
                 int match = 0;
-                if(suggestedModel.getPreferred().getValue() != null ) {
+                if(suggestedModel.getPreferred().getValue() != null){
                     match = Objects.requireNonNull(suggestedModel.getPreferred().getValue()).calculateMatchingPercentage(item.second);
                 }
                 assert item.second != null;
                 item.second.setPercentage(match);
-                if(match >= Macros.CustomerMacros.SUGGESTION_PERCENTAGE) {
+                if(match >= Macros.CustomerMacros.SUGGESTION_PERCENTAGE){
                     gridContainer.setAdapter(gridAdapter);
                     suggestedModel.addToAllItems(item.second);
                     count++;
-                    if( (count % Macros.SUGGESTED_TO_AD == 0) && count > 0 ) {
+                    if( (count % Macros.SUGGESTED_TO_AD == 0) && count > 0 ){
                         suggestedModel.addToAllItems((ShoppingItem) mainModel.getNextAd());
                         count++;
                     }
@@ -133,21 +133,19 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
             }
             gridAdapter.setAllItems(Objects.requireNonNull(suggestedModel.getAllItems().getValue()));
         });
-                gridContainer.setOnScrollListener(new AbsListView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-                        if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)) {
-                            showArrow();
-                        } else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
-                            hideArrow();
-                        }
-                    }
+        gridContainer.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)) {
+                    showArrow();
+                } else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
+                    hideArrow();
+                }
+            }
 
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                    }
-                });
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+        });
     }
 
     private void init() {

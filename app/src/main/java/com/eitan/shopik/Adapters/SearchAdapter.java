@@ -63,92 +63,6 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
         this.ItemsList = items;
         this.AllItemsList = new CopyOnWriteArrayList<>();
     }
-    Filter filter = new Filter() {
-        //runs in background thread
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            Set<RecyclerItem> filteredList = new ArraySet<>();
-
-            if(constraint.equals("")){
-                filteredList.addAll(AllItemsList);
-            }
-            else {
-                for(RecyclerItem item : AllItemsList){
-                    if(item.getDescription() != null) {
-                        StringBuilder description = new StringBuilder();
-                        for(String word : item.getDescription()) {
-                            description.append(word.toLowerCase().concat(" "));
-                        }
-                        description.append(item.getId().toLowerCase().concat(" ")).
-                                append(item.getItem_sub_category().toLowerCase().concat(" ")).
-                                append(item.getBrand().toLowerCase().concat(" ")).
-                                append(item.getSeller().toLowerCase().concat(" "));
-
-                        if(description.toString().contains(constraint.toString().toLowerCase())){
-                            filteredList.add(item);
-                        }
-                    }
-                }
-            }
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            filterResults.count = filteredList.size();
-
-            return filterResults;
-        }
-
-        //runs in UI thread
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            if(results.values == null ) return;
-            MainModel mainModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(MainModel.class);
-
-            ItemsList.clear();
-            int count = 0;
-            for(RecyclerItem item : (Collection<? extends RecyclerItem>) results.values) {
-                ItemsList.add(item);
-                count++;
-                if ((count % Macros.SEARCH_TO_AD == 0) && count > 0) {
-                    ShoppingItem shoppingItem = (ShoppingItem) mainModel.getNextAd();
-                    RecyclerItem recyclerItem = new RecyclerItem(null,null);
-                    recyclerItem.setAd(true);
-                    recyclerItem.setNativeAd(shoppingItem.getNativeAd());
-                    ItemsList.add(recyclerItem);
-                }
-                notifyDataSetChanged();
-            }
-        }
-    };
-
-    @Nullable
-    @Override
-    public RecyclerItem getItem(int position) {
-        return ItemsList.get(position);
-    }
-
-    @Override
-    public int getCount() {
-        return ItemsList.size();
-    }
-
-    public void setAllItems(CopyOnWriteArrayList<RecyclerItem> allItems){
-        for(RecyclerItem item : allItems) {
-            if( item != null && !item.isAd() ) {
-                this.AllItemsList.add(item);
-            }
-        }
-    }
-
-    @NonNull
-    @Override
-    public Filter getFilter() {
-        return filter;
-    }
-    public Filter getSortingFilter() {
-        return sorting;
-    }
-
     @NonNull
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("SetTextI18n")
@@ -356,6 +270,93 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
         }
 
         return convertView;
+    }
+
+    Filter filter = new Filter() {
+        //runs in background thread
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            Set<RecyclerItem> filteredList = new ArraySet<>();
+
+            if(constraint.equals("")){
+                filteredList.addAll(AllItemsList);
+            }
+            else {
+                for(RecyclerItem item : AllItemsList){
+                    if(item.getDescription() != null) {
+                        StringBuilder description = new StringBuilder();
+                        for(String word : item.getDescription()) {
+                            description.append(word.toLowerCase().concat(" "));
+                        }
+                        description.append(item.getId().toLowerCase().concat(" ")).
+                                append(item.getItem_sub_category().toLowerCase().concat(" ")).
+                                append(item.getBrand().toLowerCase().concat(" ")).
+                                append(item.getSeller().toLowerCase().concat(" "));
+
+                        if(description.toString().contains(constraint.toString().toLowerCase())){
+                            filteredList.add(item);
+                        }
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            filterResults.count = filteredList.size();
+
+            return filterResults;
+        }
+
+        //runs in UI thread
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if(results.values == null ) return;
+            MainModel mainModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(MainModel.class);
+
+            ItemsList.clear();
+            int count = 0;
+            for(RecyclerItem item : (Collection<? extends RecyclerItem>) results.values) {
+                ItemsList.add(item);
+                count++;
+                if ((count % Macros.SEARCH_TO_AD == 0) && count > 0) {
+                    ShoppingItem shoppingItem = (ShoppingItem) mainModel.getNextAd();
+                    RecyclerItem recyclerItem = new RecyclerItem(null,null);
+                    recyclerItem.setAd(true);
+                    recyclerItem.setNativeAd(shoppingItem.getNativeAd());
+                    ItemsList.add(recyclerItem);
+                }
+                notifyDataSetChanged();
+            }
+        }
+    };
+
+    @Nullable
+    @Override
+    public RecyclerItem getItem(int position) {
+        return ItemsList.get(position);
+    }
+
+    @Override
+    public int getCount() {
+        return ItemsList.size();
+    }
+
+    public void setAllItems(CopyOnWriteArrayList<RecyclerItem> allItems){
+        for(RecyclerItem item : allItems) {
+            if( item != null && !item.isAd() ) {
+                this.AllItemsList.add(item);
+            }
+        }
+    }
+
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    public Filter getSortingFilter() {
+        return sorting;
     }
     Filter sorting = new Filter() {
         //runs in background thread

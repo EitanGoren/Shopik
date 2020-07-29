@@ -25,6 +25,7 @@ public class Macros {
     public static final String COMPANIES = "Companies";
     public static final String DEFAULT_DESCRIPTION = "Write something here...";
     public static final String DEFAULT_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=oQbh5Kvet04";
+    public static final String YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=";
     public static final String DEFAULT_COVER_PHOTO = "https://i.pinimg.com/originals/10/50/61/1050612a07b764970e4df8227caf8e1c.jpg";
     public static final String DEFAULT_PROFILE_IMAGE = "https://clipartart.com/images/account-profile-clipart-4.png";
     public static final String CUSTOMERS = "Customers";
@@ -77,85 +78,276 @@ public class Macros {
         public static final String GOOGLE = "google.com";
         public static final String PASSWORD = "password";
     }
+    public static final String[] CompanyNames = {
+            "Castro", "ASOS", "Terminal X",
+    };
+
+    public static class CustomerMacros {
+
+        public static final String MEN = "Men";
+        public static final String WOMEN = "Women";
+
+        public static final int SUGGESTION_PERCENTAGE = 75;
+
+        public static final String LIKED = "Liked";
+        public static final String UNLIKED = "Unliked";
+        public static final String FAVOURITE = "favorite";
+        public static final String PREFERRED_ITEMS = "Preferred items";
+    }
+
+    public static class Arrays {
+
+        public static final int[] WOMEN_CLOTHES_TYPES = {
+                6992,2623,13497
+        };
+
+        public static final int[] MEN_CLOTHES_TYPES = {
+                17184,27441,13500
+        };
+
+        public static final String[] FAV_LINES = {
+                "Great choice!", "Nice!", "Very good choice", "You gonna love it!" ,
+                "Hey, We like it too!", "Very nice taste", "Lots of buyers for this one",
+                "It's worth it","חדלות פירעון!","Hello Peachy Breezyyy",
+        };
+
+        public static final String[] RIPPED = {"ripped"};
+        public static final String[] PRICES = {"between 50 to 100", "above 100" ,"less than 50"};
+        public static final String[] SANDALS = {"sandals","sandal"};
+        public static final String[] SUPER_SIZE = {"super","oversize","oversized","plus"};
+        public static final String[] MATERNITY = {"maternity","mom","mother"};
+        public static final String[] JEGGINGS = {"jeggings","jegging"};
+        public static final String[] PUFFER = {"puffer","puff"};
+        public static final String[] RUNNING = {"run","running","training","train","sport","track","track-suit","tracksuit"};
+        public static final String[] SLIM = {"slim"};
+        public static final String[] MINI = {"mini"};
+        public static final String[] MIDI = {"midi","maxi"};
+        public static final String[] STRAIGHT = {"straight"};
+        public static final String[] SKINNY = {"skinny","skiny"};
+        public static final String[] RINGS = {"ring","rings"};
+        public static final String[] STRETCH = {"stretch"};
+        public static final String[] SUPER_SKINNY = {"super","skinny","super-skinny"};
+        public static final String[] BRACELET = {"bracelet","bracelets"};
+        public static final String[] NECKLACE = {"necklace","neclaces"};
+        public static final String[] EARRINGS = {"earrings","earring"};
+        public static final String[] ROUND = {"round"};
+        public static final String[] SQUARE = {"square","rectangle","rect"};
+        public static final String[] CAT_EYE = {"cat","cat-aye"};
+        public static final String[] CLASSIC = {"class","classic"};
+        public static final String[] LOAFERS = {"loafers","loafer"};
+        public static final String[] BOAT = {"boat"};
+        public static final String[] ESPADRILLES = {"espadrilles"};
+        public static final String[] LONG = {"long"};
+        public static final String[] TANK = {"tank","tanks"};
+        public static final String[] T_SHIRT = {"t","t-shirt"};
+        public static final String[] OXFORD = {"oxford"};
+        public static final String[] MUSCLE = {"muscle","muscle-fit"};
+        public static final String[] SMART = {"smart"};
+        public static final String[] DIGITAL = {"digital"};
+        public static final String[] MESH = {"mesh"};
+        public static final String[] SHORTS = {"short","shorts"};
+        public static final String[] CO_ORD = {"co-ord","co-ords","ord","ords","coord","coords"};
+        public static final String[] LEATHER = {"leather"};
+        public static final String[] BUM = {"bum"};
+        public static final String[] CLUTCH = {"clutch"};
+        public static final String[] BACKPACK = {"backpack"};
+        public static final String[] CROSS = {"cross","shoulder","crossbody","croc"};
+        public static final String[] TOTE = {"tote"};
+        public static final String[] PETITE = {"petite","small"};
+        public static final String[] SUNDRESS = {"sundress"};
+        public static final String[] DENIM = {"denim"};
+        public static final String[] COAT = {"coat","coats"};
+        public static final String[] BOMBER = {"bomber","bombers","puff"};
+        public static final String[] BOOTS = {"boots","boot"};
+        public static final String[] HEELS = {"heel","heels"};
+        public static final String[] SLIDERS = {"sliders"};
+        public static final String[] EVENING = {"evening"};
+        public static final String[] WEDDING = {"wedding"};
+        public static final String[] JUMPER = {"jumper"};
+        public static final String[] ANKLET = {"anklet"};
+        public static final String[] BIKINI = {"bikini"};
+        public static final String[] SWIMSUIT = {"swimsuit","swim","suit"};
+        public static final String[] TRAINERS = {"train","trainers","sport","workout"};
+        public static final String[] TRENCH = {"trench"};
+        public static final String[] BIKER = {"biker","bikers"};
+        public static final String[] HOODIES = {"hoodies","hoodie"};
+        public static final String[] HIGH_WAIST = {"high-waist"};
+        public static final String[] PARTY = {"party"};
+        public static final String[] SWEATSHIRTS = {"sweatshirt","shirt"};
+        public static final String[] BLOUSES = {"blouse"};
+        public static final String[] CAMIS = {"camis","cami"};
+        public static final String[] SUMMER_TOP = {"summer-top","top","summer"};
+        public static final String[] AVIATOR = {"aviator","aviation"};
+        public static final String[] WINTER = {"winter"};
+        public static final String[] TEDDY = {"teddy"};
+        public static final String[] JACKET = {"jacket","jackets"};
+        public static final String[] OVERCOAT = {"overcoat"};
+    }
 
     public static class Items {
 
         public static final String[] brands = {
-              /*  "ASOS","ASOS Design","American Eagle","Pull&Bear","In the style","The O Dolls Collection","& Other Stories",
-                "Stradivarius","Bershka","Collusion","Mango","Valentino","Birkenstock","The North Face",
-                "French Connection","Topshop","Urban Bliss","River Island","Calvin Klein","FashionKilla",
-                "Tommy Jeans","New Look","AllSaints","Selected Femme","G-Star","Levi's","Sinead Gorey","New Girl Order",
-                "Monkey","Freddy WR.UP","Ridley","Only","Vero Moda","Weekday","Miss Selfridge","Converse",
-                "Reclaimed Vintage","Mamalicious","Spanx","Liquor N Poker","Noisy May","Rivington","Simply Be",
-                "Pimkie","Farleigh","PrettyLittleThing","Pieces","Adidas","Club L London","Femme Luxe","Abrand '94",
-                "Oasis","Camper","Raid Damien","Simmi London","Kurt Geiger","Genuins Sara","Glamourous","Free People",
-                "Warehouse","Nike","SilkSilk","Jack & Jones","boohooMAM","Burton","Armani Exchange","Replay","Dr Martens",
-                "Lacoste","WALK LONDON","Mad But Magic","TFNC","STYLENNANDA","Maya","Lasula","Forever New","Wednesday's Girl",
-                "Boohoo","Paper Dolls","Whistles Elis","JDY","The Ragged Priest","Keepsake Think Twice","Monki","First Base",
-                "E.F.L.A","Every Cloud","Foxiedox","Motel","Chi Chi London","Love Triangle","Misha Collection","Jaded London",
-                "Puma","My Accessories","Mi-Pac","Love Moschino","Santa Cruz","HUGO","Ted Baker","Ralph Lauren","Barbour Eldon",
-                "Palladium","Koi","Timberland","Clarks","Jeffery West","House of Hounds","Teva","Fadey","Columbia",
-                "Foxglove","Fossil","Limit","Sekonda","Marc Jacobs","Olivia Burton","Tommy Hilfiger","Versus Versace","Versace",
-                "Missguided","Hollister","Napapijri Box","DKNY","FitBit","The Couture Club","Diesel","Fiorucci",
-                "Rip Curl","Volcom Stone","Ellesse","Dr Denim","Public Desire","Champion","Chinatown Market",
-                "Fred Perry","Abercrombie & Fitch","Daisy Street","South Beach","NA-KD","Reebok","Barbour",
-                "Crooked Tongues","Casio","Rolex","Swatch","Michael Kors","Herschel","Dooper","Goorin","Vans",*/
-              //MENS BRANDS
+
+                //MENS BRANDS
+
                 "ASOS EDITION", "Chained & Able", "Classics 77", "DesignB London", "Icon Brand",
-                "Topman", "Uncommon Souls", "WFTW","AAPE BY A BATHING APE", "Abercrombie and Fitch",
-                "adidas", "AJ Morgan","Serge DeNimes", "Seven London",
+                "Topman", "Uncommon Souls", "WFTW", "AAPE BY A BATHING APE", "Abercrombie and Fitch",
+                "adidas", "AJ Morgan", "Serge DeNimes", "Seven London", "Herschel", "Dooper", "Goorin",
+                "Vans", "Mr Natty", "New Look", "Pepe Jeans", "Typo", "Spitfire", "Jeepers Peepers",
                 "Albam Utility", "AllSaints", "American Crew", "American Eagle", "Anatomicals",
                 "Armani", "Armani Exchange", "Arnette", "Asics", "ASOS 4505", "ASOS Collection",
-                "ASOS DESIGN", "ASOS EDITION", "Bench", "Berghaus","Barbour", "Apothecary 87",
+                "ASOS DESIGN", "ASOS EDITION", "Bench", "Berghaus", "Barbour", "Apothecary 87",
                 "ASOS MADE IN KENYA", "ASOS WHITE", "Avail London", "Aveda", "Babyliss", "Barber Pro",
                 "Barneys Originals", "Base London", "Beauty Kitchen", "Bellfield", "Ben Sherman",
                 "Bershka", "Billabong", "Birkenstock", "Bjorn Borg", "Bleach London", "Blood Brother",
                 "BOSS", "Bowlcut", "Bronx", "Brooklyn Supply Co.", "Buffalo", "Bulldog", "Bumble and bumble",
                 "Burton Menswear London", "Call it Spring", "Calvin Klein", "Camper", "Cantu",
                 "Carhartt WIP", "Carrots", "Casio", "Caudalie", "Celio", "CeraVe", "Chained & Able",
-                "Champion","Clinique","Criminal Damage","Bolongaro Trevor", "Edwin", "Element",
+                "Champion", "Clinique", "Criminal Damage", "Bolongaro Trevor", "Edwin", "Element",
                 "Cheap Monday", "Chinatown Market", "Choose Love", "Clarks Originals", "Classics 77",
-                "COLLUSION", "Columbia", "Common People", "Converse","Creative Recreation", "Crep Protect",
+                "COLLUSION", "Columbia", "Common People", "Converse", "Creative Recreation", "Crep Protect",
                 "Crocs", "Crooked Tongues", "David Beckham", "DesignB", "Deus Ex Machina", "Dickies",
                 "Diesel", "DKNY", "Doers of London", "Dr Denim", "Dr Martens", "Dr. Jart+", "Dr. Oracle",
                 "Due Diligence", "Duke", "Dune London", "Dunlop", "DUSK TO DAWN", "EA7", "Eastpak",
                 "Elemis", "ellesse", "Emporio Armani", "Entente", "Esprit", "Estee Lauder", "Farah",
-                "Fila", "Fiorucci", "Fitbit", "Fossil", "Fred Perry", "French Connection","Friend Or Faux",
+                "Fila", "Fiorucci", "Fitbit", "Fossil", "Fred Perry", "French Connection", "Friend Or Faux",
                 "G Star", "G.H. Bass & Co.", "Garnier", "Gianni Feraud", "Gift Republic", "Gillette",
                 "Grenson", "H by Hudson", "Hanz de Fuko", "Harry Brown", "Havaianas", "Heart & Dagger",
                 "Helly Hansen", "Hermano", "Herschel", "Hi-Tec", "HIIT", "Holika Holika", "Hollister",
-                "House 99","Hype", "Icon Brand", "Mennace", "Good For Nothing", "Aprex Supersoft",
+                "House 99", "Hype", "Icon Brand", "Mennace", "Good For Nothing", "Aprex Supersoft",
                 "House of Hounds", "Hudson", "Huf", "HUGO", "Hugo Boss", "Hunter", "HXTN Supply",
-                "J.Crew Mercantile", "Jacamo", "Jack & Jones","Jack Wills", "Jaded London", "Jeepers Peepers",
+                "J.Crew Mercantile", "Jacamo", "Jack & Jones", "Jack Wills", "Jaded London",
                 "Jeffery West", "Johnnys Chop Shop", "Jordan", "Kangol", "Kappa", "Karl Kani",
                 "Karl Lagerfeld", "Kent Brushes", "Kickers", "Koi Footwear", "Kurt Geiger", "Lab Series",
                 "Lacoste", "Lambretta", "Laura Mercier", "LDN DNM", "Lee", "Lefrik", "Les (Art)ists",
-                "Levi's", "Limit", "Liquor N Poker", "Lock Stock", "Love Moschino","Lyle & Scott",
+                "Levi's", "Limit", "Liquor N Poker", "Lock Stock", "Love Moschino", "Lyle & Scott",
                 "L’Oreal Men Expert", "M.A.D Beauty", "MAC", "MasqueBAR", "matt & nat", "Mauvais",
-                "Mi-Pac", "Michael Kors", "Milk It", "Mitchell & Ness", "Moss London", "Mossimo", "Mr Natty",
-                "Murdock London", "Napapijri", "Native Youth", "NEOM", "New Balance", "New Era", "New Look",
-                "New Love Club", "Nicce", "Nike", "Noak", "Nokwol", "Nothing Is Sacred", "Nudie Jeans Co",
+                "Mi-Pac", "Michael Kors", "Milk It", "Mitchell & Ness", "Moss London", "Mossimo",
+                "Murdock London", "Napapijri", "Native Youth", "NEOM", "New Balance", "New Era",
+                "New Love Club", "Nicce", "Nike", "Noak", "Nokwol", "Nothing Is Sacred",
                 "Obey", "Office", "Oh K!", "Olaplex", "One Above Another", "Only & Sons", "Original Penguin",
-                "Origins", "Paddywax", "Palladium", "Parlez", "Paul Smith", "Paul Smith Jeans","Pepe Jeans",
-                "Peter Werth", "Pier One", "Polo Ralph Lauren", "PopSockets", "Pretty Green", "Produkt",
+                "Origins", "Paddywax", "Palladium", "Parlez", "Paul Smith", "Paul Smith Jeans",
+                "Peter Werth", "Pier One", "Polo Ralph Lauren", "PopSockets", "Pretty Green",
                 "PS Paul Smith", "Pull&Bear", "Puma", "Quiksilver", "RAINS", "Ray-Ban", "Reclaimed Vintage",
                 "Revolution", "Ringspun", "Rip N Dip", "River Island", "Rudie", "Russell Athletic",
-                "Sacred Hawk", "Santa Cruz", "Reebok", "Religion", "Replay","Protest", "Oakley",
+                "Sacred Hawk", "Santa Cruz", "Reebok", "Religion", "Replay", "Protest", "Oakley",
                 "Schmidt's", "Schott", "Scotch & Soda", "Sekonda", "Selected Homme", "Serge DeNimes",
                 "Seven Jewellery", "Sex Skateboards", "Shay and Blue", "Shelby & Sons",
                 "Shiseido", "Sik Silk", "Sixth June", "Skechers", "skyn ICELAND", "Slydes", "Solid",
                 "Stan Ray", "Sunday Rain", "Superdry", "Superga", "Taka Original", "Ted Baker", "Teva",
                 "THE INKEY LIST", "The North Face", "The Ordinary", "The Ragged Priest", "Thumbs Up",
-                "Timberland", "Tom Tailor", "Tommy Hilfiger","The Couture Club", "The Fox Tan",
-                "Toms", "Tonymoly", "Topman", "True Religion", "Tux Till Dawn", "Twisted Tailor", "Typo",
-                "Ugg", "Uncommon Souls","Vans", "Versace Jeans Couture", "South Beach", "Spiral", "Spitfire",
-                "Under Armour", "United Colors of Benetton", "Uppercut Deluxe", "Valentino by Mario Valentino",
+                "Timberland", "Tom Tailor", "Tommy Hilfiger", "The Couture Club", "The Fox Tan",
+                "Toms", "Tonymoly", "Topman", "True Religion", "Tux Till Dawn", "Twisted Tailor",
+                "Ugg", "Uncommon Souls", "Vans", "Versace Jeans Couture", "South Beach", "Spiral",
+                "Under Armour", "United Colors of Benetton", "Uppercut Deluxe","Nudie Jeans Co",
                 "Vibe + Carter", "Viggo", "Vintage Supply", "Voi", "Volcom", "Wahl", "Walk London",
-                "Weekday", "WeSC", "WFTW", "World Projects", "Wrangler", "31st State", "Castro","TERMINAL X",
-
+                "Weekday", "WeSC", "WFTW", "World Projects", "Wrangler", "31st State", "Castro",
 
                 //WOMENS BRANDS
 
+                "A Star Is Born", "A.kjaerbede", "Abercrombie and Fitch", "Abrand", "Accessorize",
+                "adidas", "Adolescent Clothing", "Aerie", "AJ Morgan", "Akasa", "Aldo", "AllSaints",
+                "Alpha H", "Amelia Rose", "Ameliorate", "America & Beyond", "American Eagle",
+                "Amuse Society", "Amy Lynn", "Anatomicals", "Anaya With Love", "Anmol", "Ann Summers",
+                "Another Reason", "Ardell", "Aria Cove", "Ariana Grande", "Aroma Home", "Ash", "Ashiana",
+                "ASOS 4505", "ASOS Collection", "ASOS DESIGN", "ASOS EDITION", "ASOS MADE IN KENYA",
+                "ASOS WHITE", "ASRA", "Astrid & Miyu", "Atoir", "Aveda", "AX Paris", "AYM Studio",
+                "b.Young", "Babyliss", "Band of Gypsies", "Band Of Stars", "Bandia", "Barbour", "Bardot",
+                "bareMinerals", "Bariano", "Barneys Originals", "Barry M", "BCBG", "BCBGeneration",
+                "Be Mine", "Beach Riot", "Beauty Kitchen", "Beauty Works", "Bec & Bridge", "BECCA",
+                "Bellfield", "Benefit", "Berghaus", "Bershka", "Billabong", "Birkenstock", "Blank NYC",
+                "Bleach London", "Blend", "BLFD", "BlueBella", "Blume Maternity", "Bobbi Brown",
+                "Body Glove", "Bolongaro Trevor", "Bondi Sands", "BOSS", "Boux Avenue", "Bravado",
+                "Brave Soul", "Bronx", "Buffalo", "Bumble and bumble", "By Malina", "BYBI",
+                "Calm Club", "Calvin Klein", "Camper", "Candypants", "Cantu", "Capulet", "Carhartt WIP",
+                "Carmex", "Carvela", "Casio", "Caterpillar", "Caudalie", "CeraVe", "Champion",
+                "Charlie Holiday","TERMINAL X","Valentino by Mario Valentino","Produkt","Call It Spring",
+                "Charlotte Tilbury", "Cheap Monday", "Chelsea Peers", "Chi Chi", "Chio", "Choose Love",
+                "Chorus", "Ciate", "City Chic", "City Goddess", "Clarins", "Claudia Canova", "CLEAN",
+                "Cleobella", "Clinique", "Closet", "Club L", "CMeo Collective", "Coast", "Coco & Eve",
+                "Coco De Mer", "Coconut Lane", "Collective The Label", "COLLUSION", "Columbia", "Converse",
+                "Corkcicle", "Cosmetea", "Cowshed Collections", "Crayola", "Criminal Damage", "Crocs",
+                "Crooked Tongues", "Current Air", "Curvy Kate", "Daisy Street", "Dare2b", "Dark Pink",
+                "DB Berdan", "Dermalogica", "DesignB", "Dickies", "Diesel", "DKNY", "Dolce Vita",
+                "Dorina", "Dr Denim", "Dr Martens", "Dr. Dennis Gross", "Dr. Jart+", "Dr. Oracle",
+                "Dune London", "Dusty Daze", "Eastpak", "Ebonie n Ivory", "Eco Star Dust", "EEight",
+                "Ei8th Hour", "Elegant Touch", "Elemis", "ellesse", "Elsie and Fred", "Elvi",
+                "Embryolisse", "Emma Hardie", "Emory Park", "Emporio Armani", "En Crème", "Erase",
+                "Esprit", "Essentiel Antwerp", "Estee Lauder", "Eylure", "Fabienne Chapot", "Faithfull",
+                "Farsáli", "Fashion Forms", "Fashion Union", "Fashionkilla", "Femme Luxe", "Figleaves",
+                "Fila", "Finders", "Fiorucci", "First Aid Beauty", "Fizz", "Florence By Mills", "Flounce London",
+                "Foamie", "For Love and Lemons", "Foreo", "Forever New", "Forever Unique", "Fossil",
+                "Frankies Bikinis", "Fred Perry", "Free People", "Free Society", "French Connection",
+                "French Fashion House", "Freya", "Frock & Frill", "Fujifilm", "Fulton", "G Star",
+                "Garnier", "GeBe", "Genuins", "Gestuz", "ghd", "Ghospell", "Ghost", "Ghost Fragrances",
+                "Gift Republic", "Gilly Hicks", "Gipsy", "Girl In Mind", "Glamorous", "Goddiva", "GoGuy",
+                "Goosecraft", "Gossard", "Grenson", "Happy Plugs", "Havaianas", "HD Brows", "Head over Heels",
+                "Heartbreak", "Helene Berman", "Herschel", "HIIT", "Holika Holika", "Hollister",
+                "Hope and Ivy","Dolly Delicious","Frank Body","Hunter","Indeed Laboratories",
+                "Hosbjerg", "House of Holland", "House of Stars", "HUGO", "Hugo Boss", "Hunkemoller",
+                "Hype", "Ichi", "Illamasqua", "Image Gang", "In The Style", "In Wear", "In Your Dreams",
+                "Influence", "INIKA", "Invisibobble", "Isle of Paradise","adidas", "b.Young",
+                "bareMinerals", "ellesse", "ghd", "Ivory Rose", "Ivyrevel", "J Brand", "J.Crew Mercantile",
+                "Jack Wills", "Jaded London", "Jagger & Stone", "Jarlo", "JDY", "Jeepers Peepers",
+                "Jeffrey Campbell", "John Zack", "Johnny Loves Rosie", "Jonathan Aston", "Jordan",
+                "Joshua Sanders", "Juicy Couture", "Junarose", "Kappa", "Karen Millen", "Karl Lagerfeld",
+                "Kate Spade", "Kazbands", "KeepCup", "Keepsake", "KG", "Kickers", "Kikiriki", "KikiRio",
+                "Kilian", "Kings of Indigo", "Kingsley Ryan", "Kiss The Sky", "Koco & K", "Kocostar",
+                "Koi Footwear", "Koko", "Kulani Kinis", "Kurt Geiger", "L'Oreal", "Lab", "Lace & Beads",
+                "Laced in Love", "Lacoste", "Lamoda", "Lanolips", "Lasula", "Lavish Alice", "Lazy Oaf",
+                "Le Buns", "Le Mini Macaron", "Le Specs", "Lee", "Lemon Lunar", "Lepel", "Les Girls Les Boys",
+                "Levete Room", "Levi's", "LF Markey", "Liars & Lovers", "Limit", "Lindex", "Lioness",
+                "Lipsy", "Liquor N Poker", "Liquorish", "Little Mistress", "Lixir", "Local Heroes",
+                "Lola May", "London Rebel", "Lost Ink", "Lottie", "Loungeable", "Love", "Love Moschino",
+                "Love Triangle", "Lovedrobe", "Lucy Maggie", "Luella Grey", "LullaBellz", "L’Oreal Paris Colorista",
+                "M.A.D Beauty", "Maaji", "MAC", "MAGIC Bodyfashion", "Maison Scotch", "Mamalicious",
+                "Mane 'n Tail", "Mango", "Marc Jacobs", "MasqueBAR", "Maya", "Maybelline", "Melissa",
+                "Mi-Pac", "Micha Lounge", "Michael Kors", "MiH", "Milk It", "Minimum", "MinkPink",
+                "Miss KG", "Miss Patisserie", "Miss Selfridge", "Miss Sixty", "Missguided", "Mod Cloth",
+                "Moda Minx", "Monki", "Montce", "Moon Boot", "Moon River", "Morgan", "Moschino",
+                "Mossimo", "Mossman", "Motel", "Musier", "Muubaa", "My Accessories", "My Mum Made It",
+                "My White Secret", "NA-KD", "NaaNaa", "Naf Naf", "Namilia", "Napapijri", "NARS",
+                "Native Youth", "Needle & Thread", "NEOM", "Neon Rose", "Never Fully Dressed",
+                "New Balance", "New Era", "New Girl Order", "New Look", "New Love Club", "Nicce",
+                "Nike", "Niod", "Nip+Fab", "Nobody’s Child", "Noisy May", "Nokwol", "Notes du Nord",
+                "NPW", "Nubian Skin", "Nunoo", "Nylon", "NYX Professional Makeup", "O'Mighty",
+                "O'Neill", "Oasis", "Obey", "Object", "Office", "Oh K!", "Olaplex", "Olivia Burton",
+                "One Above Another", "One Teaspoon", "Only", "Opening Ceremony", "Opulence England",
+                "Orelia", "Origins", "Oskia", "Ouai", "Outrageous Fortune", "Paddywax", "Palladium",
+                "Paper Dolls", "Parallel Lines", "Parisian", "Park Lane", "Peek & Beau", "People Tree",
+                "Pepe Jeans", "Peter Werth", "Philip Kingsley", "Pieces", "Pilgrim", "Pimkie",
+                "Pink Clove", "Pistol Panties", "Pixi", "Playful Promises", "Polaroid", "Police",
+                "Polo Ralph Lauren", "PopSockets", "Pour Moi", "Power 2 The Flower", "Pretty Lavish",
+                "Pretty Polly", "Project Me", "Protest", "Psychic Sisters", "Public Desire", "Pukas",
+                "Pull&Bear", "Puma", "QED London", "Quay Australia", "Queen Bee", "Quiksilver",
+                "Rachel Antonoff", "Raga", "Ragyard", "Rahi Cali", "Raid", "Rains", "Rare", "Rare Bird",
+                "Ray-Ban", "Real Techniques", "Reclaimed Vintage", "Reebok", "RegalRose", "Religion",
+                "REN", "Replay", "Revolution", "Rhythm", "Rimmel London", "Rip Curl", "Rip N Dip",
+                "River Island", "Rokoko", "Roxy", "Russell Athletic", "RVCA", "Sacred Hawk", "Saint Genies",
+                "Sally Hansen", "Sam Edelman", "Sand and Sky", "Santa Cruz", "Sass and Belle",
+                "SAVAGE X FENTY", "Scarlet Rocks", "Schmidt's", "Seafolly", "See You Never", "Sekonda",
+                "Selected Femme", "Shashi", "Shay and Blue", "Shea Moisture", "Shiseido", "Sian Marie",
+                "Signature 8", "Significant Other", "SIMMI", "Simonett", "Simply Be", "Sinead Gorey",
+                "Sister Jane", "Sisters of the Tribe", "Sixth June", "Skechers", "Skinnydip",
+                "Skylar Rose", "skyn ICELAND", "Sleek MakeUP", "Sloggi", "Smashbox", "Soaked in Luxury",
+                "Sole East by Onia", "Solillas", "Somedays", "Sorel", "Sorelle", "South Beach", "Spanx",
+                "Spectrum", "Spitfire", "St. Tropez", "Starlet", "Stefania Vaidani", "Stella McCartney",
+                "Steve Madden", "Stevie May", "Stila", "Stitch & Pieces", "Stojo", "Stradivarius",
+                "Style Cheat", "Stylenanda", "Sunday Rain", "Superdry", "Superga", "Swim Society",
+                "T.U.K", "Talulah", "Tan-Luxe", "Tangle Teezer", "Tara Khorzad", "Tavik", "Ted Baker",
+                "Teva", "TFNC", "The Couture Club", "The East Order", "The Fox Tan", "The Girlcode",
+                "THE INKEY LIST", "The North Face", "The O Dolls Collection", "The Ordinary",
+                "The Ragged Priest", "The Shrine", "THINX", "This Works", "Three Floor", "Thumbs Up",
+                "Tiger Mist", "Timberland", "Tommy Hilfiger", "Toms", "Tonymoly", "Topshop", "True Decadence",
+                "True Religion", "True Violet", "Truffle Collection", "Tutti Rouge", "Twiin", "Twisted Wunder",
+                "Typo", "Ugg", "Ultrasun", "Under Armour", "Unique 21", "UOMA", "Urban Bliss", "Urban Decay",
+                "Urbancode", "Vagabond", "Valentino by Mario Valentino", "Vans", "Vera Wang", "Vero Moda",
+                "Verona", "Versace Jeans Couture", "Vesper", "Vestire", "Vila", "Vintage Supply",
+                "Virgos Lounge", "Vita Liberata", "Vix", "Volcom", "Von Dutch", "Warehouse", "Waven",
+                "We Are Kindred", "We Are Paradoxx", "We Are We Wear", "Wednesday's Girl", "Weekday",
+                "WeWoreWhat", "Whistles", "Who What Wear", "Wild Honey", "Without You", "Wolf & Whistle",
+                "Women'secret", "Wonderbra", "Wrangler", "Y.A.S", "Yaura", "Yes To", "Yours", "Z_Code_Z",
+                "Zulu & Zephyr", "ZYA"
     };
 
 
@@ -453,112 +645,10 @@ public class Macros {
         public static final String UNLIKES_NUM = "unlikes";
     }
 
-    public static class CustomerMacros {
-
-        public static final String MEN = "Men";
-        public static final String WOMEN = "Women";
-
-        public static final int SUGGESTION_PERCENTAGE = 75;
-
-        public static final String LIKED = "Liked";
-        public static final String UNLIKED = "Unliked";
-        public static final String FAVOURITE = "favorite";
-        public static final String PREFERRED_ITEMS = "Preferred items";
-    }
-
-    public static class Arrays {
-
-        public static final int[] WOMEN_CLOTHES_TYPES = {
-                6992,2623,13497
-        };
-
-        public static final int[] MEN_CLOTHES_TYPES = {
-                17184,27441,13500
-        };
-
-        public static final String[] FAV_LINES = {
-                "Great choice!", "Nice!", "Very good choice", "You gonna love it!" ,
-                "Hey, We like it too!", "Very nice taste", "Lots of buyers for this one",
-                "It's worth it","חדלות פירעון!","Hello Peachy Breezyyy",
-        };
-
-        public static final String[] RIPPED = {"ripped"};
-        public static final String[] PRICES = {"between 50 to 100", "above 100" ,"less than 50"};
-        public static final String[] SANDALS = {"sandals","sandal"};
-        public static final String[] SUPER_SIZE = {"super","oversize","oversized","plus"};
-        public static final String[] MATERNITY = {"maternity","mom","mother"};
-        public static final String[] JEGGINGS = {"jeggings","jegging"};
-        public static final String[] PUFFER = {"puffer","puff"};
-        public static final String[] RUNNING = {"run","running","training","train","sport","track","track-suit","tracksuit"};
-        public static final String[] SLIM = {"slim"};
-        public static final String[] MINI = {"mini"};
-        public static final String[] MIDI = {"midi","maxi"};
-        public static final String[] STRAIGHT = {"straight"};
-        public static final String[] SKINNY = {"skinny","skiny"};
-        public static final String[] RINGS = {"ring","rings"};
-        public static final String[] STRETCH = {"stretch"};
-        public static final String[] SUPER_SKINNY = {"super","skinny","super-skinny"};
-        public static final String[] BRACELET = {"bracelet","bracelets"};
-        public static final String[] NECKLACE = {"necklace","neclaces"};
-        public static final String[] EARRINGS = {"earrings","earring"};
-        public static final String[] ROUND = {"round"};
-        public static final String[] SQUARE = {"square","rectangle","rect"};
-        public static final String[] CAT_EYE = {"cat","cat-aye"};
-        public static final String[] CLASSIC = {"class","classic"};
-        public static final String[] LOAFERS = {"loafers","loafer"};
-        public static final String[] BOAT = {"boat"};
-        public static final String[] ESPADRILLES = {"espadrilles"};
-        public static final String[] LONG = {"long"};
-        public static final String[] TANK = {"tank","tanks"};
-        public static final String[] T_SHIRT = {"t","t-shirt"};
-        public static final String[] OXFORD = {"oxford"};
-        public static final String[] MUSCLE = {"muscle","muscle-fit"};
-        public static final String[] SMART = {"smart"};
-        public static final String[] DIGITAL = {"digital"};
-        public static final String[] MESH = {"mesh"};
-        public static final String[] SHORTS = {"short","shorts"};
-        public static final String[] CO_ORD = {"co-ord","co-ords","ord","ords","coord","coords"};
-        public static final String[] LEATHER = {"leather"};
-        public static final String[] BUM = {"bum"};
-        public static final String[] CLUTCH = {"clutch"};
-        public static final String[] BACKPACK = {"backpack"};
-        public static final String[] CROSS = {"cross","shoulder","crossbody","croc"};
-        public static final String[] TOTE = {"tote"};
-        public static final String[] PETITE = {"petite","small"};
-        public static final String[] SUNDRESS = {"sundress"};
-        public static final String[] DENIM = {"denim"};
-        public static final String[] COAT = {"coat","coats"};
-        public static final String[] BOMBER = {"bomber","bombers","puff"};
-        public static final String[] BOOTS = {"boots","boot"};
-        public static final String[] HEELS = {"heel","heels"};
-        public static final String[] SLIDERS = {"sliders"};
-        public static final String[] EVENING = {"evening"};
-        public static final String[] WEDDING = {"wedding"};
-        public static final String[] JUMPER = {"jumper"};
-        public static final String[] ANKLET = {"anklet"};
-        public static final String[] BIKINI = {"bikini"};
-        public static final String[] SWIMSUIT = {"swimsuit","swim","suit"};
-        public static final String[] TRAINERS = {"train","trainers","sport","workout"};
-        public static final String[] TRENCH = {"trench"};
-        public static final String[] BIKER = {"biker","bikers"};
-        public static final String[] HOODIES = {"hoodies","hoodie"};
-        public static final String[] HIGH_WAIST = {"high-waist"};
-        public static final String[] PARTY = {"party"};
-        public static final String[] SWEATSHIRTS = {"sweatshirt","shirt"};
-        public static final String[] BLOUSES = {"blouse"};
-        public static final String[] CAMIS = {"camis","cami"};
-        public static final String[] SUMMER_TOP = {"summer-top","top","summer"};
-        public static final String[] AVIATOR = {"aviator","aviation"};
-        public static final String[] WINTER = {"winter"};
-        public static final String[] TEDDY = {"teddy"};
-        public static final String[] JACKET = {"jacket","jackets"};
-        public static final String[] OVERCOAT = {"overcoat"};
-    }
-
     public static class Functions {
 
-        public static String translateCategoryToCastro(String category){
-            switch (category){
+        public static String translateCategoryToCastro(String category) {
+            switch (category) {
                 case BAG:
                     return "Bags-Wallets";
                 case DRESS:
@@ -580,8 +670,8 @@ public class Macros {
             }
         }
 
-        public static String translateCategoryToTerminalX(String category){
-            switch (category){
+        public static String translateCategoryToTerminalX(String category) {
+            switch (category) {
                 case BAG:
                     return "accessories/bags";
                 case DRESS:
@@ -604,7 +694,6 @@ public class Macros {
                     return "";
             }
         }
-
         public static void showSnackbar(View view, String text, Context context, int drawableRes) {
             Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
             View snackbarLayout = snackbar.getView();
@@ -629,19 +718,18 @@ public class Macros {
         public static void fullscreen(Context context, Object item) {
             Intent intent = new Intent(context, FullscreenImageActivity.class);
             Bundle bundle = new Bundle();
-            if(item instanceof RecyclerItem){
+            if (item instanceof RecyclerItem) {
                 RecyclerItem recyclerItem = (RecyclerItem) item;
-                bundle.putSerializable("item",recyclerItem);
-            }
-            else if(item instanceof ShoppingItem){
+                bundle.putSerializable("item", recyclerItem);
+            } else if (item instanceof ShoppingItem) {
                 ShoppingItem shoppingItem = (ShoppingItem) item;
-                bundle.putSerializable("item",shoppingItem);
+                bundle.putSerializable("item", shoppingItem);
             }
             intent.putExtra("bundle", bundle);
             context.startActivity(intent);
         }
 
-        public static void goToCustomerMain(Context context, RecyclerItem item){
+        public static void goToCustomerMain(Context context, RecyclerItem item) {
             Intent intent = new Intent(context, CustomerMainActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("gender", item.getGender());
@@ -653,72 +741,72 @@ public class Macros {
             context.startActivity(intent);
         }
 
-        public static void sellerProfile(Context context, String sellerId){
+        public static void sellerProfile(Context context, String sellerId) {
             Intent intent = new Intent(context, CompanyProfileActivity.class);
-            intent.putExtra("id",sellerId);
+            intent.putExtra("id", sellerId);
             intent.putExtra("customer_id", Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
             context.startActivity(intent);
         }
 
-        public static Pair<Integer,Integer> getCategoryNum(String gender, String sub_cat, String item_type) {
+        public static Pair<Integer, Integer> getCategoryNum(String gender, String sub_cat, String item_type) {
             switch (item_type) {
                 case BAG:
                     return getBag(sub_cat);
                 case JEANS:
-                    return getJeans(gender,sub_cat);
+                    return getJeans(gender, sub_cat);
                 case SHOES:
-                    return getShoes(gender,sub_cat);
+                    return getShoes(gender, sub_cat);
                 case DRESS:
                     return getDress(sub_cat);
                 case SHIRT:
-                    return getShirt(gender,sub_cat);
+                    return getShirt(gender, sub_cat);
                 case WATCH:
-                    return getWatch(gender,sub_cat);
+                    return getWatch(gender, sub_cat);
                 case SUNGLASSES:
-                    return getSunglasses(gender,sub_cat);
+                    return getSunglasses(gender, sub_cat);
                 case JACKETS:
-                    return getJackets(gender,sub_cat);
+                    return getJackets(gender, sub_cat);
                 case JEWELLERY:
-                    return getJewellery(gender,sub_cat);
+                    return getJewellery(gender, sub_cat);
                 default:
                     return getSwimwear(sub_cat);
             }
         }
 
-        private static Pair<Integer,Integer> getJeans(String gender, String sub_cat) {
+        private static Pair<Integer, Integer> getJeans(String gender, String sub_cat) {
             switch (sub_cat) {
                 case "jeggings":
-                    return new Pair<>(19057,1);
+                    return new Pair<>(19057, 1);
                 case "slim":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(15157,2) : new Pair<>(5054,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(15157, 2) : new Pair<>(5054, 1);
                 case "straight":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(3630,1) : new Pair<>(5052,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(3630, 1) : new Pair<>(5052, 1);
                 case "ripped":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(19823,3) : new Pair<>(16463,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(19823, 3) : new Pair<>(16463, 1);
                 case "high-waist":
-                    return new Pair<>(15159,6);
+                    return new Pair<>(15159, 6);
                 default:
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(10769,1) : new Pair<>(5403,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(10769, 1) : new Pair<>(5403, 1);
             }
         }
 
-        private static Pair<Integer,Integer> getShoes(String gender, String sub_cat) {
+        private static Pair<Integer, Integer> getShoes(String gender, String sub_cat) {
             switch (sub_cat) {
                 case "boots":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(6455,1) : new Pair<>(5774,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(6455, 1) : new Pair<>(5774, 1);
                 case "heels":
-                    return new Pair<>(6461,1);
+                    return new Pair<>(6461, 1);
                 case "sliders":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17170,1) : new Pair<>(17514,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17170, 1) : new Pair<>(17514, 1);
                 case "loafers":
-                    return new Pair<>(11247,1);
+                    return new Pair<>(11247, 1);
                 default:
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17170,1) : new Pair<>(6593,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17170, 1) : new Pair<>(6593, 1);
                 //sandals
             }
         }
 
-        private static Pair<Integer,Integer> getDress(String sub_cat) {
+        private static Pair<Integer, Integer> getDress(String sub_cat) {
             switch (sub_cat) {
                 case "evening":
                     return new Pair<>(8857, 25);
@@ -735,112 +823,112 @@ public class Macros {
             }
         }
 
-        private static Pair<Integer,Integer> getShirt(String gender,String sub_cat) {
+        private static Pair<Integer, Integer> getShirt(String gender, String sub_cat) {
             switch (sub_cat) {
                 case "hoodies":
-                    return  gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17426,3) : new Pair<>(15427,10);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17426, 3) : new Pair<>(15427, 10);
                 case "sweatshirts":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17427,3) : new Pair<>(15426,10);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17427, 3) : new Pair<>(15426, 10);
                 case "blouses":
-                    return new Pair<>(11318,13);
+                    return new Pair<>(11318, 13);
                 case "t-shirts":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(4718,22) : new Pair<>(20778,20);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(4718, 22) : new Pair<>(20778, 20);
                 case "check":
-                    return new Pair<>(12299,1);
+                    return new Pair<>(12299, 1);
                 case "denim":
-                    return new Pair<>(13024,2);
+                    return new Pair<>(13024, 2);
                 case "oxford":
-                    return new Pair<>(14478,2);
+                    return new Pair<>(14478, 2);
                 case "camis":
-                    return new Pair<>(15202,3);
+                    return new Pair<>(15202, 3);
                 case "summer-top":
-                    return new Pair<>(28018,6);
+                    return new Pair<>(28018, 6);
                 case "slim-fit":
-                    return new Pair<>(21884,4);
+                    return new Pair<>(21884, 4);
                 default: //evening
-                    return new Pair<>(11320,3);
+                    return new Pair<>(11320, 3);
             }
         }
 
-        private static Pair<Integer,Integer> getWatch(String gender, String sub_cat) {
+        private static Pair<Integer, Integer> getWatch(String gender, String sub_cat) {
             switch (sub_cat) {
                 case "smart":
-                    return new Pair<>(26217,1);
+                    return new Pair<>(26217, 1);
                 case "digital":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11328,1) : new Pair<>(29087,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11328, 1) : new Pair<>(29087, 1);
                 default:
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(5088,2) : new Pair<>(19855,3);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(5088, 2) : new Pair<>(19855, 3);
                 //All
             }
         }
 
-        private static Pair<Integer,Integer> getSunglasses(String gender, String sub_cat) {
+        private static Pair<Integer, Integer> getSunglasses(String gender, String sub_cat) {
             switch (sub_cat) {
                 case "round":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17433,2) : new Pair<>(19271,2);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17433, 2) : new Pair<>(19271, 2);
                 case "cat-eye":
-                    return new Pair<>(17432,1);
+                    return new Pair<>(17432, 1);
                 case "square":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(15192,2) : new Pair<>(21043,2);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(15192, 2) : new Pair<>(21043, 2);
                 default:
-                    return new Pair<>(15191,1); //"aviator"
+                    return new Pair<>(15191, 1); //"aviator"
             }
         }
 
-        private static Pair<Integer,Integer> getJackets(String gender, String sub_cat) {
+        private static Pair<Integer, Integer> getJackets(String gender, String sub_cat) {
             switch (sub_cat) {
                 case "jacket":
-                    return new Pair<>(11894,7);
+                    return new Pair<>(11894, 7);
                 case "coat":
-                    return new Pair<>(11893,3);
+                    return new Pair<>(11893, 3);
                 case "teddy":
-                    return new Pair<>(29374,1);
+                    return new Pair<>(29374, 1);
                 case "leather":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11895,1) : new Pair<>(11760,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11895, 1) : new Pair<>(11760, 1);
                 case "biker":
-                    return new Pair<>(12340,1);
+                    return new Pair<>(12340, 1);
                 case "trench":
-                    return new Pair<>(11902,1);
+                    return new Pair<>(11902, 1);
                 case "denim":
-                    return new Pair<>(11908,3);
+                    return new Pair<>(11908, 3);
                 case "winter":
-                    return new Pair<>(29375,1);
+                    return new Pair<>(29375, 1);
                 case "overcoat":
-                    return new Pair<>(20990,1);
-                default :
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(28643,1) : new Pair<>(28642,1);
+                    return new Pair<>(20990, 1);
+                default:
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(28643, 1) : new Pair<>(28642, 1);
                 //puffer
             }
         }
 
-        private static Pair<Integer,Integer> getJewellery(String gender, String sub_cat) {
+        private static Pair<Integer, Integer> getJewellery(String gender, String sub_cat) {
             switch (sub_cat) {
                 case "ring":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11407,2) : new Pair<>(13834,3);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11407, 2) : new Pair<>(13834, 3);
                 case "anklet":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(29193,1) : new Pair<>(29194,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(29193, 1) : new Pair<>(29194, 1);
                 case "earrings":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11409,6) : new Pair<>(13837,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11409, 6) : new Pair<>(13837, 1);
                 case "necklace":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11408,4) : new Pair<>(13836,3);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11408, 4) : new Pair<>(13836, 3);
                 default:
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11410,1) : new Pair<>(13835,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11410, 1) : new Pair<>(13835, 1);
             }
         }
 
-        private static Pair<Integer,Integer> getSwimwear(String sub_cat) {
+        private static Pair<Integer, Integer> getSwimwear(String sub_cat) {
             switch (sub_cat) {
                 case "bikini":
-                    return new Pair<>(10117,20);
+                    return new Pair<>(10117, 20);
                 case "swimsuit":
-                    return new Pair<>(10118,4);
+                    return new Pair<>(10118, 4);
                 default:
-                    return new Pair<>(13210,10);
+                    return new Pair<>(13210, 10);
                 //mens
             }
         }
 
-        private static Pair<Integer,Integer> getBag(String sub_cat) {
+        private static Pair<Integer, Integer> getBag(String sub_cat) {
             switch (sub_cat) {
 
                 case "purses":
@@ -862,4 +950,5 @@ public class Macros {
             }
         }
     }
+
 }

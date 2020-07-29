@@ -351,7 +351,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
                     else {
                         videoLayout.setVisibility(View.INVISIBLE);
                         photoView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                        photoView.setImageResource(R.drawable.animal1);
+                        photoView.setImageResource(R.drawable.tooki);
                         photoView.setPadding(25,0,25,0);
                         no_video.setVisibility(View.VISIBLE);
                     }

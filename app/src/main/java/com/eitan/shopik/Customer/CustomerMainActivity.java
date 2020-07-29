@@ -23,15 +23,19 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.eitan.shopik.Adapters.MainPagerAdapter;
+import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.PreferredItem;
+import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LandingPageActivity;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
+import com.eitan.shopik.ViewModels.AllItemsModel;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.eitan.shopik.ViewModels.SuggestedModel;
+import com.eitan.shopik.ViewModels.SwipesModel;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdSettings;
@@ -43,6 +47,7 @@ import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -56,7 +61,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -99,16 +103,19 @@ public class CustomerMainActivity extends AppCompatActivity {
     private CircleImageView mUserProfile;
     private String customerFirstName, imageUrl;
     private int color;
+    private String userId;
     private androidx.appcompat.widget.Toolbar toolbar;
     private ViewPager mainPager;
     private androidx.appcompat.widget.Toolbar.OnMenuItemClickListener topNavListener;
     private SuggestedModel suggestedModel;
+    private SwipesModel swipesModel;
+    private AllItemsModel allItemsModel;
     private ValueEventListener valueEventListener;
     private UnifiedNativeAd tempAd;
     private Pair<Integer,Integer> cat_num;
-    private int counter = 0;
     private ArrayList<ShoppingItem> allItems;
     private com.facebook.ads.InterstitialAd interstitialAd;
+    private BottomNavigationView main_bottom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,8 +132,6 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        counter = 0;
-
         if(!isConnectedToInternet()) {
             RelativeLayout LandingLayout = findViewById(R.id.mainLayout);
             Macros.Functions.showSnackbar (
@@ -138,6 +143,10 @@ public class CustomerMainActivity extends AppCompatActivity {
         }
 
         init();
+
+        getAllCompaniesInfo();
+
+        getLastSwipedItem();
 
         for( int i=0; i < Macros.NUM_OF_ADS; ++i ){
             loadAds();
@@ -159,9 +168,6 @@ public class CustomerMainActivity extends AppCompatActivity {
         };
         customerDB.addValueEventListener(valueEventListener);
 
-        getItems get = new getItems();
-        get.execute();
-
         //initFBInterstitial();
 
         loadCustomerInfo();
@@ -170,7 +176,7 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         setViewPager();
 
-        setTabLayout();
+       /*setTabLayout();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -192,8 +198,9 @@ public class CustomerMainActivity extends AppCompatActivity {
 
             }
         });
+        */
 
-        topNavListener = item -> {
+       topNavListener = item -> {
             Intent selectedIntent = null;
             switch (item.getTitle().toString()) {
                 case "Log Out":
@@ -226,7 +233,7 @@ public class CustomerMainActivity extends AppCompatActivity {
             return false;
         };
 
-        setToolbar();
+       setToolbar();
     }
 
     private void setToolbarColor() {
@@ -234,6 +241,18 @@ public class CustomerMainActivity extends AppCompatActivity {
             color = getColor(R.color.womenColor);
         else
             color = getColor(R.color.menColor);
+    }
+
+    private void getAllCompaniesInfo(){
+        FirebaseFirestore.getInstance().collection(Macros.COMPANIES).get().
+                addOnSuccessListener(documentSnapshot -> {
+                    for(DocumentSnapshot doc : documentSnapshot){
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("seller", doc.get("name"));
+                        map.put("logo_url", doc.get("logo_url"));
+                        mainModel.setCompanies_info(Objects.requireNonNull(doc.get("id")).toString(), map);
+                    }
+                });
     }
 
     private void setTabLayout() {
@@ -263,6 +282,66 @@ public class CustomerMainActivity extends AppCompatActivity {
         mainPager = findViewById(R.id.customer_container);
         mainPager.setAdapter(mainPgerAdapter);
         mainPager.setPageTransformer(false, new ZoomOutPageTransformer());
+
+        main_bottom = findViewById(R.id.main_bottom_navigation_view);
+        BottomNavigationView.OnNavigationItemSelectedListener navigation_listener = item -> {
+            switch(item.getItemId())
+            {
+                case R.id.bottom_swipe:
+                    mainPager.setCurrentItem(0);
+                    break;
+                case R.id.bottom_favorites:
+                    main_bottom.getOrCreateBadge(item.getItemId()).setNumber(0);
+                    main_bottom.getOrCreateBadge(item.getItemId()).setVisible(false, true);
+                    mainPager.setCurrentItem(1);
+                    break;
+                case R.id.bottom_search:
+                    mainPager.setCurrentItem(2);
+                    break;
+                case R.id.bottom_suggested:
+                    mainPager.setCurrentItem(3);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected Value "+ item.getItemId());
+            }
+            return true;
+        };
+
+        main_bottom.setOnNavigationItemSelectedListener(navigation_listener);
+        mainPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch(position)
+                {
+                    case 0:
+                        main_bottom.getMenu().findItem(R.id.bottom_swipe).setChecked(true);
+                        break;
+                    case 1:
+                        main_bottom.getOrCreateBadge(R.id.bottom_favorites).setNumber(0);
+                        main_bottom.getOrCreateBadge(R.id.bottom_favorites).setVisible(false, true);
+                        main_bottom.getMenu().findItem(R.id.bottom_favorites).setChecked(true);
+                        break;
+                    case 2:
+                        main_bottom.getMenu().findItem(R.id.bottom_search).setChecked(true);
+                        break;
+                    case 3:
+                        main_bottom.getMenu().findItem(R.id.bottom_suggested).setChecked(true);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected Value "+ position);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void setToolbar() {
@@ -293,6 +372,9 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         mainModel = new ViewModelProvider(this).get(MainModel.class);
         suggestedModel = new ViewModelProvider(this).get(SuggestedModel.class);
+        swipesModel = new ViewModelProvider(this).get(SwipesModel.class);
+        allItemsModel = new ViewModelProvider(this).get(AllItemsModel.class);
+
         setNavigationBarButtonsColor(getWindow().getNavigationBarColor());
         GenderModel genderModel = new ViewModelProvider(this).get(GenderModel.class);
 
@@ -329,13 +411,16 @@ public class CustomerMainActivity extends AppCompatActivity {
         customerDB = FirebaseDatabase.getInstance().getReference().
                 child(Macros.CUSTOMERS).
                 child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).
-                child(item_gender).child(Macros.CustomerMacros.PREFERRED_ITEMS).
-                child(item_type).child(item_sub_category);
+                child(item_gender).
+                child(Macros.CustomerMacros.PREFERRED_ITEMS).
+                child(item_type).
+                child(item_sub_category);
 
         customerFirstName = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName();
+        userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         imageUrl = bundle.getString("imageUrl");
         mAuth = FirebaseAuth.getInstance();
-        tabLayout = findViewById(R.id.top_nav);
+        //tabLayout = findViewById(R.id.top_nav);
 
         toolbar = findViewById(R.id.customer_toolbar);
     }
@@ -410,41 +495,30 @@ public class CustomerMainActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getCompanyInfo(final ShoppingItem shoppingItem) {
+    private void getCompanyInfo(final ShoppingItem shoppingItem, boolean search) {
 
-        counter++;
         final String company_id = shoppingItem.getSellerId();
-
         if (Objects.requireNonNull(mainModel.getCompanies_info().getValue()).containsKey(company_id)) {
             shoppingItem.setSeller(Objects.requireNonNull((Objects.requireNonNull(mainModel.getCompanies_info().getValue().get(company_id))).get("seller")).toString());
             shoppingItem.setSellerLogoUrl(Objects.requireNonNull((Objects.requireNonNull(mainModel.getCompanies_info().getValue().get(company_id))).get("logo_url")).toString());
 
-            androidx.core.util.Pair<String, ShoppingItem> pair = new androidx.core.util.Pair<>(shoppingItem.getId(), shoppingItem);
-            mainModel.addItemId(pair);
-
-           // if(shoppingItem.getPage_num() == cat_num.second && allItems.size() == counter){
-                mainModel.postAllItemsIds();
-           // }
-        }
-        else {
-            FirebaseFirestore.getInstance().collection(Macros.COMPANIES).
-                    document(shoppingItem.getSellerId()).
-                    get().addOnSuccessListener(documentSnapshot -> {
-
-                Map<String,Object> map = new HashMap<>();
-                map.put("seller", Objects.requireNonNull(documentSnapshot.get("name")).toString());
-                map.put("logo_url", Objects.requireNonNull(documentSnapshot.get("logo_url")).toString());
-                mainModel.setCompanies_info(shoppingItem.getSellerId(), map);
-                shoppingItem.setSeller(Objects.requireNonNull(documentSnapshot.get("name")).toString());
-                shoppingItem.setSellerLogoUrl(Objects.requireNonNull(documentSnapshot.get("logo_url")).toString());
-
-                androidx.core.util.Pair<String, ShoppingItem> pair = new androidx.core.util.Pair<>(shoppingItem.getId(), shoppingItem);
+            if( search ){
+                allItemsModel.addItem(ShoppingItemToRecyclerItem(shoppingItem));
+                if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
+                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                    if (shoppingItemAd != null) {
+                        RecyclerItem adItem = new RecyclerItem(null,null);
+                        adItem.setNativeAd(shoppingItemAd.getNativeAd());
+                        adItem.setAd(true);
+                        allItemsModel.addItem(adItem);
+                    }
+                }
+            }
+            else{
+                androidx.core.util.Pair<String, ShoppingItem> pair = new androidx.core.util.Pair<>(shoppingItem.getSeller(), shoppingItem);
                 mainModel.addItemId(pair);
-
-                //if(shoppingItem.getPage_num() == cat_num.second && allItems.size() == counter){
-                    mainModel.postAllItemsIds();
-               // }
-            });
+                mainModel.postAllItemsIds();
+            }
         }
     }
 
@@ -453,6 +527,7 @@ public class CustomerMainActivity extends AppCompatActivity {
         FirebaseDatabase.getInstance().getReference().
                 child(Macros.ITEMS).
                 child(item_gender).
+                child(shoppingItem.getSeller()).
                 child(item_type).
                 child(shoppingItem.getId()).
                 addListenerForSingleValueEvent(new ValueEventListener() {
@@ -482,7 +557,7 @@ public class CustomerMainActivity extends AppCompatActivity {
 
                             if (liked_users == null || liked_users.isEmpty()) {
                                 if (unliked_users == null || unliked_users.isEmpty()) {
-                                    getCompanyInfo(shoppingItem);
+                                    getCompanyInfo(shoppingItem,false);
                                 } else {
                                     getUnlikedUserInfo(shoppingItem, unliked_users);
                                 }
@@ -494,7 +569,7 @@ public class CustomerMainActivity extends AppCompatActivity {
                             shoppingItem.setUnlikes(0);
                             shoppingItem.setLikedUsers(null);
                             shoppingItem.setUnlikedUsers(null);
-                            getCompanyInfo(shoppingItem);
+                            getCompanyInfo(shoppingItem,false);
                         }
                     }
 
@@ -507,7 +582,8 @@ public class CustomerMainActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String, String> liked_users, Map<String, String> unliked_users) {
+    private void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String, String> liked_users,
+                                        Map<String, String> unliked_users) {
 
         ArrayList<String> list = new ArrayList<>(liked_users.keySet());
         for (String customer_id : list) {
@@ -538,7 +614,7 @@ public class CustomerMainActivity extends AppCompatActivity {
             });
         }
         if (unliked_users == null || unliked_users.isEmpty())
-            getCompanyInfo(shoppingItem);
+            getCompanyInfo(shoppingItem,false);
         else
             getUnlikedUserInfo(shoppingItem, unliked_users);
     }
@@ -575,15 +651,13 @@ public class CustomerMainActivity extends AppCompatActivity {
                 }
             });
         }
-        getCompanyInfo(shoppingItem);
+        getCompanyInfo(shoppingItem,false);
     }
 
     @Override
     protected void onDestroy() {
 
         customerDB.removeEventListener(valueEventListener);
-        mainModel.getAll_items().removeObservers(this);
-        mainModel.getAll_items().removeObservers(this);
         mainModel.getCustomers_info().removeObservers(this);
         mainModel.getCompanies_info().removeObservers(this);
         mainModel.clearAds();
@@ -693,6 +767,10 @@ public class CustomerMainActivity extends AppCompatActivity {
                         dummy.setAd(true);
                         dummy.setNativeAd(tempAd);
                         mainModel.addAd(dummy);
+                        if(mainModel.getAdsContainerSize() == Macros.NUM_OF_ADS) {
+                            getItems get = new getItems(1);
+                            get.execute();
+                        }
                     }
 
                     @Override
@@ -706,10 +784,100 @@ public class CustomerMainActivity extends AppCompatActivity {
         adLoader.loadAd(new PublisherAdRequest.Builder().build());
     }
 
-    private class getItems extends AsyncTask<Void, Integer, Void> {
+    private RecyclerItem ShoppingItemToRecyclerItem(ShoppingItem shoppingItem){
+
+        RecyclerItem recyclerItem = new RecyclerItem(shoppingItem.getBrand(), shoppingItem.getSite_link());
+        recyclerItem.setPrice(shoppingItem.getPrice());
+        recyclerItem.setLink(shoppingItem.getSite_link());
+        recyclerItem.setDescription(shoppingItem.getName());
+        recyclerItem.setType(shoppingItem.getType());
+        recyclerItem.setId(shoppingItem.getId());
+        recyclerItem.setSale(shoppingItem.isOn_sale());
+        recyclerItem.setVideo_link(shoppingItem.getVideo_link());
+        recyclerItem.setOutlet(shoppingItem.isOutlet());
+        recyclerItem.setReduced_price(shoppingItem.getReduced_price());
+        recyclerItem.setSeller(shoppingItem.getSeller());
+        recyclerItem.setBrand(shoppingItem.getBrand());
+        recyclerItem.setSeller_id(shoppingItem.getSellerId());
+        recyclerItem.setImages(shoppingItem.getImages());
+
+        recyclerItem.setSellerImageUrl(shoppingItem.getSellerLogoUrl());
+        return recyclerItem;
+    }
+
+    private void getLastSwipedItem() {
+        for(String company : Macros.CompanyNames) {
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(userId).
+                    child(item_gender).
+                    child(Macros.Items.LIKED).
+                    child(company).
+                    child(item_type).
+                    child(item_sub_category).
+                    orderByKey().
+                    limitToLast(1).
+                    addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                for (Object item_id : ((Map) Objects.requireNonNull(dataSnapshot.getValue())).keySet()) {
+                                    swipesModel.setLast_item_id(item_id.toString(), company);
+                                }
+                            }
+                            FirebaseDatabase.getInstance().getReference().
+                                    child(Macros.CUSTOMERS).
+                                    child(userId).
+                                    child(item_gender).
+                                    child(Macros.Items.UNLIKED).
+                                    child(company).
+                                    child(item_type).
+                                    child(item_sub_category).
+                                    orderByKey().
+                                    limitToLast(1).
+                                    addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                for (Object item_id : ((Map) Objects.requireNonNull(dataSnapshot.getValue())).keySet()) {
+                                                    if (swipesModel.getLast_item_id().getValue() != null) {
+                                                        String last_item = Objects.requireNonNull(((Map) swipesModel.getLast_item_id().getValue()).get(company)).toString();
+                                                        String res;
+                                                        if (item_id.toString().compareTo(last_item) > 0)
+                                                            res = item_id.toString();
+                                                        else res = last_item;
+                                                        swipesModel.setLast_item_id(res,company);
+                                                    }
+                                                    else
+                                                        swipesModel.setLast_item_id(item_id.toString(),company);
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled()" + databaseError.getMessage());
+                                        }
+                                    });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled()" + databaseError.getMessage());
+                        }
+
+                    });
+        }
+    }
+
+    public class getItems extends AsyncTask<Void, Integer, Void> {
 
         String data = "";
+        int page_num;
 
+        getItems(int page_num){
+            this.page_num = page_num;
+        }
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -722,21 +890,17 @@ public class CustomerMainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             try {
 
-                //getBrands();
-
                 cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
+
+                String tx_cat = Macros.Functions.translateCategoryToTerminalX(item_type);
+                getTerminalX(tx_cat,page_num,item_sub_category);
 
                 String c_cat = Macros.Functions.translateCategoryToCastro(item_type);
                 getCastro(c_cat);
 
-                String tx_cat = Macros.Functions.translateCategoryToTerminalX(item_type);
-                getTerminalX(tx_cat);
+                getAsos(page_num);
 
-                for ( int i=1; i < cat_num.second + 1; ++i ) {
-                    getAllItems(i);
-                }
-
-                for(ShoppingItem item : allItems){
+                for(ShoppingItem item : allItems) {
                     getLikes(item);
                 }
             }
@@ -746,21 +910,34 @@ public class CustomerMainActivity extends AppCompatActivity {
             return null;
         }
 
-        private void getTerminalX(String cat) {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        private void getTerminalX(String cat, int page_num,String sub_cat) {
             try {
-                Document document = Jsoup.connect("https://www.terminalx.com/" + item_gender.toLowerCase() + "/" + cat).get();
-                Elements elements = document.getElementsByAttributeValueContaining("class", "products list items product-items");
-                Elements items = elements.get(0).getElementsByAttributeValueContaining("class", "product-item-photo-shop");
 
-                for (Element item : items) {
+                Document temp = Jsoup.connect("https://www.terminalx.com/" +
+                        item_gender.toLowerCase() +
+                        "/" + cat +
+                        "/" + sub_cat +
+                        "?p=" + page_num ).get();
 
-                    String link = item.childNode(1).attr("href");
-                    Attributes attributes = item.childNode(1).childNode(1).childNode(1).childNode(1).attributes();
+                Elements list_items = temp.getElementsByAttributeValue("class", "products list items product-items");
+                Elements items_photo = list_items.get(0).getElementsByAttributeValue("class", "product-item-photo-shop");
+                Elements items_details = list_items.get(0).getElementsByAttributeValue("class", "product details product-item-details");
+
+                for (int i=0; i<items_photo.size(); ++i) {
+
+                    String link = items_photo.get(i).childNode(1).attr("href");
+
+                    Attributes attributes = items_photo.get(i).childNode(1).
+                            childNode(1).childNode(1).
+                            childNode(1).attributes();
+
                     String title = attributes.get("alt");
 
                     Document doc = Jsoup.connect(link).get();
                     Elements info = doc.getElementsByAttributeValue("class", "product-info-main");
                     Elements media = doc.getElementsByAttributeValue("class", "product media");
+
                     String img_url = media.get(0).
                             childNode(3).childNode(1).
                             childNode(1).childNode(3).
@@ -776,28 +953,50 @@ public class CustomerMainActivity extends AppCompatActivity {
                     images.add(img_url.replace("-1","-4"));
 
                     Elements product_item_brand = info.get(0).getElementsByAttributeValue("class", "product-item-brand");
-                    String brand = product_item_brand.get(0).childNode(1).childNode(0).toString();
-
                     ShoppingItem shoppingItem = new ShoppingItem();
 
+                    String brand;
                     String price;
-                    Elements final_price = info.get(0).getElementsByAttributeValue("class", "price-box price-final_price");
-                    if(final_price.get(0).childNodeSize() == 5){
-                        String reduced_price = final_price.get(0).
+                    String id;
+                    if(product_item_brand.size() == 0) {
+
+                        brand = items_details.get(i).
                                 childNode(1).childNode(1).
-                                childNode(3).attr("data-price-amount");
+                                childNode(1).childNode(0).
+                                toString().replace("\n ","");
 
-                        price = final_price.get(0).
-                                childNode(3).childNode(1).
-                                childNode(3).attr("data-price-amount");
+                        id = items_details.get(i).
+                                childNode(1).childNode(5).
+                                attr("data-id");
 
-                        shoppingItem.setOn_sale(true);
-                        shoppingItem.setReduced_price(reduced_price);
+                        price = items_details.get(i).
+                                childNode(1).childNode(3).
+                                childNode(0).childNode(1).
+                                childNode(1).childNode(1).
+                                childNode(0).
+                                toString().replace("&nbsp;₪","");
                     }
-                    else
-                        price = final_price.get(0).childNode(1).childNode(1).attr("data-price-amount");
+                    else {
+                        brand = product_item_brand.get(0).childNode(1).childNode(0).toString();
+                        Elements final_price = info.get(0).getElementsByAttributeValue("class", "price-box price-final_price");
+                        id = final_price.get(0).attr("data-product-id");
 
-                    String id = final_price.get(0).attr("data-product-id");
+                        if(final_price.get(0).childNodeSize() == 5){
+                            String reduced_price = final_price.get(0).
+                                    childNode(1).childNode(1).
+                                    childNode(3).attr("data-price-amount");
+
+                            price = final_price.get(0).
+                                    childNode(3).childNode(1).
+                                    childNode(3).attr("data-price-amount");
+
+                            shoppingItem.setOn_sale(true);
+                            shoppingItem.setReduced_price(reduced_price);
+                        }
+                        else
+                            price = final_price.get(0).childNode(1).childNode(1).attr("data-price-amount");
+                    }
+
                     shoppingItem.setPrice(price);
                     shoppingItem.setId_in_seller(id);
                     shoppingItem.setId(id);
@@ -815,15 +1014,240 @@ public class CustomerMainActivity extends AppCompatActivity {
                     shoppingItem.setVideo_link(null);
 
                     allItems.add(shoppingItem);
+                    getCompanyInfo(shoppingItem,true);
                 }
             }
-            catch (Exception e){
+            catch (Exception e) {
+                Log.d(Macros.TAG,"getTerminalX() " + e.getMessage());
+            }
+        }
+
+     //   @RequiresApi(api = Build.VERSION_CODES.N)
+     /*   private void getShein(String cat, int page_num,String sub_cat) {
+            try {
+
+                Document temp = Jsoup.connect("https://www.terminalx.com/" +
+                        item_gender.toLowerCase() +
+                        "/" + cat +
+                        "/" + sub_cat +
+                        "?p=" + page_num ).get();
+
+                Elements list_items = temp.getElementsByAttributeValue("class", "products list items product-items");
+                Elements items_photo = list_items.get(0).getElementsByAttributeValue("class", "product-item-photo-shop");
+                Elements items_details = list_items.get(0).getElementsByAttributeValue("class", "product details product-item-details");
+
+                for (int i=0; i<items_photo.size(); ++i) {
+
+                    String link = items_photo.get(i).childNode(1).attr("href");
+
+                    Attributes attributes = items_photo.get(i).childNode(1).
+                            childNode(1).childNode(1).
+                            childNode(1).attributes();
+
+                    String title = attributes.get("alt");
+
+                    Document doc = Jsoup.connect(link).get();
+                    Elements info = doc.getElementsByAttributeValue("class", "product-info-main");
+                    Elements media = doc.getElementsByAttributeValue("class", "product media");
+
+                    String img_url = media.get(0).
+                            childNode(3).childNode(1).
+                            childNode(1).childNode(3).
+                            childNode(1).childNode(5).
+                            childNode(1).childNode(1).
+                            attr("src");
+
+                    ArrayList<String> images = new ArrayList<>();
+
+                    images.add(img_url);
+                    images.add(img_url.replace("-1","-2"));
+                    images.add(img_url.replace("-1","-3"));
+                    images.add(img_url.replace("-1","-4"));
+
+                    Elements product_item_brand = info.get(0).getElementsByAttributeValue("class", "product-item-brand");
+                    ShoppingItem shoppingItem = new ShoppingItem();
+
+                    String brand;
+                    String price;
+                    String id;
+                    if(product_item_brand.size() == 0) {
+
+                        brand = items_details.get(i).
+                                childNode(1).childNode(1).
+                                childNode(1).childNode(0).
+                                toString().replace("\n ","");
+
+                        id = items_details.get(i).
+                                childNode(1).childNode(5).
+                                attr("data-id");
+
+                        price = items_details.get(i).
+                                childNode(1).childNode(3).
+                                childNode(0).childNode(1).
+                                childNode(1).childNode(1).
+                                childNode(0).
+                                toString().replace("&nbsp;₪","");
+                    }
+                    else {
+                        brand = product_item_brand.get(0).childNode(1).childNode(0).toString();
+                        Elements final_price = info.get(0).getElementsByAttributeValue("class", "price-box price-final_price");
+                        id = final_price.get(0).attr("data-product-id");
+
+                        if(final_price.get(0).childNodeSize() == 5){
+                            String reduced_price = final_price.get(0).
+                                    childNode(1).childNode(1).
+                                    childNode(3).attr("data-price-amount");
+
+                            price = final_price.get(0).
+                                    childNode(3).childNode(1).
+                                    childNode(3).attr("data-price-amount");
+
+                            shoppingItem.setOn_sale(true);
+                            shoppingItem.setReduced_price(reduced_price);
+                        }
+                        else
+                            price = final_price.get(0).childNode(1).childNode(1).attr("data-price-amount");
+                    }
+
+                    shoppingItem.setPrice(price);
+                    shoppingItem.setId_in_seller(id);
+                    shoppingItem.setId(id);
+                    shoppingItem.setPrice(price);
+                    shoppingItem.setSite_link(link);
+                    shoppingItem.setBrand(brand);
+                    shoppingItem.setType(item_type);
+                    shoppingItem.setGender(item_gender);
+                    ArrayList<String> name = new ArrayList<>(Arrays.asList(title.split(" ")));
+                    shoppingItem.setName(name);
+                    shoppingItem.setSeller("Terminal X");
+                    shoppingItem.setSub_category(cat);
+                    shoppingItem.setSellerId("KhrLuCxBoKc0DLAL8dA6WAbOFXT2");
+                    shoppingItem.setImages(images);
+                    shoppingItem.setVideo_link(null);
+
+                    allItems.add(shoppingItem);
+                    getCompanyInfo(shoppingItem,true);
+                }
+            }
+            catch (Exception e) {
                 Log.d(Macros.TAG,"getTerminalX() " + e.getMessage());
             }
         }
 
         @RequiresApi(api = Build.VERSION_CODES.N)
-        private void getAllItems(int page_num) throws IOException {
+        private void getZara(String cat, int page_num,String sub_cat) {
+            try {
+
+                Document temp = Jsoup.connect("https://www.terminalx.com/" +
+                        item_gender.toLowerCase() +
+                        "/" + cat +
+                        "/" + sub_cat +
+                        "?p=" + page_num ).get();
+
+                Elements list_items = temp.getElementsByAttributeValue("class", "products list items product-items");
+                Elements items_photo = list_items.get(0).getElementsByAttributeValue("class", "product-item-photo-shop");
+                Elements items_details = list_items.get(0).getElementsByAttributeValue("class", "product details product-item-details");
+
+                for (int i=0; i<items_photo.size(); ++i) {
+
+                    String link = items_photo.get(i).childNode(1).attr("href");
+
+                    Attributes attributes = items_photo.get(i).childNode(1).
+                            childNode(1).childNode(1).
+                            childNode(1).attributes();
+
+                    String title = attributes.get("alt");
+
+                    Document doc = Jsoup.connect(link).get();
+                    Elements info = doc.getElementsByAttributeValue("class", "product-info-main");
+                    Elements media = doc.getElementsByAttributeValue("class", "product media");
+
+                    String img_url = media.get(0).
+                            childNode(3).childNode(1).
+                            childNode(1).childNode(3).
+                            childNode(1).childNode(5).
+                            childNode(1).childNode(1).
+                            attr("src");
+
+                    ArrayList<String> images = new ArrayList<>();
+
+                    images.add(img_url);
+                    images.add(img_url.replace("-1","-2"));
+                    images.add(img_url.replace("-1","-3"));
+                    images.add(img_url.replace("-1","-4"));
+
+                    Elements product_item_brand = info.get(0).getElementsByAttributeValue("class", "product-item-brand");
+                    ShoppingItem shoppingItem = new ShoppingItem();
+
+                    String brand;
+                    String price;
+                    String id;
+                    if(product_item_brand.size() == 0) {
+
+                        brand = items_details.get(i).
+                                childNode(1).childNode(1).
+                                childNode(1).childNode(0).
+                                toString().replace("\n ","");
+
+                        id = items_details.get(i).
+                                childNode(1).childNode(5).
+                                attr("data-id");
+
+                        price = items_details.get(i).
+                                childNode(1).childNode(3).
+                                childNode(0).childNode(1).
+                                childNode(1).childNode(1).
+                                childNode(0).
+                                toString().replace("&nbsp;₪","");
+                    }
+                    else {
+                        brand = product_item_brand.get(0).childNode(1).childNode(0).toString();
+                        Elements final_price = info.get(0).getElementsByAttributeValue("class", "price-box price-final_price");
+                        id = final_price.get(0).attr("data-product-id");
+
+                        if(final_price.get(0).childNodeSize() == 5){
+                            String reduced_price = final_price.get(0).
+                                    childNode(1).childNode(1).
+                                    childNode(3).attr("data-price-amount");
+
+                            price = final_price.get(0).
+                                    childNode(3).childNode(1).
+                                    childNode(3).attr("data-price-amount");
+
+                            shoppingItem.setOn_sale(true);
+                            shoppingItem.setReduced_price(reduced_price);
+                        }
+                        else
+                            price = final_price.get(0).childNode(1).childNode(1).attr("data-price-amount");
+                    }
+
+                    shoppingItem.setPrice(price);
+                    shoppingItem.setId_in_seller(id);
+                    shoppingItem.setId(id);
+                    shoppingItem.setPrice(price);
+                    shoppingItem.setSite_link(link);
+                    shoppingItem.setBrand(brand);
+                    shoppingItem.setType(item_type);
+                    shoppingItem.setGender(item_gender);
+                    ArrayList<String> name = new ArrayList<>(Arrays.asList(title.split(" ")));
+                    shoppingItem.setName(name);
+                    shoppingItem.setSeller("Terminal X");
+                    shoppingItem.setSub_category(cat);
+                    shoppingItem.setSellerId("KhrLuCxBoKc0DLAL8dA6WAbOFXT2");
+                    shoppingItem.setImages(images);
+                    shoppingItem.setVideo_link(null);
+
+                    allItems.add(shoppingItem);
+                    getCompanyInfo(shoppingItem,true);
+                }
+            }
+            catch (Exception e) {
+                Log.d(Macros.TAG,"getTerminalX() " + e.getMessage());
+            }
+        }*/
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        private void getAsos(int page_num) throws IOException {
 
             URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num.first + "&page=" + page_num);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -910,6 +1334,17 @@ public class CustomerMainActivity extends AppCompatActivity {
 
                     shoppingItem.setId_in_seller(id);
                     shoppingItem.setColor(color);
+
+                    ArrayList<String> images = new ArrayList<>();
+                    Database connection = new Database();
+                    images.add(connection.getASOSimageUrl(1,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
+                    images.add(connection.getASOSimageUrl(2,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
+                    images.add(connection.getASOSimageUrl(3,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
+                    images.add(connection.getASOSimageUrl(4,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
+
+                    Document doc = Jsoup.connect("https://video.asos-media.com/products/0/" + id + "-catwalk-AVS.m3u8").get();
+                    System.out.println(doc);
+
                     shoppingItem.setType(item_type);
                     shoppingItem.setBrand(branda);
                     shoppingItem.setName(list);
@@ -922,8 +1357,10 @@ public class CustomerMainActivity extends AppCompatActivity {
                     shoppingItem.setGender(item_gender);
                     shoppingItem.setId(id);
                     shoppingItem.setSub_category(item_sub_category);
+                    shoppingItem.setImages(images);
 
                     allItems.add(shoppingItem);
+                    getCompanyInfo(shoppingItem,true);
                 }
             }
             catch (Exception e) {
@@ -934,119 +1371,90 @@ public class CustomerMainActivity extends AppCompatActivity {
             }
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         private void getCastro(String cat) {
             try {
                 Document document = Jsoup.connect("https://www.castro.com/he/" + item_gender.toUpperCase() + "/" + cat + ".html").get();
-                Elements elements = document.getElementsByAttributeValueContaining("class", "products-grid cols-3");
+                Elements elements = document.getElementsByAttributeValueContaining("class","products-grid cols-3");
+
                 for (Element elem : elements) {
-                    Elements elements1 = elem.getElementsByClass("price-box");
 
-                    String price1 = "";
-                    String price2 = "";
-                    String price3 = "";
-
-                        if (elements1.get(0).childNode(1).childNodeSize() > 3)
-                            price1 = elements1.get(0).childNode(1).childNode(3).childNode(2).toString();
-                        else
-                            price1 = elements1.get(0).childNode(1).childNode(1).childNode(1).toString();
-
-                        if (elements1.get(1).childNode(1).childNodeSize() > 3)
-                            price2 = elements1.get(1).childNode(1).childNode(3).childNode(2).toString();
-                        else
-                            price2 = elements1.get(1).childNode(1).childNode(1).childNode(1).toString();
-
-                        if (elements1.get(2).childNode(1).childNodeSize() > 3)
-                            price3 = elements1.get(2).childNode(1).childNode(3).childNode(2).toString();
-                        else
-                            price3 = elements1.get(2).childNode(1).childNode(1).childNode(1).toString();
-
-                        Node item1 = elem.childNode(1);
-                        setCastroItem(item1, price1, cat);
-
-                        Node item2 = elem.childNode(3);
-                        setCastroItem(item2, price2, cat);
-
-                        Node item3 = elem.childNode(5);
-                        setCastroItem(item3, price3, cat);
+                    ArrayList<Node> list = new ArrayList<>();
+                    int size = elem.childNodeSize();
+                    for(int i=0; i<size; ++i){
+                        if( i%2 == 1){
+                            list.add(elem.childNode(i));
+                        }
                     }
+
+                    for( Node node : list){
+
+                        ShoppingItem shoppingItem = new ShoppingItem();
+
+                        String link = node.childNode(1).attr("href");
+
+                        String description = node.childNode(1).attr("title");
+
+                        ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
+
+                        Document item_doc = Jsoup.connect(link).get();
+                        Elements elems = item_doc.getElementsByAttributeValueContaining("class","MagicToolboxContainer");
+                        Elements price_elem = item_doc.getElementsByAttributeValue("class", "price-box");
+
+                        String price;
+
+                        if (price_elem.get(0).childNode(1).childNodeSize() > 3)
+                            price = price_elem.get(0).childNode(1).childNode(3).childNode(2).toString();
+                        else
+                            price = price_elem.get(0).childNode(1).childNode(1).childNode(1).toString();
+
+                        List<Node> nodes = elems.get(0).childNode(3).childNode(3).childNodes();
+
+                        String id = node.childNode(node.childNodeSize() - 6).attr("data-id");
+
+                        if (node.childNode(node.childNodeSize() - 2).childNode(5).childNodeSize() > 3) {
+
+                            shoppingItem.setOn_sale(true);
+                            shoppingItem.setReduced_price(price.replace("&nbsp;",""));
+
+                            String old_price = node.
+                                    childNode(node.childNodeSize() - 2).
+                                    childNode(5).childNode(3).
+                                    childNode(3).childNode(2).
+                                    toString();
+
+                            shoppingItem.setPrice(old_price.replace("&nbsp;",""));
+                        }
+                        else
+                            shoppingItem.setPrice(price.replace("&nbsp;",""));
+
+                        ArrayList<String> images = new ArrayList<>();
+                        for (int i=0; i<nodes.size(); ++i) {
+                            if( i % 2 == 1 && i < 8 ){
+                                images.add(nodes.get(i).childNode(0).attr("href"));
+                            }
+                        }
+
+                        shoppingItem.setImages(images);
+                        shoppingItem.setBrand("Castro");
+                        shoppingItem.setType(item_type);
+                        shoppingItem.setGender(item_gender);
+                        shoppingItem.setSeller("Castro");
+                        shoppingItem.setSub_category(cat);
+                        shoppingItem.setSellerId("P6qfLsJbruQZbciTMF4oWnIjuZ63");
+                        shoppingItem.setId(id);
+                        shoppingItem.setColor(node.attributes().get("data-color"));
+                        shoppingItem.setName(name);
+                        shoppingItem.setSite_link(link);
+                        shoppingItem.setVideo_link(null);
+
+                        allItems.add(shoppingItem);
+                        getCompanyInfo(shoppingItem,true);
+                    }
+                }
             }
             catch (Exception e){
                 Log.d(Macros.TAG,"getCastro() " + e.getMessage());
-            }
-        }
-
-        private void setCastroItem(Node node,String price,String cat){
-
-            ShoppingItem shoppingItem = new ShoppingItem();
-            String id = node.childNode(node.childNodeSize() - 6).attr("data-id");
-
-            if (node.childNode(node.childNodeSize() - 2).childNode(5).childNodeSize() > 3) {
-                    shoppingItem.setOn_sale(true);
-                    shoppingItem.setReduced_price(price.replace("&nbsp;", ""));
-                    String old_price = node.childNode(node.childNodeSize() - 2).childNode(5).childNode(3).childNode(3).childNode(2).toString();
-                    shoppingItem.setPrice(old_price.replace("&nbsp;", ""));
-            }
-            else
-                shoppingItem.setPrice(price.replace("&nbsp;", ""));
-
-            Attributes attributes_item = node.attributes();
-            shoppingItem.setId(id);
-            shoppingItem.setColor(attributes_item.get("data-color"));
-
-            List<Attribute> list = node.childNode(node.childNodeSize()-8).attributes().asList();
-            shoppingItem.setSite_link(list.get(0).getValue());
-            shoppingItem.setBrand("Castro");
-            shoppingItem.setType(item_type);
-            shoppingItem.setId_in_seller(id);
-            shoppingItem.setGender(item_gender);
-            ArrayList<String> name = new ArrayList<>(Arrays.asList(list.get(1).getValue().split(" ")));
-            shoppingItem.setName(name);
-            shoppingItem.setSeller("Castro");
-            shoppingItem.setSub_category(cat);
-            shoppingItem.setSellerId("P6qfLsJbruQZbciTMF4oWnIjuZ63");
-
-            ArrayList<String> images = new ArrayList<>();
-            try {
-                Document document = Jsoup.connect(shoppingItem.getSite_link()).get();
-                Elements elements = document.getElementsByAttributeValueContaining("class", "slider");
-                for (Element element : elements){
-                    int[] indics = {1,3,5,7};
-                    for(int i=0 ; i < element.childNodeSize()/2; ++i){
-                        if( i > 3)
-                            break;
-                        try {
-                            images.add(element.childNode(indics[i]).childNode(0).attr("href"));
-                        }catch (Exception e){
-                            Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
-                        }
-                    }
-                    if(images.size() == 3){
-                        images.add(images.get(0));
-                    }
-                }
-            }
-            catch (Exception e){
-                Log.d(Macros.TAG,"castro item: " + e.getMessage());
-            }
-
-            shoppingItem.setImages(images);
-            shoppingItem.setVideo_link(null);
-
-            allItems.add(shoppingItem);
-        }
-
-        private void getBrands(){
-            try {
-                Document document = Jsoup.connect("https://www.asos.com/women/a-to-z-of-brands/cat/?cid=1340&nlid=ww|brands|top+brands").get();
-                Elements elements = document.getElementsByAttributeValueContaining("class", "vqk6pTa");
-                ArrayList<String> list = new ArrayList<>();
-                for (Element elem : elements) {
-                    list.add( "\""+ elem.childNode(0).childNode(0).toString() +"\"" + ", " );
-                }
-                System.out.println(list);
-            }
-            catch (Exception e){
-                Log.d(Macros.TAG,"getBrands : " + e.getMessage());
             }
         }
 
@@ -1063,4 +1471,5 @@ public class CustomerMainActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
         }
     }
+
 }

@@ -28,7 +28,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.bumptech.glide.Glide;
-import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
@@ -39,7 +38,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
@@ -161,13 +159,6 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
 
             final int[] i = {0};
-            ArrayList<String> images = new ArrayList<>();
-            if(item.getSeller().equals("ASOS")) {
-                setImagesArray(item, images);
-                item.setImages(images);
-            }
-            else
-                images = item.getImages();
 
             CircleImageView seller_logo2 = convertView.findViewById(R.id.seller_logo2);
             TextView seller_name = convertView.findViewById(R.id.seller_name);
@@ -183,7 +174,7 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
 
             final ImageView imageView = convertView.findViewById(R.id.image_item);
             String image = "";
-            for(String img : images){
+            for(String img : item.getImages()){
                 if(img != null && !img.equals("")) {
                     image = img;
                     break;
@@ -260,22 +251,21 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
 
             String cur_price;
             if(item.getSeller().equals("ASOS"))
-               cur_price = new DecimalFormat("##.##").
-                       format(Double.parseDouble(item.getPrice())*Macros.POUND_TO_ILS) +
+                cur_price = new DecimalFormat("##.##").
+                        format(Double.parseDouble(item.getPrice()) * Macros.POUND_TO_ILS) +
                         Currency.getInstance("ILS").getSymbol();
             else
                 cur_price = new DecimalFormat("##.##").
-                    format(Double.parseDouble(item.getPrice())) +
-                    Currency.getInstance("ILS").getSymbol();
+                        format(Double.parseDouble(item.getPrice())) +
+                        Currency.getInstance("ILS").getSymbol();
 
+            if (item.isOutlet() || item.isOn_sale()) {
+                int discount = (int) (100 - Math.ceil(100 * (Double.parseDouble(item.getReduced_price()) / Double.parseDouble(item.getPrice()))));
 
-            if(item.isOutlet() || item.isOn_sale()) {
-                int discount = (int) (100 - Math.ceil(100*(Double.parseDouble(item.getReduced_price())/Double.parseDouble(item.getPrice()))));
-
-                if(item.isOn_sale())
-                    sale.setText( "SALE" + System.lineSeparator() + "-" + discount + "%" );
-                else if(item.isOutlet())
-                    sale.setText( "OUTLET" + System.lineSeparator() + "-" + discount + "%" );
+                if (item.isOn_sale())
+                    sale.setText("SALE" + System.lineSeparator() + "-" + discount + "%");
+                else if (item.isOutlet())
+                    sale.setText("OUTLET" + System.lineSeparator() + "-" + discount + "%");
 
                 sale.setVisibility(View.VISIBLE);
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.blink_anim);
@@ -284,17 +274,17 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 String new_price;
                 if(item.getSeller().equals("ASOS"))
                     new_price = new DecimalFormat("##.##").
-                            format(Double.parseDouble(item.getPrice())*Macros.POUND_TO_ILS) +
+                            format(Double.parseDouble(item.getReduced_price()) * Macros.POUND_TO_ILS) +
                             Currency.getInstance("ILS").getSymbol();
                 else
                     new_price = new DecimalFormat("##.##").
-                            format(Double.parseDouble(item.getPrice())) +
+                            format(Double.parseDouble(item.getReduced_price())) +
                             Currency.getInstance("ILS").getSymbol();
 
                 old_price.setVisibility(View.VISIBLE);
                 old_price.setText(cur_price);
-                old_price.setTextColor(Color.BLACK);
                 old_price.setPaintFlags(price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                old_price.setTextColor(Color.BLACK);
 
                 price.setText(new_price);
                 price.setTextColor(Color.RED);
@@ -305,6 +295,7 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 price.setText(cur_price);
                 price.setTextColor(Color.BLACK);
             }
+
 
             TextView buy = convertView.findViewById(R.id.list_item_buy_button);
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(), item.getSite_link()));
@@ -320,16 +311,6 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
     @Override
     public ShoppingItem getItem(int position) {
         return super.getItem(position);
-    }
-
-    private void setImagesArray(ShoppingItem shoppingItem, ArrayList<String> imagesUrl) {
-
-        Database connection = new Database();
-
-        imagesUrl.add(connection.getASOSimageUrl(1,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
-        imagesUrl.add(connection.getASOSimageUrl(2,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
-        imagesUrl.add(connection.getASOSimageUrl(3,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
-        imagesUrl.add(connection.getASOSimageUrl(4,shoppingItem.getColor(),shoppingItem.getId_in_seller()));
     }
 
     @Override

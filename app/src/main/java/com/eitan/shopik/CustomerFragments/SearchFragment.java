@@ -21,24 +21,18 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.eitan.shopik.Adapters.SearchAdapter;
-import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.RecyclerItem;
-import com.eitan.shopik.Items.ShoppingItem;
-import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.AllItemsModel;
-import com.eitan.shopik.ViewModels.MainModel;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SearchFragment extends Fragment implements View.OnClickListener{
 
@@ -48,14 +42,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private boolean isSearchOpened = false;
     private OvershootInterpolator overshootInterpolator = new OvershootInterpolator();
     private ExtendedFloatingActionButton main;
-    private FloatingActionButton search,clear,more;
+    private FloatingActionButton search, clear,more;
     private float translationY = 100f;
     private LinearLayout options;
     private ImageView down_arrow;
     private CardView search_card;
     private SearchView searchView2;
     private AllItemsModel allItemsModel;
-    private MainModel mainModel;
+    private CopyOnWriteArrayList<RecyclerItem> allitems;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -66,8 +60,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initOnCreate() {
-        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
         allItemsModel = new ViewModelProvider(requireActivity()).get(AllItemsModel.class);
+        allitems = new CopyOnWriteArrayList<>();
     }
 
     @Override
@@ -82,54 +76,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         initViews();
 
-        mainModel.getAll_items_ids().observe(getViewLifecycleOwner(), pairs -> {
-            allItemsModel.clearItems();
-            int count = 0;
-            for (Pair<String,ShoppingItem> item : pairs) {
-                assert item.second != null;
-                RecyclerItem recyclerItem = new RecyclerItem(item.second.getBrand(), item.second.getSite_link());
-                recyclerItem.setPrice(item.second.getPrice());
-                recyclerItem.setLink(item.second.getSite_link());
-                recyclerItem.setDescription(item.second.getName());
-                recyclerItem.setType(item.second.getType());
-                recyclerItem.setId(item.second.getId());
-                recyclerItem.setSale(item.second.isOn_sale());
-                recyclerItem.setVideo_link(item.second.getVideo_link());
-                recyclerItem.setOutlet(item.second.isOutlet());
-                recyclerItem.setReduced_price(item.second.getReduced_price());
-                recyclerItem.setSeller(item.second.getSeller());
-                recyclerItem.setBrand(item.second.getBrand());
-                recyclerItem.setSeller_id(item.second.getSellerId());
-
-                if(item.second.getSeller().equals("ASOS")) {
-                    final ArrayList<String> imagesUrl = new ArrayList<>();
-                    Database connection = new Database();
-                    imagesUrl.add(connection.getASOSimageUrl(1, item.second.getColor(), item.second.getId_in_seller()));
-                    imagesUrl.add(connection.getASOSimageUrl(2, item.second.getColor(), item.second.getId_in_seller()));
-                    imagesUrl.add(connection.getASOSimageUrl(3, item.second.getColor(), item.second.getId_in_seller()));
-                    imagesUrl.add(connection.getASOSimageUrl(4, item.second.getColor(), item.second.getId_in_seller()));
-                    recyclerItem.setImages(imagesUrl);
-                }
-                else
-                    recyclerItem.setImages(item.second.getImages());
-
-                recyclerItem.setSellerImageUrl(item.second.getSellerLogoUrl());
-
-                allItemsModel.addItem(recyclerItem);
-                count++;
-                if( (count% Macros.SEARCH_TO_AD == 0) && count > 0 ) {
-                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                    if(shoppingItemAd != null) {
-                        RecyclerItem adItem = new RecyclerItem(null, null);
-                        adItem.setNativeAd(shoppingItemAd.getNativeAd());
-                        adItem.setAd(true);
-                        allItemsModel.addItem(adItem);
-                        count++;
-                    }
-                }
-                searchAdapter.notifyDataSetChanged();
-            }
-            searchAdapter.setAllItems(Objects.requireNonNull(allItemsModel.getItems().getValue()));
+        allItemsModel.getItems().observe(requireActivity(), recyclerItems -> {
+          //  Collections.shuffle(recyclerItems);
+            allitems.clear();
+            allitems.addAll(recyclerItems);
+            searchAdapter.notifyDataSetChanged();
+            searchAdapter.setAllItems(allitems);
         });
 
         listContainer.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -137,10 +89,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)) {
                     showArrow();
-                } else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
+                }
+                else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
                     hideArrow();
                 }
-                // were mot moving
+                // were not moving
                 if (scrollState == SCROLL_STATE_IDLE && !isOpened && !isSearchOpened)
                     main.extend();
                 // were scrolling
@@ -157,7 +110,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     public void onDestroyView() {
         super.onDestroyView();
 
-        searchAdapter = null;
+        //searchAdapter = null;
         listContainer = null;
         allItemsModel.getItems().removeObservers(getViewLifecycleOwner());
         options = null;
@@ -174,9 +127,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private void initViews() {
         listContainer = requireView().findViewById(R.id.search_list);
         search_card = requireView().findViewById(R.id.search_card);
-        searchView2 = getView().findViewById(R.id.search_bar);
+        searchView2 = requireView().findViewById(R.id.search_bar);
         down_arrow = requireView().findViewById(R.id.see_items_below);
-        searchAdapter = new SearchAdapter(requireActivity(), R.layout.list_item, allItemsModel.getItems().getValue());
+        searchAdapter = new SearchAdapter(requireActivity(), R.layout.list_item, allitems);
         listContainer.setAdapter(searchAdapter);
 
         initFab();
@@ -196,10 +149,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private void initFab(){
 
         main = requireView().findViewById(R.id._main_fab);
-        search = getView().findViewById(R.id._search_icon);
-        more = getView().findViewById(R.id._more_icon);
-        clear = getView().findViewById(R.id._clear_search);
-        options = getView().findViewById(R.id._more_options_layout);
+        search = requireView().findViewById(R.id._search_icon);
+        more = requireView().findViewById(R.id._more_icon);
+        clear = requireView().findViewById(R.id._clear_search);
+        options = requireView().findViewById(R.id._more_options_layout);
 
         options.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.floating));
         main.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.floating));
@@ -291,7 +244,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private void closeKeyboard(){
         View view = requireActivity().getCurrentFocus();
         if( view != null ){
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             assert imm != null;
             imm.hideSoftInputFromWindow(view.getWindowToken(),0);
         }

@@ -1,24 +1,15 @@
 package com.eitan.shopik.ViewModels;
 
 import android.app.Application;
-import android.os.Build;
-import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.eitan.shopik.Items.ShoppingItem;
-import com.eitan.shopik.Macros;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
-import com.google.android.gms.ads.formats.UnifiedNativeAd;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FavoritesModel extends AndroidViewModel {
 

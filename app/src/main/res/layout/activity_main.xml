@@ -34,7 +34,7 @@
                 android:fontFamily="cursive"
                 android:text="Shopik"
                 android:textAllCaps="false"
-                android:textColor="#000000"
+                android:textColor="@color/SplashScreenBackground"
                 android:textSize="40sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -57,7 +57,7 @@
                 android:textAlignment="center"
                 android:gravity="center"
                 android:textAllCaps="false"
-                android:textColor="#000000"
+                android:textColor="@color/SplashScreenBackground"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -65,7 +65,7 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <com.google.android.material.tabs.TabLayout
+  <!--  <com.google.android.material.tabs.TabLayout
         android:id="@+id/top_nav"
         style="@style/MyTabLayout"
         android:layout_width="match_parent"
@@ -103,12 +103,26 @@
             android:tag="search" />
 
     </com.google.android.material.tabs.TabLayout>
+    -->
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/main_bottom_navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/fragmentBackground"
+        android:elevation="20dp"
+        android:translationZ="20dp"
+        app:menu="@menu/bottom_nav_menu">
+
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/customer_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/top_nav"
+        android:layout_above="@id/main_bottom_navigation_view"
+        android:layout_below="@id/customer_toolbar"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
 
     <ProgressBar
@@ -117,7 +131,7 @@
         android:layout_height="25dp"
         android:layout_marginTop="-10dp"
         android:visibility="gone"
-        android:layout_below="@id/top_nav"
+        android:layout_below="@id/customer_toolbar"
         tools:visibility="visible"
         android:fitsSystemWindows="true"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"

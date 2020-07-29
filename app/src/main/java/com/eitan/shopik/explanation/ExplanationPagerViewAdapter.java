@@ -5,8 +5,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.eitan.shopik.CustomerFragments.WatchedItemsFragment;
-
 public class ExplanationPagerViewAdapter extends FragmentPagerAdapter {
 
     public ExplanationPagerViewAdapter(@NonNull FragmentManager fm) {
@@ -25,7 +23,7 @@ public class ExplanationPagerViewAdapter extends FragmentPagerAdapter {
                 selectedFragment = new E3Fragment();
                 break;
             default:
-                selectedFragment = new WatchedItemsFragment(); //E1Fragment();
+                selectedFragment = new E1Fragment();//WatchedItemsFragment();
         }
         return selectedFragment;
     }

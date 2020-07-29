@@ -8,13 +8,15 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.eitan.shopik.Items.ShoppingItem;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SwipesModel extends AndroidViewModel {
 
     private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> items;
-    private MutableLiveData<String> last_item_id;
+    private MutableLiveData<Map<String,String>> last_item_id;
 
     public SwipesModel(Application application){
         super(application);
@@ -23,7 +25,9 @@ public class SwipesModel extends AndroidViewModel {
         CopyOnWriteArrayList<ShoppingItem> items = new CopyOnWriteArrayList<>();
         this.items.setValue(items);
 
+        Map<String,String> map = new HashMap<>();
         last_item_id = new MutableLiveData<>();
+        last_item_id.setValue(map);
     }
 
     public void clearAllItems(){
@@ -42,10 +46,12 @@ public class SwipesModel extends AndroidViewModel {
         Objects.requireNonNull(this.items.getValue()).remove(0);
     }
 
-    public LiveData<String> getLast_item_id() {
+    public LiveData<Map<String,String>> getLast_item_id() {
         return last_item_id;
     }
-    public void setLast_item_id(String last_item_id) {
-        this.last_item_id.postValue(last_item_id);
+    public void setLast_item_id(String last_item_id, String key) {
+        Objects.requireNonNull(this.last_item_id.getValue()).put(key,last_item_id);
+        Map koko = this.last_item_id.getValue();
+        this.last_item_id.postValue(koko);
     }
 }

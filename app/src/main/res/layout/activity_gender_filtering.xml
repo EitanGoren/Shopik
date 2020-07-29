@@ -32,16 +32,26 @@
                 android:layout_gravity="center"
                 android:text="Shopik"
                 android:textAllCaps="false"
-                android:textColor="#000000"
+                android:textColor="@color/SplashScreenBackground"
                 android:textSize="40sp"
                 android:textStyle="bold"
                 android:textAlignment="center"/>
+
+            <ImageView
+                android:id="@+id/company_img_logo"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="12dp"
+                android:src="@drawable/tooki"/>
 
             <Spinner
                 android:id="@+id/gender_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
                 android:textAlignment="center"/>
 
         </LinearLayout>

@@ -33,7 +33,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
-import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
@@ -170,17 +169,6 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             convertView.setLayoutParams(params);
         }
         else if(!shoppingItem.isAd()) {
-            ArrayList<String> imagesUrl = new ArrayList<>();
-            if(shoppingItem.getSeller().equals("ASOS")) {
-                Database connection = new Database();
-                imagesUrl.add(connection.getASOSimageUrl(1, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-                imagesUrl.add(connection.getASOSimageUrl(2, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-                imagesUrl.add(connection.getASOSimageUrl(3, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-                imagesUrl.add(connection.getASOSimageUrl(4, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-                shoppingItem.setImages(imagesUrl);
-            }
-            else
-                imagesUrl = shoppingItem.getImages();
 
             isFavorite[0] = false;
 
@@ -188,7 +176,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.swipe_item, parent,false);
 
             final ImageView favorite = convertView.findViewById(R.id.swipe_favorite_button);
-            final ImageView image = convertView.findViewById(R.id.swipe_image);
+            final ImageView imageView = convertView.findViewById(R.id.swipe_image);
             final ImageButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
             TextView sale = convertView.findViewById(R.id.swipe_discount);
             TextView price = convertView.findViewById(R.id.updated_price);
@@ -351,7 +339,14 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
             fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),shoppingItem));
 
-            Glide.with(getContext()).load(shoppingItem.getImages().get(0)).into(image);
+            String image = "";
+            for(String img : shoppingItem.getImages()){
+                if(img != null && !img.equals("")) {
+                    image = img;
+                    break;
+                }
+            }
+            Glide.with(getContext()).load(image).into(imageView);
 
         }
         return convertView;

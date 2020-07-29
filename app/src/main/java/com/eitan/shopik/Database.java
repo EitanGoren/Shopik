@@ -15,7 +15,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -63,7 +62,10 @@ public class Database {
                 replace("$","").
                 replace("#","").
                 replace("[","").
-                replace("]","");
+                replace("]","").
+                replace(":","");
+
+        Map<String,Object> map = new HashMap<>();
 
         FirebaseDatabase.getInstance().getReference().
                 child(Macros.CUSTOMERS).
@@ -77,11 +79,31 @@ public class Database {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long num = 1;
-                if(dataSnapshot.exists()){
+                if(dataSnapshot.exists() && attr.equals(dataSnapshot.getKey())){
                     num = (long) dataSnapshot.getValue();
                     num++;
+                    map.put(attr,num);
+
+                    FirebaseDatabase.getInstance().getReference().
+                            child(Macros.CUSTOMERS).
+                            child(userId).
+                            child(gender).
+                            child(Macros.CustomerMacros.PREFERRED_ITEMS).
+                            child(type).
+                            child(sub_category).
+                            updateChildren(map);
                 }
-                dataSnapshot.getRef().setValue(num);
+                else if(attr.equals(dataSnapshot.getKey())){
+                    FirebaseDatabase.getInstance().getReference().
+                            child(Macros.CUSTOMERS).
+                            child(userId).
+                            child(gender).
+                            child(Macros.CustomerMacros.PREFERRED_ITEMS).
+                            child(type).
+                            child(sub_category).
+                            child(attr).
+                            setValue(1);
+                }
             }
 
             @Override
@@ -91,7 +113,9 @@ public class Database {
         });
     }
 
-    public void onCustomerInteractWithItem(String itemId, String type, String gender, String sub_category, String action){
+    public void onCustomerInteractWithItem(String itemId, String type,
+                                           String gender, String sub_category,
+                                           String action,String company){
 
         String temp_action = action;
         if(action.equals(Macros.CustomerMacros.FAVOURITE))
@@ -105,12 +129,13 @@ public class Database {
                 child(userId).
                 child(gender).
                 child(temp_action).
+                child(company).
                 child(type).
                 child(sub_category).
                 updateChildren(map);
     }
 
-    public void onItemAction(String type, String gender, String item_id, String action){
+    public void onItemAction(String type, String gender, String item_id, String action,String company){
 
         String temp_action = action;
         if(action.equals(Macros.CustomerMacros.FAVOURITE))
@@ -122,6 +147,7 @@ public class Database {
         FirebaseDatabase.getInstance().getReference().
                 child(Macros.ITEMS).
                 child(gender).
+                child(company).
                 child(type).
                 child(item_id).
                 child(temp_action).
@@ -167,16 +193,5 @@ public class Database {
             images.add("https://images.asos-media.com/groups/0/" + item_id_in_seller + "-group-1" + "?$S$&wid=595&hei=760");
         }
         return images;
-    }
-
-    public void updateActionInItem(final String gender, final String type, final String item_id, final String action_num) {
-
-        // add 1 to "action_num" field
-        Map<String, Object> _action = new HashMap<>();
-        _action.put(action_num, FieldValue.increment(1));
-        itemsFS.document(gender).
-                collection(type).
-                document(item_id).
-                update(_action);
     }
 }

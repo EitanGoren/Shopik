@@ -48,7 +48,7 @@ import java.util.Objects;
 public class FavoritesFragment extends Fragment {
 
     private CollectionReference customerFS;
-    private DatabaseReference itemsDB,customerDB;
+    private DatabaseReference itemsDB,AsosDB,CastroDB,TxDB;
     private FavouritesListAdapter arrayAdapter;
     private String item_type;
     private String item_sub_category;
@@ -59,7 +59,7 @@ public class FavoritesFragment extends Fragment {
     private String currentUId;
     private MainModel mainModel;
     private Map<String,String> favs;
-    private ChildEventListener childEventListener;
+    private String item_gender;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -83,51 +83,20 @@ public class FavoritesFragment extends Fragment {
         init();
 
         arrayAdapter = new FavouritesListAdapter(requireActivity(), R.layout.list_item, model.getItems().getValue());
-        mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
-            model.clearItems();
-            arrayAdapter.notifyDataSetChanged();
-            int count = 0;
-            for (Pair<String,ShoppingItem> item : pairs) {
-                assert item.second != null;
-                if (favs.containsKey(item.first)) {
-                    item.second.setFavorite(Objects.equals(favs.get(item.first), Macros.CustomerMacros.FAVOURITE));
-                    model.addToItems(item.second);
-                    count++;
-                    if( (count%Macros.FAV_TO_AD == 0) && count > 0 ) {
-                        ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                        if(shoppingItemAd != null) {
-                            model.addToItems(shoppingItemAd);
-                            count++;
-                        }
-                    }
-                }
-            }
-            listContainer.setAdapter(arrayAdapter);
-            arrayAdapter.notifyDataSetChanged();
-        });
+        listContainer.setAdapter(arrayAdapter);
+        arrayAdapter.notifyDataSetChanged();
 
-        listContainer.setOnScrollListener( new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE))
-                    showArrow();
-                else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL))
-                    hideArrow();
-            }
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) { }
-        });
-
-        childEventListener = new ChildEventListener() {
+        TxDB.addChildEventListener( new ChildEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists() && !favs.containsKey(dataSnapshot.getKey())) {
                     favs.put(dataSnapshot.getKey(), Objects.requireNonNull(dataSnapshot.getValue()).toString());
                     for (Pair<String,ShoppingItem> pair : Objects.requireNonNull(mainModel.getAll_items_ids().getValue())) {
-                        if (Objects.equals(dataSnapshot.getKey(), pair.first)) {
-                            assert pair.second != null;
-                            pair.second.setFavorite(Objects.equals(favs.get(pair.first), Macros.CustomerMacros.FAVOURITE));
+                        assert pair.second != null;
+                        String item_id = pair.second.getId();
+                        if (Objects.equals(dataSnapshot.getKey(), item_id)) {
+                            pair.second.setFavorite(Objects.equals(favs.get(item_id), Macros.CustomerMacros.FAVOURITE));
                             getLikes(pair.second);
                         }
                     }
@@ -149,8 +118,109 @@ public class FavoritesFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
-        };
-        customerDB.addChildEventListener(childEventListener);
+        });
+        CastroDB.addChildEventListener( new ChildEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (dataSnapshot.exists() && !favs.containsKey(dataSnapshot.getKey())) {
+                    favs.put(dataSnapshot.getKey(), Objects.requireNonNull(dataSnapshot.getValue()).toString());
+                    for (Pair<String,ShoppingItem> pair : Objects.requireNonNull(mainModel.getAll_items_ids().getValue())) {
+                        assert pair.second != null;
+                        String item_id = pair.second.getId();
+                        if (Objects.equals(dataSnapshot.getKey(), item_id)) {
+                            pair.second.setFavorite(Objects.equals(favs.get(item_id), Macros.CustomerMacros.FAVOURITE));
+                            getLikes(pair.second);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+        AsosDB.addChildEventListener( new ChildEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (dataSnapshot.exists() && !favs.containsKey(dataSnapshot.getKey())) {
+                    favs.put(dataSnapshot.getKey(), Objects.requireNonNull(dataSnapshot.getValue()).toString());
+                    for (Pair<String,ShoppingItem> pair : Objects.requireNonNull(mainModel.getAll_items_ids().getValue())) {
+                        assert pair.second != null;
+                        String item_id = pair.second.getId();
+                        if (Objects.equals(dataSnapshot.getKey(), item_id)) {
+                            pair.second.setFavorite(Objects.equals(favs.get(item_id), Macros.CustomerMacros.FAVOURITE));
+                            getLikes(pair.second);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+        mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
+            model.clearItems();
+            arrayAdapter.notifyDataSetChanged();
+            int count = 0;
+            for (Pair<String,ShoppingItem> item : pairs) {
+                assert item.second != null;
+                if (favs.containsKey(item.second.getId())) {
+                    item.second.setFavorite(Objects.equals(favs.get(item.second.getId()), Macros.CustomerMacros.FAVOURITE));
+                    model.addToItems(item.second);
+                    arrayAdapter.notifyDataSetChanged();
+                    count++;
+                    if( (count % Macros.FAV_TO_AD == 0) && count > 0 ) {
+                        ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                        if(shoppingItemAd != null) {
+                            model.addToItems(shoppingItemAd);
+                            arrayAdapter.notifyDataSetChanged();
+                            count++;
+                        }
+                    }
+                }
+            }
+            arrayAdapter.notifyDataSetChanged();
+        });
+
+        listContainer.setOnScrollListener( new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE))
+                    showArrow();
+                else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL))
+                    hideArrow();
+            }
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) { }
+        });
     }
 
     @Override
@@ -159,10 +229,8 @@ public class FavoritesFragment extends Fragment {
         arrayAdapter = null;
         genderModel.getType().removeObservers(getViewLifecycleOwner());
         genderModel.getSub_category().removeObservers(getViewLifecycleOwner());
-        mainModel.getAll_items().removeObservers(getViewLifecycleOwner());
         listContainer = null;
         down_arrow = null;
-        customerDB.removeEventListener(childEventListener);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -180,7 +248,7 @@ public class FavoritesFragment extends Fragment {
         genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         model = new ViewModelProvider(requireActivity()).get(FavoritesModel.class);
 
-        String item_gender = genderModel.getGender().getValue();
+        item_gender = genderModel.getGender().getValue();
         item_type = genderModel.getType().getValue();
         item_sub_category = genderModel.getSub_category().getValue();
 
@@ -188,16 +256,33 @@ public class FavoritesFragment extends Fragment {
 
         currentUId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         assert item_gender != null;
-        itemsDB = FirebaseDatabase.getInstance().getReference().
-                child(Macros.ITEMS).
-                child(item_gender).
-                child(item_type);
 
-        customerDB = FirebaseDatabase.getInstance().getReference().
+        itemsDB = FirebaseDatabase.getInstance().getReference().child(Macros.ITEMS);
+
+        AsosDB = FirebaseDatabase.getInstance().getReference().
                 child(Macros.CUSTOMERS).
                 child(currentUId).
                 child(item_gender).
                 child(Macros.Items.LIKED).
+                child("ASOS").
+                child(item_type).
+                child(item_sub_category);
+
+        CastroDB = FirebaseDatabase.getInstance().getReference().
+                child(Macros.CUSTOMERS).
+                child(currentUId).
+                child(item_gender).
+                child(Macros.Items.LIKED).
+                child("Castro").
+                child(item_type).
+                child(item_sub_category);
+
+        TxDB = FirebaseDatabase.getInstance().getReference().
+                child(Macros.CUSTOMERS).
+                child(currentUId).
+                child(item_gender).
+                child(Macros.Items.LIKED).
+                child("Terminal X").
                 child(item_type).
                 child(item_sub_category);
 
@@ -217,7 +302,10 @@ public class FavoritesFragment extends Fragment {
 
     private void getLikes(final ShoppingItem shoppingItem) {
 
-        itemsDB.child(shoppingItem.getId()).
+        itemsDB.child(item_gender).
+                child(shoppingItem.getSeller()).
+                child(item_type).
+                child(shoppingItem.getId()).
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override

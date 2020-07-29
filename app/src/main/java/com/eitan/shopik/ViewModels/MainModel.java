@@ -22,9 +22,9 @@ public class MainModel extends ViewModel {
 
     private MutableLiveData<Map<String,Map<String,Object>>> companies_info;
     private MutableLiveData<Map<String, LikedUser>> customers_info;
-    private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> all_items;
     private MutableLiveData<CopyOnWriteArrayList<Pair<String,ShoppingItem>>> all_items_ids;
     private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> castro_items;
+
     private ArrayList<ShoppingItem> shoppingAdsArray;
 
     public MainModel(){
@@ -38,10 +38,6 @@ public class MainModel extends ViewModel {
         Map<String,LikedUser> customers_info_map = new HashMap<>();
         this.customers_info = new MutableLiveData<>();
         this.customers_info.setValue(customers_info_map);
-
-        CopyOnWriteArrayList<ShoppingItem> list = new CopyOnWriteArrayList<>();
-        this.all_items = new MutableLiveData<>();
-        all_items.setValue(list);
 
         CopyOnWriteArrayList<Pair<String,ShoppingItem>> ids = new CopyOnWriteArrayList<>();
         this.all_items_ids = new MutableLiveData<>();
@@ -65,9 +61,6 @@ public class MainModel extends ViewModel {
         Objects.requireNonNull(this.customers_info.getValue()).put(id,likedUser);
     }
 
-    public LiveData<CopyOnWriteArrayList<ShoppingItem>> getAll_items() {
-        return all_items;
-    }
     public LiveData<CopyOnWriteArrayList<Pair<String,ShoppingItem>>> getAll_items_ids() {
         return all_items_ids;
     }

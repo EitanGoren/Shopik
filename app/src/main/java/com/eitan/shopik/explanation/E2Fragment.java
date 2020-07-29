@@ -188,6 +188,7 @@ public class E2Fragment extends Fragment {
             addDressSubCategory("party",Macros.Items.PETITE_DRESS_RES);
             addDressSubCategory("maxi",Macros.Items.SUNDRESS_DRESS_RES);
             addDressSubCategory("evening",Macros.Items.SUNDRESS_DRESS_RES);
+            addDressSubCategory("mini",Macros.Items.MINI_DRESSES_RES);
 
             addJacketsSubCategory("leather",Macros.Items.WOMEN_LEATHER_JACKETS_RES,Macros.CustomerMacros.WOMEN);
             addJacketsSubCategory("winter",Macros.Items.WOMEN_DENIM_JACKETS_RES,Macros.CustomerMacros.WOMEN);
@@ -201,6 +202,7 @@ public class E2Fragment extends Fragment {
             addShoesSubCategory("heels",Macros.Items.WOMEN_HEELS_RES,Macros.CustomerMacros.WOMEN);
             addShoesSubCategory("leather",Macros.Items.WOMEN_LEATHER_SHOES,Macros.CustomerMacros.WOMEN);
             addShoesSubCategory("sliders",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
+            addShoesSubCategory("sneakers",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
 
             addJeansSubCategory("slim", Macros.Items.WOMEN_SLIM_JEANS_RES, Macros.CustomerMacros.WOMEN);
             addJeansSubCategory("straight", Macros.Items.WOMEN_STRAIGHT_JEANS_RES, Macros.CustomerMacros.WOMEN);
@@ -233,6 +235,8 @@ public class E2Fragment extends Fragment {
 
             addSwimwearSubCategory("bikini", Macros.Items.WOMEN_BIKINI_RES,Macros.CustomerMacros.WOMEN);
             addSwimwearSubCategory("swimsuit", Macros.Items.WOMEN_SWIMSUIT_RES,Macros.CustomerMacros.WOMEN);
+            addSwimwearSubCategory("one-piece", Macros.Items.WOMEN_SWIMSUIT_RES,Macros.CustomerMacros.WOMEN);
+            addSwimwearSubCategory("swimwear", Macros.Items.WOMEN_SWIMSUIT_RES,Macros.CustomerMacros.WOMEN);
 
             Catagory bags = new Catagory(Macros.BAG, gender, sub_bags);
             Catagory dresses = new Catagory(Macros.DRESS, gender, sub_dress);

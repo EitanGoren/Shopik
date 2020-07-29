@@ -2,6 +2,8 @@ package com.eitan.shopik.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +27,6 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
-import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -52,6 +53,133 @@ public class GridAdapter extends ArrayAdapter<ShoppingItem> implements Filterabl
         this.ItemsList = items;
         this.AllItemsList = new CopyOnWriteArrayList<>();
     }
+
+    Filter filter = new Filter() {
+        //runs in background thread
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            ArrayList<ShoppingItem> filteredList = new ArrayList<>();
+
+            if(constraint.toString().isEmpty()){
+               filteredList.addAll(AllItemsList);
+            }
+            else {
+                for (ShoppingItem item : AllItemsList) {
+                    StringBuilder description = new StringBuilder();
+                    if (item.getName() != null) {
+                        for (String word : item.getName()) {
+                            description.append(word).append(" ");
+                        }
+                        if (description.toString().contains(constraint)) {
+                            filteredList.add(item);
+                        }
+                    }
+                }
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            filterResults.count = filteredList.size();
+
+            return filterResults;
+        }
+
+        //runs in UI thread
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if(results.values == null )
+                return;
+            MainModel mainModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(MainModel.class);
+
+            ItemsList.clear();
+            int count = 0;
+            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
+                ItemsList.add(item);
+                count++;
+                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
+                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
+                }
+                notifyDataSetChanged();
+            }
+        }
+    };
+
+    @Nullable
+    @Override
+    public ShoppingItem getItem(int position) {
+        return ItemsList.get(position);
+    }
+
+    @Override
+    public int getCount() {
+        return ItemsList.size();
+    }
+
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+    public Filter getSortingFilter() {
+        return sorting;
+    }
+
+    public void setAllItems(List<ShoppingItem> allItems) {
+        for(ShoppingItem item : allItems) {
+            if( item != null && !item.isAd() ) {
+                this.AllItemsList.add(item);
+            }
+        }
+    }
+    Filter sorting = new Filter() {
+        //runs in background thread
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            ArrayList<ShoppingItem> filteredList = new ArrayList<>(AllItemsList);
+
+            if(constraint.toString().isEmpty()){
+                filteredList.addAll(AllItemsList);
+            }
+
+            if(constraint.equals("price")) {
+                filteredList.sort((o1, o2) -> Double.compare(Double.parseDouble(o2.getPrice()),Double.parseDouble(o1.getPrice())));
+            }
+            else if(constraint.equals("match")) {
+                filteredList.sort((o1, o2) -> o2.getPercentage() - o1.getPercentage());
+            }
+            else if(constraint.equals("sale")) {
+                filteredList.sort((o1, o2) -> Boolean.compare(o1.isOn_sale(),o2.isOn_sale()));
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            filterResults.count = filteredList.size();
+
+            return filterResults;
+        }
+
+        //runs in UI thread
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if(results.values == null )
+                return;
+            MainModel mainModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(MainModel.class);
+
+            ItemsList.clear();
+            int count = 0;
+            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
+                ItemsList.add(item);
+                count++;
+                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
+                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
+                }
+                notifyDataSetChanged();
+            }
+        }
+    };
 
     @NonNull
     @SuppressLint("SetTextI18n")
@@ -135,19 +263,8 @@ public class GridAdapter extends ArrayAdapter<ShoppingItem> implements Filterabl
         else if(!item.isAd()){
 
             ItemsList = items;
-            ArrayList<String> images = new ArrayList<>();
 
-            if(item.getSeller().equals("ASOS")) {
-                final Database connection = new Database();
-                images.add(connection.getASOSimageUrl(3, item.getColor(), item.getId_in_seller()));
-                images.add(connection.getASOSimageUrl(2, item.getColor(), item.getId_in_seller()));
-                images.add(connection.getASOSimageUrl(1, item.getColor(), item.getId_in_seller()));
-                images.add(connection.getASOSimageUrl(4, item.getColor(), item.getId_in_seller()));
-            }
-            else
-                images = item.getImages();
-
-            itemPicsAdapter arrayAdapter = new itemPicsAdapter(images);
+            itemPicsAdapter arrayAdapter = new itemPicsAdapter(item.getImages());
 
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.grid_item, parent, false);
 
@@ -155,21 +272,48 @@ public class GridAdapter extends ArrayAdapter<ShoppingItem> implements Filterabl
             TextView buy = convertView.findViewById(R.id.list_item_buy_button);
             final Button fullscreen = convertView.findViewById(R.id.fullscreen_button);
 
-            item.setImages(images);
             fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),item));
 
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(),item.getSite_link()));
 
-            Currency shekel = Currency.getInstance("ILS");
-            String currency_symbol = shekel.getSymbol();
-            double current;
-            if(item.getSeller().equals("ASOS"))
-                current = Double.parseDouble(item.getPrice()) * Macros.POUND_TO_ILS;
-            else
-                current = Double.parseDouble(item.getPrice());
-
             TextView price = convertView.findViewById(R.id.price);
-            price.setText(new DecimalFormat("##.##").format(current) + currency_symbol);
+            TextView old_price = convertView.findViewById(R.id.old_price);
+
+            String cur_price;
+            if(item.getSeller().equals("ASOS")) {
+                cur_price = new DecimalFormat("##.##").
+                        format(Double.parseDouble(item.getPrice())*Macros.POUND_TO_ILS) +
+                        Currency.getInstance("ILS").getSymbol();
+            }
+            else {
+                cur_price = new DecimalFormat("##.##").
+                        format(Double.parseDouble(item.getPrice())) +
+                        Currency.getInstance("ILS").getSymbol();
+            }
+
+            if(item.isOutlet() || item.isOn_sale()) {
+                String new_price;
+                if(item.getSeller().equals("ASOS"))
+                    new_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(item.getReduced_price()) * Macros.POUND_TO_ILS) +
+                            Currency.getInstance("ILS").getSymbol();
+                else
+                    new_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(item.getReduced_price())) +
+                            Currency.getInstance("ILS").getSymbol();
+
+                old_price.setVisibility(View.VISIBLE);
+                old_price.setText(cur_price);
+                old_price.setPaintFlags(price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+                price.setText(new_price);
+                price.setTextColor(Color.RED);
+            }
+            else {
+                old_price.setVisibility(View.INVISIBLE);
+                price.setText(cur_price);
+                price.setTextColor(Color.BLACK);
+            }
 
             TextView counter = convertView.findViewById(R.id.item_count);
             counter.setText((position + 1) + "/" + getCount());
@@ -199,135 +343,6 @@ public class GridAdapter extends ArrayAdapter<ShoppingItem> implements Filterabl
         }
         return convertView;
     }
-
-    @Nullable
-    @Override
-    public ShoppingItem getItem(int position) {
-        return ItemsList.get(position);
-    }
-
-    @Override
-    public int getCount() {
-        return ItemsList.size();
-    }
-
-    @NonNull
-    @Override
-    public Filter getFilter() {
-        return filter;
-    }
-
-    public Filter getSortingFilter() {
-        return sorting;
-    }
-
-    public void setAllItems(List<ShoppingItem> allItems) {
-        for(ShoppingItem item : allItems) {
-            if( item != null && !item.isAd() ) {
-                this.AllItemsList.add(item);
-            }
-        }
-    }
-
-    Filter filter = new Filter() {
-        //runs in background thread
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            ArrayList<ShoppingItem> filteredList = new ArrayList<>();
-
-            if(constraint.toString().isEmpty()){
-               filteredList.addAll(AllItemsList);
-            }
-            else {
-                for (ShoppingItem item : AllItemsList) {
-                    StringBuilder description = new StringBuilder();
-                    if (item.getName() != null) {
-                        for (String word : item.getName()) {
-                            description.append(word).append(" ");
-                        }
-                        if (description.toString().contains(constraint)) {
-                            filteredList.add(item);
-                        }
-                    }
-                }
-            }
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            filterResults.count = filteredList.size();
-
-            return filterResults;
-        }
-
-        //runs in UI thread
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            if(results.values == null )
-                return;
-            MainModel mainModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(MainModel.class);
-
-            ItemsList.clear();
-            int count = 0;
-            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
-                ItemsList.add(item);
-                count++;
-                if ((count % 20 == 0) && count > 0) {
-                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
-                }
-                notifyDataSetChanged();
-            }
-        }
-    };
-
-    Filter sorting = new Filter() {
-        //runs in background thread
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            ArrayList<ShoppingItem> filteredList = new ArrayList<>(AllItemsList);
-
-            if(constraint.toString().isEmpty()){
-                filteredList.addAll(AllItemsList);
-            }
-
-            if(constraint.equals("price")) {
-                filteredList.sort((o1, o2) -> Double.compare(Double.parseDouble(o2.getPrice()),Double.parseDouble(o1.getPrice())));
-            }
-            else if(constraint.equals("match")) {
-                filteredList.sort((o1, o2) -> o2.getPercentage() - o1.getPercentage());
-            }
-            else if(constraint.equals("sale")) {
-                filteredList.sort((o1, o2) -> Boolean.compare(o1.isOn_sale(),o2.isOn_sale()));
-            }
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            filterResults.count = filteredList.size();
-
-            return filterResults;
-        }
-
-        //runs in UI thread
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            if(results.values == null )
-                return;
-            MainModel mainModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(MainModel.class);
-
-            ItemsList.clear();
-            int count = 0;
-            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
-                ItemsList.add(item);
-                count++;
-                if ((count % 20 == 0) && count > 0) {
-                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
-                }
-                notifyDataSetChanged();
-            }
-        }
-    };
 
     private static class itemPicsAdapter extends PagerAdapter {
 
