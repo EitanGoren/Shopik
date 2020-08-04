@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.bumptech.glide.Glide;
@@ -32,10 +34,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.youtube.player.YouTubeBaseActivity;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -61,7 +59,7 @@ import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CompanyProfileActivity extends YouTubeBaseActivity {
+public class CompanyProfileActivity extends AppCompatActivity { //} extends YouTubeBaseActivity {
 
     private DocumentReference companyFS;
     private String companyId,imageUrl,name,facebook,
@@ -71,7 +69,7 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
     private CircleImageView mProfile_image,toolbar_pic;
     private ImageView mFacebook,mTwitter,mSite,mInstagram,mYoutube,bgimage;
     private TextView mRaters,mDescription,mSlogan,mRatingNum;
-    private TextView mVideoTitle;
+//    private TextView mVideoTitle;
     private RatingBar ratingBar,smallRating;
     private Map rating_map;
     private Float current_rating;
@@ -80,9 +78,9 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
     private boolean isCompany;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout appBar;
-    private YouTubePlayerView youTubePlayerView;
-    private YouTubePlayer player;
-    private YouTubePlayer.OnInitializedListener initializedListener;
+//    private YouTubePlayerView youTubePlayerView;
+//    private YouTubePlayer player;
+//    private YouTubePlayer.OnInitializedListener initializedListener;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -115,32 +113,14 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
                     byte[] data2 = baos.toByteArray();
 
                     UploadTask uploadTask = filePath.putBytes(data2);
-                    uploadTask.addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d(Macros.TAG, "failed to load company picture:" + e.getMessage());
-                        }
-                    });
+                    uploadTask.addOnFailureListener(e -> Log.d(Macros.TAG, "failed to load company picture:" + e.getMessage()));
 
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Map<String, Object> userInfo = new HashMap<String, Object>();
-                                    userInfo.put("logo_url", uri.toString());
-                                    imageUrl = uri.toString();
-                                    companyFS.update(userInfo);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    Log.d(Macros.TAG, "failed to load company picture:" + exception.getMessage());
-                                }
-                            });
-                        }
-                    });
+                    uploadTask.addOnSuccessListener(taskSnapshot -> filePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                        Map<String, Object> userInfo = new HashMap<>();
+                        userInfo.put("logo_url", uri.toString());
+                        imageUrl = uri.toString();
+                        companyFS.update(userInfo);
+                    }).addOnFailureListener(exception -> Log.d(Macros.TAG, "failed to load company picture:" + exception.getMessage())));
 
                 }
             }
@@ -205,9 +185,18 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // inside your activity (if you did not enable transitions in your theme)
+       // getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        // set an enter transition
+      //  getWindow().setEnterTransition(new Fade());
+        // set an exit transition
+      //  getWindow().setExitTransition(new Fade());
+
+
         setContentView(R.layout.fragment_my_profile);
 
         init();
+
 
         companyFS.get().addOnSuccessListener(documentSnapshot -> {
             if(documentSnapshot.exists()){
@@ -231,7 +220,7 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
             mDescription.setText(description);
             mSlogan.setText(slogan);
 
-            setYoutubeLink();
+      //    setYoutubeLink();
             setCollapsingBar();
             setRating();
             updateRating();
@@ -335,7 +324,7 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
             startActivity(browserIntent);
         });
 
-        initializedListener = new YouTubePlayer.OnInitializedListener() {
+      /*  initializedListener = new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer,boolean b) {
                 youTubePlayer.loadVideo(youtube_link);
@@ -348,15 +337,17 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
             }
         };
 
+       */
+
     }
 
     private void setYoutubeLink() {
-        if(youtube_link == null)
+      /*  if(youtube_link == null)
             youtube_link = Macros.DEFAULT_YOUTUBE_VIDEO;
 
         youTubePlayerView.initialize( Macros.API_KEY, initializedListener );
         getVideoTitle getVideoTitle = new getVideoTitle();
-        getVideoTitle.execute();
+        getVideoTitle.execute(); */
     }
 
     private void setImages() {
@@ -491,9 +482,20 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
 
         setNavigationBarButtonsColor(getWindow().getNavigationBarColor());
 
-        youTubePlayerView = findViewById(R.id.youtube_video_company);
-        mVideoTitle  = findViewById(R.id.company_video_title);
+    //  youTubePlayerView = findViewById(R.id.youtube_video_company);
+    //  mVideoTitle  = findViewById(R.id.company_video_title);
         mProfile_image = findViewById(R.id.profile_company_profile);
+        supportPostponeEnterTransition();
+        mProfile_image.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        mProfile_image.getViewTreeObserver().removeOnPreDrawListener(this);
+                        supportStartPostponedEnterTransition();
+                        return true;
+                    }
+                }
+        );
         mFacebook = findViewById(R.id.company_facebook);
         mTwitter = findViewById(R.id.company_twitter);
         mInstagram = findViewById(R.id.company_instagram);
@@ -510,7 +512,7 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
         toolbar_pic = findViewById(R.id.company_toolbar_pic);
         mDescription = findViewById(R.id.description);
         bgimage = findViewById(R.id.company_bgImage);
-        rating_map = new HashMap();
+        rating_map = new HashMap<>();
 
         Glide.with(this).load( Macros.TWITTER_IC ).into(mTwitter);
         Glide.with(this).load( Macros.FACEBOOK_IC ).into(mFacebook);
@@ -527,7 +529,7 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
     }
 
     private void setVideoTitle(String title){
-        mVideoTitle.setText(title);
+      //  mVideoTitle.setText(title);
     }
 
     private class getVideoTitle extends AsyncTask<Void,Void,String> {
@@ -583,20 +585,26 @@ public class CompanyProfileActivity extends YouTubeBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(player != null) {
-            player.play();
-        }
+      //  if(player != null) {
+      //      player.play();
+      //  }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(player != null) {
-            player.pause();
-        }
+     //   if(player != null) {
+     //       player.pause();
+     //   }
 
         Map map2 = new HashMap();
         map2.put("rating", rating_map);
         companyFS.set(map2, SetOptions.merge());
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.supportFinishAfterTransition();
     }
 }

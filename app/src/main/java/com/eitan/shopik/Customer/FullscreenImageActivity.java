@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,6 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
@@ -60,20 +60,17 @@ public class FullscreenImageActivity extends AppCompatActivity {
     private String path;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        overridePendingTransition(R.anim.fadein,R.anim.fadeout);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_fullscreen_image);
-
         Window window = getWindow();
+        // set an enter transition
+        window.setEnterTransition(new Fade());
+        // set an exit transition
+        window.setExitTransition(new Fade());
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.TRANSPARENT);
+
+        setContentView(R.layout.activity_fullscreen_image);
 
         setDecoreView();
 
@@ -83,7 +80,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
         init();
 
-        mClose.setOnClickListener(v -> finish());
+        mClose.setOnClickListener(v -> this.supportFinishAfterTransition());
     }
 
     private void init() {
@@ -224,7 +221,8 @@ public class FullscreenImageActivity extends AppCompatActivity {
                     videoMediaController.hide();
                     photoView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     photoView.setPadding(0,0,0,0);
-                    Glide.with(photoView.getContext()).load(imagesUrl.get(position)).into(photoView);
+                    Macros.Functions.GlidePicture(photoView.getContext(),imagesUrl.get(position),photoView);
+                   // Glide.with(photoView.getContext()).load(imagesUrl.get(position)).into(photoView);
                     mVideoView.pause();
                     videoMediaController.hide();
                 }
@@ -282,7 +280,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
                 });
             }
 
-            protected class getVideoLink extends AsyncTask<Void,Integer,String> {
+            private class getVideoLink extends AsyncTask<Void,Integer,String> {
 
                 String id,video_path;
 
@@ -298,21 +296,21 @@ public class FullscreenImageActivity extends AppCompatActivity {
                         getVideo(id);
                     }
                     catch (Exception e){
-                        Log.d(Macros.TAG, "e3fragment-getItems: " + Objects.requireNonNull(e.getMessage()));
+                        Log.d(Macros.TAG, "FullscreenActivity:getVideoLink: " + Objects.requireNonNull(e.getMessage()));
                     }
                     return video_path;
                 }
 
                 private void getVideo(String id) throws IOException {
+
                     URL url = new URL("https://video.asos-media.com/products/0/" + id + "-catwalk-AVS.m3u8");
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    InputStream inputStream = httpURLConnection.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
                     try {
 
                         StringBuilder data = new StringBuilder();
-
-                        InputStream inputStream = httpURLConnection.getInputStream();
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
                         String line = "";
                         int i=0;
@@ -335,6 +333,8 @@ public class FullscreenImageActivity extends AppCompatActivity {
                     }
                     finally {
                         httpURLConnection.disconnect();
+                        inputStream.close();
+                        bufferedReader.close();
                     }
                 }
 
@@ -388,9 +388,4 @@ public class FullscreenImageActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.fadein,R.anim.fadeout);
-    }
 }

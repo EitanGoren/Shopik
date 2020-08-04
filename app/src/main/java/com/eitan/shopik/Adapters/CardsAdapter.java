@@ -3,14 +3,12 @@ package com.eitan.shopik.Adapters;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +30,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
@@ -162,9 +159,8 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             convertView = adView;
             final float scale = getContext().getResources().getDisplayMetrics().density;
             int pixels = (int) (570 * scale + 0.5f);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT,
-                    pixels,
-                    Gravity.CENTER
+            FrameLayout.LayoutParams params = new FrameLayout.
+                    LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT, pixels, Gravity.CENTER
             );
             convertView.setLayoutParams(params);
         }
@@ -175,9 +171,9 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.swipe_item, parent,false);
 
-            final ImageView favorite = convertView.findViewById(R.id.swipe_favorite_button);
-            final ImageView imageView = convertView.findViewById(R.id.swipe_image);
-            final ImageButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
+            ImageView favorite = convertView.findViewById(R.id.swipe_favorite_button);
+            ImageView imageView = convertView.findViewById(R.id.swipe_image);
+            ImageButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
             TextView sale = convertView.findViewById(R.id.swipe_discount);
             TextView price = convertView.findViewById(R.id.updated_price);
             TextView old_price = convertView.findViewById(R.id.old_price);
@@ -185,45 +181,56 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             TextView exclusive = convertView.findViewById(R.id.exclusive);
             TextView brand_name = convertView.findViewById(R.id.brand_name);
 
-            final androidx.appcompat.widget.Toolbar toolbar = convertView.findViewById(R.id.customer_toolbar);
+            androidx.appcompat.widget.Toolbar toolbar = convertView.findViewById(R.id.customer_toolbar);
             androidx.appcompat.widget.Toolbar.OnMenuItemClickListener topNavListener = item -> {
                 switch (item.getItemId()) {
                     case R.id.card_cart:
-                        //TODO Make cart page & icon in mainpage
-                        Toast.makeText(getContext(), "cart", Toast.LENGTH_SHORT).show();
+                        // TODO Make cart page & icon in Main Page
+                        Toast.makeText(getContext(),"Cart", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.card_shop:
-                        if ( shoppingItem.getSite_link() != null) {
-                            if (!shoppingItem.getSite_link().startsWith("http://") && !shoppingItem.getSite_link().startsWith("https://"))
-                                shoppingItem.setSite_link("http://" + shoppingItem.getSite_link());
-                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(shoppingItem.getSite_link()));
-                            getContext().startActivity(browserIntent);
-                        }
+                        Macros.Functions.buy(getContext(),shoppingItem.getSite_link());
                         break;
                     case R.id.card_info:
-                        //TODO Make an item info page
-                        Toast.makeText(getContext(), "info", Toast.LENGTH_SHORT).show();
+                        // TODO Make an item info page
+                        Toast.makeText(getContext(),"Info", Toast.LENGTH_SHORT).show();
                        break;
                     case R.id.card_seller:
-                        Macros.Functions.sellerProfile(getContext(),shoppingItem.getSellerId());
+                        Macros.Functions.sellerProfile(getContext(), shoppingItem.getSellerId(),null);
                         break;
                     case R.id.card_favorites:
                         if(!isFavorite[0]) {
                             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.like_swing);
                             favorite.startAnimation(animation);
                             isFavorite[0] = !isFavorite[0];
-                            swipeFlingAdapterView.getTopCardListener().selectRight();
+                            animation.setAnimationListener(new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    swipeFlingAdapterView.getTopCardListener().selectRight();
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {
+
+                                }
+                            });
                         }
                         break;
                 }
                 return true;
             };
             toolbar.setOnMenuItemClickListener(topNavListener);
-            Objects.requireNonNull(toolbar.getOverflowIcon()).setTint(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+            Objects.requireNonNull(toolbar.getOverflowIcon()).
+                    setTint(ContextCompat.getColor(getContext(), R.color.colorPrimary));
             toolbar.setSoundEffectsEnabled(true);
 
-            final TextView likes = convertView.findViewById(R.id.like);
-            final TextView unlikes = convertView.findViewById(R.id.unlike);
+            TextView likes = convertView.findViewById(R.id.like);
+            TextView unlikes = convertView.findViewById(R.id.unlike);
             likes.setText(String.valueOf(shoppingItem.getLikes()));
             unlikes.setText(String.valueOf(shoppingItem.getUnlikes()));
 
@@ -249,26 +256,63 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             likes.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.zoomin);
                 final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike1);
-                mp.start();
                 likes.startAnimation(animation);
                 likes.setText(String.valueOf(shoppingItem.getLikes() + 1));
-                final Handler handler = new Handler();
-                final Runnable r = () -> swipeFlingAdapterView.getTopCardListener().selectRight();
-                handler.postDelayed(r, 1050);
+
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        mp.start();
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
+                mp.setOnCompletionListener(mp1 -> {
+                    swipeFlingAdapterView.getTopCardListener().selectRight();
+                });
 
             });
             unlikes.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.zoomout);
                 final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike1);
-                mp.start();
+
                 unlikes.startAnimation(animation);
                 unlikes.setText(String.valueOf(shoppingItem.getUnlikes() + 1));
-                final Handler handler = new Handler();
-                final Runnable r = () -> swipeFlingAdapterView.getTopCardListener().selectLeft();
-                handler.postDelayed(r, 1050);
+
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        mp.start();
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
+                mp.setOnCompletionListener(mp1 -> {
+                    swipeFlingAdapterView.getTopCardListener().selectLeft();
+                });
+
             });
 
-            seller_logo.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),shoppingItem.getSellerId()));
+            seller_logo.setOnClickListener(v -> Macros.Functions.
+                    sellerProfile(getContext(),shoppingItem.getSellerId(), Pair.create(seller_logo,"company_logo")));
 
             String cur_price;
             if(shoppingItem.getSeller().equals("ASOS")) {
@@ -324,7 +368,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             else
                 exclusive.setVisibility(View.INVISIBLE);
 
-            Glide.with(getContext()).load(shoppingItem.getSellerLogoUrl()).into(seller_logo);
+            Macros.Functions.GlidePicture(getContext(),shoppingItem.getSellerLogoUrl(),seller_logo);
 
             brand_name.setText(shoppingItem.getBrand());
 
@@ -332,12 +376,25 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.like_swing);
                 favorite.startAnimation(animation);
                 isFavorite[0] = true;
-                final Handler handler = new Handler();
-                final Runnable r = () -> swipeFlingAdapterView.getTopCardListener().selectRight();
-                handler.postDelayed(r, 1000);
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        swipeFlingAdapterView.getTopCardListener().selectRight();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
             });
 
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),shoppingItem));
+            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), shoppingItem));
 
             String image = "";
             for(String img : shoppingItem.getImages()){
@@ -346,8 +403,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                     break;
                 }
             }
-            Glide.with(getContext()).load(image).into(imageView);
-
+            Macros.Functions.GlidePicture(getContext(),image,imageView);
         }
         return convertView;
     }
@@ -369,12 +425,17 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
         ListView listView = dialog.findViewById(R.id.likes_list);
 
-        header.setCompoundDrawablesRelativeWithIntrinsicBounds(dialog.getContext().getDrawable(R.drawable.ic_thumb_up_seleste),null,null,null);
+        header.setCompoundDrawablesRelativeWithIntrinsicBounds(dialog.getContext().
+                getDrawable(R.drawable.ic_thumb_up_seleste),null,null,null);
         header.setCompoundDrawablePadding(20);
 
         listView.setAdapter(likedListAdapter);
 
         Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setTitle("POOK");
+        dialog.getWindow().setElevation(25);
+        dialog.getWindow().setAllowEnterTransitionOverlap(true);
+        dialog.getWindow().setAllowReturnTransitionOverlap(true);
         dialog.show();
     }
 

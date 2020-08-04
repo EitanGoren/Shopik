@@ -226,7 +226,7 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        arrayAdapter = null;
+     //   arrayAdapter = null;
         genderModel.getType().removeObservers(getViewLifecycleOwner());
         genderModel.getSub_category().removeObservers(getViewLifecycleOwner());
         listContainer = null;
@@ -303,15 +303,14 @@ public class FavoritesFragment extends Fragment {
     private void getLikes(final ShoppingItem shoppingItem) {
 
         itemsDB.child(item_gender).
-                child(shoppingItem.getSeller()).
                 child(item_type).
-                child(shoppingItem.getId()).
+                child(shoppingItem.getSeller() + "-" + shoppingItem.getId()).
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists()){
-                            Map<String,String> unliked_users = new HashMap<>();
+                            Map unliked_users = new HashMap<>();
                             Map<String,String> liked_users = new HashMap<>();
 
                             //set likes num

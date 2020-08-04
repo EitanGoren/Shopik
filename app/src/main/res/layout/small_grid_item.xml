@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:layout_above="@id/item_text"
         android:background="#00FFFFFF"
+        android:transitionName="fullscreen"
         android:layout_marginBottom="3dp"/>
 
     <TextView

@@ -1,170 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/LandingLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LandingLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/SplashScreenBackground"
-    android:orientation="vertical"
-    tools:context=".LandingPageActivity">
+    android:background="@color/SplashScreenBackground">
 
-  <!--  <RelativeLayout
-        android:id="@+id/lines_layout"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_alignParentTop="true">
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="135dp"
+        android:layout_height="155dp"
+        android:layout_above="@id/shopik"
+        android:layout_alignEnd="@id/shopik"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="-65dp"
+        android:padding="5dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/tooki"/>
 
-        <TextView
-            android:id="@+id/line1"
-            android:layout_width="22dp"
-            android:layout_height="310dp"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/line1" />
-
-        <TextView
-            android:id="@+id/line2"
-            android:layout_width="22dp"
-            android:layout_height="185dp"
-            android:layout_marginStart="7dp"
-            android:layout_toEndOf="@id/line1"
-            android:background="@drawable/line2" />
-
-        <TextView
-            android:id="@+id/line3"
-            android:layout_width="22dp"
-            android:layout_height="140dp"
-            android:layout_marginStart="7dp"
-            android:layout_toEndOf="@id/line2"
-            android:background="@drawable/line4" />
-
-        <TextView
-            android:id="@+id/line4"
-            android:layout_width="22dp"
-            android:layout_height="95dp"
-            android:layout_marginStart="7dp"
-            android:layout_toEndOf="@id/line3"
-            android:background="@drawable/line6" />
-
-        <TextView
-            android:id="@+id/line5"
-            android:layout_width="22dp"
-            android:layout_height="55dp"
-            android:layout_toStartOf="@id/line6"
-            android:layout_marginEnd="7dp"
-            android:background="@drawable/line5" />
-
-        <TextView
-            android:id="@+id/line6"
-            android:layout_width="22dp"
-            android:layout_height="150dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/line3" />
-
-    </RelativeLayout>  -->
+    <TextView
+        android:id="@+id/shopik"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fontFamily="cursive"
+        android:text="Shopik"
+        android:textColor="@color/SplashScreenText"
+        android:textSize="110sp"
+        android:textStyle="bold"/>
 
     <RelativeLayout
-        android:id="@+id/middle_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/copyright_text"
-        android:gravity="center">
-
-        <ImageView
-            android:layout_width="145dp"
-            android:layout_height="160dp"
-            android:layout_above="@id/shopik"
-            android:layout_alignEnd="@id/shopik"
-            android:layout_marginEnd="45dp"
-            android:layout_marginBottom="-65dp"
-            android:padding="5dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/tooki" />
+        android:id="@+id/hello_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="65dp"
+        android:layout_below="@id/shopik"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="86dp"
+        android:layout_marginBottom="135dp">
 
         <TextView
-            android:id="@+id/shopik"
+            android:id="@+id/welcome_signed_in"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:fontFamily="cursive"
-            android:text="Shopik"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/image_profile"
+            android:fontFamily="@font/nunito_sans_semibold"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:text="Hi"
             android:textColor="@color/SplashScreenText"
-            android:textSize="110sp"
-            android:textStyle="bold" />
+            android:textSize="20sp" />
 
-        <RelativeLayout
-            android:id="@+id/hello_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="65dp"
-            android:layout_below="@id/shopik"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp">
-
-            <TextView
-                android:id="@+id/welcome_signed_in"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@id/image_profile"
-                android:fontFamily="@font/nunito_sans_semibold"
-                android:gravity="center_vertical"
-                android:padding="5dp"
-                android:text="Hi"
-                android:textColor="@color/SplashScreenText"
-                android:textSize="20sp"/>
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/image_profile"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:padding="5dp"
-                android:src="@drawable/ic_person_black"/>
-
-        </RelativeLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image_profile"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:src="@drawable/ic_person_black" />
 
     </RelativeLayout>
 
     <TextView
         android:id="@+id/copyright_text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
         android:fontFamily="@font/nunito_semibold"
+        android:text="@string/copy_right"
         android:textAlignment="center"
         android:textColor="@color/SplashScreenText"
-        android:text="@string/copy_right"
-        android:textSize="12sp" />
-
-   <!-- <RelativeLayout
-        android:id="@+id/bot_lines"
-        android:layout_width="50dp"
-        android:layout_height="200dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="10dp">
-
-        <TextView
-            android:id="@+id/bot_line1"
-            android:layout_width="22dp"
-            android:layout_height="100dp"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/line6"
-            android:rotation="180"/>
-
-        <TextView
-            android:id="@+id/bot_line2"
-            android:layout_width="22dp"
-            android:layout_height="200dp"
-            android:layout_alignParentEnd="true"
-            android:background="@drawable/line4"
-            android:layout_alignParentBottom="true"
-            android:rotation="180"/>
-
-    </RelativeLayout>  -->
+        android:textSize="12sp"/>
 
 </RelativeLayout>

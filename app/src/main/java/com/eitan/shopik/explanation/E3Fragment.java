@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.ArraySet;
@@ -26,13 +25,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -141,12 +138,6 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
         outletsModel.getOutlets().removeObservers(getViewLifecycleOwner());
         search_card = null;
         searchView2 = null;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     private void initFab(){
@@ -277,7 +268,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private class E3GridAdapter extends ArrayAdapter<RecyclerItem> implements Serializable {
+    private static class E3GridAdapter extends ArrayAdapter<RecyclerItem> implements Serializable {
 
         private List<RecyclerItem> AllItemsList;
         private List<RecyclerItem> ItemsList;
@@ -313,7 +304,8 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
 
             assert item != null;
             final ArrayList<String> imagesUrl = item.getImages();
-            Glide.with(getContext()).load(imagesUrl.get(0)).into(imageView);
+
+            Macros.Functions.GlidePicture(getContext(),imagesUrl.get(0),imageView);
 
             if(item.isSale())
                 sale.setVisibility(View.VISIBLE);
@@ -341,7 +333,7 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
                 price.setTextSize(16);
             }
 
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),item));
+            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
 
             return convertView;
         }
@@ -363,11 +355,11 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
             return filter;
         }
 
-        public void setAllItems(CopyOnWriteArrayList<RecyclerItem> allItems){
+        public void setAllItems(CopyOnWriteArrayList<RecyclerItem> allItems) {
             this.AllItemsList.addAll(allItems);
         }
 
-        public void clearItems(){
+        public void clearItems() {
             this.AllItemsList.clear();
             this.ItemsList.clear();
         }

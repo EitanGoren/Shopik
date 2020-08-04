@@ -86,6 +86,7 @@
                 android:elevation="5dp"
                 android:gravity="center"
                 android:padding="8dp"
+                android:transitionName="like"
                 android:textColor="#ffffff"
                 android:theme="@style/Buttons"
                 android:translationZ="5dp" />
@@ -118,7 +119,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="430dp"
                 android:layout_centerVertical="true"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:transitionName="fullscreen"/>
 
             <TextView
                 android:id="@+id/exclusive"
@@ -201,6 +203,7 @@
             android:layout_marginEnd="50dp"
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="55dp"
+            android:transitionName="company_logo"
             app:civ_border_color="@color/borderLine"
             android:translationZ="10dp"
             android:elevation="10dp"

@@ -26,7 +26,6 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -272,8 +271,6 @@ public class GridAdapter extends ArrayAdapter<ShoppingItem> implements Filterabl
             TextView buy = convertView.findViewById(R.id.list_item_buy_button);
             final Button fullscreen = convertView.findViewById(R.id.fullscreen_button);
 
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),item));
-
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(),item.getSite_link()));
 
             TextView price = convertView.findViewById(R.id.price);
@@ -327,7 +324,7 @@ public class GridAdapter extends ArrayAdapter<ShoppingItem> implements Filterabl
             else
                 percentage.setVisibility(View.INVISIBLE);
 
-            seller_name.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),item.getSellerId()));
+            seller_name.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),item.getSellerId(),null));
 
             String brand = item.getBrand();
             String seller = item.getSeller();
@@ -339,6 +336,8 @@ public class GridAdapter extends ArrayAdapter<ShoppingItem> implements Filterabl
 
             ViewPager viewPager = convertView.findViewById(R.id.image_viewPager);
             viewPager.setAdapter(arrayAdapter);
+
+            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
 
         }
         return convertView;
@@ -366,14 +365,16 @@ public class GridAdapter extends ArrayAdapter<ShoppingItem> implements Filterabl
         @Override
         public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
 
-            LayoutInflater layoutInflater = (LayoutInflater) container.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) container.getContext().
+                    getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             final int[] i = {position};
             assert layoutInflater != null;
             final View view = layoutInflater.inflate(R.layout.grid_images_item,container,false);
             final ImageView imageView = view.findViewById(R.id.image_item);
 
-            Glide.with(container.getContext()).load(imagesUrl.get((i[0])%4)).into(imageView);
+            Macros.Functions.GlidePicture(container.getContext(), imagesUrl.get((i[0])%4), imageView);
+
             container.addView(view);
 
             Button mNext = view.findViewById(R.id.next);
@@ -381,14 +382,14 @@ public class GridAdapter extends ArrayAdapter<ShoppingItem> implements Filterabl
 
             mNext.setOnClickListener(v -> {
                 container.removeView(view);
-                Glide.with(container.getContext()).load(imagesUrl.get((i[0] + 1)%4)).into(imageView);
+                Macros.Functions.GlidePicture(container.getContext(), imagesUrl.get((i[0] + 1) % 4), imageView);
                 container.addView(view);
                 i[0]++;
             });
 
             mPrev.setOnClickListener(v -> {
                 container.removeView(view);
-                Glide.with(container.getContext()).load(imagesUrl.get((i[0] + 3)%4)).into(imageView);
+                Macros.Functions.GlidePicture(container.getContext(), imagesUrl.get((i[0] - 1) % 4), imageView);
                 container.addView(view);
                 --i[0];
             });

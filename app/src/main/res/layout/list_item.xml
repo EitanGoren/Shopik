@@ -20,6 +20,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
+                    android:transitionName="fullscreen"
                     android:scaleType="centerCrop" />
 
                 <Button
@@ -61,6 +62,7 @@
             android:layout_alignStart="@id/image_viewPager"
             android:layout_alignTop="@id/image_viewPager"
             android:src="@drawable/ic_favorite_black_24dp"
+            android:transitionName="favorite"
             android:visibility="invisible"/>
 
         <TextView
@@ -207,6 +209,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="40dp"
             android:layout_marginBottom="-50dp"
+            android:transitionName="company_logo"
             android:padding="10dp"
             app:civ_border_color="@color/borderLine"
             app:civ_border_width="3.5dp" />

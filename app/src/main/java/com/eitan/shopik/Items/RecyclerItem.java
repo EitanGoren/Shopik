@@ -32,7 +32,12 @@ public class RecyclerItem implements Serializable {
         return brand;
     }
     public void setBrand(String brand) {
-        this.brand = brand;
+        String[] pook = brand.split(" ");
+        StringBuilder temp = new StringBuilder();
+        for (String word : pook) {
+            temp.append(word.substring(0, 1).toUpperCase()).append(word.toLowerCase().substring(1)).append(" ");
+        }
+        this.brand = temp.toString();
     }
 
     public String getText() {

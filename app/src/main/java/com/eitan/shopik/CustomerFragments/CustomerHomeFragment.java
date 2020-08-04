@@ -29,8 +29,6 @@ import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.eitan.shopik.ViewModels.SwipesModel;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
@@ -45,7 +43,6 @@ public class CustomerHomeFragment extends Fragment {
     private String item_type;
     private String item_gender;
     private String item_sub_category;
-    private TabLayout tabLayout;
     private SwipesModel swipesModel;
     private Dialog dialog;
     private static final int DELAY_MILLIS = 2500;
@@ -54,9 +51,7 @@ public class CustomerHomeFragment extends Fragment {
     ArrayList<ShoppingItem> castro = new ArrayList<>();
     ArrayList<ShoppingItem> tx = new ArrayList<>();
     ArrayList<ShoppingItem> asos = new ArrayList<>();
-    private String userId;
     private Map<String,String> last_items;
-    private BottomNavigationView bottomNavigationView;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -83,7 +78,6 @@ public class CustomerHomeFragment extends Fragment {
         init();
 
         swipesModel.getLast_item_id().observe(requireActivity(), stringStringMap -> last_items = stringStringMap);
-
         mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
 
             swipesModel.clearAllItems();
@@ -170,7 +164,6 @@ public class CustomerHomeFragment extends Fragment {
             }
 
         });
-
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
@@ -209,41 +202,44 @@ public class CustomerHomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        tabLayout = null;
         flingContainer.setFlingListener(null);
         mainModel.getAll_items_ids().removeObservers(getViewLifecycleOwner());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void init() {
-      //  tabLayout = requireActivity().findViewById(R.id.top_nav);
-        bottomNavigationView = requireActivity().findViewById(R.id.main_bottom_navigation_view);
         flingContainer = requireActivity().findViewById(R.id.frame);
         arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item, swipesModel.getItems().getValue());
     }
 
     private void updateBadge() {
 
-        BadgeDrawable fav_badge = bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites);
+        TabLayout tabLayout = requireActivity().findViewById(R.id.top_nav);
+        TabLayout.Tab tab = tabLayout.getTabAt(1);
 
-        if (Objects.requireNonNull(fav_badge).hasNumber()) {
-            int num = Objects.requireNonNull(fav_badge).getNumber();
-            Objects.requireNonNull(fav_badge).setNumber(num + 1);
+        assert tab != null;
+        if (tab.getOrCreateBadge().hasNumber()) {
+            int num = tab.getOrCreateBadge().getNumber();
+            tab.getOrCreateBadge().setNumber(num + 1);
         }
         else
-            Objects.requireNonNull(fav_badge).setNumber(1);
+            tab.getOrCreateBadge().setNumber(1);
 
-        Objects.requireNonNull(fav_badge).setVisible(true);
+        tab.getOrCreateBadge().setVisible(true);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void onItemLiked(Object dataObject) {
+
         final MediaPlayer mp = MediaPlayer.create(requireContext(), R.raw.swipe);
         mp.start();
         final ShoppingItem shoppingItem = (ShoppingItem) dataObject;
         Database connection = new Database();
         if (!shoppingItem.isAd()) {
             String item_id = shoppingItem.getId();
+            String link = shoppingItem.getSite_link();
+            String imageUrl = shoppingItem.getImages().get(0);
+
             if (item_id != null) {
 
                 String seller = shoppingItem.getSeller();
@@ -252,7 +248,6 @@ public class CustomerHomeFragment extends Fragment {
                 shoppingItem.setFavorite(isFavorite);
                 if (isFavorite) {
                     dialog = new Dialog(requireContext());
-                    String imageUrl = shoppingItem.getImages().get(0);
                     showFavoritesDialog(imageUrl);
                 }
                 swipesModel.setLast_item_id(item_id,seller);
@@ -265,13 +260,16 @@ public class CustomerHomeFragment extends Fragment {
                 else
                     action = Macros.CustomerMacros.LIKED;
 
-                connection.onCustomerInteractWithItem(item_id, item_type, item_gender,item_sub_category, action,seller);
+                connection.onCustomerInteractWithItem(item_id, item_type, item_gender,
+                        item_sub_category, action, seller);
+
                 // add user_id to items Liked field
-                connection.onItemAction(item_type, item_gender, item_id,action,seller);
+                connection.onItemAction(item_type, item_gender, item_id, action, seller, link, imageUrl);
 
                 connection.updatePreferredItem(shoppingItem, item_sub_category);
             }
         }
+
     }
 
     private void onItemUnliked(Object dataObject) {
@@ -279,16 +277,20 @@ public class CustomerHomeFragment extends Fragment {
         mp.start();
         final ShoppingItem shoppingItem = (ShoppingItem) dataObject;
         if (!shoppingItem.isAd()) {
+
             String item_id = shoppingItem.getId();
             String seller = shoppingItem.getSeller();
-            if (item_id != null) {
+            String link = shoppingItem.getSite_link();
+            String imageUrl = shoppingItem.getImages().get(0);
 
-                swipesModel.setLast_item_id(item_id,seller);
+        if (item_id != null) {
 
-                Database connection = new Database();
-                connection.onItemAction(item_type, item_gender, item_id, Macros.Items.UNLIKED, seller);
-                connection.onCustomerInteractWithItem(item_id, item_type, item_gender, item_sub_category,
-                        Macros.Items.UNLIKED, seller);
+            swipesModel.setLast_item_id(item_id,seller);
+            Database connection = new Database();
+
+            connection.onItemAction(item_type, item_gender, item_id, Macros.Items.UNLIKED, seller, link,imageUrl);
+            connection.onCustomerInteractWithItem(item_id, item_type, item_gender, item_sub_category,
+                    Macros.Items.UNLIKED, seller);
             }
         }
     }

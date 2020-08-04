@@ -188,14 +188,6 @@ public class LandingPageActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
     }
 
-    @SuppressLint("RestrictedApi")
-    private void isCustomerOrCompany(final String user_id) {
-
-        //is_company = findViewById(R.id.is_company);
-        checkCustomer(user_id);
-      //  checkCompany(user_id);
-    }
-
     private void registerNewUser(){
         if(type == null){
             Intent intent = new Intent(LandingPageActivity.this, MainRegistrationActivity.class);
@@ -316,7 +308,7 @@ public class LandingPageActivity extends AppCompatActivity {
                                 id_in_provider = object.getString("id");
                                 imageUrl = "http://graph.facebook.com/" + id_in_provider + "/picture?type=large&width=720&height=720";
                                 Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
-                                isCustomerOrCompany(user.getUid());
+                                checkCustomer(user.getUid());
                             } catch (JSONException e) {
                                 Log.d(Macros.TAG, "facebook failed: " + e.getMessage());
                             }
@@ -333,7 +325,7 @@ public class LandingPageActivity extends AppCompatActivity {
                                 id_in_provider = acct.getId();
                                 imageUrl = Objects.requireNonNull(acct.getPhotoUrl()).toString().split("=", 2)[0].concat("=s700-c");
                                 Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
-                                isCustomerOrCompany(user.getUid());
+                                checkCustomer(user.getUid());
                             }
                         } catch (Exception e) {
                             Log.d(Macros.TAG, "googleAuth failed: " + e.getMessage());
@@ -341,7 +333,7 @@ public class LandingPageActivity extends AppCompatActivity {
                         break;
                     case Macros.Providers.PASSWORD:
                        // Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
-                        isCustomerOrCompany(user.getUid());
+                        checkCustomer(user.getUid());
                         break;
                 }
             }
@@ -367,8 +359,7 @@ public class LandingPageActivity extends AppCompatActivity {
         TextView copyright = findViewById(R.id.copyright_text);
         copyright.setAnimation(bottom_anim);
 
-        RelativeLayout middle_layout = findViewById(R.id.middle_layout);
-        middle_layout.setAnimation(middle_anim);
+        imageView.setAnimation(middle_anim);
     }
 
     @SuppressLint("NewApi")

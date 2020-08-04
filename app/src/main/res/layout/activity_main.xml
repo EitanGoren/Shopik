@@ -13,7 +13,7 @@
         android:id="@+id/customer_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/fragmentBackground"
+        android:background="#FFFFFF"
         android:elevation="5dp"
         android:translationZ="5dp"
         android:paddingBottom="7dp"
@@ -21,47 +21,56 @@
         app:menu="@menu/menu_customer_toolbar"
         app:titleTextColor="#000000">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingTop="5dp">
+            android:layout_height="60dp">
 
             <TextView
                 android:id="@+id/company_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_centerVertical="true"
                 android:fontFamily="cursive"
                 android:text="Shopik"
                 android:textAllCaps="false"
                 android:textColor="@color/SplashScreenBackground"
                 android:textSize="40sp"
                 android:textStyle="bold"
-                android:gravity="center"
                 android:textAlignment="center"/>
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/user_profile"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="10dp"
-                android:padding="5dp"
-                android:src="@drawable/ic_account_circle_black_24dp"/>
+            <ImageView
+                android:id="@+id/logo_image"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@id/company_logo"
+                android:src="@drawable/tooki" />
 
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/comfortaa"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/user_profile"
                 android:textAlignment="center"
-                android:gravity="center"
+                android:layout_toEndOf="@id/logo_image"
                 android:textAllCaps="false"
                 android:textColor="@color/SplashScreenBackground"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
-        </LinearLayout>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_profile"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/ic_account_circle_black_24dp"/>
+
+        </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -105,23 +114,68 @@
     </com.google.android.material.tabs.TabLayout>
     -->
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/main_bottom_navigation_view"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/top_nav"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="65dp"
+        android:background="#FFFFFF"
+        android:elevation="25dp"
+        android:scrollbars="horizontal"
+        android:soundEffectsEnabled="true"
         android:layout_alignParentBottom="true"
-        android:background="@color/fragmentBackground"
-        android:elevation="20dp"
-        android:translationZ="20dp"
-        app:menu="@menu/bottom_nav_menu">
+        android:translationZ="25dp"
+        app:tabGravity="fill"
+        app:tabIconTint="#000000"
+        app:tabIndicatorColor="@color/SplashScreenBackground"
+        app:tabIndicatorGravity="top"
+        app:tabIndicatorHeight="3.5dp"
+        app:tabMode="fixed"
+        app:tabPaddingBottom="3dp"
+        app:tabPaddingTop="8dp"
+        app:tabSelectedTextColor="#000000"
+        app:tabTextAppearance="@style/MineCustomTabText">
 
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/top_swipes"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:contextClickable="true"
+            android:icon="@drawable/ic_outline_touch_app_24"
+            android:tag="swipes"
+            android:text="Swipes"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/top_favorites"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:icon="@drawable/ic_outline_favorite_border_24"
+            android:tag="favorites"
+            android:text="Favorites"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/top_suggestion"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:contextClickable="true"
+            android:icon="@drawable/ic_outline_thumbs_up_down_24"
+            android:tag="suggested"
+            android:text="Suggested"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/top_search"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:icon="@drawable/ic_search"
+            android:tag="all items"
+            android:text="All items"/>
+
+    </com.google.android.material.tabs.TabLayout>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/customer_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/main_bottom_navigation_view"
+        android:layout_above="@id/top_nav"
         android:layout_below="@id/customer_toolbar"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
 

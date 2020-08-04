@@ -1,5 +1,6 @@
 package com.eitan.shopik.Adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -102,18 +102,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         }
 
         public void setItem(final RecyclerItem item) {
+
             switch (type) {
                 case "Item": {
                     brand.setText(item.getText());
-                    brand.setCompoundDrawablesWithIntrinsicBounds(brand.getContext().getDrawable(R.drawable.ic_thumb_up_blue), null, null, null);
+                    brand.setCompoundDrawablesWithIntrinsicBounds(getContext().getDrawable(R.drawable.ic_thumb_up_blue), null, null, null);
                     brand.setCompoundDrawablePadding(20);
-                    link.setOnClickListener(v -> Macros.Functions.buy(link.getContext(),item.getLink()));
-                    Glide.with(imageView.getContext()).load(item.getImages().get(0)).into(imageView);
-                    full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(full_screen.getContext(),item));
+                    link.setOnClickListener(v -> Macros.Functions.buy(getContext(),item.getLink()));
+                    Macros.Functions.GlidePicture(getContext(),item.getImages().get(0), imageView);
+                    full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),item));
                     break;
                 }
                 case "Market": {
-                    Glide.with(imageView.getContext()).load(item.getImage_resource()).into(imageView);
+                    Macros.Functions.GlidePicture(getContext(),item.getImage_resource(), imageView);
+
                     price.setText(item.getPrice());
                     text.setText(item.getText());
                     break;
@@ -121,22 +123,23 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 case "New-Item": {
                     brand.setText(item.getText());
                     price.setText(item.getPrice());
-                    link.setOnClickListener(v -> Macros.Functions.buy(link.getContext(),item.getLink()));
-                    Glide.with(imageView.getContext()).load(item.getImages().get(0)).into(imageView);
-                    full_screen.setOnClickListener(v -> {
-                       Macros.Functions.fullscreen(full_screen.getContext(),item);
-                    });
+                    link.setOnClickListener(v -> Macros.Functions.buy(getContext(),item.getLink()));
+                    Macros.Functions.GlidePicture(getContext(),item.getImages().get(0), imageView);
+
+                    full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),item));
                     break;
                 }
                 case "Brand":
                     brand.setText(item.getText());
                     break;
                 case "SubCategory":
-                    Glide.with(imageView.getContext()).load(item.getImage_resource()).into(imageView);
+                    Macros.Functions.GlidePicture(getContext(),item.getImage_resource(), imageView);
                     sub_cat.setText(item.getText());
-                    imageView.setOnClickListener(v -> Macros.Functions.goToCustomerMain(imageView.getContext(),item));
+                    imageView.setOnClickListener(v -> Macros.Functions.goToCustomerMain(getContext(),item));
                     break;
             }
         }
+
+        public Context getContext() {return itemView.getContext();}
     }
 }

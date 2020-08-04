@@ -22,7 +22,8 @@
         android:layout_width="205dp"
         android:layout_height="225dp"
         android:layout_gravity="top"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:transitionName="fullscreen"/>
 
     <Button
         android:id="@+id/store_link"

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.util.ArraySet;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,6 @@ import androidx.annotation.RequiresApi;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
@@ -234,39 +234,75 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
                     break;
                 }
             }
-            Glide.with(getContext()).load(image).into(imageView);
+            Macros.Functions.GlidePicture(getContext(),image,imageView);
 
             Button mNext = convertView.findViewById(R.id.next);
             Button mPrev = convertView.findViewById(R.id.previous);
-
             mNext.setOnClickListener(v -> {
                 Animation fadeout = AnimationUtils.loadAnimation(getContext(), R.anim.fadeout);
                 Animation fadein = AnimationUtils.loadAnimation(getContext(), R.anim.fadein);
                 imageView.startAnimation(fadeout);
-                Glide.with(getContext()).load(images.get(((Math.abs(i[0]) + 1) % 4))).into(imageView);
+                fadeout.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        Macros.Functions.GlidePicture(getContext(),(images.get((Math.abs(i[0]) + 1) % 4)),imageView);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        imageView.startAnimation(fadein);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
                 i[0]++;
-                imageView.startAnimation(fadein);
             });
             mPrev.setOnClickListener(v -> {
                 Animation fadeout = AnimationUtils.loadAnimation(getContext(), R.anim.fadeout);
                 Animation fadein = AnimationUtils.loadAnimation(getContext(), R.anim.fadein);
                 imageView.startAnimation(fadeout);
-                Glide.with(getContext()).load((images.get((Math.abs(i[0]) + 1) % 4))).into(imageView);
+                fadeout.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        Macros.Functions.GlidePicture(getContext(),(images.get((Math.abs(i[0]) - 1) % 4)),imageView);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        imageView.startAnimation(fadein);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
                 --i[0];
-                imageView.startAnimation(fadein);
             });
 
             final ImageButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
             item.setImages(images);
+
             fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
 
             TextView buy = convertView.findViewById(R.id.list_item_buy_button);
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(), item.getLink()));
 
             CircleImageView seller_logo = convertView.findViewById(R.id.seller_logo2);
-            seller_logo.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(), item.getSeller_id()));
-            seller_name.setText(item.getText());
-            Glide.with(getContext()).load(item.getSellerLogoUrl()).into(seller_logo);
+            seller_logo.setOnClickListener(v -> Macros.Functions.
+                    sellerProfile(getContext(), item.getSeller_id(), Pair.create(seller_logo,"company_logo")));
+
+            if(item.getText().length() > 20){
+                seller_name.setText(item.getText().subSequence(0,20) );
+            }
+            else
+                seller_name.setText(item.getText());
+
+            Macros.Functions.GlidePicture(getContext(),item.getSellerLogoUrl(),seller_logo);
         }
 
         return convertView;

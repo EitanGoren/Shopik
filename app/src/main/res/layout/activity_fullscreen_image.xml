@@ -11,7 +11,7 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/fullscreen_image_viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <RelativeLayout
         android:id="@+id/buttons_layout"
@@ -98,6 +98,7 @@
         android:layout_marginStart="20dp"
         android:layout_below="@id/buttons_layout"
         android:src="@drawable/ic_favorite_black_24dp"
+        android:transitionName="favorite"
         android:visibility="invisible"/>
 
     <androidx.cardview.widget.CardView

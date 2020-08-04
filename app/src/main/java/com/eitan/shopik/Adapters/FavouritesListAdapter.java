@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
@@ -180,7 +180,7 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                     break;
                 }
             }
-            Glide.with(getContext()).load(image).into(imageView);
+            Macros.Functions.GlidePicture(getContext(),image,imageView);
 
             Button mNext = convertView.findViewById(R.id.next);
             Button mPrev = convertView.findViewById(R.id.previous);
@@ -189,7 +189,7 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 Animation fadeout = AnimationUtils.loadAnimation(getContext(),R.anim.fadeout);
                 Animation fadein = AnimationUtils.loadAnimation(getContext(),R.anim.fadein);
                 imageView.startAnimation(fadeout);
-                Glide.with(getContext()).load(item.getImages().get(((Math.abs(i[0]) + 1) % 4))).into(imageView);
+                Macros.Functions.GlidePicture(getContext(),item.getImages().get(((Math.abs(i[0]) + 1) % 4)),imageView);
                 i[0]++;
                 imageView.startAnimation(fadein);
             });
@@ -197,7 +197,7 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 Animation fadeout = AnimationUtils.loadAnimation(getContext(),R.anim.fadeout);
                 Animation fadein = AnimationUtils.loadAnimation(getContext(),R.anim.fadein);
                 imageView.startAnimation(fadeout);
-                Glide.with(getContext()).load((item.getImages().get((Math.abs(i[0]) + 1) % 4))).into(imageView);
+                Macros.Functions.GlidePicture(getContext(),item.getImages().get(((Math.abs(i[0]) + 3) % 4)),imageView);
                 --i[0];
                 imageView.startAnimation(fadein);
             });
@@ -221,12 +221,17 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 return true;
             });
 
-            seller_name.setText(item.getBrand());
-            Glide.with(getContext()).load(item.getSellerLogoUrl()).into(seller_logo2);
+            if(item.getBrand().length() > 20){
+                seller_name.setText(item.getBrand().subSequence(0,20));
+            }
+            else
+                seller_name.setText(item.getBrand());
+
+            Macros.Functions.GlidePicture(getContext(),item.getSellerLogoUrl(),seller_logo2);
 
             ImageView favorite = convertView.findViewById(R.id.list_item_favourite_icon);
-
             final ImageButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
+
             fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
 
             if (item.isFavorite()) {
@@ -296,12 +301,13 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 price.setTextColor(Color.BLACK);
             }
 
-
             TextView buy = convertView.findViewById(R.id.list_item_buy_button);
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(), item.getSite_link()));
 
-            seller_logo2.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),item.getSellerId()));
-            seller_name.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(),item.getSellerId()));
+            seller_logo2.setOnClickListener(v -> Macros.Functions.
+                    sellerProfile(getContext(),item.getSellerId(),Pair.create(seller_logo2,"company_logo")));
+            seller_name.setOnClickListener(v -> Macros.Functions.
+                    sellerProfile(getContext(),item.getSellerId(),Pair.create(seller_logo2,"company_logo")));
         }
 
         return convertView;

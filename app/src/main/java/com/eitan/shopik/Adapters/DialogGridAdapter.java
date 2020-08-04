@@ -15,7 +15,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -54,7 +53,7 @@ public class DialogGridAdapter extends ArrayAdapter<RecyclerItem> {
         });
 
         assert item != null;
-        Glide.with(getContext()).load(item.getImages().get(0)).into(imageView);
+        Macros.Functions.GlidePicture(getContext(),item.getImages().get(0),imageView);
 
         if(item.isSale())
             sale.setVisibility(View.VISIBLE);
@@ -82,7 +81,7 @@ public class DialogGridAdapter extends ArrayAdapter<RecyclerItem> {
             price.setTextSize(16);
         }
 
-        fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),item));
+        fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
 
         return convertView;
     }

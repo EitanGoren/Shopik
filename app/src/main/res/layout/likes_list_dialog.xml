@@ -23,6 +23,7 @@
             android:textAlignment="center"
             android:fontFamily="@font/nunito_semibold"
             android:layout_marginTop="15dp"
+            android:transitionName="like"
             android:layout_marginBottom="15dp"
             android:layout_gravity="center"
             android:textColor="#000000"

@@ -113,9 +113,9 @@ public class Database {
         });
     }
 
-    public void onCustomerInteractWithItem(String itemId, String type,
-                                           String gender, String sub_category,
-                                           String action,String company){
+    public void onCustomerInteractWithItem(String itemId, String type, String gender,
+                                           String sub_category, String action,
+                                           String company) {
 
         String temp_action = action;
         if(action.equals(Macros.CustomerMacros.FAVOURITE))
@@ -135,7 +135,7 @@ public class Database {
                 updateChildren(map);
     }
 
-    public void onItemAction(String type, String gender, String item_id, String action,String company){
+    public void onItemAction(String type, String gender, String item_id, String action,String company,String link, String image){
 
         String temp_action = action;
         if(action.equals(Macros.CustomerMacros.FAVOURITE))
@@ -147,11 +147,22 @@ public class Database {
         FirebaseDatabase.getInstance().getReference().
                 child(Macros.ITEMS).
                 child(gender).
-                child(company).
                 child(type).
-                child(item_id).
+                child(company + "-" + item_id).
                 child(temp_action).
                 updateChildren(map);
+
+        Map<String,Object> info = new HashMap<>();
+        info.put("link", link);
+        info.put("image", image);
+
+        FirebaseDatabase.getInstance().getReference().
+                child(Macros.ITEMS).
+                child(gender).
+                child(type).
+                child(company + "-" + item_id).
+                child("Info").
+                setValue(info);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)

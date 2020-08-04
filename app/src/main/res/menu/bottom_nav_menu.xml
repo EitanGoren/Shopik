@@ -5,7 +5,7 @@
         android:id="@+id/bottom_swipe"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:icon="@drawable/ic_touch_app_black"
+        android:icon="@drawable/ic_outline_touch_app_24"
         android:tag="swipe"
         android:title="Swipe"/>
 
@@ -13,7 +13,7 @@
         android:id="@+id/bottom_favorites"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:icon="@drawable/ic_favorite_black_24dp"
+        android:icon="@drawable/ic_outline_favorite_border_24"
         android:tag="favorites"
         android:title="Favorites"/>
 
@@ -21,7 +21,7 @@
         android:id="@+id/bottom_suggested"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:icon="@drawable/ic_check_circle_green"
+        android:icon="@drawable/ic_outline_thumbs_up_down_24"
         android:tag="suggested"
         android:title="Suggested"/>
 

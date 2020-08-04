@@ -4,15 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
 
-import com.eitan.shopik.CustomerFragments.AllItemsFragment;
 import com.eitan.shopik.CustomerFragments.CustomerHomeFragment;
 import com.eitan.shopik.CustomerFragments.FavoritesFragment;
 import com.eitan.shopik.CustomerFragments.SearchFragment;
 import com.eitan.shopik.CustomerFragments.SuggestedFragment;
-
-import java.util.List;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
@@ -29,10 +25,10 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
                 selectedFragment = new FavoritesFragment();
                 break;
             case 2:
-                selectedFragment = new SearchFragment();
+                selectedFragment = new SuggestedFragment();
                 break;
             case 3:
-                selectedFragment = new SuggestedFragment();
+                selectedFragment = new SearchFragment();
                 break;
             default:
                 selectedFragment = new CustomerHomeFragment();

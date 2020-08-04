@@ -1,14 +1,26 @@
 package com.eitan.shopik;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.eitan.shopik.Company.CompanyProfileActivity;
 import com.eitan.shopik.Customer.CustomerMainActivity;
 import com.eitan.shopik.Customer.FullscreenImageActivity;
@@ -18,6 +30,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Macros {
 
@@ -43,6 +57,10 @@ public class Macros {
     public static final String BAG = "Bag";
     public static final String SHOES = "Shoes";
     public static final String JEANS = "Jeans";
+    public static final String ACCESSORIES = "Accessories";
+    public static final String LINGERIE = "Lingerie";
+    public static final String FACE_AND_BODY = "Face&Body";
+    public static final String ACTIVE_WEAR = "ActiveWear";
     public static final String DRESS = "Dress";
     public static final String SHIRT = "Shirt";
     public static final String SUNGLASSES = "Sunglasses";
@@ -70,7 +88,6 @@ public class Macros {
     public static final int FAV_TO_AD = 15;
     public static final int SEARCH_TO_AD = 15;
     public static final int SUGGESTED_TO_AD = 15;
-    public static final int NUM_OF_ADS = 15;
 
     public static class Providers {
 
@@ -90,6 +107,7 @@ public class Macros {
         public static final int SUGGESTION_PERCENTAGE = 75;
 
         public static final String LIKED = "Liked";
+        public static final String INFO = "Info";
         public static final String UNLIKED = "Unliked";
         public static final String FAVOURITE = "favorite";
         public static final String PREFERRED_ITEMS = "Preferred items";
@@ -350,8 +368,7 @@ public class Macros {
                 "Zulu & Zephyr", "ZYA"
     };
 
-
-        public static final String[] cuts = {
+     /*   public static final String[] cuts = {
                 "Petite","Maternity","Curve","Tall","Plus","plus","tall","curve","maternity","petite","Super","super",
         };
 
@@ -370,7 +387,7 @@ public class Macros {
                 "classic","rips","washed","midi","maxi","relaxed","muscle","Wide","wide","Big","big",
                 "carrot","plus","Plus"
         };
-
+*/
         static final String[] shit_words = {
                 "fit","size","up",".", "#", "$", "[", "]" ,"with", "&" ,
                 "design","in","t","and","asos","'farleigh'","waist","waisted","jean","jeans",
@@ -694,6 +711,7 @@ public class Macros {
                     return "";
             }
         }
+
         public static void showSnackbar(View view, String text, Context context, int drawableRes) {
             Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
             View snackbarLayout = snackbar.getView();
@@ -705,6 +723,38 @@ public class Macros {
             textView.setTextColor(Color.BLACK);
             textView.setTextSize(16);
             snackbar.show();
+        }
+
+        public static void GlidePicture(Context context,String imageUrl, View view) {
+            RequestListener<Drawable> req = new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    assert e != null;
+                    Log.d(TAG,"Glide Failed: " + model + " " + e.getMessage());
+                    return true;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    if(view instanceof CircleImageView) {
+                        ((CircleImageView) view).setBorderColor(Color.WHITE);
+                        view.setElevation(10);
+                        view.setTranslationZ(10);
+                        ((CircleImageView) view).setBorderWidth(1);
+                        view.setBackground(resource);
+                        view.setTransitionName("company_logo");
+                    }
+                    else
+                        view.setBackground(resource);
+
+                    return true;
+                }
+            };
+
+            if(view instanceof CircleImageView)
+                Glide.with(context).load(imageUrl).into((CircleImageView) view);//addListener(req).into((CircleImageView) view);
+            else
+                Glide.with(context).load(imageUrl).into((ImageView) view);//addListener(req).into((ImageView) view);
         }
 
         public static void buy(Context context, String site_link) {
@@ -721,11 +771,13 @@ public class Macros {
             if (item instanceof RecyclerItem) {
                 RecyclerItem recyclerItem = (RecyclerItem) item;
                 bundle.putSerializable("item", recyclerItem);
-            } else if (item instanceof ShoppingItem) {
+            }
+            else if (item instanceof ShoppingItem) {
                 ShoppingItem shoppingItem = (ShoppingItem) item;
                 bundle.putSerializable("item", shoppingItem);
             }
             intent.putExtra("bundle", bundle);
+
             context.startActivity(intent);
         }
 
@@ -741,11 +793,17 @@ public class Macros {
             context.startActivity(intent);
         }
 
-        public static void sellerProfile(Context context, String sellerId) {
+        public static void sellerProfile(Context context, String sellerId,Pair<View, String> pair) {
             Intent intent = new Intent(context, CompanyProfileActivity.class);
             intent.putExtra("id", sellerId);
             intent.putExtra("customer_id", Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
-            context.startActivity(intent);
+
+            if(pair != null) {
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) context, pair);
+                context.startActivity(intent, options.toBundle());
+            }
+            else
+                context.startActivity(intent);
         }
 
         public static Pair<Integer, Integer> getCategoryNum(String gender, String sub_cat, String item_type) {
@@ -949,6 +1007,9 @@ public class Macros {
                     return new Pair<>(15142, 1);
             }
         }
-    }
 
+        public static String translateSubCategoryToTerminalX(String item_sub_category) {
+            return "";
+        }
+    }
 }

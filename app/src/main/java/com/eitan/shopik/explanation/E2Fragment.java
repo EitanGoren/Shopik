@@ -45,6 +45,9 @@ public class E2Fragment extends Fragment {
     private Catagory jackets;
     private Catagory jewellery;
     private Catagory swimwear;
+    private Catagory lingerie;
+    private Catagory accessories;
+
     private EntranceViewModel viewModel;
 
     @Override
@@ -175,6 +178,8 @@ public class E2Fragment extends Fragment {
             addSwimwearSubCategory("oversized", Macros.Items.MEN_PLUS_SWIM_RES,Macros.CustomerMacros.MEN);
         }
         else {
+
+            //"THONGS & KNICKERSSEXY LINGERIEBACKLESS BRASPYJAMASDRESSING GOWNSBRASSHAPEWEARBODIES"
             addBagsSubCategory("leather",Macros.Items.LEATHER_RES);
             addBagsSubCategory("bum",Macros.Items.BUM_RES);
             addBagsSubCategory("clutch",Macros.Items.CLUTCH_RES);
@@ -253,6 +258,8 @@ public class E2Fragment extends Fragment {
         sunglasses = new Catagory(Macros.SUNGLASSES,gender,sub_glasses);
         jewellery = new Catagory(Macros.JEWELLERY,gender,sub_jewellery);
         swimwear = new Catagory(Macros.SWIMWEAR,gender,sub_swim);
+        lingerie = new Catagory(Macros.JEWELLERY,gender,sub_jewellery);
+        accessories = new Catagory(Macros.SWIMWEAR,gender,sub_swim);
 
        fillCategories();
 

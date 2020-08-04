@@ -10,7 +10,7 @@
         android:id="@+id/e2_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:dividerHeight="0.7dp"
+        android:dividerHeight="0.8dp"
         android:clickable="true"
         android:background="#ffffff"
         android:footerDividersEnabled="true"

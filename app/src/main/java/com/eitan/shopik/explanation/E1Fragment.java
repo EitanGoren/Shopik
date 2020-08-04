@@ -65,12 +65,6 @@ public class E1Fragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -80,7 +74,6 @@ public class E1Fragment extends Fragment {
         model.getGender().observe(requireActivity(), s -> {
             if(!gender.equals(s)) {
                 gender = s;
-
                 entranceViewModel.setLiked_items(gender);
                 recyclerAdapter.notifyDataSetChanged();
                 liked_counter.setText("Loading...");
@@ -100,7 +93,7 @@ public class E1Fragment extends Fragment {
         relativeLayout2.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_SHOES));
         relativeLayout3.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_TRENDING));
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL,false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL,false);
         RecyclerView recyclerView = requireView().findViewById(R.id.recycler);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setScrollbarFadingEnabled(true);
@@ -183,22 +176,22 @@ public class E1Fragment extends Fragment {
     }
 
     private void setAnimation() {
-        Animation fading = AnimationUtils.loadAnimation(getActivity(),R.anim.fade_in);
+        Animation fading = AnimationUtils.loadAnimation(requireActivity(),R.anim.fade_in);
 
         RelativeLayout layout1 = requireView().findViewById(R.id.layout2);
-        RelativeLayout layout2 = getView().findViewById(R.id.layout3);
-        RelativeLayout layout3 = getView().findViewById(R.id.layout4);
+        RelativeLayout layout2 = requireView().findViewById(R.id.layout3);
+        RelativeLayout layout3 = requireView().findViewById(R.id.layout4);
 
         layout1.startAnimation(fading);
         layout2.startAnimation(fading);
         layout3.startAnimation(fading);
     }
+
     private void setWomenEntrance() {
 
         String first_header = "ALL NEW CLOTHING ITEMS";
         String second_header = "OUR NEWEST SHOES COLLECTION";
         String third_header = "MOST TRENDING NOW";
-
 
         TextView textView1 = requireView().findViewById(R.id.text_btn1);
         TextView textView2 = requireView().findViewById(R.id.text_btn2);
@@ -242,6 +235,7 @@ public class E1Fragment extends Fragment {
 
         setAnimation();
     }
+
     private void setMenEntrance() {
 
         String first_header = "ALL NEW CLOTHING ITEMS";
@@ -289,6 +283,7 @@ public class E1Fragment extends Fragment {
             public void onLoadCleared(@Nullable Drawable placeholder) {}
         });
     }
+
     private void closeKeyboard(){
         View view = requireActivity().getCurrentFocus();
         if( view != null ){
@@ -297,4 +292,5 @@ public class E1Fragment extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(),0);
         }
     }
+
 }
