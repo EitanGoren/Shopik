@@ -1,6 +1,7 @@
 package com.eitan.shopik.Adapters;
 
 import android.content.Context;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,7 +111,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                     brand.setCompoundDrawablePadding(20);
                     link.setOnClickListener(v -> Macros.Functions.buy(getContext(),item.getLink()));
                     Macros.Functions.GlidePicture(getContext(),item.getImages().get(0), imageView);
-                    full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),item));
+                    Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
+                    full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
                     break;
                 }
                 case "Market": {
@@ -125,8 +127,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                     price.setText(item.getPrice());
                     link.setOnClickListener(v -> Macros.Functions.buy(getContext(),item.getLink()));
                     Macros.Functions.GlidePicture(getContext(),item.getImages().get(0), imageView);
-
-                    full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(),item));
+                    Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
+                    full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
                     break;
                 }
                 case "Brand":

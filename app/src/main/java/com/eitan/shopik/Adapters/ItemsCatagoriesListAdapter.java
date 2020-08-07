@@ -199,7 +199,8 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
         }
 
         if(convertView == null){
-            LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().
+                    getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             assert layoutInflater != null;
             convertView = layoutInflater.inflate(R.layout.category_item,null);
         }

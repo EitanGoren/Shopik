@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +82,8 @@ public class DialogGridAdapter extends ArrayAdapter<RecyclerItem> {
             price.setTextSize(16);
         }
 
-        fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
+        Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
+        fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
 
         return convertView;
     }

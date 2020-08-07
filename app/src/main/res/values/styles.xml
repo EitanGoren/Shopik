@@ -67,7 +67,11 @@
     </style>
 
     <style name="GridBuyButtons" parent="Theme.AppCompat">
-        <item name="colorPrimary">#F3F9FF</item>
+        <item name="colorPrimary">#EBF5FF</item>
+    </style>
+
+    <style name="GridAdButtons" parent="Theme.AppCompat">
+        <item name="colorPrimary">#DADADA</item>
     </style>
 
     <style name="MainActivity" parent="Theme.AppCompat">

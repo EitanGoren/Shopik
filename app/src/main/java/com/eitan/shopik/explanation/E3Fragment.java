@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.ArraySet;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -333,7 +334,8 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
                 price.setTextSize(16);
             }
 
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
+            Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
+            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
 
             return convertView;
         }

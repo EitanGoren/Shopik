@@ -1,17 +1,17 @@
 package com.eitan.shopik.CustomerFragments;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.util.Pair;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +23,8 @@ import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.eitan.shopik.ViewModels.SuggestedModel;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
@@ -32,9 +33,14 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
 
     private RecyclerGridAdapter recyclerGridAdapter;
     private RecyclerView mRecyclerView;
+    private TextView text_view;
     private SuggestedModel suggestedModel;
     private MainModel mainModel;
-    private FloatingActionButton price,sale,match;
+    private Chip price,sale,match,favorite,toolbar_price,toolbar_sale,toolbar_match,toolbar_favorite;
+    private FloatingActionButton scroll;
+    private boolean scrollUp;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private AppBarLayout appBarLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -69,88 +75,155 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        scrollUp = false;
         //initialize views
         init();
 
-        mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
+        mainModel.getAll_items().observe(requireActivity(), shoppingItems -> {
             suggestedModel.clearItems();
             int count = 0;
             int items_num = 0;
-            String sub_category = "";
-            String category = "";
-            for (Pair<String, ShoppingItem> item : pairs) {
+            String sub_category;
+            String category;
+            for (ShoppingItem shoppingItem : shoppingItems) {
                 int match = 0;
-                assert item.second != null;
-
-                sub_category = item.second.getSub_category();
-                category = item.second.getType();
+                sub_category = shoppingItem.getSub_category();
+                category = shoppingItem.getType();
 
                 if(suggestedModel.getPreferred().getValue() != null){
                     match = Objects.requireNonNull(suggestedModel.
                             getPreferred().
                             getValue()).
-                            calculateMatchingPercentage(item.second);
+                            calculateMatchingPercentage(shoppingItem);
                 }
-                item.second.setPercentage(match);
+                shoppingItem.setPercentage(match);
                 if(match >= Macros.CustomerMacros.SUGGESTION_PERCENTAGE){
                     mRecyclerView.setAdapter(recyclerGridAdapter);
-                    suggestedModel.addToAllItems(item.second);
+                    suggestedModel.addToAllItems(shoppingItem);
                     count++;
                     items_num++;
                     if( (count % Macros.SUGGESTED_TO_AD == 0) && count > 0 ){
-                        suggestedModel.addToAllItems((ShoppingItem) mainModel.getNextAd());
+                        ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                        shoppingItemAd.setAd(true);
+                        suggestedModel.addToAllItems(shoppingItemAd);
                         count++;
                     }
                     recyclerGridAdapter.notifyDataSetChanged();
                 }
 
-                String text = "We found " + items_num + " " + sub_category + " " + category.toLowerCase() + " that you may like," +
-                        System.lineSeparator() + "based on your swipes ";
-
-                TextView text_view = requireView().findViewById(R.id.text_view);
+                String text = "We found " + items_num + " " + sub_category + " " + category.toLowerCase() + " that you may like";
                 text_view.setText(text);
             }
             recyclerGridAdapter.setAllItems(Objects.requireNonNull(suggestedModel.getAllItems().getValue()));
-
         });
+
+        scroll.setOnClickListener(v -> {
+
+            //scroll down
+            if(!scrollUp) {
+                scroll.hide();
+                mLayoutManager.smoothScrollToPosition(mRecyclerView,
+                        null, Objects.requireNonNull(suggestedModel.getAllItems().getValue()).size() - 1);
+            } //scroll down
+            else {
+                scroll.hide();
+                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
+            }
+            scrollUp = !scrollUp;
+        });
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                // ON BOTTOM
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    scroll.show();
+                    scroll.setRotation(180);
+                }
+                // ON TOP
+                else if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE){
+                    scroll.show();
+                    scroll.setRotation(0);
+                }
+            }
+        });
+
+        appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+
+            RelativeLayout relativeLayout = requireView().findViewById(R.id.info_layout);
+            Toolbar toolbar = requireView().findViewById(R.id.toolbar);
+
+            // Collapsed
+            if(verticalOffset <= -270) {
+                relativeLayout.setVisibility(View.INVISIBLE);
+                toolbar.setVisibility(View.VISIBLE);
+            }
+            // Expanded
+            else{
+                toolbar.setVisibility(View.INVISIBLE);
+                relativeLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
     }
 
     private void init() {
 
+        appBarLayout = requireView().findViewById(R.id.appbar);
         mRecyclerView = requireView().findViewById(R.id.grid_recycler_view);
+        text_view = requireView().findViewById(R.id.text_view);
+        scroll = requireView().findViewById(R.id.scroll_up_down);
         recyclerGridAdapter = new RecyclerGridAdapter(suggestedModel.getAllItems().getValue());
-        RecyclerView.LayoutManager mLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        mLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerGridAdapter);
-        CollapsingToolbarLayout collapsing_toolbar = requireView().findViewById(R.id.collapsing_toolbar);
-        collapsing_toolbar.setExpandedTitleColor(Color.WHITE);
-        collapsing_toolbar.setCollapsedTitleTextColor(Color.WHITE);
 
-        initFab();
+        initChips();
     }
 
-    private void initFab(){
+    private void initChips(){
 
-        price = requireView().findViewById(R.id._price_icon);
-        sale = requireView().findViewById(R.id._sale_icon);
-        match = requireView().findViewById(R.id._match_icon);
+        price = requireView().findViewById(R.id.price_chip);
+        sale = requireView().findViewById(R.id.sale_chip);
+        match = requireView().findViewById(R.id.match_chip);
+        favorite = requireView().findViewById(R.id.favorites_chip);
+
+        toolbar_price = requireView().findViewById(R.id.price_chip2);
+        toolbar_sale = requireView().findViewById(R.id.sale_chip2);
+        toolbar_match = requireView().findViewById(R.id.match_chip2);
+        toolbar_favorite = requireView().findViewById(R.id.favorites_chip2);
 
         price.setOnClickListener(this);
         sale.setOnClickListener(this);
         match.setOnClickListener(this);
+        favorite.setOnClickListener(this);
+
+        toolbar_favorite.setOnClickListener(this);
+        toolbar_match.setOnClickListener(this);
+        toolbar_sale.setOnClickListener(this);
+        toolbar_price.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id._match_icon:
+            case R.id.match_chip2:
+            case R.id.match_chip:
                 sortItems("match");
                 break;
-            case R.id._price_icon:
+            case R.id.price_chip:
+            case R.id.price_chip2:
                 sortItems("price");
                 break;
-            case R.id._sale_icon:
+            case R.id.sale_chip2:
+            case R.id.sale_chip:
                 sortItems("sale");
+                break;
+            case R.id.favorites_chip:
+            case R.id.favorites_chip2:
+                sortItems("favorites");
                 break;
             default:
                 sortItems("clear");
@@ -161,4 +234,5 @@ public class SuggestedFragment extends Fragment implements View.OnClickListener{
     private void sortItems(String sort_by){
         recyclerGridAdapter.getSortingFilter().filter(sort_by);
     }
+
 }

@@ -1,22 +1,18 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_profile"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/ic_person_black"
         android:title="My Profile"/>
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home_black_24dp"
         android:title="Home"/>
     <item
+        android:id="@+id/nav_orders"
+        android:icon="@drawable/ic_local_grocery_store_black_24dp"
+        android:title="My Orders"/>
+    <item
         android:id="@+id/nav_logout"
         android:icon="@drawable/ic_input_black_24dp"
         android:title="Log Out"/>
-<!--    <item
-        android:id="@+id/nav_search"
-        app:showAsAction="ifRoom|collapseActionView"
-        android:icon="@drawable/ic_search"
-        android:title="Search"
-        app:actionViewClass="androidx.appcompat.widget.SearchView" /> -->
-
 </menu>

@@ -150,6 +150,19 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/liked_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:drawableEnd="@drawable/ic_favorite_black_24dp"
+                android:drawablePadding="7dp"
+                android:drawableTint="#FF57D8"
+                android:fontFamily="@font/nobile"
+                android:gravity="center_vertical"
+                android:padding="2dp"
+                android:textColor="#FF57D8"
+                android:textSize="13sp"/>
 
         </LinearLayout>
 
@@ -187,7 +200,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/info_layout"
             android:layout_centerHorizontal="true"
-            android:elevation="3dp"
             android:fontFamily="@font/nobile"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
@@ -196,8 +208,9 @@
             android:textColor="#000000"
             android:textSize="14sp"
             android:theme="@style/GridBuyButtons"
-            android:translationZ="3dp" />
-
+            android:elevation="5dp"
+            android:translationY="5dp"
+            android:translationZ="5dp" />
 
     </RelativeLayout>
 

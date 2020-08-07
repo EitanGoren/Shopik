@@ -26,12 +26,16 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.eitan.shopik.Adapters.SearchAdapter;
 import com.eitan.shopik.Items.RecyclerItem;
+import com.eitan.shopik.Items.ShoppingItem;
+import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.AllItemsModel;
+import com.eitan.shopik.ViewModels.MainModel;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SearchFragment extends Fragment implements View.OnClickListener{
@@ -50,6 +54,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private SearchView searchView2;
     private AllItemsModel allItemsModel;
     private CopyOnWriteArrayList<RecyclerItem> allitems;
+    private MainModel mainModel;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -61,6 +66,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
     private void initOnCreate() {
         allItemsModel = new ViewModelProvider(requireActivity()).get(AllItemsModel.class);
+        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
         allitems = new CopyOnWriteArrayList<>();
     }
 
@@ -76,41 +82,55 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         initViews();
 
-        allItemsModel.getItems().observe(requireActivity(), recyclerItems -> {
-          //  Collections.shuffle(recyclerItems);
-            allitems.clear();
-            allitems.addAll(recyclerItems);
+        mainModel.getAll_items().observe(requireActivity(), shoppingItems -> {
+
+            allItemsModel.clearItems();
             searchAdapter.notifyDataSetChanged();
-            searchAdapter.setAllItems(allitems);
+
+            for (ShoppingItem shoppingItem : shoppingItems) {
+
+                allItemsModel.addItem(ShoppingItemToRecyclerItem(shoppingItem));
+                searchAdapter.notifyDataSetChanged();
+
+                if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
+                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                    if (shoppingItemAd != null) {
+                        RecyclerItem adItem = new RecyclerItem(null, null);
+                        adItem.setNativeAd(shoppingItemAd.getNativeAd());
+                        adItem.setAd(true);
+                        allItemsModel.addItem(adItem);
+                    }
+                }
+            }
+            searchAdapter.setAllItems(Objects.requireNonNull(allItemsModel.getItems().getValue()));
         });
 
         listContainer.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)) {
-                    showArrow();
-                }
-                else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
-                    hideArrow();
-                }
-                // were not moving
-                if (scrollState == SCROLL_STATE_IDLE && !isOpened && !isSearchOpened)
-                    main.extend();
-                // were scrolling
-                else
-                    main.shrink();
-            }
+                    @Override
+                    public void onScrollStateChanged(AbsListView view, int scrollState) {
+                        if (view.canScrollList(View.SCROLL_AXIS_VERTICAL) && (scrollState == SCROLL_STATE_IDLE)) {
+                            showArrow();
+                        } else if ((scrollState != SCROLL_STATE_IDLE) && view.canScrollList(View.SCROLL_AXIS_VERTICAL)) {
+                            hideArrow();
+                        }
+                        // were not moving
+                        if (scrollState == SCROLL_STATE_IDLE && !isOpened && !isSearchOpened)
+                            main.extend();
+                            // were scrolling
+                        else
+                            main.shrink();
+                    }
 
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
-        });
+                    @Override
+                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    }
+                });
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
 
-        //searchAdapter = null;
         listContainer = null;
         allItemsModel.getItems().removeObservers(getViewLifecycleOwner());
         options = null;
@@ -129,7 +149,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         search_card = requireView().findViewById(R.id.search_card);
         searchView2 = requireView().findViewById(R.id.search_bar);
         down_arrow = requireView().findViewById(R.id.see_items_below);
-        searchAdapter = new SearchAdapter(requireActivity(), R.layout.list_item, allitems);
+        searchAdapter = new SearchAdapter(requireActivity(), R.layout.list_item, allItemsModel.getItems().getValue());
         listContainer.setAdapter(searchAdapter);
 
         initFab();
@@ -169,6 +189,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         more.setOnClickListener(this);
         search.setOnClickListener(this);
         clear.setOnClickListener(this);
+
     }
 
     private void switchFab(){
@@ -266,6 +287,27 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             case R.id.more_icon:
                 searchAdapter.getSortingFilter().filter("price");
         }
+    }
+
+    private RecyclerItem ShoppingItemToRecyclerItem(ShoppingItem shoppingItem){
+
+        RecyclerItem recyclerItem = new RecyclerItem(shoppingItem.getBrand(), shoppingItem.getSite_link());
+        recyclerItem.setPrice(shoppingItem.getPrice());
+        recyclerItem.setLink(shoppingItem.getSite_link());
+        recyclerItem.setDescription(shoppingItem.getName());
+        recyclerItem.setType(shoppingItem.getType());
+        recyclerItem.setId(shoppingItem.getId());
+        recyclerItem.setSale(shoppingItem.isOn_sale());
+        recyclerItem.setVideo_link(shoppingItem.getVideo_link());
+        recyclerItem.setOutlet(shoppingItem.isOutlet());
+        recyclerItem.setReduced_price(shoppingItem.getReduced_price());
+        recyclerItem.setSeller(shoppingItem.getSeller());
+        recyclerItem.setBrand(shoppingItem.getBrand());
+        recyclerItem.setSeller_id(shoppingItem.getSellerId());
+        recyclerItem.setImages(shoppingItem.getImages());
+
+        recyclerItem.setSellerImageUrl(shoppingItem.getSellerLogoUrl());
+        return recyclerItem;
     }
 
 }

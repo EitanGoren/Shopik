@@ -765,7 +765,7 @@ public class Macros {
             context.startActivity(browserIntent);
         }
 
-        public static void fullscreen(Context context, Object item) {
+        public static void fullscreen(Context context, Object item,Pair<View, String> pair) {
             Intent intent = new Intent(context, FullscreenImageActivity.class);
             Bundle bundle = new Bundle();
             if (item instanceof RecyclerItem) {
@@ -778,6 +778,8 @@ public class Macros {
             }
             intent.putExtra("bundle", bundle);
 
+           // ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) context, pair);
+          //  context.startActivity(intent, options.toBundle());
             context.startActivity(intent);
         }
 

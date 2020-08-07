@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -337,7 +338,8 @@ public class GridAdapter extends ArrayAdapter<ShoppingItem> implements Filterabl
             ViewPager viewPager = convertView.findViewById(R.id.image_viewPager);
             viewPager.setAdapter(arrayAdapter);
 
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
+            Pair<View, String> pair = new Pair<>(viewPager,"fullscreen");
+            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
 
         }
         return convertView;

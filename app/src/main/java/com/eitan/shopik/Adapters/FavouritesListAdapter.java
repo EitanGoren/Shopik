@@ -232,7 +232,8 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
             ImageView favorite = convertView.findViewById(R.id.list_item_favourite_icon);
             final ImageButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
 
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
+            Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
+            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
 
             if (item.isFavorite()) {
                 favorite.setVisibility(View.VISIBLE);

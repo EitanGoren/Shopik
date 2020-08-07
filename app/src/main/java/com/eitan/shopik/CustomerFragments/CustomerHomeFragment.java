@@ -16,7 +16,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -32,8 +31,6 @@ import com.eitan.shopik.ViewModels.SwipesModel;
 import com.google.android.material.tabs.TabLayout;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -48,10 +45,6 @@ public class CustomerHomeFragment extends Fragment {
     private static final int DELAY_MILLIS = 2500;
     private SwipeFlingAdapterView flingContainer;
     private MainModel mainModel;
-    ArrayList<ShoppingItem> castro = new ArrayList<>();
-    ArrayList<ShoppingItem> tx = new ArrayList<>();
-    ArrayList<ShoppingItem> asos = new ArrayList<>();
-    private Map<String,String> last_items;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -77,93 +70,33 @@ public class CustomerHomeFragment extends Fragment {
 
         init();
 
-        swipesModel.getLast_item_id().observe(requireActivity(), stringStringMap -> last_items = stringStringMap);
-        mainModel.getAll_items_ids().observe(requireActivity(), pairs -> {
+        mainModel.getAll_items().observe(requireActivity(), shoppingItems -> {
 
             swipesModel.clearAllItems();
             arrayAdapter.notifyDataSetChanged();
 
-            castro.clear();
-            tx.clear();
-            asos.clear();
+            for( ShoppingItem shoppingItem : shoppingItems ) {
 
-            // Separate items
-            for (Pair<String, ShoppingItem> p : pairs) {
-                assert p.first != null;
-                switch (p.first) {
-                    case "Castro":
-                        castro.add(p.second);
-                    case "ASOS":
-                        asos.add(p.second);
-                    case "Terminal X":
-                        tx.add(p.second);
+                if(!shoppingItem.isSeen()) {
+                    swipesModel.addToItems(shoppingItem);
+                }
+
+                if ((swipesModel.getItems().getValue().size() % Macros.SWIPES_TO_AD == 0)
+                        && swipesModel.getItems().getValue().size() > 0) {
+
+                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                    if (shoppingItemAd != null) {
+                        shoppingItemAd.setAd(true);
+                        swipesModel.addToItems(shoppingItemAd);
+                    }
                 }
             }
 
-            castro.sort((o1, o2) -> (int) Long.parseLong(String.valueOf(Long.parseLong(o1.getId()) - Long.parseLong(o2.getId()))));
-            tx.sort((o1, o2) -> (int) Long.parseLong(String.valueOf(Long.parseLong(o1.getId()) - Long.parseLong(o2.getId()))));
-            asos.sort((o1, o2) -> (int) Long.parseLong(String.valueOf(Long.parseLong(o1.getId()) - Long.parseLong(o2.getId()))));
+            arrayAdapter.notifyDataSetChanged();
             flingContainer.setAdapter(arrayAdapter);
 
-            int count = 0;
-            for (ShoppingItem cas_item : castro) {
-                assert last_items != null;
-                if (last_items.get(cas_item.getSeller()) == null ||
-                        Long.parseLong(Objects.requireNonNull(last_items.get(cas_item.getSeller()))) < Long.parseLong(cas_item.getId())) {
-                    swipesModel.addToItems(cas_item);
-                    arrayAdapter.notifyDataSetChanged();
-
-                    count++;
-                    if ((count % Macros.SWIPES_TO_AD == 0) && count > 0) {
-                        ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                        if (shoppingItemAd != null) {
-                            swipesModel.addToItems(shoppingItemAd);
-                            count++;
-                            arrayAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            }
-            for (ShoppingItem asos_item : asos) {
-                assert last_items != null;
-                if (last_items.get(asos_item.getSeller()) == null ||
-                        Long.parseLong(Objects.requireNonNull(last_items.get(asos_item.getSeller()))) < Long.parseLong(asos_item.getId())) {
-                    swipesModel.addToItems(asos_item);
-                    arrayAdapter.notifyDataSetChanged();
-
-                    count++;
-                    if ((count % Macros.SWIPES_TO_AD == 0) && count > 0) {
-                        ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                        if (shoppingItemAd != null) {
-                            swipesModel.addToItems(shoppingItemAd);
-                            count++;
-                            arrayAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            }
-            for (ShoppingItem tx_item : tx) {
-                assert last_items != null;
-                if (last_items.get(tx_item.getSeller()) == null ||
-                        Long.parseLong(Objects.requireNonNull(last_items.get(tx_item.getSeller())))
-                                < Long.parseLong(tx_item.getId())) {
-
-                    swipesModel.addToItems(tx_item);
-                    arrayAdapter.notifyDataSetChanged();
-
-                    count++;
-                    if ((count % Macros.SWIPES_TO_AD == 0) && count > 0) {
-                        ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                        if (shoppingItemAd != null) {
-                            swipesModel.addToItems(shoppingItemAd);
-                            count++;
-                            arrayAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            }
-
         });
+
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
@@ -184,7 +117,9 @@ public class CustomerHomeFragment extends Fragment {
 
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
-            public void onAdapterAboutToEmpty(int itemsInAdapter) {}
+            public void onAdapterAboutToEmpty(int itemsInAdapter) {
+
+            }
 
             @Override
             public void onScroll(float scrollProgressPercent) {
@@ -203,7 +138,7 @@ public class CustomerHomeFragment extends Fragment {
         super.onDestroyView();
 
         flingContainer.setFlingListener(null);
-        mainModel.getAll_items_ids().removeObservers(getViewLifecycleOwner());
+        mainModel.getAll_items().removeObservers(getViewLifecycleOwner());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -250,7 +185,7 @@ public class CustomerHomeFragment extends Fragment {
                     dialog = new Dialog(requireContext());
                     showFavoritesDialog(imageUrl);
                 }
-                swipesModel.setLast_item_id(item_id,seller);
+                mainModel.addSwipedItemId(item_id);
 
                 updateBadge();
 
@@ -285,7 +220,7 @@ public class CustomerHomeFragment extends Fragment {
 
         if (item_id != null) {
 
-            swipesModel.setLast_item_id(item_id,seller);
+            mainModel.addSwipedItemId(item_id);
             Database connection = new Database();
 
             connection.onItemAction(item_type, item_gender, item_id, Macros.Items.UNLIKED, seller, link,imageUrl);

@@ -1,9 +1,9 @@
 package com.eitan.shopik.ViewModels;
 
 import android.os.Build;
+import android.util.ArraySet;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -16,15 +16,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MainModel extends ViewModel {
 
     private MutableLiveData<Map<String,Map<String,Object>>> companies_info;
     private MutableLiveData<Map<String, LikedUser>> customers_info;
-    private MutableLiveData<CopyOnWriteArrayList<Pair<String,ShoppingItem>>> all_items_ids;
-    private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> castro_items;
-
+    private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> all_items;
+    private Set<String> swipedItems;
     private ArrayList<ShoppingItem> shoppingAdsArray;
 
     public MainModel(){
@@ -39,13 +39,11 @@ public class MainModel extends ViewModel {
         this.customers_info = new MutableLiveData<>();
         this.customers_info.setValue(customers_info_map);
 
-        CopyOnWriteArrayList<Pair<String,ShoppingItem>> ids = new CopyOnWriteArrayList<>();
-        this.all_items_ids = new MutableLiveData<>();
-        all_items_ids.setValue(ids);
+        CopyOnWriteArrayList<ShoppingItem> items = new CopyOnWriteArrayList<>();
+        this.all_items = new MutableLiveData<>();
+        all_items.setValue(items);
 
-        CopyOnWriteArrayList<ShoppingItem> castro = new CopyOnWriteArrayList<>();
-        this.castro_items = new MutableLiveData<>();
-        castro_items.setValue(castro);
+        swipedItems = new ArraySet<>();
     }
 
     public LiveData<Map<String, LikedUser>> getCustomers_info() {
@@ -61,35 +59,25 @@ public class MainModel extends ViewModel {
         Objects.requireNonNull(this.customers_info.getValue()).put(id,likedUser);
     }
 
-    public LiveData<CopyOnWriteArrayList<Pair<String,ShoppingItem>>> getAll_items_ids() {
-        return all_items_ids;
+    public LiveData<CopyOnWriteArrayList<ShoppingItem>> getAll_items() {
+        return all_items;
     }
-
-    //castro
-    public void add_castro_item(ShoppingItem item) {
-        Objects.requireNonNull(this.castro_items.getValue()).add(item);
-    }
-    public LiveData<CopyOnWriteArrayList<ShoppingItem>> getAllCastroItems() {
-        return castro_items;
-    }
-    public void postAllCastroItemsIds(){
-        CopyOnWriteArrayList<ShoppingItem> koko = this.castro_items.getValue();
-        castro_items.postValue(koko);
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void addItemId(Pair<String,ShoppingItem> pair) {
-        Objects.requireNonNull(this.all_items_ids.getValue()).add(pair);
+    public void addItem(ShoppingItem shoppingItem, int size) {
+        Objects.requireNonNull(this.all_items.getValue()).add(shoppingItem);
+        if(this.all_items.getValue().size() == size){
+            postAllItems();
+        }
     }
-    public void postAllItemsIds(){
-        CopyOnWriteArrayList<Pair<String,ShoppingItem>> koko = this.all_items_ids.getValue();
-        all_items_ids.postValue(koko);
+    public void postAllItems() {
+        CopyOnWriteArrayList<ShoppingItem> koko = this.all_items.getValue();
+        all_items.postValue(koko);
     }
 
     public void addAd(ShoppingItem shoppingItem){
         this.shoppingAdsArray.add(shoppingItem);
     }
-    public Object getNextAd(){
+    public Object getNextAd() {
         Random random = new Random();
         if( shoppingAdsArray.size() > 0) {
             int idx = (random.nextInt(shoppingAdsArray.size()));
@@ -98,8 +86,12 @@ public class MainModel extends ViewModel {
         else
             return null;
     }
-    public int getAdsContainerSize(){
-        return shoppingAdsArray.size();
+
+    public void addSwipedItemId(String id){
+        swipedItems.add(id);
+    }
+    public boolean isSwiped(String id){
+        return swipedItems.contains(id);
     }
 
     public void clearAds(){

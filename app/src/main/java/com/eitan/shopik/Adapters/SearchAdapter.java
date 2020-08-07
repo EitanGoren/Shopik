@@ -287,7 +287,8 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
             final ImageButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
             item.setImages(images);
 
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
+            Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
+            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
 
             TextView buy = convertView.findViewById(R.id.list_item_buy_button);
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(), item.getLink()));

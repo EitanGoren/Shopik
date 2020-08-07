@@ -20,6 +20,8 @@ public class ShoppingItem implements Serializable {
     private long likes,unlikes;
     private transient UnifiedNativeAd nativeAd;
 
+    private boolean isSeen;
+
     public ShoppingItem(){}
 
     ShoppingItem(String id, String color, String type, String brand, String price, ArrayList<String> name,
@@ -318,5 +320,12 @@ public class ShoppingItem implements Serializable {
     }
     public void setDummyLastItem(boolean dummyLastItem) {
         isDummyLastItem = dummyLastItem;
+    }
+
+    public boolean isSeen() {
+        return isSeen;
+    }
+    public void setSeen(boolean seen) {
+        isSeen = seen;
     }
 }

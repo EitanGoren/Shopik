@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/layout"
+    android:transitionGroup="false"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Customer.FullscreenImageActivity">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/fullscreen_image_viewPager"
         android:layout_width="match_parent"
+        android:transitionGroup="false"
         android:layout_height="match_parent" />
 
     <RelativeLayout

@@ -9,33 +9,34 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Adapters.MainPagerAdapter;
 import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.PreferredItem;
-import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LandingPageActivity;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.eitan.shopik.ViewModels.AllItemsModel;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.eitan.shopik.ViewModels.SuggestedModel;
-import com.eitan.shopik.ViewModels.SwipesModel;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdSettings;
@@ -49,6 +50,7 @@ import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -63,17 +65,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -90,7 +87,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static com.facebook.ads.AdSettings.IntegrationErrorMode.INTEGRATION_ERROR_CRASH_DEBUG_MODE;
 import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_LEFT;
 
-public class CustomerMainActivity extends AppCompatActivity {
+public class CustomerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DatabaseReference customerDB;
     private String item_type;
@@ -102,41 +99,34 @@ public class CustomerMainActivity extends AppCompatActivity {
     private TextView mUserName;
     private CircleImageView mUserProfile;
     private String customerFirstName, imageUrl;
-    private int color;
     private String userId;
     private androidx.appcompat.widget.Toolbar toolbar;
     private androidx.appcompat.widget.Toolbar.OnMenuItemClickListener topNavListener;
     private SuggestedModel suggestedModel;
-    private SwipesModel swipesModel;
-    private AllItemsModel allItemsModel;
     private ValueEventListener valueEventListener;
     private UnifiedNativeAd tempAd;
     private Pair<Integer,Integer> cat_num;
-    private ArrayList<ShoppingItem> allItems;
     private com.facebook.ads.InterstitialAd interstitialAd;
     public static final int NUM_OF_ADS = 15;
     private TabLayout top_nav;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //Google Ads
-
         List<String> testDeviceIds = Arrays.asList("7255B1C36174A2C33091060576730302");
         RequestConfiguration configuration =
                 new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
         MobileAds.setRequestConfiguration(configuration);
 
         //Facebook Ads
-
-        // If you call AudienceNetworkAds.buildInitSettings(Context).initialize()
-        // in Application.onCreate() this call is not really necessary.
-        // Otherwise call initialize() onCreate() of all Activities that contain ads or
-        // from onCreate() of your Splash Activity.
         AdSettings.addTestDevice("a0e31a81-5e54-4e90-80c9-e76b9820ba80");
         AdSettings.setIntegrationErrorMode(INTEGRATION_ERROR_CRASH_DEBUG_MODE);
         AudienceNetworkAds.initialize(this);
+       // initFBInterstitial();
 
         setContentView(R.layout.activity_main);
 
@@ -176,13 +166,9 @@ public class CustomerMainActivity extends AppCompatActivity {
         };
         customerDB.addValueEventListener(valueEventListener);
 
-        //initFBInterstitial();
-
         new getItems().execute(1);
 
         loadCustomerInfo();
-
-        setToolbarColor();
 
         setViewPager();
 
@@ -264,15 +250,9 @@ public class CustomerMainActivity extends AppCompatActivity {
         setToolbar();
     }
 
-    private void setToolbarColor() {
-        if (item_gender.equals(Macros.CustomerMacros.WOMEN))
-            color = getColor(R.color.womenColor);
-        else
-            color = getColor(R.color.menColor);
-    }
-
-    private void getAllCompaniesInfo(){
-        FirebaseFirestore.getInstance().collection(Macros.COMPANIES).get().
+    private void getAllCompaniesInfo() {
+        FirebaseFirestore.getInstance().
+                collection(Macros.COMPANIES).get().
                 addOnSuccessListener(documentSnapshot -> {
                     for(DocumentSnapshot doc : documentSnapshot){
                         Map<String,Object> map = new HashMap<>();
@@ -285,14 +265,14 @@ public class CustomerMainActivity extends AppCompatActivity {
 
     private void setTabLayout() {
 
-        top_nav.setSelectedTabIndicatorColor(getColor(R.color.SplashScreenBackground));
+        top_nav.setSelectedTabIndicatorColor(Color.BLACK);
         top_nav.setTabIndicatorFullWidth(true);
-        top_nav.setTabTextColors(getColor(R.color.SplashScreenBackground), getColor(R.color.SplashScreenBackground));
+        top_nav.setTabTextColors(Color.BLACK, Color.BLACK);
 
-        Objects.requireNonNull(top_nav.getTabAt(0)).setText("Swipe");
-        Objects.requireNonNull(top_nav.getTabAt(1)).setText("Likes");
-        Objects.requireNonNull(top_nav.getTabAt(2)).setText("Suggested");
-        Objects.requireNonNull(top_nav.getTabAt(3)).setText("All items");
+    //    Objects.requireNonNull(top_nav.getTabAt(0)).setText("Swipe");
+    //    Objects.requireNonNull(top_nav.getTabAt(1)).setText("Likes");
+    //    Objects.requireNonNull(top_nav.getTabAt(2)).setText("Suggested");
+    //    Objects.requireNonNull(top_nav.getTabAt(3)).setText("All items");
 
         Objects.requireNonNull(top_nav.getTabAt(0)).setIcon(R.drawable.ic_outline_touch_app_24);
         Objects.requireNonNull(top_nav.getTabAt(1)).setIcon(R.drawable.ic_outline_favorite_border_24);
@@ -339,8 +319,6 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         mainModel = new ViewModelProvider(this).get(MainModel.class);
         suggestedModel = new ViewModelProvider(this).get(SuggestedModel.class);
-        swipesModel = new ViewModelProvider(this).get(SwipesModel.class);
-        allItemsModel = new ViewModelProvider(this).get(AllItemsModel.class);
 
         setNavigationBarButtonsColor(getWindow().getNavigationBarColor());
         GenderModel genderModel = new ViewModelProvider(this).get(GenderModel.class);
@@ -349,7 +327,7 @@ public class CustomerMainActivity extends AppCompatActivity {
         mUserProfile = findViewById(R.id.user_profile);
         progressBar = findViewById(R.id.progressBar);
         top_nav = findViewById(R.id.top_nav);
-        allItems = new ArrayList<>();
+        navigationView = findViewById(R.id.nav_view);
 
         Bundle bundle = getIntent().getBundleExtra("bundle");
 
@@ -389,12 +367,28 @@ public class CustomerMainActivity extends AppCompatActivity {
         imageUrl = bundle.getString("imageUrl");
         mAuth = FirebaseAuth.getInstance();
 
+        drawerLayout = findViewById(R.id.drawerLayout);
         toolbar = findViewById(R.id.customer_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,
+                R.string.open_drawer,R.string.close_drawer);
+
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
     }
 
     private void loadCustomerInfo() {
-        if (imageUrl != null)
-            Glide.with(this).load(imageUrl).into(mUserProfile);
+
+        View hView =  navigationView.getHeaderView(0);
+        TextView nav_user_name = hView.findViewById(R.id.name);
+        CircleImageView nav_image = hView.findViewById(R.id.profile_pic);
+        TextView nav_greetings = hView.findViewById(R.id.greeting);
+
+        if (imageUrl != null) {
+            Macros.Functions.GlidePicture(this,imageUrl,mUserProfile);
+            Macros.Functions.GlidePicture(this,imageUrl,nav_image);
+        }
 
         Calendar calendar = new GregorianCalendar();
         Date trialTime = new Date();
@@ -413,13 +407,53 @@ public class CustomerMainActivity extends AppCompatActivity {
         }
 
         String first_name = customerFirstName.split(" ")[0];
-        if (first_name.length() > 5) {
-            String msg = greeting + System.lineSeparator() + first_name;
-            mUserName.setText(msg);
-        } else {
-            String msg = greeting + first_name;
-            mUserName.setText(msg);
+        String msg = "";
+
+        if (first_name.length() > 5)
+             msg = greeting + System.lineSeparator() + first_name;
+        else
+             msg = greeting + first_name;
+
+        mUserName.setText(msg);
+        nav_user_name.setText(first_name);
+        nav_greetings.setText(msg);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Intent selectedIntent = null;
+        switch (item.getItemId()) {
+            case R.id.nav_logout:
+                mAuth.signOut();
+                if (mAuth.getCurrentUser() == null) {
+                    selectedIntent = new Intent(CustomerMainActivity.this, LandingPageActivity.class);
+                    startActivity(selectedIntent);
+                }
+                break;
+            case R.id.nav_my_profile:
+                selectedIntent = new Intent(CustomerMainActivity.this, CustomerSettingsActivity.class);
+                selectedIntent.putExtra("from_activity", "CustomerMainActivity");
+                selectedIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                break;
+            case R.id.nav_home:
+                Intent intent = new Intent(CustomerMainActivity.this, GenderFilteringActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("gender", item_gender);
+                bundle.putString("name", customerFirstName);
+                bundle.putString("imageUrl", imageUrl);
+                intent.putExtra("bundle", bundle);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                return true;
+            case R.id.nav_orders:
+                Toast.makeText(this, "my orders", Toast.LENGTH_SHORT).show();
+                break;
         }
+        if (selectedIntent != null) {
+            startActivity(selectedIntent);
+            return true;
+        }
+        return false;
     }
 
     public static class ZoomOutPageTransformer implements ViewPager.PageTransformer {
@@ -462,34 +496,22 @@ public class CustomerMainActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getCompanyInfo(final ShoppingItem shoppingItem, boolean search) {
+    private void getCompanyInfo(final ShoppingItem shoppingItem,int size) {
 
         final String company_id = shoppingItem.getSellerId();
         if (Objects.requireNonNull(mainModel.getCompanies_info().getValue()).containsKey(company_id)) {
-            shoppingItem.setSeller(Objects.requireNonNull((Objects.requireNonNull(mainModel.getCompanies_info().getValue().get(company_id))).get("seller")).toString());
-            shoppingItem.setSellerLogoUrl(Objects.requireNonNull((Objects.requireNonNull(mainModel.getCompanies_info().getValue().get(company_id))).get("logo_url")).toString());
 
-            if( search ){
-                allItemsModel.addItem(ShoppingItemToRecyclerItem(shoppingItem));
-                if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
-                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                    if (shoppingItemAd != null) {
-                        RecyclerItem adItem = new RecyclerItem(null,null);
-                        adItem.setNativeAd(shoppingItemAd.getNativeAd());
-                        adItem.setAd(true);
-                        allItemsModel.addItem(adItem);
-                    }
-                }
-            }
-            else {
-                androidx.core.util.Pair<String, ShoppingItem> pair = new androidx.core.util.Pair<>(shoppingItem.getSeller(), shoppingItem);
-                mainModel.addItemId(pair);
-                mainModel.postAllItemsIds();
-            }
+            shoppingItem.setSeller((mainModel.getCompanies_info().
+                    getValue().get(company_id).get("seller")).toString());
+
+            shoppingItem.setSellerLogoUrl((mainModel.getCompanies_info().
+                    getValue().get(company_id).get("logo_url")).toString());
+
+            mainModel.addItem(shoppingItem,size);
         }
     }
 
-    private void getLikes(final ShoppingItem shoppingItem) {
+    private void getLikes(final ShoppingItem shoppingItem, int size) {
 
         FirebaseDatabase.getInstance().getReference().
                 child(Macros.ITEMS).
@@ -501,14 +523,15 @@ public class CustomerMainActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            Map<String, String> unliked_users = new HashMap<>();
+                            Map unliked_users = new HashMap<>();
                             Map liked_users = new HashMap<>();
 
                             //set likes num
                             if (dataSnapshot.hasChild(Macros.Items.LIKED)) {
                                 shoppingItem.setLikes(dataSnapshot.child(Macros.Items.LIKED).getChildrenCount());
                                 liked_users = (Map) dataSnapshot.child(Macros.Items.LIKED).getValue();
-                            } else {
+                            }
+                            else {
                                 shoppingItem.setLikes(0);
                                 shoppingItem.setLikedUsers(null);
                             }
@@ -516,26 +539,27 @@ public class CustomerMainActivity extends AppCompatActivity {
                             if (dataSnapshot.hasChild(Macros.Items.UNLIKED)) {
                                 shoppingItem.setUnlikes(dataSnapshot.child(Macros.Items.UNLIKED).getChildrenCount());
                                 unliked_users = (Map) dataSnapshot.child(Macros.Items.UNLIKED).getValue();
-                            } else {
+                            }
+                            else {
                                 shoppingItem.setUnlikes(0);
                                 shoppingItem.setUnlikedUsers(null);
                             }
 
                             if (liked_users == null || liked_users.isEmpty()) {
-                                if (unliked_users == null || unliked_users.isEmpty()) {
-                                    getCompanyInfo(shoppingItem,false);
-                                } else {
-                                    getUnlikedUserInfo(shoppingItem, unliked_users);
-                                }
-                            } else
-                                getInteractedUsersInfo(shoppingItem, liked_users, unliked_users);
-
-                        } else {
+                                if (unliked_users == null || unliked_users.isEmpty())
+                                    getCompanyInfo(shoppingItem,size);
+                                else
+                                    getUnlikedUserInfo(shoppingItem, unliked_users,size);
+                            }
+                            else
+                                getInteractedUsersInfo(shoppingItem, liked_users, unliked_users,size);
+                        }
+                        else {
                             shoppingItem.setLikes(0);
                             shoppingItem.setUnlikes(0);
                             shoppingItem.setLikedUsers(null);
                             shoppingItem.setUnlikedUsers(null);
-                            getCompanyInfo(shoppingItem,false);
+                            getCompanyInfo(shoppingItem,size);
                         }
                     }
 
@@ -549,7 +573,7 @@ public class CustomerMainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String, String> liked_users,
-                                        Map<String, String> unliked_users) {
+                                        Map<String, String> unliked_users,int size) {
 
         ArrayList<String> list = new ArrayList<>(liked_users.keySet());
         for (String customer_id : list) {
@@ -560,14 +584,16 @@ public class CustomerMainActivity extends AppCompatActivity {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
                     for (DocumentSnapshot doc : documentSnapshots) {
-                        LikedUser likedUser = new LikedUser(
+                        LikedUser likedUser = new LikedUser (
                                 Objects.requireNonNull(doc.get("imageUrl")).toString(),
                                 Objects.requireNonNull(doc.get("first_name")).toString(),
                                 Objects.requireNonNull(doc.get("last_name")).toString()
                         );
 
-                        if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
+                        //if current user liked this item
+                        if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
                             likedUser.setLast_name(likedUser.getLast_name() + " (You)");
+                        }
 
                         mainModel.setCustomers_info(customer_id, likedUser);
                         likedUser.setFavorite(Objects.equals(liked_users.get(doc.getId()), Macros.CustomerMacros.FAVOURITE));
@@ -580,13 +606,13 @@ public class CustomerMainActivity extends AppCompatActivity {
             });
         }
         if (unliked_users == null || unliked_users.isEmpty())
-            getCompanyInfo(shoppingItem,false);
+            getCompanyInfo(shoppingItem,size);
         else
-            getUnlikedUserInfo(shoppingItem, unliked_users);
+            getUnlikedUserInfo(shoppingItem, unliked_users,size);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list) {
+    private void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list,int size) {
 
         assert unlikes_list != null;
         ArrayList<String> list = new ArrayList<>(unlikes_list.keySet());
@@ -617,7 +643,7 @@ public class CustomerMainActivity extends AppCompatActivity {
                 }
             });
         }
-        getCompanyInfo(shoppingItem,false);
+        getCompanyInfo(shoppingItem,size);
     }
 
     @Override
@@ -746,29 +772,25 @@ public class CustomerMainActivity extends AppCompatActivity {
         adLoader.loadAd(new PublisherAdRequest.Builder().build());
     }
 
-    private RecyclerItem ShoppingItemToRecyclerItem(ShoppingItem shoppingItem){
-
-        RecyclerItem recyclerItem = new RecyclerItem(shoppingItem.getBrand(), shoppingItem.getSite_link());
-        recyclerItem.setPrice(shoppingItem.getPrice());
-        recyclerItem.setLink(shoppingItem.getSite_link());
-        recyclerItem.setDescription(shoppingItem.getName());
-        recyclerItem.setType(shoppingItem.getType());
-        recyclerItem.setId(shoppingItem.getId());
-        recyclerItem.setSale(shoppingItem.isOn_sale());
-        recyclerItem.setVideo_link(shoppingItem.getVideo_link());
-        recyclerItem.setOutlet(shoppingItem.isOutlet());
-        recyclerItem.setReduced_price(shoppingItem.getReduced_price());
-        recyclerItem.setSeller(shoppingItem.getSeller());
-        recyclerItem.setBrand(shoppingItem.getBrand());
-        recyclerItem.setSeller_id(shoppingItem.getSellerId());
-        recyclerItem.setImages(shoppingItem.getImages());
-
-        recyclerItem.setSellerImageUrl(shoppingItem.getSellerLogoUrl());
-        return recyclerItem;
-    }
-
     private void getLastSwipedItem() {
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (Object item_id : ((Map) Objects.requireNonNull(dataSnapshot.getValue())).keySet()) {
+                        mainModel.addSwipedItemId(item_id.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled()" + databaseError.getMessage());
+            }
+
+        };
         for(String company : Macros.CompanyNames) {
+
             FirebaseDatabase.getInstance().getReference().
                     child(Macros.CUSTOMERS).
                     child(userId).
@@ -777,62 +799,32 @@ public class CustomerMainActivity extends AppCompatActivity {
                     child(company).
                     child(item_type).
                     child(item_sub_category).
-                    orderByKey().
-                    limitToLast(1).
-                    addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                for (Object item_id : ((Map) Objects.requireNonNull(dataSnapshot.getValue())).keySet()) {
-                                    swipesModel.setLast_item_id(item_id.toString(), company);
-                                }
-                            }
-                            FirebaseDatabase.getInstance().getReference().
-                                    child(Macros.CUSTOMERS).
-                                    child(userId).
-                                    child(item_gender).
-                                    child(Macros.Items.UNLIKED).
-                                    child(company).
-                                    child(item_type).
-                                    child(item_sub_category).
-                                    orderByKey().
-                                    limitToLast(1).
-                                    addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if (dataSnapshot.exists()) {
-                                                for (Object item_id : ((Map) Objects.requireNonNull(dataSnapshot.getValue())).keySet()) {
-                                                    if (swipesModel.getLast_item_id().getValue() != null) {
-                                                        String last_item = Objects.requireNonNull(((Map) swipesModel.getLast_item_id().getValue()).get(company)).toString();
-                                                        String res;
-                                                        if (item_id.toString().compareTo(last_item) > 0)
-                                                            res = item_id.toString();
-                                                        else res = last_item;
-                                                        swipesModel.setLast_item_id(res,company);
-                                                    }
-                                                    else
-                                                        swipesModel.setLast_item_id(item_id.toString(),company);
-                                                }
-                                            }
-                                        }
+                    addValueEventListener(valueEventListener);
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                                            Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled()" + databaseError.getMessage());
-                                        }
-                                    });
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled()" + databaseError.getMessage());
-                        }
-
-                    });
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(userId).
+                    child(item_gender).
+                    child(Macros.Items.UNLIKED).
+                    child(company).
+                    child(item_type).
+                    child(item_sub_category).
+                    addValueEventListener(valueEventListener);
         }
     }
 
-    private class getItems extends AsyncTask<Integer, Integer, Void> {
+    @Override
+    public void onBackPressed() {
+
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
+
+    private class getItems extends AsyncTask <Integer, Integer, Void> {
 
         String data = "";
 
@@ -850,10 +842,6 @@ public class CustomerMainActivity extends AppCompatActivity {
                 getCastro(c_cat);
 
                 getAsos(page_num[0]);
-
-                for(ShoppingItem item : allItems) {
-                    getLikes(item);
-                }
             }
             catch (Exception e) {
                 Log.d(Macros.TAG, "MainCustomerActivity::getItems() " + e.getMessage());
@@ -868,14 +856,11 @@ public class CustomerMainActivity extends AppCompatActivity {
             progressBar.setProgress(0);
         }
 
-
         @RequiresApi(api = Build.VERSION_CODES.N)
         private void getTerminalX(String cat, int page_num,String sub_cat) {
 
-            Document temp;
-
             try {
-                temp = Jsoup.connect("https://www.terminalx.com/" +
+                Document temp = Jsoup.connect("https://www.terminalx.com/" +
                         item_gender.toLowerCase() +
                         "/" + cat +
                         "/" + sub_cat +
@@ -917,7 +902,7 @@ public class CustomerMainActivity extends AppCompatActivity {
                     ShoppingItem shoppingItem = new ShoppingItem();
 
                     String brand;
-                    String price;
+                    String price;  //by ILS
                     String id;
                     if(product_item_brand.size() == 0) {
 
@@ -972,9 +957,10 @@ public class CustomerMainActivity extends AppCompatActivity {
                     shoppingItem.setSellerId("KhrLuCxBoKc0DLAL8dA6WAbOFXT2");
                     shoppingItem.setImages(images);
                     shoppingItem.setVideo_link(null);
+                    shoppingItem.setExclusive(name.contains("exclusive"));
+                    shoppingItem.setSeen(mainModel.isSwiped(id));
 
-                    allItems.add(shoppingItem);
-                    getCompanyInfo(shoppingItem,true);
+                    getLikes(shoppingItem,items_photo.size());
                 }
             }
             catch (Exception e) {
@@ -983,21 +969,14 @@ public class CustomerMainActivity extends AppCompatActivity {
         }
 
         @RequiresApi(api = Build.VERSION_CODES.N)
-        private void getAsos(int page_num) throws IOException {
-
-            URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num.first + "&page=" + page_num);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        private void getAsos(int page_num) {
 
             try {
 
-                String line = "";
-                while (line != null) {
-                    line = bufferedReader.readLine();
-                    data = data + line;
-                }
+                Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num.first + "&page=" + page_num).get();
+                DataNode node = (DataNode) document.childNode(2).childNode(2).childNode(28).childNode(0);
 
+                data = node.getWholeData();
                 String[] data_split = data.split("\"products\":", 2);
                 String koko = data_split[1];
                 koko = koko.replaceAll("u002F", "").
@@ -1081,7 +1060,7 @@ public class CustomerMainActivity extends AppCompatActivity {
                     shoppingItem.setType(item_type);
                     shoppingItem.setBrand(branda);
                     shoppingItem.setName(list);
-                    shoppingItem.setPrice(price);
+                    shoppingItem.setPrice(price); //by POUND
                     shoppingItem.setSeller(seller_name);
                     shoppingItem.setSellerId(seller_id);
                     shoppingItem.setSite_link(link);
@@ -1091,18 +1070,14 @@ public class CustomerMainActivity extends AppCompatActivity {
                     shoppingItem.setId(id);
                     shoppingItem.setSub_category(item_sub_category);
                     shoppingItem.setImages(images);
+                    shoppingItem.setExclusive(list.contains("exclusive"));
+                    shoppingItem.setSeen(mainModel.isSwiped(id));
 
-                    allItems.add(shoppingItem);
-                    getCompanyInfo(shoppingItem,true);
+                    getLikes(shoppingItem,total_items);
                 }
             }
             catch (Exception e) {
                 Log.d(Macros.TAG, "MainCustomerActivity::getAllItems() " + e.getMessage());
-            }
-            finally {
-                httpURLConnection.disconnect();
-                inputStream.close();
-                bufferedReader.close();
             }
         }
 
@@ -1144,6 +1119,7 @@ public class CustomerMainActivity extends AppCompatActivity {
                         List<Node> nodes = elems.get(0).childNode(3).childNode(3).childNodes();
                         String id = node.childNode(node.childNodeSize() - 6).attr("data-id");
 
+                        // by ILS
                         if (node.childNode(node.childNodeSize() - 2).childNode(5).childNodeSize() > 3) {
 
                             shoppingItem.setOn_sale(true);
@@ -1179,9 +1155,10 @@ public class CustomerMainActivity extends AppCompatActivity {
                         shoppingItem.setName(name);
                         shoppingItem.setSite_link(link);
                         shoppingItem.setVideo_link(null);
+                        shoppingItem.setExclusive(name.contains("exclusive"));
+                        shoppingItem.setSeen(mainModel.isSwiped(id));
 
-                        allItems.add(shoppingItem);
-                        getCompanyInfo(shoppingItem,true);
+                        getLikes(shoppingItem,list.size());
                     }
                 }
             }

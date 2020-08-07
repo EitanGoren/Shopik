@@ -1,104 +1,218 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:elevation="5dp"
-    android:translationZ="5dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Customer.CustomerSettingsActivity">
+    android:elevation="5dp">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="5dp"
         android:fitsSystemWindows="true"
-        android:translationZ="5dp"
         app:liftOnScroll="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:background="@color/collapsingBG"
-            android:elevation="5dp"
-            android:minHeight="95dp"
-            android:translationZ="5dp"
-            app:contentScrim="@color/fragmentBackground"
+            android:layout_height="175dp"
+            android:background="#25D7EA"
+            android:fitsSystemWindows="true"
+            android:minHeight="175dp"
+            app:contentScrim="#25D7EA"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:statusBarScrim="@color/fragmentBackground">
+            app:statusBarScrim="#25D7EA">
 
-            <TextView
-                android:id="@+id/text_view"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:layout_marginBottom="15dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="10dp"
-                android:textColor="#ffffff"
-                android:textSize="17sp"
-                app:layout_collapseMode="parallax"/>
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="65dp"
+                android:fitsSystemWindows="true"
                 app:layout_collapseMode="pin">
 
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/_match_icon"
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fitsSystemWindows="true"
+                    android:scrollbars="none">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroup2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="65dp"
-                        android:layout_marginEnd="65dp"
-                        android:translationZ="5dp"
-                        app:backgroundTint="#FFFFFF"
-                        app:elevation="5dp"
-                        app:fabSize="mini"
-                        app:rippleColor="@color/SplashScreenBackground"
-                        app:srcCompat="@drawable/ic_baseline_thumbs_up_down"
-                        app:tint="#000000" />
+                        android:fitsSystemWindows="true"
+                        app:chipSpacingHorizontal="10dp">
 
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/_price_icon"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/match_chip2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Match"
+                            android:textColor="#000000"
+                            android:textSize="15sp"
+                            app:chipBackgroundColor="#FFFFFF"
+                            app:chipCornerRadius="15dp"
+                            app:chipEndPadding="10dp"
+                            app:chipIcon="@drawable/percent"
+                            app:chipIconTint="#000000"
+                            app:chipStartPadding="10dp"/>
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/price_chip2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Price"
+                            android:textColor="#000000"
+                            android:textSize="15sp"
+                            app:chipBackgroundColor="#FFFFFF"
+                            app:chipCornerRadius="15dp"
+                            app:chipEndPadding="10dp"
+                            app:chipIcon="@drawable/ic_attach_money_black_24dp"
+                            app:chipIconTint="#0F9815"
+                            app:chipStartPadding="10dp"/>
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/sale_chip2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sale"
+                            android:textColor="#000000"
+                            android:textSize="15sp"
+                            app:chipBackgroundColor="#FFFFFF"
+                            app:chipCornerRadius="15dp"
+                            app:chipEndPadding="10dp"
+                            app:chipIcon="@drawable/sale1"
+                            app:chipIconTint="#000000"
+                            app:chipStartPadding="10dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/favorites_chip2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Favorites"
+                            android:textColor="#000000"
+                            android:textSize="15sp"
+                            app:chipBackgroundColor="#FFFFFF"
+                            app:chipCornerRadius="15dp"
+                            app:chipEndPadding="10dp"
+                            app:chipIcon="@drawable/ic_favorite_black_24dp"
+                            app:chipIconTint="#FF0000"
+                            app:chipStartPadding="10dp" />
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                </HorizontalScrollView>
+
+            </androidx.appcompat.widget.Toolbar>
+
+            <RelativeLayout
+                android:id="@+id/info_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_collapseMode="parallax">
+
+                <TextView
+                    android:id="@+id/filtering_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@id/chipGroup"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/martel_sans"
+                    android:text="Filtering Options: "
+                    android:textAlignment="viewStart"
+                    android:textColor="#ffffff"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_collapseMode="parallax"/>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/filtering_header"
+                    android:layout_centerHorizontal="true"
+                    app:chipSpacingHorizontal="10dp"
+                    app:layout_collapseMode="parallax">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/match_chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:translationZ="5dp"
-                        app:backgroundTint="#FFFFFF"
-                        app:elevation="5dp"
-                        app:fabSize="mini"
-                        app:rippleColor="@color/SplashScreenBackground"
-                        app:srcCompat="@drawable/ic_baseline_attach_money"
-                        app:tint="#000000" />
+                        android:text="Match"
+                        android:textColor="#000000"
+                        android:textSize="15sp"
+                        app:chipBackgroundColor="#FFFFFF"
+                        app:chipCornerRadius="15dp"
+                        app:chipEndPadding="10dp"
+                        app:chipIcon="@drawable/percent"
+                        app:chipIconTint="#000000"
+                        app:chipStartPadding="10dp"/>
 
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/_sale_icon"
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/price_chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="65dp"
-                        android:layout_marginEnd="65dp"
-                        android:translationZ="5dp"
-                        app:backgroundTint="#FFFFFF"
-                        app:elevation="5dp"
-                        app:fabSize="mini"
-                        app:rippleColor="@color/SplashScreenBackground"
-                        app:srcCompat="@drawable/ic_baseline_money_off"
-                        app:tint="#000000" />
+                        android:text="Price"
+                        android:textColor="#000000"
+                        android:textSize="15sp"
+                        app:chipBackgroundColor="#FFFFFF"
+                        app:chipCornerRadius="15dp"
+                        app:chipEndPadding="10dp"
+                        app:chipIcon="@drawable/ic_attach_money_black_24dp"
+                        app:chipIconTint="#0F9815"
+                        app:chipStartPadding="10dp"/>
 
-            </com.google.android.material.appbar.MaterialToolbar>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/sale_chip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sale"
+                        android:textColor="#000000"
+                        android:textSize="15sp"
+                        app:chipBackgroundColor="#FFFFFF"
+                        app:chipCornerRadius="15dp"
+                        app:chipEndPadding="10dp"
+                        app:chipIcon="@drawable/sale1"
+                        app:chipIconTint="#000000"
+                        app:chipStartPadding="10dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/favorites_chip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Favorites"
+                        android:textColor="#000000"
+                        android:textSize="15sp"
+                        app:chipBackgroundColor="#FFFFFF"
+                        app:chipCornerRadius="15dp"
+                        app:chipEndPadding="10dp"
+                        app:chipIcon="@drawable/ic_favorite_black_24dp"
+                        app:chipIconTint="#FF0000"
+                        app:chipStartPadding="10dp" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+                <TextView
+                    android:id="@+id/text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/chipGroup"
+                    android:layout_marginBottom="10dp"
+                    android:paddingStart="15sp"
+                    android:paddingEnd="15dp"
+                    android:textAlignment="center"
+                    android:textColor="#ffffff"
+                    android:textSize="18sp"
+                    app:layout_collapseMode="parallax"/>
+
+            </RelativeLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/grid_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -106,5 +220,18 @@
             android:columnWidth="240dp"
             android:padding="2dp"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/scroll_up_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="15dp"
+        android:src="@drawable/ic_arrow_downward"
+        android:theme="@style/Widget.Design.FloatingActionButton"
+        app:backgroundTint="#25D7EA"
+        app:elevation="10dp"
+        app:fabSize="mini"
+        app:useCompatPadding="true"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -350,11 +350,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
             try {
                 //Outlet Items
                 int num = gender.equals(Macros.CustomerMacros.WOMEN) ? WOMEN_OUTLET_NUM : MEN_OUTLET_NUM;
-               // int cur_page = page;
-               // for (int i = cur_page; i < cur_page + BULK; ++i) {
-                 //   page++;
-                    getOutletItems(1, num);
-               // }
+                getOutletItems(1, num);
 
                 //New Items
                 map = new HashMap<>();
@@ -368,7 +364,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         getMenItems(cat_num);
                     }
                 }
-
             }
             catch(IOException e){
                 Log.d(Macros.TAG, "GenderFilteringActivity::fetchData(): " + e.getMessage());

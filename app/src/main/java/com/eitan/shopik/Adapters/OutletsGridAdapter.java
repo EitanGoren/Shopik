@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.ArraySet;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,7 +96,8 @@ public class OutletsGridAdapter extends ArrayAdapter<RecyclerItem> implements Se
                 price.setTextSize(16);
             }
 
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item));
+            Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
+            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
 
             return convertView;
         }

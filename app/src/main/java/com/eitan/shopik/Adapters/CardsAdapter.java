@@ -168,7 +168,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
             isFavorite[0] = false;
 
-            SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
+
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.swipe_item, parent,false);
 
             ImageView favorite = convertView.findViewById(R.id.swipe_favorite_button);
@@ -211,6 +211,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
                                 @Override
                                 public void onAnimationEnd(Animation animation) {
+                                    SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
                                     swipeFlingAdapterView.getTopCardListener().selectRight();
                                 }
 
@@ -277,6 +278,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 });
 
                 mp.setOnCompletionListener(mp1 -> {
+                    SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
                     swipeFlingAdapterView.getTopCardListener().selectRight();
                 });
 
@@ -306,6 +308,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 });
 
                 mp.setOnCompletionListener(mp1 -> {
+                    SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
                     swipeFlingAdapterView.getTopCardListener().selectLeft();
                 });
 
@@ -384,6 +387,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
+                        SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
                         swipeFlingAdapterView.getTopCardListener().selectRight();
                     }
 
@@ -394,7 +398,8 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 });
             });
 
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), shoppingItem));
+            Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
+            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), shoppingItem, pair));
 
             String image = "";
             for(String img : shoppingItem.getImages()){

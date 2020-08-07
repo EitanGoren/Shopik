@@ -45,13 +45,4 @@ public class SwipesModel extends AndroidViewModel {
     public void removeFromItems(){
         Objects.requireNonNull(this.items.getValue()).remove(0);
     }
-
-    public LiveData<Map<String,String>> getLast_item_id() {
-        return last_item_id;
-    }
-    public void setLast_item_id(String last_item_id, String key) {
-        Objects.requireNonNull(this.last_item_id.getValue()).put(key,last_item_id);
-        Map koko = this.last_item_id.getValue();
-        this.last_item_id.postValue(koko);
-    }
 }
