@@ -40,15 +40,11 @@ public class CustomerLoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         customersDb = FirebaseDatabase.getInstance().getReference().child("Customers");
-        DatabaseReference companiesDb = FirebaseDatabase.getInstance().getReference().child("Companies");
 
-        firebaseauthstatelistener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null ) {
-                    isCustomer(user.getUid());
-                }
+        firebaseauthstatelistener = firebaseAuth -> {
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null ) {
+                isCustomer(user.getUid());
             }
         };
 
@@ -59,12 +55,6 @@ public class CustomerLoginActivity extends AppCompatActivity {
         mEmailError = findViewById(R.id.email_explanation);
         mPasswordError = findViewById(R.id.password_explanation);
 
-        Button mBack = findViewById(R.id.back);
-        mBack.setOnClickListener(v -> {
-        //    Intent intent = new Intent(CustomerLoginActivity.this, MainWelcomeActivity.class);
-        //    startActivity(intent);
-        //    finish();
-        });
         btnLogin.setOnClickListener(v -> {
             final String email = mEmail.getText().toString();
             final String password = mPassword.getText().toString();
@@ -83,7 +73,6 @@ public class CustomerLoginActivity extends AppCompatActivity {
                 boolean new_user_bool = Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getAdditionalUserInfo()).isNewUser();
                 if (!new_user_bool) {
                     uid = Objects.requireNonNull(task.getResult().getUser()).getUid();
-                    //isCustomer(uid);
                 }
 
                 if (!task.isSuccessful()) {

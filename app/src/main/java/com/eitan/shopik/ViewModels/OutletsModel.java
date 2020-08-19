@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.eitan.shopik.Items.RecyclerItem;
-import com.eitan.shopik.Items.ShoppingItem;
 
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -17,6 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class OutletsModel extends AndroidViewModel {
 
     private MutableLiveData<CopyOnWriteArrayList<RecyclerItem>> outlets;
+
     public OutletsModel(Application application){
         super(application);
 

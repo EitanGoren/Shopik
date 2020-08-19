@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.eitan.shopik.Items.PreferredItem;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 
@@ -26,10 +27,15 @@ public class MainModel extends ViewModel {
     private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> all_items;
     private Set<String> swipedItems;
     private ArrayList<ShoppingItem> shoppingAdsArray;
+    private MutableLiveData<PreferredItem> preferred;
+    private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> favorites;
+    private MutableLiveData<Long> current_page;
 
     public MainModel(){
 
+        this.preferred = new MutableLiveData<>();
         shoppingAdsArray = new ArrayList<>();
+        current_page = new MutableLiveData<>();
 
         Map<String,Map<String,Object>> companies_info_map = new HashMap<>();
         this.companies_info = new MutableLiveData<>();
@@ -42,6 +48,10 @@ public class MainModel extends ViewModel {
         CopyOnWriteArrayList<ShoppingItem> items = new CopyOnWriteArrayList<>();
         this.all_items = new MutableLiveData<>();
         all_items.setValue(items);
+
+        this.favorites = new MutableLiveData<>();
+        CopyOnWriteArrayList<ShoppingItem> favorites_list = new CopyOnWriteArrayList<>();
+        this.favorites.setValue(favorites_list);
 
         swipedItems = new ArraySet<>();
     }
@@ -59,6 +69,16 @@ public class MainModel extends ViewModel {
         Objects.requireNonNull(this.customers_info.getValue()).put(id,likedUser);
     }
 
+    public void markItemAsSeen(String item_id){
+        for(ShoppingItem shoppingItem : Objects.requireNonNull(all_items.getValue())){
+            if(shoppingItem.getId().equals(item_id)) {
+                shoppingItem.setSeen(true);
+                //postAllItems();
+                return;
+            }
+        }
+    }
+
     public LiveData<CopyOnWriteArrayList<ShoppingItem>> getAll_items() {
         return all_items;
     }
@@ -73,7 +93,33 @@ public class MainModel extends ViewModel {
         CopyOnWriteArrayList<ShoppingItem> koko = this.all_items.getValue();
         all_items.postValue(koko);
     }
+    public void clearAllItems(){
+        Objects.requireNonNull(all_items.getValue()).clear();
+    }
 
+    //PAGE NUM
+    public LiveData<Long> getCurrent_page() {
+        return current_page;
+    }
+    public void setCurrent_page(Long current_page) {
+        this.current_page.postValue(current_page);
+    }
+
+    //SWIPED
+    public void addSwipedItemId(String id){
+        swipedItems.add(id);
+    }
+    public boolean isSwiped(String id){
+        return swipedItems.contains(id);
+    }
+
+    //ADS
+    public void clearAds(){
+        for(ShoppingItem item : shoppingAdsArray) {
+            item.destroyAd();
+        }
+        shoppingAdsArray.clear();
+    }
     public void addAd(ShoppingItem shoppingItem){
         this.shoppingAdsArray.add(shoppingItem);
     }
@@ -87,17 +133,24 @@ public class MainModel extends ViewModel {
             return null;
     }
 
-    public void addSwipedItemId(String id){
-        swipedItems.add(id);
+    //PREFERRED
+    public LiveData<PreferredItem> getPreferred(){
+        return preferred;
     }
-    public boolean isSwiped(String id){
-        return swipedItems.contains(id);
+    public void setPreferred(PreferredItem preferredItem){
+        this.preferred.postValue(preferredItem);
     }
 
-    public void clearAds(){
-        for(ShoppingItem item : shoppingAdsArray) {
-            item.destroyAd();
-        }
-        shoppingAdsArray.clear();
+    //FAVORITES
+    public LiveData<CopyOnWriteArrayList<ShoppingItem>> getFavorite() {
+        return favorites;
+    }
+    public void addFavorite(ShoppingItem shoppingItem){
+        Objects.requireNonNull(this.favorites.getValue()).add(shoppingItem );
+        CopyOnWriteArrayList<ShoppingItem> koko = this.favorites.getValue();
+        favorites.postValue(koko);
+    }
+    public void clearFavorite(){
+        Objects.requireNonNull(this.favorites.getValue()).clear();
     }
 }

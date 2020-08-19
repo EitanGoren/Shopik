@@ -14,145 +14,87 @@
         android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFF"
-        tools:context=".Customer.CustomerMainActivity">
+        android:background="#FFFFFF">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/customer_toolbar"
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/botton_nav"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#FFFFFF"
-            android:elevation="5dp"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp"
-            app:menu="@menu/menu_customer_toolbar"
-            app:titleTextColor="#000000">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp">
-
-                <TextView
-                    android:id="@+id/company_logo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:fontFamily="cursive"
-                    android:text="Shopik"
-                    android:textAlignment="center"
-                    android:textAllCaps="false"
-                    android:textColor="@color/SplashScreenBackground"
-                    android:textSize="40sp"
-                    android:textStyle="bold"/>
-
-                <ImageView
-                    android:id="@+id/logo_image"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="8dp"
-                    android:layout_toEndOf="@id/company_logo"
-                    android:src="@drawable/tooki" />
-
-                <TextView
-                    android:id="@+id/user_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@id/user_profile"
-                    android:layout_toEndOf="@id/logo_image"
-                    android:fontFamily="@font/comfortaa"
-                    android:textAlignment="center"
-                    android:textAllCaps="false"
-                    android:textColor="@color/SplashScreenBackground"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/user_profile"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="5dp"
-                    android:src="@drawable/ic_account_circle_black_24dp"/>
-
-            </RelativeLayout>
-
-        </androidx.appcompat.widget.Toolbar>
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/top_nav"
-            android:layout_width="match_parent"
-            android:layout_height="65dp"
+            android:layout_height="60dp"
             android:layout_alignParentBottom="true"
-            android:background="#FFFFFF"
-            android:elevation="40dp"
-            android:scrollbars="horizontal"
-            android:soundEffectsEnabled="true"
-            app:tabGravity="fill"
-            app:tabIconTint="#000000"
-            app:tabIndicatorColor="@color/SplashScreenBackground"
-            app:tabIndicatorGravity="top"
-            app:tabIndicatorHeight="3.5dp"
-            app:tabMode="fixed"
-            app:tabPaddingBottom="3dp"
-            app:tabPaddingTop="8dp"
-            app:tabSelectedTextColor="#000000"
-            app:tabTextAppearance="@style/MineCustomTabText">
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/top_swipes"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:contextClickable="true"
-                android:icon="@drawable/ic_outline_touch_app_24"
-                android:tag="swipes"/>
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/top_favorites"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:icon="@drawable/ic_outline_favorite_border_24"
-                android:tag="favorites" />
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/top_suggestion"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:contextClickable="true"
-                android:icon="@drawable/ic_outline_thumbs_up_down_24"
-                android:tag="suggested" />
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/top_search"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:icon="@drawable/ic_search"
-                android:tag="all items" />
-
-        </com.google.android.material.tabs.TabLayout>
+            android:clipToPadding="true"
+            android:fitsSystemWindows="true"
+            android:paddingBottom="2dp"
+            android:translationZ="20dp"
+            app:elevation="25dp"
+            app:itemIconSize="27sp"
+            app:itemIconTint="#000000"
+            app:itemRippleColor="@color/SplashScreenBackground"
+            app:itemTextColor="#000000"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu">
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/customer_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/top_nav"
+            android:layout_above="@id/botton_nav"
             android:layout_below="@id/customer_toolbar"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="-4dp"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="410dp"
-            android:layout_height="25dp"
+        <com.google.android.material.progressindicator.ProgressIndicator
+            android:id="@+id/top_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/customer_toolbar"
-            android:layout_marginTop="-10dp"
-            android:fitsSystemWindows="true"
-            android:indeterminate="true"
-            android:visibility="gone"
-            tools:visibility="visible">
-        </ProgressBar>
+            android:indeterminate="false"
+            app:indicatorColor="@color/com_facebook_messenger_blue"
+            app:indicatorWidth="10dp"
+            app:trackColor="#ffffff"
+            tools:visibility="visible" />
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/customer_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:layout_alignParentTop="true"
+            android:clipToPadding="true"
+            android:elevation="10dp"
+            android:minHeight="65dp"
+            android:translationZ="5dp"
+            app:buttonGravity="center_vertical"
+            app:collapseIcon="@drawable/ic_local_mall_black_24dp"
+            android:background="#FFFFFF"
+            app:menu="@menu/search_menu"
+            app:navigationIcon="@drawable/ic_menu_34"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="@string/app_name"
+            app:titleMarginStart="5dp"
+            app:titleTextAppearance="@style/MainTitle"
+            app:titleTextColor="@color/SplashScreenBackground">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="start">
+
+                <ImageView
+                    android:id="@+id/logo_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:transitionName="tooki"
+                    android:src="@drawable/tooki" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </RelativeLayout>
 
@@ -160,9 +102,37 @@
         android:id="@+id/nav_view"
         android:layout_width="265dp"
         android:layout_height="match_parent"
-        android:layout_gravity="left"
         android:fitsSystemWindows="true"
+        android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/nav_view_menu" />
+        app:menu="@menu/nav_view_menu" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="15dp"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="35dp"
+                android:layout_marginBottom="-23dp"
+                android:src="@drawable/tooki"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="cursive"
+                android:text="@string/app_name"
+                android:textColor="@color/SplashScreenBackground"
+                android:textSize="35sp"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

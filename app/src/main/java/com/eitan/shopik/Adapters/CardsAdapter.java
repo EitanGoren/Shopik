@@ -50,6 +50,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
     private final boolean[] isFavorite = new boolean[1];
+    private SwipeFlingAdapterView flingCardContainer;
 
     @Override
     public int getPosition(@Nullable ShoppingItem shoppingItem) {
@@ -59,6 +60,10 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public CardsAdapter(Context context, int resourceId, List<ShoppingItem> items){
         super(context,resourceId,items);
+    }
+
+    public void setFlingContainer(SwipeFlingAdapterView swipeFlingAdapterView){
+        this.flingCardContainer = swipeFlingAdapterView;
     }
 
     @NonNull
@@ -168,7 +173,6 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
             isFavorite[0] = false;
 
-
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.swipe_item, parent,false);
 
             ImageView favorite = convertView.findViewById(R.id.swipe_favorite_button);
@@ -205,20 +209,15 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                             isFavorite[0] = !isFavorite[0];
                             animation.setAnimationListener(new Animation.AnimationListener() {
                                 @Override
-                                public void onAnimationStart(Animation animation) {
-
-                                }
+                                public void onAnimationStart(Animation animation) {}
 
                                 @Override
                                 public void onAnimationEnd(Animation animation) {
-                                    SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
-                                    swipeFlingAdapterView.getTopCardListener().selectRight();
+                                    flingCardContainer.getTopCardListener().selectRight();
                                 }
 
                                 @Override
-                                public void onAnimationRepeat(Animation animation) {
-
-                                }
+                                public void onAnimationRepeat(Animation animation) {}
                             });
                         }
                         break;
@@ -278,8 +277,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 });
 
                 mp.setOnCompletionListener(mp1 -> {
-                    SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
-                    swipeFlingAdapterView.getTopCardListener().selectRight();
+                    flingCardContainer.getTopCardListener().selectRight();
                 });
 
             });
@@ -308,8 +306,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 });
 
                 mp.setOnCompletionListener(mp1 -> {
-                    SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
-                    swipeFlingAdapterView.getTopCardListener().selectLeft();
+                    flingCardContainer.getTopCardListener().selectLeft();
                 });
 
             });
@@ -387,8 +384,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        SwipeFlingAdapterView swipeFlingAdapterView = parent.findViewById(R.id.frame);
-                        swipeFlingAdapterView.getTopCardListener().selectRight();
+                        flingCardContainer.getTopCardListener().selectRight();
                     }
 
                     @Override

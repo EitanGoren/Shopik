@@ -12,7 +12,7 @@
         android:id="@+id/company_appbar"
         android:layout_width="match_parent"
         android:fitsSystemWindows="true"
-        android:layout_height="290dp">
+        android:layout_height="250dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/company_collapsing_toolbar"

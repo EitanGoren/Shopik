@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/LandingLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/SplashScreenBackground">
+    android:background="#ffffff">
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="135dp"
-        android:layout_height="155dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_above="@id/shopik"
         android:layout_alignEnd="@id/shopik"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="-65dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="-45dp"
+        android:transitionName="tooki"
         android:padding="5dp"
-        android:scaleType="fitXY"
         android:src="@drawable/tooki"/>
 
     <TextView
@@ -23,53 +25,63 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:fontFamily="cursive"
-        android:text="Shopik"
-        android:textColor="@color/SplashScreenText"
-        android:textSize="110sp"
+        android:text="@string/app_name"
+        android:textColor="@color/SplashScreenBackground"
+        android:textSize="65sp"
         android:textStyle="bold"/>
 
-    <RelativeLayout
-        android:id="@+id/hello_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="65dp"
+  <!--  <com.agrawalsuneet.dotsloader.loaders.LazyLoader
+        android:id="@+id/lazyloader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/shopik"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="86dp"
-        android:layout_marginBottom="135dp">
+        app:lazyloader_animDur="800"
+        app:lazyloader_dotsDist="10dp"
+        app:lazyloader_dotsRadius="6dp"
+        app:lazyloader_firstDelayDur="150"
+        app:lazyloader_firstDotColor="@color/SplashScreenBackground"
+        app:lazyloader_interpolator="@android:anim/decelerate_interpolator"
+        app:lazyloader_secondDelayDur="300"
+        app:lazyloader_secondDotColor="#01BAC1"
+        app:lazyloader_thirdDotColor="#00F6FF"/> -->
 
-        <TextView
-            android:id="@+id/welcome_signed_in"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/image_profile"
-            android:fontFamily="@font/nunito_sans_semibold"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:text="Hi"
-            android:textColor="@color/SplashScreenText"
-            android:textSize="20sp" />
+    <com.agrawalsuneet.dotsloader.loaders.TashieLoader
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shopik"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        app:tashieloader_animDelay="80"
+        app:tashieloader_animDur="480"
+        app:tashieloader_dotsColor="@color/SplashScreenBackground"
+        app:tashieloader_dotsDist="10dp"
+        app:tashieloader_dotsRadius="5.5dp"
+        app:tashieloader_interpolator="@android:anim/accelerate_interpolator"
+        app:tashieloader_noOfDots="6" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/image_profile"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:padding="5dp"
-            android:src="@drawable/ic_person_black" />
-
-    </RelativeLayout>
+ <!--   <com.agrawalsuneet.dotsloader.loaders.ZeeLoader
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shopik"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        app:zee_animDuration="320"
+        app:zee_distanceMultiplier="4"
+        app:zee_dotsRadius="12dp"
+        app:zee_firstDotsColor="@color/SplashScreenBackground"
+        app:zee_secondDotsColor="#01BAC1" /> -->
 
     <TextView
         android:id="@+id/copyright_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="35dp"
         android:layout_alignParentBottom="true"
         android:fontFamily="@font/nunito_semibold"
         android:text="@string/copy_right"
         android:textAlignment="center"
-        android:textColor="@color/SplashScreenText"
-        android:textSize="12sp"/>
+        android:textColor="@color/SplashScreenBackground"
+        android:textSize="13sp"/>
 
 </RelativeLayout>

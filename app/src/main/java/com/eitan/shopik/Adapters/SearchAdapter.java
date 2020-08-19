@@ -16,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -35,6 +34,7 @@ import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.ads.formats.UnifiedNativeAdView;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.DecimalFormat;
@@ -84,7 +84,7 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
             adView.setHeadlineView(adView.findViewById(R.id.ad_brand_name));
             adView.setBodyView(adView.findViewById(R.id.ad_body));
             adView.setCallToActionView(adView.findViewById(R.id.ad_action_button));
-            adView.setIconView(adView.findViewById(R.id.ad_card_seller_logo));
+            adView.setIconView(adView.findViewById(R.id.ad_logo));
             adView.setPriceView(adView.findViewById(R.id.ad_price));
             adView.setStarRatingView(adView.findViewById(R.id.ad_stars));
             adView.setStoreView(adView.findViewById(R.id.ad_store));
@@ -164,14 +164,14 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
         }
         else if(!item.isAd()) {
 
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.search_item_list, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_new, parent,false);
 
             ItemsList = items;
 
             final ArrayList<String> images = item.getImages();
 
-            TextView counter = convertView.findViewById(R.id.item_count);
-            counter.setText((position + 1) + "/" + getCount());
+         //   TextView counter = convertView.findViewById(R.id.item_count);
+         //   counter.setText((position + 1) + "/" + getCount());
             TextView sale = convertView.findViewById(R.id.discount);
             TextView price = convertView.findViewById(R.id.updated_price);
             TextView old_price = convertView.findViewById(R.id.old_price);
@@ -284,7 +284,7 @@ public class SearchAdapter extends ArrayAdapter<RecyclerItem> {
                 --i[0];
             });
 
-            final ImageButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
+            final MaterialButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
             item.setImages(images);
 
             Pair<View, String> pair = new Pair<>(imageView,"fullscreen");

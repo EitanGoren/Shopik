@@ -244,7 +244,7 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 favorite.setVisibility(View.INVISIBLE);
             }
 
-            ListView listContainer = parent.findViewById(R.id.favorites_list);
+        //    ListView listContainer = parent.findViewById(R.id.favorites_list);
             unlikes.setOnClickListener(v -> {
                 String item_id = item.getId();
                 String item_type = item.getType();
@@ -252,7 +252,7 @@ public class FavouritesListAdapter extends ArrayAdapter<ShoppingItem> {
                 updateCustomerDB(item_id,item_type,item_gender,item.getSub_category());
                 updateItemsDB(item_id,item_type,item_gender);
                 remove(item);
-                Macros.Functions.showSnackbar(listContainer, "Removed Successfully", Objects.requireNonNull(getContext()),R.drawable.ic_thumb_down_pink);
+              // Macros.Functions.showSnackbar(listContainer, "Removed Successfully", Objects.requireNonNull(getContext()),R.drawable.ic_thumb_down_pink);
             });
 
             String cur_price;

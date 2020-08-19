@@ -51,8 +51,7 @@ public class Database {
 
         if (attribute.equals("")
                 || sub_category.contains(attribute)
-                || Arrays.asList(Macros.Items.shit_words).contains(attribute)
-                || Arrays.asList(Macros.Items.getList(sub_category)).contains(attribute)) {
+                || Arrays.asList(Macros.Items.shit_words).contains(attribute)) {
 
             return;
         }

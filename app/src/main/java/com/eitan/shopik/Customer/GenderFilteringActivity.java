@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -39,17 +40,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
+import org.jsoup.nodes.Document;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -57,9 +54,8 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
     private static final int WOMEN_OUTLET_NUM = 27391;
     private static final int MEN_OUTLET_NUM = 27396;
-    private static final int BULK = 5;
-    private int page;
     private int color;
+
     private Spinner gender_spinner;
     private TabLayout tabLayout;
     private String name,imageUrl;
@@ -75,6 +71,8 @@ public class GenderFilteringActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
         setContentView(R.layout.activity_gender_filtering);
 
         if(!isConnectedToInternet()){
@@ -88,9 +86,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
 
         init();
-
-        fetchLikedItems fetchLikedItems = new fetchLikedItems();
-        fetchLikedItems.execute();
 
         setToolbarColor();
 
@@ -137,23 +132,29 @@ public class GenderFilteringActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 model.setGender(parent.getItemAtPosition(position).toString());
                 gender = parent.getItemAtPosition(position).toString();
-                page = 1;
                 model.setGender(gender);
                 model.setImageUrl(imageUrl);
                 model.setName(name);
                 setColors();
 
-                outletsModel.clearAllOutlets();
-                fetchData fetchData = new fetchData();
-                fetchData.execute();
+                //LIKED ITEMM
+                new fetchLikedItems().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                //Outlet Items
+                int num = gender.equals(Macros.CustomerMacros.WOMEN) ? WOMEN_OUTLET_NUM : MEN_OUTLET_NUM;
+                new fetchOutlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num,1);
+
+                if (gender.equals(Macros.CustomerMacros.WOMEN)) {
+                    new fetchNewInWomen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, 1);
+                }
+                else {
+                    new fetchNewInMen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, 1);
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-
-        fetchData fetchData = new fetchData();
-        fetchData.execute();
 
         setMarquee();
     }
@@ -232,8 +233,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
         imageUrl = bundle.getString("imageUrl");
         name = bundle.getString("name");
 
-        page = 1;
-
         toolbar = findViewById(R.id.gender_toolbar);
         tabLayout = findViewById(R.id.gender_top_nav);
         mMainPager = findViewById(R.id.gender_pager);
@@ -288,8 +287,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
             finish();
         else
             mMainPager.setCurrentItem(0);
-
-        //super.onBackPressed();
     }
 
     public static class ZoomOutPageTransformer implements ViewPager.PageTransformer {
@@ -332,11 +329,114 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
     }
 
-    private class fetchData extends AsyncTask<Void,Integer,Void> {
+    @Override
+    protected void onStop() {
+        super.onStop();
+        model.getGender().removeObservers(this);
+        model.getSub_category().removeObservers(this);
+    }
 
-        String outlet_data = "";
-        String new_items_data = "";
-        Map map;
+    private boolean isConnectedToInternet(){
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+        assert connectivityManager != null;
+        //we are connected to a network
+        if(Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)).getState() == NetworkInfo.State.CONNECTED ||
+                Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)).getState() == NetworkInfo.State.CONNECTED){
+
+            return internetIsConnected();
+        }
+        else
+            return false;
+
+    }
+
+    public boolean internetIsConnected() {
+        try {
+            String command = "ping -c 1 google.com";
+            return (Runtime.getRuntime().exec(command).waitFor() == 0);
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    private class fetchLikedItems extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            // Liked Items
+            for (String type : Macros.Items.getAllItemTypes()) {
+                FirebaseDatabase.getInstance().
+                        getReference().
+                        child(Macros.ITEMS).
+                        child(gender).
+                        child(type).
+                        orderByChild(Macros.CustomerMacros.LIKED).
+                        addListenerForSingleValueEvent(new ValueEventListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.N)
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    entranceModel.removeAllType(type, gender);
+                                    long count = 0;
+                                    long max = 0;
+                                    String item_id = "";
+                                    String imageUrl = "";
+                                    String link = "";
+                                    for (DataSnapshot data : snapshot.getChildren()) {
+                                        Map<String, Object> map = (Map<String, Object>) data.getValue();
+                                        assert map != null;
+                                        Map<String, Object> likes = (Map<String, Object>) map.get(Macros.CustomerMacros.LIKED);
+                                        Map<String, Object> info = (Map<String, Object>) map.get("Info");
+
+                                        if (likes != null) {
+                                            count = likes.size();
+                                        }
+                                        if (count > max) {
+                                            max = count;
+                                            item_id = data.getKey();
+                                            assert info != null;
+                                            imageUrl = Objects.requireNonNull(info.get("image")).toString();
+                                            link = Objects.requireNonNull(info.get("link")).toString();
+                                        }
+                                    }
+
+                                    RecyclerItem recyclerItem = new RecyclerItem(max + " Likes", link);
+                                    recyclerItem.setGender(gender);
+                                    recyclerItem.setType(type);
+                                    recyclerItem.setId(item_id);
+                                    recyclerItem.setLikes(max);
+                                    recyclerItem.setLink(link);
+
+                                    ArrayList<String> list = new ArrayList<>();
+                                    list.add(imageUrl);
+                                    list.add(imageUrl);
+                                    list.add(imageUrl);
+                                    list.add(imageUrl);
+
+                                    recyclerItem.setImages(list);
+
+                                    if (gender.equals(Macros.CustomerMacros.WOMEN))
+                                        entranceModel.addWomenLikedItem(recyclerItem);
+                                    else
+                                        entranceModel.addMenLikedItem(recyclerItem);
+
+                                    entranceModel.setLiked_items(gender);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.d(Macros.TAG,"Gender fetchData: " + error.getMessage());
+                            }
+                        });
+            }
+            return null;
+        }
+    }
+
+    private class fetchOutlet extends AsyncTask<Integer,Integer,Void> {
 
         @Override
         protected void onPreExecute() {
@@ -345,47 +445,16 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
 
         @RequiresApi(api = Build.VERSION_CODES.N)
-        protected Void doInBackground(Void... voids) {
-
-            try {
-                //Outlet Items
-                int num = gender.equals(Macros.CustomerMacros.WOMEN) ? WOMEN_OUTLET_NUM : MEN_OUTLET_NUM;
-                getOutletItems(1, num);
-
-                //New Items
-                map = new HashMap<>();
-                if (gender.equals(Macros.CustomerMacros.WOMEN)) {
-                    for (int cat_num : Macros.Arrays.WOMEN_CLOTHES_TYPES) {
-                        getWomenItems(cat_num);
-                    }
-                }
-                else {
-                    for (int cat_num : Macros.Arrays.MEN_CLOTHES_TYPES) {
-                        getMenItems(cat_num);
-                    }
-                }
-            }
-            catch(IOException e){
-                Log.d(Macros.TAG, "GenderFilteringActivity::fetchData(): " + e.getMessage());
-            }
-            return null;
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        private void getOutletItems(int page_num, int cat_num) throws IOException {
-
-            URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + page_num);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
+        @Override
+        protected Void doInBackground(Integer... integers) {
             try {
 
-                String line = "";
-                while (line != null) {
-                    line = bufferedReader.readLine();
-                    outlet_data = outlet_data + line;
-                }
+                String outlet_data = "";
+
+                Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + integers[0] + "&page=" + integers[1]).get();
+                DataNode node = (DataNode) document.childNode(2).childNode(2).childNode(28).childNode(0);
+
+                outlet_data = node.getWholeData();
 
                 String[] data_split = outlet_data.split("\"products\":", 2);
                 String koko = data_split[1];
@@ -458,349 +527,219 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
 
                     outletsModel.addToOutlets(recyclerItem);
-                    publishProgress(i+1,total_items,page_num);
+                    publishProgress(i+1,total_items,integers[1]);
                 }
             }
             catch (Exception e ) {
                 Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
             }
-            finally {
-                httpURLConnection.disconnect();
-                inputStream.close();
-                bufferedReader.close();
-            }
+            return null;
         }
+    }
+
+    private class fetchNewInMen extends AsyncTask<Integer,Integer,Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
-        private void getMenItems(int cat_num) throws IOException {
-
-            URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + 1);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        @Override
+        protected Void doInBackground(Integer... page_num) {
 
             try {
-                String cat = "";
-                switch (cat_num){
-                    case 17184:
-                        cat = Macros.NEW_SHOES;
-                        break;
-                    case 27441:
-                        cat = Macros.NEW_CLOTHING;
-                        break;
-                    case 13500:
-                        cat = Macros.NEW_TRENDING;
-                }
-
-                entranceModel.addMen_new_num(cat,0);
-
-                String line = "";
-                while (line != null) {
-                    line = bufferedReader.readLine();
-                    new_items_data += line;
-                }
-
-                String[] data_split = new_items_data.split("\"products\":", 2);
-                String koko = data_split[1];
-                koko = koko.replaceAll("u002F", "").
-                        replaceAll("urban", ".urban").
-                        replaceAll("gg-", "").
-                        replaceAll("under", ".under").
-                        replaceAll("ufluff", ".ufluff").
-                        replaceAll("upper", ".upper").
-                        replaceAll("uncommon", ".uncommon").
-                        replaceAll("uoh",".uoh");
-
-                new_items_data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
-
-                JSONArray JA = new JSONArray(new_items_data);
-                int total_items =  JA.length();
-                for (int i = 0; i < total_items; ++i) {
-                    JSONObject JO = (JSONObject) JA.get(i);
-                    String imageUrl = "https://" + JO.get("image").toString().
-                            replace(".com", ".com/").
-                            replace("products", "products/");
-                    int opop = imageUrl.lastIndexOf("-");
-
-                    String color = imageUrl.substring(opop + 1);
-                    String id = JO.get("id").toString();
-                    String link = "https://www.asos.com/" + JO.get("url").toString().
-                            replace("prd","/prd/").
-                            replace("asos-designasos","asos-design/asos");
-
-                    String price = JO.get("price").toString();
-                    String branda = "ASOS";
-
-                    Currency shekel = Currency.getInstance("ILS");
-                    String currency_symbol = shekel.getSymbol();
-                    Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
-                    price = new DecimalFormat("##.##").format(current) + currency_symbol;
-
-                    RecyclerItem recyclerItem = new RecyclerItem(branda, link);
-                    recyclerItem.setPrice(price);
-                    recyclerItem.setLink(link);
-                    recyclerItem.setType(cat);
-
-                    if((boolean) JO.get("isOutlet")){
-                        recyclerItem.setOutlet(true);
-                        recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                    }
-                    else
-                        recyclerItem.setOutlet(false);
-
-                    if((boolean) JO.get("isSale") ){
-                        recyclerItem.setSale(true);
-                        recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                    }
-                    else
-                        recyclerItem.setSale(false);
-
-                    Database connection = new Database();
-
-                    if (JO.get("url").toString().contains("prd")) {
-                        recyclerItem.setImages(connection.getASOSRecyclerImage("product", color, id));
-                    } else {
-                        recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
+                for (int cat_num : Macros.Arrays.MEN_CLOTHES_TYPES) {
+                    String cat = "";
+                    switch (cat_num) {
+                        case 17184:
+                            cat = Macros.NEW_SHOES;
+                            break;
+                        case 27441:
+                            cat = Macros.NEW_CLOTHING;
+                            break;
+                        case 13500:
+                            cat = Macros.NEW_TRENDING;
                     }
 
-                    entranceModel.addMenItem(recyclerItem);
-                    entranceModel.setList(gender);
-                }
-            }
-            catch (Exception e ) {
-                Log.d(Macros.TAG, "E1::getMenItems() " + Objects.requireNonNull(e.getMessage()));
-            }
-            finally {
-                httpURLConnection.disconnect();
-                inputStream.close();
-                bufferedReader.close();
-            }
-        }
+                    String new_items_data = "";
+                    entranceModel.addMen_new_num(cat, 0);
 
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        private void getWomenItems(int cat_num) throws IOException {
+                    Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + page_num[0]).get();
+                    DataNode node = (DataNode) document.childNode(2).childNode(2).childNode(28).childNode(0);
 
-            URL url = new URL("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + 1);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    new_items_data = node.getWholeData();
+                    String[] data_split = new_items_data.split("\"products\":", 2);
+                    String koko = data_split[1];
+                    koko = koko.replaceAll("u002F", "").
+                            replaceAll("urban", ".urban").
+                            replaceAll("gg-", "").
+                            replaceAll("under", ".under").
+                            replaceAll("ufluff", ".ufluff").
+                            replaceAll("upper", ".upper").
+                            replaceAll("uncommon", ".uncommon").
+                            replaceAll("uoh", ".uoh");
 
-            try {
+                    new_items_data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
 
-                String cat = "";
-                switch (cat_num){
-                    case 6992:
-                        cat = Macros.NEW_SHOES;
-                        break;
-                    case 2623:
-                        cat = Macros.NEW_CLOTHING;
-                        break;
-                    case 13497:
-                        cat = Macros.NEW_TRENDING;
-                }
+                    JSONArray JA = new JSONArray(new_items_data);
+                    int total_items = JA.length();
+                    for (int i = 0; i < total_items; ++i) {
+                        JSONObject JO = (JSONObject) JA.get(i);
+                        String imageUrl = "https://" + JO.get("image").toString().
+                                replace(".com", ".com/").
+                                replace("products", "products/");
+                        int opop = imageUrl.lastIndexOf("-");
 
-                entranceModel.addWomen_new_num(cat,0);
+                        String color = imageUrl.substring(opop + 1);
+                        String id = JO.get("id").toString();
+                        String link = "https://www.asos.com/" + JO.get("url").toString().
+                                replace("prd", "/prd/").
+                                replace("asos-designasos", "asos-design/asos");
 
+                        String price = JO.get("price").toString();
+                        String branda = "ASOS";
 
-                String line = "";
-                while (line != null) {
-                    line = bufferedReader.readLine();
-                    new_items_data = new_items_data + line;
-                }
+                        Currency shekel = Currency.getInstance("ILS");
+                        String currency_symbol = shekel.getSymbol();
+                        Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
+                        price = new DecimalFormat("##.##").format(current) + currency_symbol;
 
-                String[] data_split = new_items_data.split("\"products\":", 2);
-                String koko = data_split[1];
-                koko = koko.replaceAll("u002F", "").
-                        replaceAll("urban", ".urban").
-                        replaceAll("gg-", "").
-                        replaceAll("under", ".under").
-                        replaceAll("ufluff", ".ufluff").
-                        replaceAll("upper", ".upper").
-                        replaceAll("uncommon", ".uncommon").
-                        replaceAll("uoh",".uoh");
+                        RecyclerItem recyclerItem = new RecyclerItem(branda, link);
+                        recyclerItem.setPrice(price);
+                        recyclerItem.setLink(link);
+                        recyclerItem.setType(cat);
 
-                new_items_data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
+                        if ((boolean) JO.get("isOutlet")) {
+                            recyclerItem.setOutlet(true);
+                            recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
+                        } else
+                            recyclerItem.setOutlet(false);
 
-                JSONArray JA = new JSONArray(new_items_data);
-                int total_items =  JA.length();
-                for (int i = 0; i < total_items; ++i) {
-                    JSONObject JO = (JSONObject) JA.get(i);
-                    String imageUrl = "https://" + JO.get("image").toString().
-                            replace(".com", ".com/").
-                            replace("products", "products/");
+                        if ((boolean) JO.get("isSale")) {
+                            recyclerItem.setSale(true);
+                            recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
+                        } else
+                            recyclerItem.setSale(false);
 
-                    int opop = imageUrl.lastIndexOf("-");
+                        Database connection = new Database();
 
-                    String color = imageUrl.substring(opop + 1);
-                    String id = JO.get("id").toString();
-                    String link = "https://www.asos.com/" + JO.get("url").toString().
-                            replace("prd","/prd/").
-                            replace("asos-designasos", "asos-design/asos");
-
-                    String price = JO.get("price").toString();
-
-                    ArrayList<String> list = new ArrayList<>();
-                    String[] name = JO.get("description").toString().split(" ");
-                    for(String word : name){
-                        if (!word.equals("")) {
-                            list.add(word.toLowerCase());
+                        if (JO.get("url").toString().contains("prd")) {
+                            recyclerItem.setImages(connection.getASOSRecyclerImage("product", color, id));
+                        } else {
+                            recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
                         }
+
+                        entranceModel.addMenItem(recyclerItem);
+                        entranceModel.setList(gender);
                     }
-
-                    Currency shekel = Currency.getInstance("ILS");
-                    String currency_symbol = shekel.getSymbol();
-                    Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
-
-                    price = new DecimalFormat("##.##").format(current) + currency_symbol;
-                    RecyclerItem recyclerItem = new RecyclerItem(cat, link);
-                    recyclerItem.setPrice(price);
-                    recyclerItem.setLink(link);
-                    recyclerItem.setType(cat);
-                    recyclerItem.setDescription(list);
-
-                    if((boolean) JO.get("isOutlet")){
-                        recyclerItem.setOutlet(true);
-                        recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                    }
-                    else
-                        recyclerItem.setOutlet(false);
-
-                    if((boolean) JO.get("isSale") ){
-                        recyclerItem.setSale(true);
-                        recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                    }
-                    else
-                        recyclerItem.setSale(false);
-
-                    Database connection = new Database();
-
-                    if (JO.get("url").toString().contains("prd"))
-                        recyclerItem.setImages(connection.getASOSRecyclerImage("product", color, id));
-                    else
-                        recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
-
-                    entranceModel.addWomenItem(recyclerItem);
-                    entranceModel.setList(gender);
                 }
             }
             catch (Exception e ) {
-                Log.d(Macros.TAG,"E1::getWomenItems() " +  Objects.requireNonNull(e.getMessage()));
+                Log.d(Macros.TAG,"GenderFiltering::fetchNewInMen() " +  Objects.requireNonNull(e.getMessage()));
             }
-            finally {
-                httpURLConnection.disconnect();
-                inputStream.close();
-                bufferedReader.close();
+            return null;
+        }
+    }
+
+    private class fetchNewInWomen extends AsyncTask<Integer,Integer,Void> {
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            try {
+                for (int cat_num : Macros.Arrays.WOMEN_CLOTHES_TYPES) {
+                    String new_items_data;
+                    String cat = "";
+                    switch (cat_num) {
+                        case 6992:
+                            cat = Macros.NEW_SHOES;
+                            break;
+                        case 2623:
+                            cat = Macros.NEW_CLOTHING;
+                            break;
+                        case 13497:
+                            cat = Macros.NEW_TRENDING;
+                    }
+
+                    entranceModel.addWomen_new_num(cat, 0);
+
+                    Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + integers[0]).get();
+                    DataNode node = (DataNode) document.childNode(2).childNode(2).childNode(28).childNode(0);
+
+                    new_items_data = node.getWholeData();
+
+                    String[] data_split = new_items_data.split("\"products\":", 2);
+                    String koko = data_split[1];
+                    koko = koko.replaceAll("u002F", "").
+                            replaceAll("urban", ".urban").
+                            replaceAll("gg-", "").
+                            replaceAll("under", ".under").
+                            replaceAll("ufluff", ".ufluff").
+                            replaceAll("upper", ".upper").
+                            replaceAll("uncommon", ".uncommon").
+                            replaceAll("uoh", ".uoh");
+
+                    new_items_data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
+
+                    JSONArray JA = new JSONArray(new_items_data);
+
+                    for (int i = 0; i < JA.length(); ++i) {
+                        JSONObject JO = (JSONObject) JA.get(i);
+                        String imageUrl = "https://" + JO.get("image").toString().
+                                replace(".com", ".com/").
+                                replace("products", "products/");
+
+                        int opop = imageUrl.lastIndexOf("-");
+
+                        String color = imageUrl.substring(opop + 1);
+                        String id = JO.get("id").toString();
+                        String link = "https://www.asos.com/" + JO.get("url").toString().
+                                replace("prd", "/prd/").
+                                replace("asos-designasos", "asos-design/asos");
+
+                        String price = JO.get("price").toString();
+
+                        ArrayList<String> list = new ArrayList<>();
+                        String[] name = JO.get("description").toString().split(" ");
+                        for (String word : name) {
+                            if (!word.equals("")) {
+                                list.add(word.toLowerCase());
+                            }
+                        }
+
+                        Currency shekel = Currency.getInstance("ILS");
+                        String currency_symbol = shekel.getSymbol();
+                        Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
+
+                        price = new DecimalFormat("##.##").format(current) + currency_symbol;
+                        RecyclerItem recyclerItem = new RecyclerItem(cat, link);
+                        recyclerItem.setPrice(price);
+                        recyclerItem.setLink(link);
+                        recyclerItem.setType(cat);
+                        recyclerItem.setDescription(list);
+
+                        if ((boolean) JO.get("isOutlet")) {
+                            recyclerItem.setOutlet(true);
+                            recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
+                        } else
+                            recyclerItem.setOutlet(false);
+
+                        if ((boolean) JO.get("isSale")) {
+                            recyclerItem.setSale(true);
+                            recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
+                        } else
+                            recyclerItem.setSale(false);
+
+                        Database connection = new Database();
+
+                        if (JO.get("url").toString().contains("prd"))
+                            recyclerItem.setImages(connection.getASOSRecyclerImage("product", color, id));
+                        else
+                            recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
+
+                        entranceModel.addWomenItem(recyclerItem);
+                        entranceModel.setList(gender);
+                    }
+                }
             }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        model.getGender().removeObservers(this);
-        model.getSub_category().removeObservers(this);
-    }
-
-    private boolean isConnectedToInternet(){
-
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
-        assert connectivityManager != null;
-        //we are connected to a network
-        if(Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)).getState() == NetworkInfo.State.CONNECTED ||
-                Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)).getState() == NetworkInfo.State.CONNECTED){
-
-            return internetIsConnected();
-        }
-        else
-            return false;
-
-    }
-
-    public boolean internetIsConnected() {
-        try {
-            String command = "ping -c 1 google.com";
-            return (Runtime.getRuntime().exec(command).waitFor() == 0);
-        }
-        catch (Exception e) {
-            return false;
-        }
-    }
-
-    private class fetchLikedItems extends AsyncTask<Void,Void,Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            outletsModel.clearAllOutlets();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            // Liked Items
-            for (String type : Macros.Items.getAllItemTypes()) {
-                FirebaseDatabase.getInstance().
-                        getReference().
-                        child(Macros.ITEMS).
-                        child(gender).
-                        child(type).
-                        orderByChild(Macros.CustomerMacros.LIKED).
-                        addListenerForSingleValueEvent(new ValueEventListener() {
-                            @RequiresApi(api = Build.VERSION_CODES.N)
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.exists()) {
-                                    entranceModel.removeAllType(type, gender);
-                                    long count = 0;
-                                    long max = 0;
-                                    String item_id = "";
-                                    String imageUrl = "";
-                                    String link = "";
-                                    for (DataSnapshot data : snapshot.getChildren()) {
-                                        Map map = (Map) data.getValue();
-                                        Map<String, Object> likes = (Map<String, Object>) map.get(Macros.CustomerMacros.LIKED);
-                                        Map<String, Object> info = (Map<String, Object>) map.get("Info");
-
-                                        if (likes != null) {
-                                            count = likes.size();
-                                        }
-                                        if (count > max) {
-                                            max = count;
-                                            item_id = data.getKey();
-                                            assert info != null;
-                                            imageUrl = Objects.requireNonNull(info.get("image")).toString();
-                                            link = Objects.requireNonNull(info.get("link")).toString();
-                                        }
-                                    }
-
-                                    RecyclerItem recyclerItem = new RecyclerItem(max + " Likes", link);
-                                    recyclerItem.setGender(gender);
-                                    recyclerItem.setType(type);
-                                    recyclerItem.setId(item_id);
-                                    recyclerItem.setLikes(max);
-                                    recyclerItem.setLink(link);
-
-                                    ArrayList<String> list = new ArrayList<>();
-                                    list.add(imageUrl);
-                                    list.add(imageUrl);
-                                    list.add(imageUrl);
-                                    list.add(imageUrl);
-
-                                    recyclerItem.setImages(list);
-
-                                    if (gender.equals(Macros.CustomerMacros.WOMEN))
-                                        entranceModel.addWomenLikedItem(recyclerItem);
-                                    else
-                                        entranceModel.addMenLikedItem(recyclerItem);
-
-                                    entranceModel.setLiked_items(gender);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Log.d(Macros.TAG,"Gender fetchData: " + error.getMessage());
-                            }
-                        });
+            catch (Exception e ) {
+                Log.d(Macros.TAG,"GenderFiltering::fetchNewInWomen() " +  Objects.requireNonNull(e.getMessage()));
             }
             return null;
         }

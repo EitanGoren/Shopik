@@ -1,6 +1,7 @@
 package com.eitan.shopik;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -8,17 +9,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Company.CompanyMainActivity;
 import com.eitan.shopik.Customer.GenderFilteringActivity;
 import com.facebook.AccessToken;
@@ -41,27 +40,26 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class LandingPageActivity extends AppCompatActivity {
 
     private static String type,provider,token,email,imageUrl,id_in_provider;
-    private CircleImageView imageView;
-    private TextView welcome;
     private static FirebaseUser user;
     private FirebaseFirestore db;
     private int currentApiVersion;
-    private static final int DELAY_MILLIS = 5000;
+    private static final int DELAY_MILLIS = 4500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+
+        overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+
         setContentView(R.layout.activity_landing_page);
 
         init();
 
-        //FirebaseAuth.getInstance().signOut();
-
+        // FirebaseAuth.getInstance().signOut();
         if(!isConnectedToInternet()){
             RelativeLayout LandingLayout = findViewById(R.id.LandingLayout);
             Macros.Functions.showSnackbar (
@@ -124,10 +122,6 @@ public class LandingPageActivity extends AppCompatActivity {
         }
         else {
 
-            String[] user_name = Objects.requireNonNull(user.getDisplayName()).split(" ",2);
-            String hi_txt = "Hi " + user_name[0];
-            welcome.setText(hi_txt);
-
             DocumentReference user_document = db.collection(Macros.CUSTOMERS).document(user.getUid());
             DocumentReference company_document = db.collection(Macros.COMPANIES).document(user.getUid());
 
@@ -138,11 +132,7 @@ public class LandingPageActivity extends AppCompatActivity {
                     if (document.exists()) {
                         if(document.get("imageUrl") != null) {
                             imageUrl = Objects.requireNonNull(document.get("imageUrl")).toString();
-                            Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
                         }
-                        else
-                            imageView.setImageResource(R.drawable.ic_account_circle_black_24dp);
-
                         type = Macros.CUSTOMER;
                         goToApp();
                     }
@@ -159,11 +149,7 @@ public class LandingPageActivity extends AppCompatActivity {
 
                         if(document.get("logo_url") != null) {
                             imageUrl = Objects.requireNonNull(document.get("logo_url")).toString();
-                            Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
                         }
-                        else
-                            imageView.setImageResource(R.drawable.ic_account_circle_black_24dp);
-
                         type = Macros.COMPANY;
                         goToApp();
                     }
@@ -176,14 +162,6 @@ public class LandingPageActivity extends AppCompatActivity {
     }
 
     private void init() {
-
-        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
-
-        imageView = findViewById(R.id.image_profile);
-        welcome = findViewById(R.id.welcome_signed_in);
-
-        animateLayouts();
-
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
     }
@@ -232,45 +210,60 @@ public class LandingPageActivity extends AppCompatActivity {
     }
 
     private void goToApp(){
+
         if(user == null) {
             Intent intent = new Intent(LandingPageActivity.this, MainRegistrationActivity.class);
-            intent.putExtra("id_in_provider",id_in_provider);
-            intent.putExtra("imageUrl",imageUrl);
-            intent.putExtra("token",token);
-            intent.putExtra("email",email);
-            intent.putExtra("provider",provider);
+            intent.putExtra("id_in_provider", id_in_provider);
+            intent.putExtra("imageUrl", imageUrl);
+            intent.putExtra("token", token);
+            intent.putExtra("email", email);
+            intent.putExtra("provider", provider);
             startActivity(intent);
             finish();
+            overridePendingTransition(R.anim.fadein,R.anim.fadeout);
         }
         else {
-            final Handler handler = new Handler();
-            handler.postDelayed(() -> {
-                switch (type){
-                    case Macros.CUSTOMER:
-                        goToCustomer();
-                        break;
-                    case Macros.COMPANY:
-                        goToCompany();
-                        break;
-                }
-            },DELAY_MILLIS);
+            switch (type){
+                case Macros.CUSTOMER:
+                    goToCustomer();
+                    break;
+                case Macros.COMPANY:
+                    goToCompany();
+                    break;
+            }
         }
     }
 
     private void goToCustomer() {
+        ImageView tooki = findViewById(R.id.imageView);
+        ActivityOptions options = ActivityOptions.
+                makeSceneTransitionAnimation(this, Pair.create(tooki,"tooki"));
         Intent intent = new Intent(LandingPageActivity.this, GenderFilteringActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("imageUrl",imageUrl);
         bundle.putString("name",user.getDisplayName());
         intent.putExtra("bundle",bundle);
-        startActivity(intent);
-        finish();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> {
+
+            startActivity(intent, options.toBundle());
+            this.supportFinishAfterTransition();
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+
+        }, DELAY_MILLIS);
     }
 
     private void goToCompany() {
+
         Intent intent = new Intent(LandingPageActivity.this, CompanyMainActivity.class);
-        startActivity(intent);
-        finish();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            startActivity(intent);
+            this.supportFinishAfterTransition();
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        }, DELAY_MILLIS);
     }
 
     @SuppressLint("RestrictedApi")
@@ -290,16 +283,6 @@ public class LandingPageActivity extends AppCompatActivity {
                 email = new_user.getEmail();
                 provider = new_user.getProviderId();
 
-                String[] user_name;
-                if(new_user.getName() != null) {
-                     user_name = Objects.requireNonNull(new_user.getName()).split(" ", 2);
-                    String hi_txt = "Hi " + user_name[0];
-                    welcome.setText(hi_txt);
-                }
-                else welcome.setText("Hi " + email);
-
-                animateLayouts();
-
                 switch (provider) {
                     case Macros.Providers.FACEBOOK:
                         AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -307,7 +290,6 @@ public class LandingPageActivity extends AppCompatActivity {
                             try {
                                 id_in_provider = object.getString("id");
                                 imageUrl = "http://graph.facebook.com/" + id_in_provider + "/picture?type=large&width=720&height=720";
-                                Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
                                 checkCustomer(user.getUid());
                             } catch (JSONException e) {
                                 Log.d(Macros.TAG, "facebook failed: " + e.getMessage());
@@ -324,7 +306,6 @@ public class LandingPageActivity extends AppCompatActivity {
                             if (acct != null) {
                                 id_in_provider = acct.getId();
                                 imageUrl = Objects.requireNonNull(acct.getPhotoUrl()).toString().split("=", 2)[0].concat("=s700-c");
-                                Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
                                 checkCustomer(user.getUid());
                             }
                         } catch (Exception e) {
@@ -332,7 +313,6 @@ public class LandingPageActivity extends AppCompatActivity {
                         }
                         break;
                     case Macros.Providers.PASSWORD:
-                       // Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
                         checkCustomer(user.getUid());
                         break;
                 }
@@ -345,21 +325,6 @@ public class LandingPageActivity extends AppCompatActivity {
                 Toast.makeText(this, "Something went wrong.. try again", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private void animateLayouts() {
-
-        Animation middle_anim = AnimationUtils.loadAnimation(this, R.anim.middle_line_animation);
-        Animation bottom_anim = AnimationUtils.loadAnimation(this, R.anim.bottom_line_animation);
-        Animation image_anim = AnimationUtils.loadAnimation(this, R.anim.user_image_animation);
-
-        RelativeLayout user_layout = findViewById(R.id.hello_layout);
-        user_layout.setAnimation(image_anim);
-
-        TextView copyright = findViewById(R.id.copyright_text);
-        copyright.setAnimation(bottom_anim);
-
-        imageView.setAnimation(middle_anim);
     }
 
     @SuppressLint("NewApi")

@@ -13,7 +13,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -185,18 +185,12 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // inside your activity (if you did not enable transitions in your theme)
-       // getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        // set an enter transition
-      //  getWindow().setEnterTransition(new Fade());
-        // set an exit transition
-      //  getWindow().setExitTransition(new Fade());
-
-
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.fragment_my_profile);
 
         init();
-
 
         companyFS.get().addOnSuccessListener(documentSnapshot -> {
             if(documentSnapshot.exists()){
@@ -485,17 +479,6 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
     //  youTubePlayerView = findViewById(R.id.youtube_video_company);
     //  mVideoTitle  = findViewById(R.id.company_video_title);
         mProfile_image = findViewById(R.id.profile_company_profile);
-        supportPostponeEnterTransition();
-        mProfile_image.getViewTreeObserver().addOnPreDrawListener(
-                new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        mProfile_image.getViewTreeObserver().removeOnPreDrawListener(this);
-                        supportStartPostponedEnterTransition();
-                        return true;
-                    }
-                }
-        );
         mFacebook = findViewById(R.id.company_facebook);
         mTwitter = findViewById(R.id.company_twitter);
         mInstagram = findViewById(R.id.company_instagram);

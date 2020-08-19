@@ -1,5 +1,6 @@
 package com.eitan.shopik.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -135,9 +136,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                     brand.setText(item.getText());
                     break;
                 case "SubCategory":
+                    ImageView tooki = ((Activity)getContext()).findViewById(R.id.company_img_logo);
+
                     Macros.Functions.GlidePicture(getContext(),item.getImage_resource(), imageView);
                     sub_cat.setText(item.getText());
-                    imageView.setOnClickListener(v -> Macros.Functions.goToCustomerMain(getContext(),item));
+                    imageView.setOnClickListener(v -> Macros.Functions.
+                            goToCustomerMain(getContext(), item, Pair.create(tooki,"tooki")));
+
                     break;
             }
         }

@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.transition.Fade;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,9 +63,9 @@ public class FullscreenImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Window window = getWindow();
         // set an enter transition
-        window.setEnterTransition(new Fade());
+     //   window.setEnterTransition(new Fade());
         // set an exit transition
-        window.setExitTransition(new Fade());
+     //   window.setExitTransition(new Fade());
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.TRANSPARENT);
 
@@ -216,13 +215,12 @@ public class FullscreenImageActivity extends AppCompatActivity {
                 String no_video_text = "No video for this item";
                 no_video.setText(no_video_text);
 
-                if (position != 4) {
+                if (position != imagesUrl.size()) {
                     videoLayout.setVisibility(View.INVISIBLE);
                     videoMediaController.hide();
                     photoView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     photoView.setPadding(0,0,0,0);
                     Macros.Functions.GlidePicture(photoView.getContext(),imagesUrl.get(position),photoView);
-                   // Glide.with(photoView.getContext()).load(imagesUrl.get(position)).into(photoView);
                     mVideoView.pause();
                     videoMediaController.hide();
                 }
@@ -234,7 +232,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
                     @Override
                     public void onPageSelected(int pos) {
                         changeTabs(pos);
-                        if(pos == 4) {
+                        if(pos == imagesUrl.size()) {
                             dots.setVisibility(View.VISIBLE);
                             button.setVisibility(View.VISIBLE);
                             buttons_layout.setVisibility(View.VISIBLE);
@@ -296,7 +294,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
                         getVideo(id);
                     }
                     catch (Exception e){
-                        Log.d(Macros.TAG, "FullscreenActivity:getVideoLink: " + Objects.requireNonNull(e.getMessage()));
+                        //Log.d(Macros.TAG, "FullscreenActivity:getVideoLink: " + Objects.requireNonNull(e.getMessage()));
                     }
                     return video_path;
                 }

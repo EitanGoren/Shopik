@@ -34,7 +34,8 @@ public class E2Fragment extends Fragment {
     private ArrayList<Catagory> categories;
     private String gender, imageUrl;
     private ArrayList<SubCategory> sub_jackets,sub_shoes, sub_bags,sub_dress,sub_jeans,
-                                   sub_jewellery,sub_shirts,sub_glasses,sub_watches,sub_swim;
+                                   sub_jewellery,sub_shirts,sub_glasses,sub_watches,sub_swim,
+                                   sub_accessories,sub_lingerie;
     private GenderModel model;
     private FirebaseUser user;
     private Catagory shoes;
@@ -124,6 +125,9 @@ public class E2Fragment extends Fragment {
         sub_shoes = new ArrayList<>();
         sub_jeans = new ArrayList<>();
         sub_jewellery = new ArrayList<>();
+        sub_lingerie = new ArrayList<>();
+        sub_accessories = new ArrayList<>();
+
     }
 
     private void setCategories(){
@@ -132,6 +136,14 @@ public class E2Fragment extends Fragment {
         initCategories();
 
         if(gender.equals(Macros.CustomerMacros.MEN)){
+
+            addAccessoriesSubCategory("belts", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
+            addAccessoriesSubCategory("hats", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
+            addAccessoriesSubCategory("ties", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
+            addAccessoriesSubCategory("scarves", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
+
+            addLingerieSubCategory("underwear", Macros.Items.MEN_BOOTS_RES, Macros.CustomerMacros.MEN);
+            addLingerieSubCategory("socks", Macros.Items.MEN_CHRONOGRAPH_WATCH_RES, Macros.CustomerMacros.MEN);
 
             addJacketsSubCategory("overcoat", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
             addJacketsSubCategory("biker", Macros.Items.MEN_TRENCH_JACKETS_RES, Macros.CustomerMacros.MEN);
@@ -179,7 +191,18 @@ public class E2Fragment extends Fragment {
         }
         else {
 
-            //"THONGS & KNICKERSSEXY LINGERIEBACKLESS BRASPYJAMASDRESSING GOWNSBRASSHAPEWEARBODIES"
+            addAccessoriesSubCategory("belts", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
+            addAccessoriesSubCategory("scarves", Macros.Items.WOMEN_AVIATOR_GLASSES_RES, Macros.CustomerMacros.WOMEN);
+            addAccessoriesSubCategory("hats", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
+            addAccessoriesSubCategory("sport", Macros.Items.WOMEN_BOMBER_JACKETS_RES, Macros.CustomerMacros.WOMEN);
+
+            addLingerieSubCategory("underwear", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("socks", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("bras", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("shapewear", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("pyjamas", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("thongs", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
+
             addBagsSubCategory("leather",Macros.Items.LEATHER_RES);
             addBagsSubCategory("bum",Macros.Items.BUM_RES);
             addBagsSubCategory("clutch",Macros.Items.CLUTCH_RES);
@@ -205,9 +228,10 @@ public class E2Fragment extends Fragment {
             addShoesSubCategory("sandals",Macros.Items.FLAT_SANDALS_RES,Macros.CustomerMacros.WOMEN);
             addShoesSubCategory("boots",Macros.Items.WOMEN_BOOTS_RES,Macros.CustomerMacros.WOMEN);
             addShoesSubCategory("heels",Macros.Items.WOMEN_HEELS_RES,Macros.CustomerMacros.WOMEN);
-            addShoesSubCategory("leather",Macros.Items.WOMEN_LEATHER_SHOES,Macros.CustomerMacros.WOMEN);
             addShoesSubCategory("sliders",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
-            addShoesSubCategory("sneakers",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
+            addShoesSubCategory("slippers",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
+            addShoesSubCategory("flat shoes",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
+            addShoesSubCategory("trainers",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
 
             addJeansSubCategory("slim", Macros.Items.WOMEN_SLIM_JEANS_RES, Macros.CustomerMacros.WOMEN);
             addJeansSubCategory("straight", Macros.Items.WOMEN_STRAIGHT_JEANS_RES, Macros.CustomerMacros.WOMEN);
@@ -234,6 +258,8 @@ public class E2Fragment extends Fragment {
             addShirtsSubCategory("camis", Macros.Items.WOMEN_TANK_RES,Macros.CustomerMacros.WOMEN);
             addShirtsSubCategory("summer-top", Macros.Items.WOMEN_TSHIRT_RES,Macros.CustomerMacros.WOMEN);
             addShirtsSubCategory("evening", Macros.Items.WOMEN_TSHIRT_RES,Macros.CustomerMacros.WOMEN);
+            addShirtsSubCategory("tanks", Macros.Items.WOMEN_TSHIRT_RES,Macros.CustomerMacros.WOMEN);
+            addShirtsSubCategory("leotards", Macros.Items.WOMEN_TSHIRT_RES,Macros.CustomerMacros.WOMEN);
 
             addWatchesSubCategory("smart",Macros.Items.WOMEN_DIGITAL_RES,Macros.CustomerMacros.WOMEN);
             addWatchesSubCategory("digital",Macros.Items.WOMEN_DIGITAL_RES,Macros.CustomerMacros.WOMEN);
@@ -258,8 +284,8 @@ public class E2Fragment extends Fragment {
         sunglasses = new Catagory(Macros.SUNGLASSES,gender,sub_glasses);
         jewellery = new Catagory(Macros.JEWELLERY,gender,sub_jewellery);
         swimwear = new Catagory(Macros.SWIMWEAR,gender,sub_swim);
-        lingerie = new Catagory(Macros.JEWELLERY,gender,sub_jewellery);
-        accessories = new Catagory(Macros.SWIMWEAR,gender,sub_swim);
+        lingerie = new Catagory(Macros.LINGERIE,gender,sub_lingerie);
+        accessories = new Catagory(Macros.ACCESSORIES,gender,sub_accessories);
 
        fillCategories();
 
@@ -275,6 +301,8 @@ public class E2Fragment extends Fragment {
         sub_bags = new ArrayList<>();
         sub_jeans = new ArrayList<>();
         sub_jackets = new ArrayList<>();
+        sub_accessories = new ArrayList<>();
+        sub_lingerie = new ArrayList<>();
     }
     private void fillCategories() {
         categories.add(shoes);
@@ -285,6 +313,8 @@ public class E2Fragment extends Fragment {
         categories.add(jackets);
         categories.add(jewellery);
         categories.add(swimwear);
+        categories.add(accessories);
+        categories.add(lingerie);
     }
     private void clearCategories() {
 
@@ -295,6 +325,8 @@ public class E2Fragment extends Fragment {
         sub_shoes.clear();
         sub_jeans.clear();
         sub_jewellery.clear();
+        sub_lingerie.clear();
+        sub_accessories.clear();
     }
 
     private void addJacketsSubCategory(String name, String res_url, String _gender) {
@@ -336,5 +368,13 @@ public class E2Fragment extends Fragment {
     private void addShirtsSubCategory(String name,String res_url,String _gender) {
         SubCategory shirts = new SubCategory(name,res_url, _gender);
         sub_shirts.add(shirts);
+    }
+    private void addLingerieSubCategory(String name,String res_url,String _gender) {
+        SubCategory lingerie = new SubCategory(name,res_url, _gender);
+        sub_lingerie.add(lingerie);
+    }
+    private void addAccessoriesSubCategory(String name,String res_url,String _gender) {
+        SubCategory accessories = new SubCategory(name,res_url, _gender);
+        sub_accessories.add(accessories);
     }
 }

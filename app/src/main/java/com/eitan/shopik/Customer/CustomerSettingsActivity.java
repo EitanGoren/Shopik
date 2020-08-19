@@ -1,13 +1,5 @@
 package com.eitan.shopik.Customer;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -15,55 +7,39 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.navigation.ActivityNavigator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.eitan.shopik.Company.CompanyProfileActivity;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.eitan.shopik.ViewModels.GenderModel;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.youtube.player.YouTubeBaseActivity;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerView;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -73,7 +49,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CustomerSettingsActivity extends AppCompatActivity {
 
     private EditText mFirstNameField,mLastNameField,mAge,mAddress,mCity,mPhone;
-  //  private TextView mEmail;
+    private MaterialButton submit;
     private ImageView bgImage;
     private CircleImageView mProfileImage,toolbar_pic;
     private String UserId;
@@ -220,19 +196,18 @@ public class CustomerSettingsActivity extends AppCompatActivity {
 
         customerFS.get().addOnSuccessListener(documentSnapshot -> {
             if(documentSnapshot.exists()){
-                data = documentSnapshot.getData();
-                assert data != null;
-                age = documentSnapshot.get("age") != null ? documentSnapshot.get("age").toString() : null;
-                first_name = documentSnapshot.get("first_name") != null ? documentSnapshot.get("first_name").toString() : null;
-                last_name = documentSnapshot.get("last_name") != null ? documentSnapshot.get("last_name").toString() : null;
-                address = documentSnapshot.get("address") != null ? documentSnapshot.get("address").toString() : null;
-                city =  documentSnapshot.get("city") != null ? documentSnapshot.get("city").toString() : null;
-                phone = documentSnapshot.get("phone") != null ? documentSnapshot.get("phone").toString() : null;
-                profileImageUrl = documentSnapshot.get("imageUrl") != null ? documentSnapshot.get("imageUrl").toString() : Macros.DEFAULT_PROFILE_IMAGE;
-                email = documentSnapshot.get("email") != null ? documentSnapshot.get("email").toString() : null;
-                cover = documentSnapshot.get("cover_photo") != null ? documentSnapshot.get("cover_photo").toString() : Macros.DEFAULT_COVER_PHOTO;
+                age = documentSnapshot.get("age") != null ? Objects.requireNonNull(documentSnapshot.get("age")).toString() : null;
+                first_name = documentSnapshot.get("first_name") != null ? Objects.requireNonNull(documentSnapshot.get("first_name")).toString() : null;
+                last_name = documentSnapshot.get("last_name") != null ? Objects.requireNonNull(documentSnapshot.get("last_name")).toString() : null;
+                address = documentSnapshot.get("address") != null ? Objects.requireNonNull(documentSnapshot.get("address")).toString() : null;
+                city =  documentSnapshot.get("city") != null ? Objects.requireNonNull(documentSnapshot.get("city")).toString() : null;
+                phone = documentSnapshot.get("phone") != null ? Objects.requireNonNull(documentSnapshot.get("phone")).toString() : null;
+                profileImageUrl = documentSnapshot.get("imageUrl") != null ? Objects.requireNonNull(documentSnapshot.get("imageUrl")).toString() : Macros.DEFAULT_PROFILE_IMAGE;
+                email = documentSnapshot.get("email") != null ? Objects.requireNonNull(documentSnapshot.get("email")).toString() : null;
+                cover = documentSnapshot.get("cover_photo") != null ? Objects.requireNonNull(documentSnapshot.get("cover_photo")).toString() : Macros.DEFAULT_COVER_PHOTO;
             }
-        }).addOnCompleteListener(task -> {
+        }).
+                addOnCompleteListener(task -> {
 
             mFirstNameField.setText(first_name);
             mLastNameField.setText(last_name);
@@ -247,34 +222,35 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             setTitle();
             setCollapsingBar();
 
-        }).addOnFailureListener(e -> Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage())));
+        }).
+                addOnFailureListener(e -> Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage())));
 
         appBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
-            if(verticalOffset <= -550)
+            if(verticalOffset <= -300) {
                 toolbar_pic.setVisibility(View.VISIBLE);
-            else
+                mProfileImage.setVisibility(View.INVISIBLE);
+            }
+            else {
                 toolbar_pic.setVisibility(View.INVISIBLE);
-        });
-
-        mProfileImage.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent,1);
-                return true;
+                mProfileImage.setVisibility(View.VISIBLE);
             }
         });
 
-        bgImage.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent,2);
-                return true;
-            }
+        mProfileImage.setOnLongClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent,1);
+            return true;
         });
+
+        bgImage.setOnLongClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent,2);
+            return true;
+        });
+
+        submit.setOnClickListener(v -> saveUserInformation());
     }
 
     private void setNavigationBarButtonsColor(int navigationBarColor) {
@@ -283,7 +259,8 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             int flags = decorView.getSystemUiVisibility();
             if (isColorLight(navigationBarColor)) {
                 flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-            } else {
+            }
+            else {
                 flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
             }
             decorView.setSystemUiVisibility(flags);
@@ -303,7 +280,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
         collapsingToolbar.setCollapsedTitleTypeface(typeface);
         collapsingToolbar.setExpandedTitleTypeface(typeface);
         collapsingToolbar.setCollapsedTitleTextColor(Color.WHITE);
-        collapsingToolbar.setContentScrimColor(getColor(R.color.CompanyProfileScrim));
+        collapsingToolbar.setContentScrimColor(getColor(R.color.SplashScreenBackground));
 
         final ImageView imageView = bgImage;
         Glide.with(getApplicationContext()).asBitmap().load(cover).into(new CustomTarget<Bitmap>() {
@@ -342,7 +319,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
         mAddress = findViewById(R.id.address);
         mCity = findViewById(R.id.city);
         mPhone = findViewById(R.id.phone);
-       // mEmail = findViewById(R.id.email_text);
+        submit = findViewById(R.id.submit_btn);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         UserId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         customerFS = FirebaseFirestore.getInstance().collection(Macros.CUSTOMERS).document(UserId);
@@ -374,12 +351,6 @@ public class CustomerSettingsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        saveUserInformation();
-    }
-
     private void checkBottomLayoutColor(Bitmap bitmap, int height){
 
         int pixel_bottom_left = bitmap.getPixel(50,height - 50 );
@@ -400,4 +371,9 @@ public class CustomerSettingsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        ActivityNavigator.applyPopAnimationsToPendingTransition(this);
+    }
 }

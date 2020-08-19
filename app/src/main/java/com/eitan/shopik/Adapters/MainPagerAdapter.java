@@ -8,7 +8,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.eitan.shopik.CustomerFragments.CustomerHomeFragment;
 import com.eitan.shopik.CustomerFragments.FavoritesFragment;
 import com.eitan.shopik.CustomerFragments.SearchFragment;
-import com.eitan.shopik.CustomerFragments.SuggestedFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
@@ -24,20 +23,22 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 selectedFragment = new FavoritesFragment();
                 break;
+         //   case 2:
+         //       selectedFragment = new SuggestedFragment();
+         //       break;
             case 2:
-                selectedFragment = new SuggestedFragment();
-                break;
-            case 3:
                 selectedFragment = new SearchFragment();
                 break;
             default:
                 selectedFragment = new CustomerHomeFragment();
         }
+       // selectedFragment.setEnterTransition(androidx.transition.R.anim.abc_fade_in);
+       // selectedFragment.setExitTransition(androidx.transition.R.anim.abc_fade_out);
         return selectedFragment;
     }
 
     @Override
     public int getCount() {
-        return 4;
+        return 3;
     }
 }

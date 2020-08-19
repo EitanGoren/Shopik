@@ -1,23 +1,30 @@
 package com.eitan.shopik.Adapters;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -26,17 +33,23 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.eitan.shopik.Items.ShoppingItem;
+import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.ads.formats.UnifiedNativeAdView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -45,7 +58,10 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private static final int TYPE_AD = 0;
     private static final int TYPE_ITEM = 1;
-    MainModel mainModel;
+    private static final int TYPE_FAVORITES = 2;
+    private static final int TYPE_FAVORITES_AD = 3;
+
+    private MainModel mainModel;
     private List<ShoppingItem> AllItemsList;
     private List<ShoppingItem> ItemsList;
     Filter sorting = new Filter() {
@@ -88,6 +104,12 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             else if(constraint.equals("favorites")) {
                 filteredList.sort((o1, o2) -> Boolean.compare(o2.isFavorite(), o1.isFavorite()));
             }
+            else if(constraint.equals("company")) {
+                filteredList.sort((o1, o2) -> o1.getSeller().compareTo(o2.getSeller()));
+            }
+            else if(constraint.equals("brand")) {
+                filteredList.sort((o1, o2) -> o1.getBrand().compareTo(o2.getBrand()));
+            }
 
             FilterResults filterResults = new FilterResults();
             filterResults.values = filteredList;
@@ -112,26 +134,23 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
     };
-
     Filter filter = new Filter() {
         //runs in background thread
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
 
-            ArrayList<ShoppingItem> filteredList = new ArrayList<>(AllItemsList);
+            ArrayList<ShoppingItem> filteredList = new ArrayList<>();
 
             if(constraint.toString().isEmpty()){
                 filteredList.addAll(AllItemsList);
             }
             else {
                 for (ShoppingItem item : AllItemsList) {
-                    StringBuilder description = new StringBuilder();
                     if (item.getName() != null) {
                         for (String word : item.getName()) {
-                            description.append(word).append(" ");
-                        }
-                        if (description.toString().contains(constraint)) {
-                            filteredList.add(item);
+                            if(word.compareToIgnoreCase(constraint.toString()) == 0) {
+                                filteredList.add(item);
+                            }
                         }
                     }
                 }
@@ -159,22 +178,36 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
                 notifyDataSetChanged();
             }
+            notifyDataSetChanged();
         }
     };
     private List<ShoppingItem> items;
+    private String type;
+    private RecyclerView recyclerView;
 
-    public RecyclerGridAdapter(CopyOnWriteArrayList<ShoppingItem> items) {
+    public RecyclerGridAdapter(CopyOnWriteArrayList<ShoppingItem> items, @Nullable String type) {
         this.items = items;
         this.ItemsList = items;
         this.AllItemsList = new CopyOnWriteArrayList<>();
+        this.type = type;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(items.get(position).isAd())
-            return TYPE_AD;
+        if(type == null) {
+            if (items.get(position).isAd())
+                return TYPE_AD;
+            else
+                return TYPE_ITEM;
+        }
+        else if(type.equals("favorites")){
+            if (items.get(position).isAd())
+                return TYPE_FAVORITES_AD;
+            else
+                return TYPE_FAVORITES;
+        }
         else
-            return TYPE_ITEM;
+            return 1;
     }
 
     @NonNull
@@ -182,6 +215,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         mainModel = new ViewModelProvider((ViewModelStoreOwner)parent.getContext()).get(MainModel.class);
+        recyclerView = parent.findViewById(R.id.list_recycler_view);
 
         if(viewType == TYPE_AD) {
             UnifiedNativeAdView view = (UnifiedNativeAdView) LayoutInflater.from(parent.getContext()).
@@ -189,20 +223,36 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             return new ADViewHolder(view);
         }
-        else {
+        else if(viewType == TYPE_ITEM) {
             View view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.grid_clean_item, parent,false);
 
             return new ItemViewHolder(view);
         }
+        else if(viewType == TYPE_FAVORITES) {
+            View view = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.list_item_new, parent,false);
+
+            return new FavoritesViewHolder(view);
+        }
+        else {
+            UnifiedNativeAdView view = (UnifiedNativeAdView) LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.favorites_ad_item, parent,false);
+
+            return new ADViewHolder(view);
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (getItemViewType(position) == TYPE_AD)
+        if (getItemViewType(position) == TYPE_AD )
             ((ADViewHolder) holder).setAd(items.get(position));
-        else
+        else if (getItemViewType(position) == TYPE_ITEM)
             ((ItemViewHolder) holder).setItem(items.get(position));
+        else if (getItemViewType(position) == TYPE_FAVORITES)
+            ((FavoritesViewHolder) holder).setItem(items.get(position));
+        else if (getItemViewType(position) == TYPE_FAVORITES_AD)
+            ((ADViewHolder) holder).setAd(items.get(position));
     }
 
     @Override
@@ -227,7 +277,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return sorting;
     }
 
-    public static class ADViewHolder extends RecyclerView.ViewHolder {
+    private static class ADViewHolder extends RecyclerView.ViewHolder {
 
         private TextView seller_name;
 
@@ -282,7 +332,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 if (temp_ad.getIcon() == null) {
                     ((UnifiedNativeAdView)itemView).getIconView().setVisibility(View.GONE);
-                } else {
+                }
+                else {
                     ((UnifiedNativeAdView)itemView).getIconView().setVisibility(View.VISIBLE);
                     ((CircleImageView)((UnifiedNativeAdView)itemView).
                             getIconView()).
@@ -338,9 +389,10 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public class ItemViewHolder extends RecyclerView.ViewHolder {
+    private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView brand_name,buy,sale,sale_percentge, price,old_price,description,percentage,
+        private TextView brand_name,buy,sale,sale_percentge,
+                price,old_price,description,percentage,
                 percentage_header,seller_name,liked_text;
         private ViewPager viewPager;
         private Button fullscreen;
@@ -375,7 +427,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             StringBuilder item_description = new StringBuilder();
             for(String word: item.getName()) {
-                item_description.append(word.substring(0,1).toUpperCase()).append(word.toLowerCase().substring(1)).append(" ");
+                item_description.append(word).append(" ");
             }
 
             description.setText(item_description);
@@ -529,6 +581,317 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
                 container.removeView((RelativeLayout)object);
             }
+        }
+    }
+
+    private class FavoritesViewHolder extends RecyclerView.ViewHolder {
+
+        Button mNext,mPrev;
+        ImageView imageView,favorite;
+        String user_id ;
+        private TextView brand_name;
+        private TextView buy;
+        private TextView sale;
+        private TextView price;
+        private TextView old_price;
+        private TextView seller_name;
+        private TextView likes;
+        private TextView unlikes;
+        private TextView description;
+        private Button fullscreen;
+        private ImageView mDot1,mDot2,mDot3,mDot4;
+        private CircleImageView logo;
+
+        public FavoritesViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            brand_name = itemView.findViewById(R.id.brand_name);
+            favorite = itemView.findViewById(R.id.list_item_favourite_icon);
+            mNext = itemView.findViewById(R.id.next);
+            mPrev = itemView.findViewById(R.id.previous);
+            imageView = itemView.findViewById(R.id.image_item);
+            unlikes = itemView.findViewById(R.id.list_unlike);
+            likes = itemView.findViewById(R.id.list_like);
+            buy = itemView.findViewById(R.id.list_item_buy_button);
+            fullscreen = itemView.findViewById(R.id.fullscreen_button);
+            price = itemView.findViewById(R.id.updated_price);
+            old_price = itemView.findViewById(R.id.old_price);
+            seller_name = itemView.findViewById(R.id.seller_name);
+            sale = itemView.findViewById(R.id.discount);
+            logo = itemView.findViewById(R.id.seller_logo2);
+            description = itemView.findViewById(R.id.description);
+            user_id = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+            mDot1 = itemView.findViewById(R.id.fullscreen_dot_1);
+            mDot2 = itemView.findViewById(R.id.fullscreen_dot_2);
+            mDot3 = itemView.findViewById(R.id.fullscreen_dot_3);
+            mDot4 = itemView.findViewById(R.id.fullscreen_dot_4);
+        }
+
+        public void setItem(final ShoppingItem item) {
+
+            ItemsList = items;
+
+            final int[] index = {0};
+
+            mDot1.setBackground(getContext().getDrawable(R.drawable.ic_lens_black_24dp));
+            mDot2.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+            mDot3.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+            mDot4.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+
+            likes.setText(String.valueOf(item.getLikes()));
+            unlikes.setText(String.valueOf(item.getUnlikes()));
+
+            likes.setOnLongClickListener(v -> {
+                if (item.getLikedUsers() != null) {
+                    showLikesListDialog(item.getLikedUsers());
+                }
+                else {
+                    Toast.makeText(getContext(), "No Likes yet :)", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            });
+            unlikes.setOnLongClickListener(v -> {
+                if (item.getUnlikedUsers() != null) {
+                    showUnlikesListDialog(item.getUnlikedUsers());
+                }
+                else {
+                    Toast.makeText(getContext(), "No Unlikes yet :)", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            });
+            unlikes.setOnClickListener(v -> {
+                String item_id = item.getId();
+                String item_type = item.getType();
+                String item_gender = item.getGender();
+                updateCustomerDB(item_id,item_type,item_gender,item.getSub_category());
+                updateItemsDB(item_id,item_type,item_gender);
+                // remove(item);
+                Macros.Functions.showSnackbar(recyclerView, "Removed Successfully", Objects.requireNonNull(getContext()),R.drawable.ic_thumb_down_pink);
+            });
+
+            String image = "";
+            for(String img : item.getImages()){
+                if(img != null && !img.equals("")) {
+                    image = img;
+                    break;
+                }
+            }
+            Macros.Functions.GlidePicture(getContext(),image,imageView);
+
+            buy.setOnClickListener(v -> Macros.Functions.buy(getContext(), item.getSite_link()));
+
+            Macros.Functions.GlidePicture(getContext(), item.getSellerLogoUrl(), logo);
+
+            Animation fadein = AnimationUtils.loadAnimation(getContext(),R.anim.fadein);
+
+            mNext.setOnClickListener(v -> {
+                if(index[0] >=0 && index[0] < 3){
+                    index[0]++;
+                    changeTabs(index[0]);
+                    Macros.Functions.GlidePicture(getContext(), item.getImages().get(index[0]), imageView);
+                    imageView.startAnimation(fadein);
+                }
+            });
+            mPrev.setOnClickListener(v -> {
+                if(index[0] > 0 && index[0] <= 3) {
+                    index[0]--;
+                    changeTabs(index[0]);
+                    Macros.Functions.GlidePicture(getContext(), item.getImages().get(index[0]), imageView);
+                    imageView.startAnimation(fadein);
+                }
+            });
+
+            Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
+            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
+
+            if (item.isFavorite()) {
+                favorite.setVisibility(View.VISIBLE);
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.blink_anim);
+                favorite.startAnimation(animation);
+            }
+            else {
+                favorite.setVisibility(View.INVISIBLE);
+            }
+
+            String cur_price;
+            if(item.getSeller().equals("ASOS"))
+                cur_price = new DecimalFormat("##.##").
+                        format(Double.parseDouble(item.getPrice()) * Macros.POUND_TO_ILS) +
+                        Currency.getInstance("ILS").getSymbol();
+            else
+                cur_price = new DecimalFormat("##.##").
+                        format(Double.parseDouble(item.getPrice())) +
+                        Currency.getInstance("ILS").getSymbol();
+
+            if (item.isOutlet() || item.isOn_sale()) {
+                int discount = (int) (100 - Math.ceil(100 * (Double.parseDouble(item.getReduced_price()) / Double.parseDouble(item.getPrice()))));
+
+                if (item.isOn_sale())
+                    sale.setText("SALE" + " -" + discount + "%");
+                else if (item.isOutlet())
+                    sale.setText("OUTLET"  + " -" + discount + "%");
+
+                sale.setVisibility(View.VISIBLE);
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.blink_anim);
+                sale.startAnimation(animation);
+
+                String new_price;
+                if(item.getSeller().equals("ASOS"))
+                    new_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(item.getReduced_price()) * Macros.POUND_TO_ILS) +
+                            Currency.getInstance("ILS").getSymbol();
+                else
+                    new_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(item.getReduced_price())) +
+                            Currency.getInstance("ILS").getSymbol();
+
+                old_price.setVisibility(View.VISIBLE);
+                old_price.setText(cur_price);
+                old_price.setPaintFlags(price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                old_price.setTextColor(Color.BLACK);
+
+                price.setText(new_price);
+                price.setTextColor(Color.RED);
+            }
+            else {
+                sale.setVisibility(View.GONE);
+                old_price.setVisibility(View.INVISIBLE);
+                price.setText(cur_price);
+                price.setTextColor(Color.BLACK);
+            }
+
+            seller_name.setText(item.getSeller());
+            seller_name.setOnClickListener(v -> Macros.Functions.
+                    sellerProfile(getContext(),item.getSellerId(),Pair.create(logo,"company_logo")));
+            logo.setOnClickListener(v -> Macros.Functions.
+                    sellerProfile(getContext(),item.getSellerId(),Pair.create(logo,"company_logo")));
+
+            brand_name.setText(item.getBrand());
+            StringBuilder desc = new StringBuilder();
+            for(String word : item.getName()){
+                desc.append(word).append(" ");
+            }
+            description.setText(desc);
+        }
+
+        public Context getContext() { return itemView.getContext(); }
+
+        private void changeTabs(int position) {
+            switch (position){
+                case 0:
+                    mDot1.setBackground(getContext().getDrawable(R.drawable.ic_lens_black_24dp));
+                    mDot2.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+                    break;
+                case 1:
+                    mDot1.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot2.setBackground(getContext().getDrawable(R.drawable.ic_lens_black_24dp));
+                    mDot3.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+                    break;
+                case 2:
+                    mDot2.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot3.setBackground(getContext().getDrawable(R.drawable.ic_lens_black_24dp));
+                    mDot4.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+                    break;
+                case 3:
+                    mDot3.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot4.setBackground(getContext().getDrawable(R.drawable.ic_lens_black_24dp));
+                    break;
+            }
+        }
+
+        private void updateItemsDB(String item_id,String item_type, String item_gender) {
+
+            Map<String,Object> unliked = new HashMap<>();
+            unliked.put(user_id,null);
+
+            // remove user_id from liked list
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.ITEMS).
+                    child(item_gender).
+                    child(item_type).
+                    child(item_id).
+                    child(Macros.Items.LIKED).
+                    updateChildren(unliked);
+
+            unliked.clear();
+            unliked.put(user_id, Macros.Items.UNLIKED);
+
+            // add user_id to unliked list
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.ITEMS).
+                    child(item_gender).
+                    child(item_type).
+                    child(item_id).
+                    child(Macros.Items.UNLIKED).
+                    updateChildren(unliked);
+        }
+
+        private void updateCustomerDB(String item_id,String item_type, String item_gender, String item_sub_category) {
+            Map<String,Object> map = new HashMap<>();
+            map.put(item_id, null);
+            // remove from liked
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(user_id).
+                    child(item_gender).
+                    child(Macros.Items.LIKED).
+                    child(item_type).
+                    child(item_sub_category).
+                    updateChildren(map);
+
+            map.clear();
+            map.put(item_id,Macros.Items.UNLIKED);
+            // add to unliked
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(user_id).
+                    child(item_gender).
+                    child(Macros.Items.UNLIKED).
+                    child(item_type).
+                    child(item_sub_category).
+                    updateChildren(map);
+        }
+
+        private void showLikesListDialog(List<LikedUser> liked_items){
+
+            Dialog dialog = new Dialog(getContext());
+            LikesListAdapter likedListAdapter = new LikesListAdapter(dialog.getContext(), R.layout.likes_list_item, liked_items);
+            likedListAdapter.notifyDataSetChanged();
+
+            dialog.setContentView(R.layout.likes_list_dialog);
+            TextView header = dialog.findViewById(R.id.likes_header);
+            header.setText( Macros.Items.LIKED + " this item");
+
+            ListView listView = dialog.findViewById(R.id.likes_list);
+
+            header.setCompoundDrawablesRelativeWithIntrinsicBounds(dialog.getContext().getDrawable(R.drawable.ic_thumb_up_seleste),null,null,null);
+            header.setCompoundDrawablePadding(20);
+
+            listView.setAdapter(likedListAdapter);
+
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
+        }
+
+        private void showUnlikesListDialog(List<LikedUser> unliked_items){
+
+            Dialog dialog = new Dialog(getContext());
+            LikesListAdapter unlikedListAdapter = new LikesListAdapter(dialog.getContext(), R.layout.likes_list_item, unliked_items);
+            unlikedListAdapter.notifyDataSetChanged();
+
+            dialog.setContentView(R.layout.likes_list_dialog);
+            TextView header = dialog.findViewById(R.id.likes_header);
+            header.setText( Macros.Items.UNLIKED + " this item");
+
+            ListView listView = dialog.findViewById(R.id.likes_list);
+
+            header.setCompoundDrawablesRelativeWithIntrinsicBounds(dialog.getContext().getDrawable(R.drawable.ic_thumb_down_pink),null,null,null);
+            header.setCompoundDrawablePadding(20);
+
+            listView.setAdapter(unlikedListAdapter);
+
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
         }
     }
 }

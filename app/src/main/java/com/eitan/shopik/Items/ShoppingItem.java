@@ -16,8 +16,8 @@ public class ShoppingItem implements Serializable {
     private ArrayList<LikedUser> likedUsers,unlikedUsers;
 
     private boolean on_sale,isAd,isFavorite,isOutlet,isExclusive,isDummyLastItem;
-    private int percentage,page_num,catagory_num;
-    private long likes,unlikes;
+    private int percentage,catagory_num;
+    private long likes,unlikes,page_num;
     private transient UnifiedNativeAd nativeAd;
 
     private boolean isSeen;
@@ -82,6 +82,10 @@ public class ShoppingItem implements Serializable {
         return brand;
     }
     public void setBrand(String brand){
+        if(brand.equals("")) {
+            this.brand = "";
+            return;
+        }
         String[] pook = brand.split(" ");
         StringBuilder temp = new StringBuilder();
         for (String word : pook) {
@@ -219,10 +223,10 @@ public class ShoppingItem implements Serializable {
         this.catagory_num = catagory_num;
     }
 
-    public int getPage_num() {
+    public long getPage_num() {
         return page_num;
     }
-    public void setPage_num(int page_num) {
+    public void setPage_num(long page_num) {
         this.page_num = page_num;
     }
 

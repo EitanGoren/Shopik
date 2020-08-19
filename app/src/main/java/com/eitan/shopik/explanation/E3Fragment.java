@@ -5,14 +5,12 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.ArraySet;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
@@ -20,9 +18,7 @@ import android.widget.Button;
 import android.widget.Filter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,8 +32,6 @@ import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.OutletsModel;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -55,17 +49,15 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     private GridView gridContainer;
     private boolean isOpened = false;
     private boolean isSearchOpened = false;
-    private OvershootInterpolator overshootInterpolator = new OvershootInterpolator();
-    private ExtendedFloatingActionButton main;
-    private FloatingActionButton search,clear,more;
-    private float translationY = 100f;
-    private LinearLayout options;
     private CardView search_card;
     private SearchView searchView2;
     private String gender;
     private E3GridAdapter gridAdapter;
     private GenderModel model;
     private OutletsModel outletsModel;
+    private TextView header;
+    private TextView count;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,7 +66,16 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_e3, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_e3, container, false);
+
+        header = view.findViewById(R.id.best_sellers2);
+        count = view.findViewById(R.id.items_count);
+        gridContainer = view.findViewById(R.id.grid_view);
+        search_card = view.findViewById(R.id.search_card);
+        searchView2 = view.findViewById(R.id.search_bar);
+
+        return view;
     }
 
     @Override
@@ -84,8 +85,6 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
         model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         outletsModel = new ViewModelProvider(requireActivity()).get(OutletsModel.class);
         gender = model.getGender().getValue();
-        TextView header = requireView().findViewById(R.id.best_sellers2);
-        TextView count = requireView().findViewById(R.id.items_count);
 
         String header_text = "Save on Outlet";
         header.setText(header_text);
@@ -100,7 +99,6 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
         });
 
         gridAdapter = new E3GridAdapter(requireActivity(), R.layout.grid_item, outletsModel.getOutlets().getValue());
-        gridContainer = requireView().findViewById(R.id.grid_view);
         outletsModel.getOutlets().observe(requireActivity(), recyclerItems -> {
             for(int i=1; i<recyclerItems.size()+1; ++i){
                 String text = "(" + i + " items)";
@@ -117,24 +115,25 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 // not moving
-                if(scrollState == SCROLL_STATE_IDLE && !isOpened && !isSearchOpened)
-                    main.extend();
+                if(scrollState == SCROLL_STATE_IDLE && !isOpened && !isSearchOpened){
+
+                }
                 // scrolling
                 else
-                    main.shrink();
+                {
+
+                }
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
         });
-
-        search_card = requireView().findViewById(R.id.search_card);
-        searchView2 = requireView().findViewById(R.id.search_bar);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
         model.getGender().removeObservers(getViewLifecycleOwner());
         outletsModel.getOutlets().removeObservers(getViewLifecycleOwner());
         search_card = null;
@@ -142,70 +141,14 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     }
 
     private void initFab(){
-
-        main = requireView().findViewById(R.id.main_fab);
-        search = requireView().findViewById(R.id.search_icon);
-        more = requireView().findViewById(R.id.more_icon);
-        clear = requireView().findViewById(R.id.clear_search);
-        options = requireView().findViewById(R.id.more_options_layout);
-
-        options.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.floating));
-        main.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.floating));
-
-        search.setTranslationY(translationY);
-        more.setTranslationY(translationY);
-        clear.setTranslationY(translationY);
-
-        search.setAlpha(0f);
-        more.setAlpha(0f);
-        clear.setAlpha(0f);
-
-        main.setOnClickListener(this);
-        more.setOnClickListener(this);
-        search.setOnClickListener(this);
-        clear.setOnClickListener(this);
-    }
-
-    private void switchFab(){
-
-        main.shrink();
-        //open
-        if(!isOpened) {
-            options.setVisibility(View.VISIBLE);
-            search.setVisibility(View.VISIBLE);
-            more.setVisibility(View.VISIBLE);
-            clear.setVisibility(View.VISIBLE);
-
-            main.animate().setInterpolator(overshootInterpolator).rotationBy(180f).setDuration(300).start();
-            search.animate().translationY(0f).alpha(1f).setInterpolator(overshootInterpolator).setDuration(300).start();
-            more.animate().translationY(0f).alpha(1f).setInterpolator(overshootInterpolator).setDuration(300).start();
-            clear.animate().translationY(0f).alpha(1f).setInterpolator(overshootInterpolator).setDuration(300).start();
-        }
-        //close
-        else {
-            main.animate().setInterpolator(overshootInterpolator).rotationBy(180f).setDuration(300).start();
-            search.animate().translationY(translationY).alpha(0f).setInterpolator(overshootInterpolator).setDuration(300).start();
-            more.animate().translationY(translationY).alpha(0f).setInterpolator(overshootInterpolator).setDuration(300).start();
-            clear.animate().translationY(translationY).alpha(0f).setInterpolator(overshootInterpolator).setDuration(300).start();
-
-            Handler handler = new Handler();
-            handler.postDelayed(() -> {
-                options.setVisibility(View.GONE);
-                search.setVisibility(View.GONE);
-                more.setVisibility(View.GONE);
-                clear.setVisibility(View.GONE);
-            },500);
-        }
-        isOpened = !isOpened;
+        //search.setOnClickListener(this);
     }
 
     private void setSearch() {
 
-        TextView count = requireView().findViewById(R.id.items_count);
         //open search view
         if (!isSearchOpened) {
 
-            switchFab();
             searchView2.setVisibility(View.VISIBLE);
             search_card.setVisibility(View.VISIBLE);
             String queryHint = "Search something...";
@@ -235,7 +178,6 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
         else {
             search_card.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.fui_slide_out_left));
             search_card.setVisibility(View.GONE);
-            switchFab();
         }
         isSearchOpened = !isSearchOpened;
     }
@@ -252,20 +194,10 @@ public class E3Fragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.main_fab:
-                switchFab();
-                break;
-            case R.id.search_icon:
-                setSearch();
-                break;
-            case R.id.clear_search:
-                searchView2.setQuery("",true);
-                closeKeyboard();
-                break;
-            case R.id.more_icon:
-                //TODO ADD MORE ITEMS
-                Toast.makeText(getContext(), "Adding " + BULK*ITEMS_PER_PAGE + " items", Toast.LENGTH_SHORT).show();
-                break;
+           // case R.id.clear_search:
+           //     searchView2.setQuery("",true);
+           //     closeKeyboard();
+           //     break;
         }
     }
 

@@ -36,7 +36,9 @@ android {
             v2SigningEnabled true
         }
     }
-
+    buildFeatures {
+        viewBinding true
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -185,4 +187,6 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'org.riversun:okhttp3-cookie-helper:1.0.0'
     implementation 'com.jakewharton:butterknife:6.1.0'
+
+    implementation 'com.agrawalsuneet.androidlibs:dotsloader:1.4'
 }

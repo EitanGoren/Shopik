@@ -1,11 +1,12 @@
 package com.eitan.shopik.ViewModels;
 
+import android.app.Application;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class EntranceViewModel extends ViewModel {
+public class EntranceViewModel extends AndroidViewModel {
 
     private MutableLiveData<ArrayList<RecyclerItem>> liked_items;
     private MutableLiveData<ArrayList<RecyclerItem>> men_liked_items;
@@ -26,7 +27,9 @@ public class EntranceViewModel extends ViewModel {
     private MutableLiveData<Map<String, Object>> men_new_num;
     private MutableLiveData<Map<String, Object>> women_new_num;
 
-    public EntranceViewModel() {
+    public EntranceViewModel(Application application) {
+        super(application);
+
         this.men_new_num = new MutableLiveData<>();
         this.women_new_num = new MutableLiveData<>();
         this.liked_items = new MutableLiveData<>();

@@ -25,6 +25,8 @@ public class ExplanationPagerViewAdapter extends FragmentPagerAdapter {
             default:
                 selectedFragment = new E1Fragment();//WatchedItemsFragment();
         }
+       // selectedFragment.setEnterTransition(androidx.transition.R.anim.abc_fade_in);
+       // selectedFragment.setExitTransition(androidx.transition.R.anim.abc_fade_out);
         return selectedFragment;
     }
 

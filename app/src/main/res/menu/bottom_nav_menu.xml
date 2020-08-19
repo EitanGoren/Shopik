@@ -5,7 +5,7 @@
         android:id="@+id/bottom_swipe"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:icon="@drawable/ic_outline_touch_app_24"
+        android:icon="@drawable/ic_round_home_24"
         android:tag="swipe"
         android:title="Swipe"/>
 
@@ -17,19 +17,19 @@
         android:tag="favorites"
         android:title="Favorites"/>
 
-    <item
-        android:id="@+id/bottom_suggested"
+  <!--  <item
+        android:id="@+id/bottom_wishlist"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:icon="@drawable/ic_outline_thumbs_up_down_24"
-        android:tag="suggested"
-        android:title="Suggested"/>
+        android:icon="@drawable/ic_baseline_playlist_add"
+        android:tag="wishlist"
+        android:title="Wish List"/> -->
 
     <item
         android:id="@+id/bottom_search"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:icon="@drawable/ic_search"
+        android:icon="@drawable/ic_baseline_shopping_basket_24"
         android:tag="search"
         android:title="All items"/>
 </menu>
