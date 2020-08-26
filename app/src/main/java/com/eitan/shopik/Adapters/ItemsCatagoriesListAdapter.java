@@ -104,7 +104,7 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
         sub_header.setText(sub_header_text.toString());
 
         String icon = setmButtonIcon(catagory.getGender(),catagory.getName());
-        Glide.with(parent.getContext()).load(icon).into(mImage);
+        Macros.Functions.GlidePicture(parent.getContext(),icon,mImage);
 
         return convertView;
     }
@@ -171,6 +171,12 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
                 break;
             case Macros.SHOES:
                 icon = gender.equals(Macros.CustomerMacros.MEN) ? Macros.Items.MENS_SHOES_IC : Macros.Items.WOMENS_SHOES_IC;
+                break;
+            case Macros.ACCESSORIES:
+                icon = gender.equals(Macros.CustomerMacros.MEN) ? Macros.Items.MEN_ACCESSORIES_IC : Macros.Items.WOMEN_ACCESSORIES_IC;
+                break;
+            case Macros.LINGERIE:
+                icon = gender.equals(Macros.CustomerMacros.MEN) ? Macros.Items.MEN_UNDERWEAR_IC : Macros.Items.WOMEN_LINGERIE_IC;
                 break;
         }
         return icon;

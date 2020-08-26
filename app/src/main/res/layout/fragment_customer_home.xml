@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F4F4F4"
     android:elevation="5dp">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -12,38 +13,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
+        android:background="#F4F4F4"
         app:liftOnScroll="true">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
+        <TextView
+            android:id="@+id/percentage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#4760FF"
-            android:fitsSystemWindows="true"
-            android:minHeight="45dp"
-            app:contentScrim="#4760FF"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:statusBarScrim="#4760FF">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:fitsSystemWindows="true"
-                app:layout_collapseMode="pin">
-
-                <TextView
-                    android:id="@+id/cards_count"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textAlignment="center"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"/>
-
-            </androidx.appcompat.widget.Toolbar>
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+            android:layout_height="40dp"
+            android:fontFamily="@font/roboto_thin"
+            android:paddingTop="5dp"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            android:gravity="center"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -82,7 +65,7 @@
                 android:elevation="20dp"
                 android:padding="40dp"
                 android:text="@string/items_run_out"
-                android:textColor="#00BCD4"
+                android:textColor="@color/SplashScreenBackground"
                 android:textSize="50sp"
                 android:textStyle="italic"
                 android:translationZ="20dp"

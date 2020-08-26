@@ -1,12 +1,15 @@
 package com.eitan.shopik.Customer;
 
+import android.app.SearchManager;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,7 +21,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -48,7 +54,6 @@ import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.progressindicator.ProgressIndicator;
@@ -63,6 +68,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.DataNode;
@@ -99,26 +105,22 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private FirebaseAuth mAuth;
     private String customerFirstName, imageUrl;
     private String userId;
-    private String cover;
+    private String cover,image;
     private BottomNavigationView bottomNavigationView;
     private ValueEventListener valueEventListener;
     private UnifiedNativeAd tempAd;
-    private Pair<Integer,Integer> cat_num;
     private com.facebook.ads.InterstitialAd interstitialAd;
-    public static final int NUM_OF_ADS = 15;
+    public static final int NUM_OF_ADS = 10;
     private DrawerLayout drawerLayout;
     private View hView;
     private NavigationView navigationView;
     private ImageView nav_bg;
     private ViewPager mainPager;
     private MutableLiveData<Boolean> isFinished;
-    private MutableLiveData<Integer> totalItems;
-    private MutableLiveData<Integer> currentItem;
-    private int count = 0;
     private int item_count = 0;
     private int total_items_found = 0;
     private Map<String,String> favs;
-    private ValueEventListener pook;
+    private ValueEventListener pageEventListener;
     private ValueEventListener fav_single_listener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -130,9 +132,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
         //Google Ads
-        List<String> testDeviceIds = Collections.singletonList("7255B1C36174A2C33091060576730302");
-        RequestConfiguration configuration = new RequestConfiguration.
-                Builder().setTestDeviceIds(testDeviceIds).build();
+        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
+        RequestConfiguration configuration = new RequestConfiguration.Builder().
+                setTestDeviceIds(testDeviceIds).build();
         MobileAds.setRequestConfiguration(configuration);
 
         //Facebook Ads
@@ -146,6 +148,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         init();
 
         navigationView.setOnClickListener(v -> getCoverPic());
+
+        TextView copyright = findViewById(R.id.nav_copyright_text);
+        copyright.setText("Shopik Version 1.0 " + System.lineSeparator() + getResources().getString(R.string.copy_right));
 
         getAllCompaniesInfo();
         for(String company : Macros.CompanyNames) {
@@ -221,7 +226,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         customerDB.addValueEventListener(valueEventListener);
 
         fav_single_listener = new ValueEventListener() {
-
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()) {
@@ -233,12 +237,12 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d(Macros.TAG," fav_single_listener failed: " + error.getMessage());
             }
         };
         getCustomerFavorites();
 
-        pook = new ValueEventListener() {
+        pageEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -251,11 +255,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled()" + databaseError.getMessage());
+                Log.d(Macros.TAG, "CustomerHomeFragment::pook " + databaseError.getMessage());
             }
 
         };
-        pageListener.addValueEventListener(pook);
+        pageListener.addValueEventListener(pageEventListener);
 
         mainModel.getCurrent_page().observe(this, page -> {
 
@@ -272,28 +276,16 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
         });
 
-        // CALCULATE TOTAL ITEMS COUNT
-        totalItems.observe(this, integer -> {
-            count++;
-            if(count < 4){
-                total_items_found += integer;
-            }
-        });
+        mainModel.getCurrentItem().observe(this, integerBooleanPair -> {
+            int progress = (int) (((float) integerBooleanPair.first / (float) total_items_found)*100);
+            progressIndicator.setProgress(progress);
+            mainModel.getTotalItems().postValue(progress);
 
-        currentItem.observe(this, integer -> {
-                if (integer < total_items_found) {
-                    int pook = (int) (((float) integer / (float) total_items_found)*100);
-                    progressIndicator.setProgress(pook);
-                }
-                else {
-                    if (interstitialAd != null && interstitialAd.isAdLoaded()) {
-                        // Ad was loaded, show it!
-                        interstitialAd.show();
-                    }
-                    progressIndicator.setVisibility(View.GONE);
-                    item_count = 0;
-                    total_items_found = 0;
-                }
+            if(progress == 100){
+                progressIndicator.setVisibility(View.GONE);
+                item_count = 0;
+                total_items_found = 0;
+            }
         });
 
         getCoverPic();
@@ -303,8 +295,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         setViewPager();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            switch(item.getItemId())
-            {
+
+            switch(item.getItemId()) {
                 case R.id.bottom_swipe:
                     mainPager.setCurrentItem(0);
                     break;
@@ -317,24 +309,30 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     mainPager.setCurrentItem(2);
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected Value "+ item.getItemId());
+                    throw new IllegalStateException( "Unexpected Value " + item.getItemId());
             }
             return true;
         });
-
     }
 
     private void getCoverPic () {
+
         String userid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        FirebaseFirestore.getInstance().collection(Macros.CUSTOMERS).document(userid).get().
+
+        FirebaseFirestore.getInstance().
+                collection(Macros.CUSTOMERS).
+                document(userid).get().
                 addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         cover = documentSnapshot.get("cover_photo") != null ?
                                 Objects.requireNonNull(documentSnapshot.get("cover_photo")).toString() :
                                 Macros.DEFAULT_COVER_PHOTO;
+                        image = documentSnapshot.get("imageUrl") != null ?
+                                Objects.requireNonNull(documentSnapshot.get("imageUrl")).toString() :
+                                Macros.DEFAULT_PROFILE_IMAGE;
                     }
-                }).addOnCompleteListener(task -> Macros.Functions.
-                        GlidePicture(getApplicationContext(), cover, nav_bg));
+                }).addOnCompleteListener(task ->
+                Macros.Functions.GlidePicture(getApplicationContext(), cover, nav_bg));
     }
 
     private void getCustomerFavorites() {
@@ -375,20 +373,27 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onPageSelected(int position) {
-                switch(position)
-                {
+                switch(position) {
+
                     case 0:
                         bottomNavigationView.getMenu().findItem(R.id.bottom_swipe).setChecked(true);
+                        bottomNavigationView.getMenu().findItem(R.id.bottom_swipe).
+                                setIconTintList(ColorStateList.valueOf(Color.RED));
                         break;
                     case 1:
                         bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setNumber(0);
                         bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setVisible(false);
                         bottomNavigationView.getMenu().findItem(R.id.bottom_favorites).setChecked(true);
+                        bottomNavigationView.getMenu().findItem(R.id.bottom_favorites).
+                                setIconTintList(ColorStateList.valueOf(Color.RED));
                         break;
                     case 2:
                         bottomNavigationView.getMenu().findItem(R.id.bottom_search).setChecked(true);
+                        bottomNavigationView.getMenu().findItem(R.id.bottom_search).
+                                setIconTintList(ColorStateList.valueOf(Color.RED));
                         break;
                     default:
                         throw new IllegalStateException("Unexpected Value "+ position);
@@ -430,12 +435,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         bottomNavigationView = findViewById(R.id.botton_nav);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        hView =  navigationView.getHeaderView(0);
+        hView = navigationView.getHeaderView(0);
 
         isFinished = new MutableLiveData<>();
-        totalItems = new MutableLiveData<>();
-        currentItem = new MutableLiveData<>();
-
         favs = new HashMap<>();
 
         Bundle bundle = getIntent().getBundleExtra("bundle");
@@ -487,7 +489,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 child(item_sub_category);
 
         drawerLayout = findViewById(R.id.drawerLayout);
-        MaterialToolbar toolbar = findViewById(R.id.customer_toolbar);
+        Toolbar toolbar = findViewById(R.id.customer_toolbar);
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout, toolbar,
@@ -498,6 +500,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     }
 
     private void loadCustomerInfo() {
+
+
 
         getCoverPic();
 
@@ -524,7 +528,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             greeting = "Good night, ";
 
         String first_name = customerFirstName.split(" ")[0];
-        String msg = "";
+        String msg;
 
         if (first_name.length() > 5)
              msg = greeting + System.lineSeparator() + first_name;
@@ -563,6 +567,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             case R.id.nav_orders:
                 Toast.makeText(this, "my orders", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.nav_website:
+                Macros.Functions.buy(CustomerMainActivity.this,"https://eitangoren.github.io");
         }
         if (selectedIntent != null) {
             startActivity(selectedIntent);
@@ -572,7 +578,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getCompanyInfo(final ShoppingItem shoppingItem,int size) {
+    private void getCompanyInfo(final ShoppingItem shoppingItem, int size) {
 
         final String company_id = shoppingItem.getSellerId();
         if (Objects.requireNonNull(mainModel.getCompanies_info().getValue()).containsKey(company_id)) {
@@ -584,7 +590,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     getValue().get(company_id)).get("logo_url"))).toString());
 
             mainModel.addItem(shoppingItem,size);
-            currentItem.postValue(++item_count);
+            Pair<Integer,Boolean> pair = Pair.create(++item_count,shoppingItem.isSeen());
+            mainModel.getCurrentItem().postValue(pair);
 
             if (favs.containsKey(shoppingItem.getId())){
                 mainModel.addFavorite(shoppingItem);
@@ -732,7 +739,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     protected void onStop() {
         super.onStop();
         customerDB.removeEventListener(valueEventListener);
-        pageListener.removeEventListener(pook);
+        pageListener.removeEventListener(pageEventListener);
 
         mainModel.getCustomers_info().removeObservers(this);
         mainModel.getCompanies_info().removeObservers(this);
@@ -743,6 +750,12 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             interstitialAd = null;
         }
 
+       // mainModel.clearAds();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         mainModel.clearAds();
     }
 
@@ -777,7 +790,12 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             }
 
             @Override
-            public void onAdLoaded(Ad ad) {}
+            public void onAdLoaded(Ad ad) {
+                if (interstitialAd != null && interstitialAd.isAdLoaded()) {
+                    // Ad was loaded, show it!
+                    interstitialAd.show();
+                }
+            }
 
             @Override
             public void onAdClicked(Ad ad) {
@@ -791,7 +809,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         });
 
         // Load a new interstitial.
-        interstitialAd.loadAd(EnumSet.of(CacheFlag.IMAGE));
+        interstitialAd.loadAd(EnumSet.of(CacheFlag.VIDEO));
     }
 
     @Override
@@ -1008,7 +1026,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            totalItems.postValue(values[0]);
+            //totalItems.postValue(values[0]);
+            total_items_found += values[0];
         }
 
         @Override
@@ -1027,7 +1046,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         @Override
         protected Void doInBackground(Long... page_num) {
 
-            cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
+            Pair<Integer, Integer> cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
 
             if(cat_num != null){
                 try {
@@ -1149,7 +1168,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            totalItems.postValue(values[0]);
+            //totalItems.postValue(values[0]);
+            total_items_found += values[0];
         }
 
         @Override
@@ -1166,8 +1186,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         @Override
         protected Void doInBackground(Long... page_num) {
 
-            String cat = Macros.Functions.translateCategoryTo247(item_type);
-            String sub_cat = Macros.Functions.translateSubCategoryTo247(item_sub_category);
+            String cat = Macros.Functions.translateCategoryTo247(item_type,item_gender);
+            String sub_cat = Macros.Functions.translateSubCategoryTo247(item_sub_category,item_gender);
 
             if(cat != null && sub_cat != null) {
                 try {
@@ -1286,7 +1306,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            totalItems.postValue(values[0]);
+            total_items_found += values[0];
         }
 
         @Override
@@ -1321,9 +1341,19 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                             ShoppingItem shoppingItem = new ShoppingItem();
 
-                            String id = node.childNode(0).attr("data-product-sku");
-                            String link = "https://www.castro.com/" + id;
-                            Document item_doc = Jsoup.connect(link).get();
+                            String id = node.childNode(0).childNode(4).childNode(0).childNode(0).childNode(0).childNode(0).attr("data-product-sku");
+                            String link = node.childNode(0).childNode(4).childNode(0).childNode(0).childNode(0).childNode(0).attr("href");
+
+                            Document item_doc = null;
+                            try {
+                                item_doc = Jsoup.connect(link).get();
+                            }
+                            catch(HttpStatusException se){
+                                Log.d(Macros.TAG,"404: " + se.getUrl());
+                            }
+                            if(item_doc == null)
+                                continue;
+
                             Elements images_doc = item_doc.getElementsByClass("product_gallery");
 
                             String price = "";
@@ -1388,7 +1418,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            totalItems.postValue(values[0]);
+            total_items_found += values[0];
+           // totalItems.postValue(values[0]);
         }
 
         @Override
@@ -1396,79 +1427,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             super.onPostExecute(aVoid);
             isFinished.postValue(true);
             Log.d(Macros.TAG,"getCASTRO FINISHED");
-        }
-    }
-
-    private class getShein extends AsyncTask <Integer, Integer, Void> {
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected Void doInBackground(Integer... page_num) {
-
-            cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
-            String cat = Macros.Functions.translateCategoryToShein(item_type,item_gender);
-
-            try {
-                Document document = Jsoup.connect("https://il.shein.com/" + item_gender.toLowerCase()
-                        + "/" + cat + ".html").get();
-
-                Elements elements = document.
-                        getElementsByClass("row j-expose__container-list j-product-list-info j-da-event-box");
-
-                Elements pook = elements.get(0).getElementsByAttribute("data-expose-id");
-
-                int i=0;
-                for (Element elem : pook) {
-                    ShoppingItem shoppingItem = new ShoppingItem();
-                    ++i;
-                    Elements tyty = elem.getElementsByClass("c-goodsitem__ratiowrap");
-                    Elements prices = elem.getElementsByClass("btm-price-ctn");
-
-                    String img1 = tyty.get(1).childNode(3).childNode(1).attr("data-src");
-                    String img2 = tyty.get(1).childNode(3).childNode(3).attr("data-src");
-                    ArrayList<String> images = new ArrayList<>();
-                    images.add(img1);
-                    images.add(img2);
-                    images.add(img1);
-                    images.add(img2);
-
-                    String id = tyty.get(1).childNode(3).attr("data-id");
-                    String description = tyty.get(1).childNode(3).attr("data-title");
-                    ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
-
-                    String link = "https://il.shein.com/" + elem.getElementsByClass("c-goodsitem__ratiowrap").
-                            get(1).childNode(3).attr("href");
-
-                   // String price =
-
-                    shoppingItem.setImages(images);
-                    shoppingItem.setBrand("Shein");
-                    shoppingItem.setType(item_type);
-                    shoppingItem.setGender(item_gender);
-                    shoppingItem.setSeller("Shein");
-                    shoppingItem.setSub_category(cat);
-                  //  shoppingItem.setSellerId("P6qfLsJbruQZbciTMF4oWnIjuZ63");
-                    shoppingItem.setId(id);
-                    shoppingItem.setName(name);
-                    shoppingItem.setSite_link(link);
-                    shoppingItem.setVideo_link(null);
-                    shoppingItem.setExclusive(name.contains("exclusive"));
-                    shoppingItem.setSeen(mainModel.isSwiped(id));
-
-                   // getLikes(shoppingItem,pook.size());
-                }
-            }
-            catch (Exception e){
-                Log.d(Macros.TAG,"getShein() " + e.getMessage());
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            progressIndicator.setProgress((values[0] / values[1]) * 100);
         }
     }
 }

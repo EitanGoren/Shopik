@@ -7,18 +7,11 @@
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/colorTransparentWhite">
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="450dp"
-        android:layout_gravity="top"
-        app:cardBackgroundColor="@color/colorTransparentWhite"
-        app:cardCornerRadius="25dp"
-        app:cardUseCompatPadding="true">
-
         <RelativeLayout
             android:id="@+id/info_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="450dp"
+            android:layout_gravity="top">
 
             <com.google.android.gms.ads.formats.MediaView
                 android:id="@+id/ad_media"
@@ -27,7 +20,7 @@
                 android:layout_above="@id/item_info_social"
                 android:layout_below="@id/ad_body"
                 android:background="#ffffff"
-                android:scaleType="fitXY" />
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/ad_brand_name"
@@ -41,7 +34,7 @@
                 android:paddingEnd="8dp"
                 android:paddingBottom="5dp"
                 android:textAlignment="center"
-                android:textColor="#FFFFFF"
+                android:textColor="#000000"
                 android:textSize="17sp"
                 android:textStyle="bold" />
 
@@ -86,15 +79,16 @@
                 <Button
                     android:id="@+id/ad_action_button"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="45dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentBottom="true"
                     android:fontFamily="@font/nunito_bold"
                     android:text="click"
                     android:textAlignment="center"
-                    android:textColor="#ffffff"
-                    android:textSize="14sp"
+                    android:theme="@style/GridBuyButtons"
+                    android:textColor="#6A6A6A"
+                    android:textSize="16sp"
                     tools:visibility="visible" />
 
                 <TextView
@@ -131,7 +125,7 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@id/ad_logo"
                 android:layout_alignStart="@id/ad_logo"
-                android:layout_alignEnd="@id/ad_logo"
+                android:layout_marginStart="-10dp"
                 android:isIndicator="true"
                 android:numStars="5"
                 android:padding="5dp"
@@ -140,8 +134,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ad_logo"
-                android:layout_width="85dp"
-                android:layout_height="85dp"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="bottom|end"
@@ -153,7 +147,5 @@
                 app:civ_border_width="2dp" />
 
         </RelativeLayout>
-
-    </com.google.android.material.card.MaterialCardView>
 
 </com.google.android.gms.ads.formats.UnifiedNativeAdView>

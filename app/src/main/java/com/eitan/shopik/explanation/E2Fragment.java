@@ -127,7 +127,6 @@ public class E2Fragment extends Fragment {
         sub_jewellery = new ArrayList<>();
         sub_lingerie = new ArrayList<>();
         sub_accessories = new ArrayList<>();
-
     }
 
     private void setCategories(){
@@ -150,7 +149,7 @@ public class E2Fragment extends Fragment {
             addJacketsSubCategory("leather", Macros.Items.MEN_BOMBER_JACKETS_RES, Macros.CustomerMacros.MEN);
             addJacketsSubCategory("denim", Macros.Items.MEN_LEATHER_JACKETS_RES, Macros.CustomerMacros.MEN);
             addJacketsSubCategory("trench", Macros.Items.MEN_TRENCH_JACKETS_RES, Macros.CustomerMacros.MEN);
-            addJacketsSubCategory("puffer", Macros.Items.MEN_BOMBER_JACKETS_RES, Macros.CustomerMacros.MEN);
+            addJacketsSubCategory("puffer", Macros.Items.MEN_PUFFER_JACKETS_RES, Macros.CustomerMacros.MEN);
 
             addJeansSubCategory("slim", Macros.Items.MEN_SLIM_JEANS_RES, Macros.CustomerMacros.MEN);
             addJeansSubCategory("straight", Macros.Items.MEN_STRAIGHT_JEANS_RES, Macros.CustomerMacros.MEN);
@@ -177,6 +176,7 @@ public class E2Fragment extends Fragment {
             addShirtsSubCategory("t-shirt", Macros.Items.MEN_TSHIRT_RES,Macros.CustomerMacros.MEN);
             addShirtsSubCategory("oxford", Macros.Items.MEN_OXFORD_RES,Macros.CustomerMacros.MEN);
             addShirtsSubCategory("slim-fit", Macros.Items.MEN_MUSCLE_RES, Macros.CustomerMacros.MEN);
+            addShirtsSubCategory("tank", Macros.Items.MEN_TANK_RES, Macros.CustomerMacros.MEN);
 
             addWatchesSubCategory("smart",Macros.Items.MEN_SMART_WATCH_RES,Macros.CustomerMacros.MEN);
             addWatchesSubCategory("leather",Macros.Items.MEN_LEATHER_WATCH_RES,Macros.CustomerMacros.MEN);
@@ -184,6 +184,8 @@ public class E2Fragment extends Fragment {
             addWatchesSubCategory("digital",Macros.Items.MEN_DIGITAL_RES,Macros.CustomerMacros.MEN);
             addWatchesSubCategory("mesh",Macros.Items.MEN_MESH_WATCH_RES,Macros.CustomerMacros.MEN);
             addWatchesSubCategory("bracelet",Macros.Items.MEN_BRACELET_WATCH_RES,Macros.CustomerMacros.MEN);
+            addWatchesSubCategory("stylish",Macros.Items.MEN_WATCHES_RES,Macros.CustomerMacros.MEN);
+
 
             addSwimwearSubCategory("shorts", Macros.Items.MEN_SHORTS_SWIM_RES,Macros.CustomerMacros.MEN);
             addSwimwearSubCategory("co-ord", Macros.Items.MEN_CO_ORD_SWIM_RES,Macros.CustomerMacros.MEN);
@@ -210,28 +212,28 @@ public class E2Fragment extends Fragment {
             addBagsSubCategory("cross body",Macros.Items.CROSS_RES);
             addBagsSubCategory("tote",Macros.Items.TOTE_RES);
 
-            addDressSubCategory("jumper",Macros.Items.MINI_DRESSES_RES);
+            addDressSubCategory("jumper",Macros.Items.JUMPER_DRESS_RES);
             addDressSubCategory("midi",Macros.Items.MIDI_DRESS_RES);
-            addDressSubCategory("wedding",Macros.Items.TIE_WAIST_DRESS_RES);
-            addDressSubCategory("party",Macros.Items.PETITE_DRESS_RES);
-            addDressSubCategory("maxi",Macros.Items.SUNDRESS_DRESS_RES);
-            addDressSubCategory("evening",Macros.Items.SUNDRESS_DRESS_RES);
+            addDressSubCategory("wedding",Macros.Items.WEDDING_DRESS_RES);
+            addDressSubCategory("party",Macros.Items.PARTY_DRESS_RES);
+            addDressSubCategory("maxi",Macros.Items.MAXI_DRESS_RES);
+            addDressSubCategory("evening",Macros.Items.EVENING_DRESS_RES);
             addDressSubCategory("mini",Macros.Items.MINI_DRESSES_RES);
 
             addJacketsSubCategory("leather",Macros.Items.WOMEN_LEATHER_JACKETS_RES,Macros.CustomerMacros.WOMEN);
-            addJacketsSubCategory("winter",Macros.Items.WOMEN_DENIM_JACKETS_RES,Macros.CustomerMacros.WOMEN);
+            addJacketsSubCategory("denim",Macros.Items.WOMEN_DENIM_JACKETS_RES,Macros.CustomerMacros.WOMEN);
             addJacketsSubCategory("coat",Macros.Items.WOMEN_COAT_JACKETS_RES,Macros.CustomerMacros.WOMEN);
-            addJacketsSubCategory("teddy",Macros.Items.WOMEN_COAT_JACKETS_RES,Macros.CustomerMacros.WOMEN);
-            addJacketsSubCategory("puffer",Macros.Items.WOMEN_BOMBER_JACKETS_RES,Macros.CustomerMacros.WOMEN);
-            addJacketsSubCategory("jacket",Macros.Items.WOMEN_BOMBER_JACKETS_RES,Macros.CustomerMacros.WOMEN);
+            addJacketsSubCategory("teddy",Macros.Items.WOMEN_TEDDY_JACKETS_RES,Macros.CustomerMacros.WOMEN);
+            addJacketsSubCategory("puffer",Macros.Items.WOMEN_PUFFER_JACKETS_RES,Macros.CustomerMacros.WOMEN);
+            addJacketsSubCategory("jacket",Macros.Items.WOMEN_JACKET_JACKETS_RES,Macros.CustomerMacros.WOMEN);
 
-            addShoesSubCategory("sandals",Macros.Items.FLAT_SANDALS_RES,Macros.CustomerMacros.WOMEN);
+            addShoesSubCategory("sandals",Macros.Items.WOMEN_SANDALS_RES,Macros.CustomerMacros.WOMEN);
             addShoesSubCategory("boots",Macros.Items.WOMEN_BOOTS_RES,Macros.CustomerMacros.WOMEN);
             addShoesSubCategory("heels",Macros.Items.WOMEN_HEELS_RES,Macros.CustomerMacros.WOMEN);
             addShoesSubCategory("sliders",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
-            addShoesSubCategory("slippers",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
-            addShoesSubCategory("flat shoes",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
-            addShoesSubCategory("trainers",Macros.Items.WOMEN_SLIDERS_RES,Macros.CustomerMacros.WOMEN);
+            addShoesSubCategory("slippers",Macros.Items.WOMEN_SLIPPERS_RES,Macros.CustomerMacros.WOMEN);
+            addShoesSubCategory("flat shoes",Macros.Items.FLAT_SHOES_RES,Macros.CustomerMacros.WOMEN);
+            addShoesSubCategory("trainers",Macros.Items.WOMEN_TRAINERS_RES,Macros.CustomerMacros.WOMEN);
 
             addJeansSubCategory("slim", Macros.Items.WOMEN_SLIM_JEANS_RES, Macros.CustomerMacros.WOMEN);
             addJeansSubCategory("straight", Macros.Items.WOMEN_STRAIGHT_JEANS_RES, Macros.CustomerMacros.WOMEN);
@@ -251,23 +253,24 @@ public class E2Fragment extends Fragment {
             addGlassesSubCategory("cat-eye", Macros.Items.WOMEN_CATEYE_GLASSES_RES,Macros.CustomerMacros.WOMEN);
             addGlassesSubCategory("aviator", Macros.Items.WOMEN_AVIATOR_GLASSES_RES,Macros.CustomerMacros.WOMEN);
 
-            addShirtsSubCategory("hoodies", Macros.Items.WOMEN_LONG_RES,Macros.CustomerMacros.WOMEN);
-            addShirtsSubCategory("sweatshirts", Macros.Items.WOMEN_TANK_RES,Macros.CustomerMacros.WOMEN);
+            addShirtsSubCategory("hoodies", Macros.Items.WOMEN_HOODIES_RES,Macros.CustomerMacros.WOMEN);
+            addShirtsSubCategory("sweatshirts", Macros.Items.WOMEN_SWEATSHIRTS_RES,Macros.CustomerMacros.WOMEN);
             addShirtsSubCategory("t-shirts", Macros.Items.WOMEN_TSHIRT_RES,Macros.CustomerMacros.WOMEN);
-            addShirtsSubCategory("blouses", Macros.Items.WOMEN_LONG_RES,Macros.CustomerMacros.WOMEN);
-            addShirtsSubCategory("camis", Macros.Items.WOMEN_TANK_RES,Macros.CustomerMacros.WOMEN);
-            addShirtsSubCategory("summer-top", Macros.Items.WOMEN_TSHIRT_RES,Macros.CustomerMacros.WOMEN);
-            addShirtsSubCategory("evening", Macros.Items.WOMEN_TSHIRT_RES,Macros.CustomerMacros.WOMEN);
-            addShirtsSubCategory("tanks", Macros.Items.WOMEN_TSHIRT_RES,Macros.CustomerMacros.WOMEN);
-            addShirtsSubCategory("leotards", Macros.Items.WOMEN_TSHIRT_RES,Macros.CustomerMacros.WOMEN);
+            addShirtsSubCategory("blouses", Macros.Items.WOMEN_BLOUSES_RES,Macros.CustomerMacros.WOMEN);
+            addShirtsSubCategory("camis", Macros.Items.WOMEN_CAMIS_RES,Macros.CustomerMacros.WOMEN);
+            addShirtsSubCategory("summer-top", Macros.Items.WOMEN_SUMMER_TOP_RES,Macros.CustomerMacros.WOMEN);
+            addShirtsSubCategory("evening", Macros.Items.WOMEN_EVENING_RES,Macros.CustomerMacros.WOMEN);
+            addShirtsSubCategory("tanks", Macros.Items.WOMEN_TANKS_RES,Macros.CustomerMacros.WOMEN);
+            addShirtsSubCategory("leotards", Macros.Items.WOMEN_LEOTARDS_RES,Macros.CustomerMacros.WOMEN);
 
-            addWatchesSubCategory("smart",Macros.Items.WOMEN_DIGITAL_RES,Macros.CustomerMacros.WOMEN);
+            addWatchesSubCategory("smart",Macros.Items.WOMEN_SMART_RES,Macros.CustomerMacros.WOMEN);
             addWatchesSubCategory("digital",Macros.Items.WOMEN_DIGITAL_RES,Macros.CustomerMacros.WOMEN);
+            addWatchesSubCategory("stylish",Macros.Items.WOMEN_WATCHES_RES,Macros.CustomerMacros.WOMEN);
 
             addSwimwearSubCategory("bikini", Macros.Items.WOMEN_BIKINI_RES,Macros.CustomerMacros.WOMEN);
             addSwimwearSubCategory("swimsuit", Macros.Items.WOMEN_SWIMSUIT_RES,Macros.CustomerMacros.WOMEN);
-            addSwimwearSubCategory("one-piece", Macros.Items.WOMEN_SWIMSUIT_RES,Macros.CustomerMacros.WOMEN);
-            addSwimwearSubCategory("swimwear", Macros.Items.WOMEN_SWIMSUIT_RES,Macros.CustomerMacros.WOMEN);
+            addSwimwearSubCategory("one-piece", Macros.Items.WOMEN_ONE_PIECE_RES,Macros.CustomerMacros.WOMEN);
+            addSwimwearSubCategory("swimwear", Macros.Items.WOMEN_SWIMMWEAR_RES,Macros.CustomerMacros.WOMEN);
 
             Catagory bags = new Catagory(Macros.BAG, gender, sub_bags);
             Catagory dresses = new Catagory(Macros.DRESS, gender, sub_dress);

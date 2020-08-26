@@ -23,4 +23,12 @@
                 android:title="Log Out"/>
         </menu>
     </item>
+    <item android:title="About">
+        <menu>
+            <item
+                android:id="@+id/nav_website"
+                android:icon="@drawable/ic_baseline_http_24"
+                android:title="Visit My Website"/>
+        </menu>
+    </item>
 </menu>

@@ -2,6 +2,7 @@ package com.eitan.shopik.ViewModels;
 
 import android.os.Build;
 import android.util.ArraySet;
+import android.util.Pair;
 
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
@@ -30,8 +31,14 @@ public class MainModel extends ViewModel {
     private MutableLiveData<PreferredItem> preferred;
     private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> favorites;
     private MutableLiveData<Long> current_page;
+    private MutableLiveData<Pair<Integer,Boolean>> currentItem;
+    private MutableLiveData<Integer> totalItems;
 
     public MainModel(){
+
+        currentItem = new MutableLiveData<>();
+
+        totalItems = new MutableLiveData<>();
 
         this.preferred = new MutableLiveData<>();
         shoppingAdsArray = new ArrayList<>();
@@ -152,5 +159,16 @@ public class MainModel extends ViewModel {
     }
     public void clearFavorite(){
         Objects.requireNonNull(this.favorites.getValue()).clear();
+    }
+
+    //CURRENT ITEM FETCH
+    public MutableLiveData<Pair<Integer,Boolean>> getCurrentItem() {
+        return currentItem;
+    }
+
+    //TOTAL ITEMS NUM
+
+    public MutableLiveData<Integer> getTotalItems() {
+        return totalItems;
     }
 }

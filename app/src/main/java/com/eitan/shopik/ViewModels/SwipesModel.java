@@ -16,7 +16,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class SwipesModel extends AndroidViewModel {
 
     private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> items;
-    private MutableLiveData<Map<String,String>> last_item_id;
 
     public SwipesModel(Application application){
         super(application);
@@ -26,7 +25,7 @@ public class SwipesModel extends AndroidViewModel {
         this.items.setValue(items);
 
         Map<String,String> map = new HashMap<>();
-        last_item_id = new MutableLiveData<>();
+        MutableLiveData<Map<String, String>> last_item_id = new MutableLiveData<>();
         last_item_id.setValue(map);
     }
 
@@ -45,4 +44,6 @@ public class SwipesModel extends AndroidViewModel {
     public void removeFromItems(){
         Objects.requireNonNull(this.items.getValue()).remove(0);
     }
+
+
 }

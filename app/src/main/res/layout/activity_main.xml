@@ -19,18 +19,19 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/botton_nav"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="65dp"
             android:layout_alignParentBottom="true"
-            android:clipToPadding="true"
             android:fitsSystemWindows="true"
             android:paddingBottom="2dp"
-            android:translationZ="20dp"
-            app:elevation="25dp"
-            app:itemIconSize="27sp"
-            app:itemIconTint="#000000"
+            android:translationZ="5dp"
+            app:elevation="20dp"
+            app:itemIconSize="28sp"
             app:itemRippleColor="@color/SplashScreenBackground"
-            app:itemTextColor="#000000"
+            android:clipToPadding="true"
             app:labelVisibilityMode="labeled"
+            app:itemIconTint="@drawable/bottom_nav_tab_selected"
+            app:itemTextColor="@drawable/bottom_nav_tab_selected"
+            app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
             app:menu="@menu/bottom_nav_menu">
         </com.google.android.material.bottomnavigation.BottomNavigationView>
 
@@ -52,26 +53,22 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/customer_toolbar"
             android:indeterminate="false"
-            app:indicatorColor="@color/com_facebook_messenger_blue"
-            app:indicatorWidth="10dp"
+            app:indicatorColor="#0D6DC1"
+            app:indicatorWidth="5dp"
             app:trackColor="#ffffff"
             tools:visibility="visible" />
 
-        <com.google.android.material.appbar.MaterialToolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/customer_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
+            android:layout_height="65dp"
             android:layout_alignParentTop="true"
+            android:background="#ffffff"
             android:clipToPadding="true"
             android:elevation="10dp"
             android:minHeight="65dp"
             android:translationZ="5dp"
-            app:buttonGravity="center_vertical"
-            app:collapseIcon="@drawable/ic_local_mall_black_24dp"
-            android:background="#FFFFFF"
-            app:menu="@menu/search_menu"
             app:navigationIcon="@drawable/ic_menu_34"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.Light"
             app:title="@string/app_name"
             app:titleMarginStart="5dp"
@@ -89,12 +86,48 @@
                     android:layout_height="40dp"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="10dp"
+                    android:src="@drawable/tooki"
+                    android:transitionName="tooki" />
+
+            </RelativeLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    <!--    <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/customer_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="#ffffff"
+            android:layout_alignParentTop="true"
+            android:clipToPadding="true"
+            android:elevation="10dp"
+            android:minHeight="65dp"
+            android:translationZ="1dp"
+            app:menu="@menu/search_menu"
+            app:navigationIcon="@drawable/ic_menu_34"
+            app:theme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="@string/app_name"
+            app:titleMarginStart="5dp"
+            app:titleTextAppearance="@style/MainTitle"
+            app:titleTextColor="@color/com_facebook_messenger_blue">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="start">
+
+                <ImageView
+                    android:id="@+id/logo_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
                     android:transitionName="tooki"
                     android:src="@drawable/tooki" />
 
             </RelativeLayout>
 
-        </com.google.android.material.appbar.MaterialToolbar>
+        </com.google.android.material.appbar.MaterialToolbar> -->
 
     </RelativeLayout>
 
@@ -106,6 +139,17 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_view_menu" >
+
+        <TextView
+            android:id="@+id/nav_copyright_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginStart="25dp"
+            android:layout_marginBottom="115dp"
+            android:padding="15dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"

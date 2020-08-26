@@ -64,123 +64,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private MainModel mainModel;
     private List<ShoppingItem> AllItemsList;
     private List<ShoppingItem> ItemsList;
-    Filter sorting = new Filter() {
-        //runs in background thread
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            ArrayList<ShoppingItem> filteredList = new ArrayList<>(AllItemsList);
-
-            if(constraint.toString().isEmpty()){
-                filteredList.addAll(AllItemsList);
-            }
-            else if(constraint.equals("price")) {
-                filteredList.sort((o1, o2) -> {
-
-                    double price1 = o1.getReduced_price() != null ? Double.parseDouble(o1.getReduced_price()) :
-                            Double.parseDouble(o1.getPrice());
-
-                    double price2 = o2.getReduced_price() != null ? Double.parseDouble(o2.getReduced_price()) :
-                            Double.parseDouble(o2.getPrice());
-
-                    if(o1.getSeller().equals("ASOS")) {
-                        price1 *= Macros.POUND_TO_ILS;
-                    }
-                    if(o2.getSeller().equals("ASOS")) {
-                        price2 *= Macros.POUND_TO_ILS;
-                    }
-
-                    return (int) Math.ceil((price2 - price1));
-
-                });
-            }
-            else if(constraint.equals("match")) {
-                filteredList.sort((o1, o2) -> o2.getPercentage() - o1.getPercentage());
-            }
-            else if(constraint.equals("sale")) {
-                filteredList.sort((o1, o2) -> Boolean.compare(o2.isOn_sale(),o1.isOn_sale()));
-            }
-            else if(constraint.equals("favorites")) {
-                filteredList.sort((o1, o2) -> Boolean.compare(o2.isFavorite(), o1.isFavorite()));
-            }
-            else if(constraint.equals("company")) {
-                filteredList.sort((o1, o2) -> o1.getSeller().compareTo(o2.getSeller()));
-            }
-            else if(constraint.equals("brand")) {
-                filteredList.sort((o1, o2) -> o1.getBrand().compareTo(o2.getBrand()));
-            }
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            filterResults.count = filteredList.size();
-
-            return filterResults;
-        }
-
-        //runs in UI thread
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            if( results.values == null ) return;
-            ItemsList.clear();
-            int count = 0;
-            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
-                ItemsList.add(item);
-                count++;
-                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
-                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
-                }
-                notifyDataSetChanged();
-            }
-        }
-    };
-    Filter filter = new Filter() {
-        //runs in background thread
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            ArrayList<ShoppingItem> filteredList = new ArrayList<>();
-
-            if(constraint.toString().isEmpty()){
-                filteredList.addAll(AllItemsList);
-            }
-            else {
-                for (ShoppingItem item : AllItemsList) {
-                    if (item.getName() != null) {
-                        for (String word : item.getName()) {
-                            if(word.compareToIgnoreCase(constraint.toString()) == 0) {
-                                filteredList.add(item);
-                            }
-                        }
-                    }
-                }
-            }
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            filterResults.count = filteredList.size();
-
-            return filterResults;
-        }
-
-        //runs in UI thread
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            if(results.values == null ) return;
-
-            ItemsList.clear();
-            int count = 0;
-            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
-                ItemsList.add(item);
-                count++;
-                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
-                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
-                }
-                notifyDataSetChanged();
-            }
-            notifyDataSetChanged();
-        }
-    };
     private List<ShoppingItem> items;
     private String type;
     private RecyclerView recyclerView;
@@ -194,20 +77,23 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        if(type == null) {
+        if( type == null && items.get(position) != null ) {
             if (items.get(position).isAd())
                 return TYPE_AD;
             else
                 return TYPE_ITEM;
         }
-        else if(type.equals("favorites")){
-            if (items.get(position).isAd())
-                return TYPE_FAVORITES_AD;
+        else {
+
+            if(type != null && type.equals("favorites")){
+                if (items.get(position).isAd())
+                    return TYPE_FAVORITES_AD;
+                else
+                    return TYPE_FAVORITES;
+            }
             else
-                return TYPE_FAVORITES;
+                return 1;
         }
-        else
-            return 1;
     }
 
     @NonNull
@@ -391,7 +277,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView brand_name,buy,sale,sale_percentge,
+        private TextView brand_name,buy,sale,sale_percentage,
                 price,old_price,description,percentage,
                 percentage_header,seller_name,liked_text;
         private ViewPager viewPager;
@@ -413,7 +299,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             percentage_header = itemView.findViewById(R.id.percentage_header);
             percentage = itemView.findViewById(R.id.percent);
             viewPager = itemView.findViewById(R.id.image_viewPager);
-            sale_percentge = itemView.findViewById(R.id.sale_percentage);
+            sale_percentage = itemView.findViewById(R.id.sale_percentage);
             liked_text = itemView.findViewById(R.id.liked_item);
         }
 
@@ -502,13 +388,13 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 sale.setVisibility(View.VISIBLE);
 
                 String percent =  " -" + discount + "%";
-                sale_percentge.setText(percent);
-                sale_percentge.setVisibility(View.VISIBLE);
-                sale_percentge.setTextColor(Color.RED);
+                sale_percentage.setText(percent);
+                sale_percentage.setVisibility(View.VISIBLE);
+                sale_percentage.setTextColor(Color.RED);
             }
             else {
                 sale.setVisibility(View.GONE);
-                sale_percentge.setVisibility(View.GONE);
+                sale_percentage.setVisibility(View.GONE);
             }
             String brand = item.getBrand();
             String seller = item.getSeller();
@@ -633,7 +519,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             final int[] index = {0};
 
-            mDot1.setBackground(getContext().getDrawable(R.drawable.ic_lens_black_24dp));
+            mDot1.setBackground(getContext().getDrawable(R.drawable.ic_lens_black));
             mDot2.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
             mDot3.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
             mDot4.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
@@ -779,22 +665,22 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private void changeTabs(int position) {
             switch (position){
                 case 0:
-                    mDot1.setBackground(getContext().getDrawable(R.drawable.ic_lens_black_24dp));
+                    mDot1.setBackground(getContext().getDrawable(R.drawable.ic_lens_black));
                     mDot2.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
                     break;
                 case 1:
                     mDot1.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
-                    mDot2.setBackground(getContext().getDrawable(R.drawable.ic_lens_black_24dp));
+                    mDot2.setBackground(getContext().getDrawable(R.drawable.ic_lens_black));
                     mDot3.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
                     break;
                 case 2:
                     mDot2.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
-                    mDot3.setBackground(getContext().getDrawable(R.drawable.ic_lens_black_24dp));
+                    mDot3.setBackground(getContext().getDrawable(R.drawable.ic_lens_black));
                     mDot4.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
                     break;
                 case 3:
                     mDot3.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
-                    mDot4.setBackground(getContext().getDrawable(R.drawable.ic_lens_black_24dp));
+                    mDot4.setBackground(getContext().getDrawable(R.drawable.ic_lens_black));
                     break;
             }
         }
@@ -894,4 +780,124 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             dialog.show();
         }
     }
+
+    Filter sorting = new Filter() {
+        //runs in background thread
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            ArrayList<ShoppingItem> filteredList = new ArrayList<>(AllItemsList);
+
+            if(constraint.toString().isEmpty()){
+                filteredList.addAll(AllItemsList);
+            }
+            else if(constraint.equals("price")) {
+                filteredList.sort((o1, o2) -> {
+
+                    double price1 = o1.getReduced_price() != null ? Double.parseDouble(o1.getReduced_price()) :
+                            Double.parseDouble(o1.getPrice());
+
+                    double price2 = o2.getReduced_price() != null ? Double.parseDouble(o2.getReduced_price()) :
+                            Double.parseDouble(o2.getPrice());
+
+                    if(o1.getSeller().equals("ASOS")) {
+                        price1 *= Macros.POUND_TO_ILS;
+                    }
+                    if(o2.getSeller().equals("ASOS")) {
+                        price2 *= Macros.POUND_TO_ILS;
+                    }
+
+                    return (int) Math.ceil((price2 - price1));
+
+                });
+            }
+            else if(constraint.equals("match")) {
+                filteredList.sort((o1, o2) -> o2.getPercentage() - o1.getPercentage());
+            }
+            else if(constraint.equals("sale")) {
+                filteredList.sort((o1, o2) -> Boolean.compare(o2.isOn_sale(),o1.isOn_sale()));
+            }
+            else if(constraint.equals("favorites")) {
+                filteredList.sort((o1, o2) -> Boolean.compare(o2.isFavorite(), o1.isFavorite()));
+            }
+            else if(constraint.equals("company")) {
+                filteredList.sort((o1, o2) -> o1.getSeller().compareTo(o2.getSeller()));
+            }
+            else if(constraint.equals("brand")) {
+                filteredList.sort((o1, o2) -> o1.getBrand().compareTo(o2.getBrand()));
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            filterResults.count = filteredList.size();
+
+            return filterResults;
+        }
+
+        //runs in UI thread
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if( results.values == null ) return;
+            ItemsList.clear();
+            int count = 0;
+            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
+                ItemsList.add(item);
+                count++;
+                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
+                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
+                }
+                notifyDataSetChanged();
+            }
+        }
+    };
+    Filter filter = new Filter() {
+        //runs in background thread
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            ArrayList<ShoppingItem> filteredList = new ArrayList<>();
+
+            if(constraint.toString().isEmpty()){
+                filteredList.addAll(AllItemsList);
+            }
+            else {
+                for (ShoppingItem item : AllItemsList) {
+                    if (item.getName() != null) {
+                        StringBuilder description = new StringBuilder();
+                        for (String word : item.getName()) {
+                            description.append(word).append(" ");
+                        }
+                        if( description.toString().contains(constraint)) {
+                            filteredList.add(item);
+                        }
+                    }
+                }
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            filterResults.count = filteredList.size();
+
+            return filterResults;
+        }
+
+        //runs in UI thread
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if(results.values == null ) return;
+
+            ItemsList.clear();
+            int count = 0;
+            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
+                ItemsList.add(item);
+                count++;
+                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
+                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
+                }
+                notifyDataSetChanged();
+            }
+            notifyDataSetChanged();
+        }
+    };
 }

@@ -40,6 +40,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class FullscreenImageActivity extends AppCompatActivity {
 
     private Button mClose;
@@ -71,7 +73,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_fullscreen_image);
 
-        setDecoreView();
+        setDecorView();
 
         decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
             if(visibility == 0) decorView.setSystemUiVisibility(hideSystemBars());
@@ -87,11 +89,20 @@ public class FullscreenImageActivity extends AppCompatActivity {
         boolean isFavorite = false;
         Bundle bundle = getIntent().getBundleExtra("bundle");
         ImageView mFavorite = findViewById(R.id.favorite_sign);
+        CircleImageView company = findViewById(R.id.comp_logo);
+        TextView name = findViewById(R.id.comp_name);
 
         assert bundle != null;
         Object item = bundle.getSerializable("item");
-        if(item instanceof ShoppingItem)
-              isFavorite = ((ShoppingItem) item).isFavorite();
+        if(item instanceof ShoppingItem) {
+            isFavorite = ((ShoppingItem) item).isFavorite();
+            Macros.Functions.GlidePicture(this,((ShoppingItem) item).getSellerLogoUrl(), company);
+            name.setText(((ShoppingItem) item).getBrand());
+        }
+        else if(item instanceof RecyclerItem){
+            Macros.Functions.GlidePicture(this,((RecyclerItem) item).getSellerLogoUrl(), company);
+            name.setText(((RecyclerItem) item).getBrand());
+        }
 
         mDot1 = findViewById(R.id.fullscreen_dot_1);
         mDot2 = findViewById(R.id.fullscreen_dot_2);
@@ -119,7 +130,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
         viewPager.setAdapter(picsAdapter);
     }
 
-    private void setDecoreView() {
+    private void setDecorView() {
         decorView = getWindow().getDecorView();
         View decorView = getWindow().getDecorView();
         // Hide the status bar.
@@ -152,6 +163,8 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
         public fullscreenPicsAdapter(Object o){
             if(o instanceof ShoppingItem){
+
+
                 imagesUrl = ((ShoppingItem) o).getImages();
                 StringBuilder description = new StringBuilder();
                 if(((ShoppingItem) o).getName() != null) {
@@ -350,7 +363,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
                         videoLayout.setVisibility(View.INVISIBLE);
                         photoView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                         photoView.setImageResource(R.drawable.tooki);
-                        photoView.setPadding(25,0,25,0);
+                        photoView.setPadding(25,40,25,40);
                         no_video.setVisibility(View.VISIBLE);
                     }
                 }

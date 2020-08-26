@@ -1,16 +1,22 @@
 package com.eitan.shopik.CustomerFragments;
 
+import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -41,14 +47,17 @@ public class FavoritesFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private TextView header;
     private CopyOnWriteArrayList<ShoppingItem> fav_list;
-    private AppBarLayout appBarLayout;
+    private SearchView searchView;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initOnCreate();
-        MobileAds.initialize(getContext());
+
+        setHasOptionsMenu(true);
+        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
+        genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -58,7 +67,6 @@ public class FavoritesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
 
         header = view.findViewById(R.id.header_text);
-        appBarLayout = view.findViewById(R.id.appbar);
         mRecyclerView = view.findViewById(R.id.list_recycler_view);
         scroll = view.findViewById(R.id.scroll_up_down);
 
@@ -95,7 +103,7 @@ public class FavoritesFragment extends Fragment {
                 }
             }
 
-            String text= "";
+            String text;
             if(shoppingItems.size() > 0) {
                 String cat = shoppingItems.get(0).getType();
                 String sub_cat = shoppingItems.get(0).getSub_category();
@@ -110,12 +118,11 @@ public class FavoritesFragment extends Fragment {
         });
 
         scroll.setOnClickListener(v -> {
-            int size = mainModel.getFavorite().getValue().size();
+            int size = Objects.requireNonNull(mainModel.getFavorite().getValue()).size();
             //scroll down
             if(!scrollUp && size > 0) {
                 scroll.hide();
-                mLayoutManager.smoothScrollToPosition(mRecyclerView,
-                        null, (size - 1));
+                mLayoutManager.smoothScrollToPosition(mRecyclerView,null, (size - 1));
             } //scroll down
             else {
                 scroll.hide();
@@ -167,12 +174,6 @@ public class FavoritesFragment extends Fragment {
         mRecyclerView.addItemDecoration(dividerItemDecoration);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void initOnCreate() {
-        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
-        genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
-    }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -199,5 +200,41 @@ public class FavoritesFragment extends Fragment {
             outRect.bottom = verticalSpaceHeight;
             outRect.top = verticalSpaceHeight;
         }
+    }
+
+    private void closeKeyboard(){
+        View view = requireActivity().getCurrentFocus();
+        if( view != null ){
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu, menu);
+        // Retrieve the SearchView and plug it into SearchManager
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.nav_search));
+
+        String queryHint = "Search something...";
+        searchView.setQueryHint(queryHint);
+        searchView.setOnClickListener(v -> searchView.onActionViewExpanded());
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                closeKeyboard();
+                recyclerGridAdapter.getFilter().filter(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                recyclerGridAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu,inflater);
     }
 }

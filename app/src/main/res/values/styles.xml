@@ -5,12 +5,13 @@
         <item name="android:statusBarColor">#ffffff</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- navigation buttons etc.. -->
-        <item name="colorPrimary">@color/CollapsedBackground</item>
-        <item name="colorControlActivated">#2B7BBD</item>
+        <item name="colorPrimary">#DC333333</item>
+        <item name="android:navigationBarColor">#000000</item>
+        <item name="colorControlActivated">#000000</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 
         <!-- to line of phone, clock... -->
-        <item name="colorPrimaryDark">@color/SplashScreenBackground</item>
+        <item name="colorPrimaryDark">#ffffff</item>
 
         <item name="colorAccent">@color/SplashScreenBackground</item>
         <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
@@ -22,9 +23,9 @@
         <item name="android:windowActivityTransitions">true</item>
 
         <!-- navigation buttons etc.. -->
-        <item name="colorPrimary">#2E2E2E</item>
-        <item name="android:navigationBarColor">@color/SplashScreenBackground</item>
-        <item name="colorControlActivated">#2B7BBD</item>
+        <item name="colorPrimary">#DC333333</item>
+        <item name="android:navigationBarColor">#000000</item>
+        <item name="colorControlActivated">#000000</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 
         <!-- line of phone, clock... -->
@@ -74,7 +75,10 @@
     </style>
 
     <style name="GridBuyButtons" parent="Theme.AppCompat">
-        <item name="colorPrimary">#E2F1FF</item>
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="android:fontFamily">font/nobile</item>
+        <item name="android:text">BUY NOW</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="GridAdButtons" parent="Theme.AppCompat">

@@ -205,11 +205,14 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                     case R.id.card_favorites:
                         if(!isFavorite[0]) {
                             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.like_swing);
+                            final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike1);
                             favorite.startAnimation(animation);
                             isFavorite[0] = !isFavorite[0];
                             animation.setAnimationListener(new Animation.AnimationListener() {
                                 @Override
-                                public void onAnimationStart(Animation animation) {}
+                                public void onAnimationStart(Animation animation) {
+                                    mp.start();
+                                }
 
                                 @Override
                                 public void onAnimationEnd(Animation animation) {
@@ -374,12 +377,13 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
             favorite.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.like_swing);
+                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike1);
                 favorite.startAnimation(animation);
-                isFavorite[0] = true;
+                isFavorite[0] = !isFavorite[0];
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
-
+                        mp.start();
                     }
 
                     @Override
@@ -388,9 +392,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                     }
 
                     @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
+                    public void onAnimationRepeat(Animation animation) {}
                 });
             });
 

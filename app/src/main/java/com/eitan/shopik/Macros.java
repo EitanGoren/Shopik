@@ -15,7 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.agrawalsuneet.dotsloader.loaders.CircularDotsLoader;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -38,7 +40,6 @@ public class Macros {
     public static final String TAG = "com.eitan.shopik";
     public static final String COMPANIES = "Companies";
     public static final String DEFAULT_DESCRIPTION = "Write something here...";
-    public static final String DEFAULT_YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=oQbh5Kvet04";
     public static final String YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=";
     public static final String DEFAULT_COVER_PHOTO = "https://i.pinimg.com/originals/10/50/61/1050612a07b764970e4df8227caf8e1c.jpg";
     public static final String DEFAULT_PROFILE_IMAGE = "https://clipartart.com/images/account-profile-clipart-4.png";
@@ -85,11 +86,11 @@ public class Macros {
     public static final String WEB_IC = "https://www.freepnglogos.com/uploads/logo-website-png/logo-website-world-wide-web-svg-png-icon-download-10.png";
     public static final String INSTAGRAM_IC = "https://www.kartisyarok.co.il/wp-content/uploads/2018/09/instagram-logo-png-7.png";
 
-    public static final double POUND_TO_ILS = 5.2482;
-    public static final int SWIPES_TO_AD = 8;
-    public static final int FAV_TO_AD = 15;
-    public static final int SEARCH_TO_AD = 15;
-    public static final int SUGGESTED_TO_AD = 15;
+    public static final double POUND_TO_ILS = 5.2483;
+    public static final int SWIPES_TO_AD = 20;
+    public static final int FAV_TO_AD = 20;
+    public static final int SEARCH_TO_AD = 20;
+    public static final int SUGGESTED_TO_AD = 20;
 
     public static class Providers {
         public static final String FACEBOOK = "facebook.com";
@@ -104,12 +105,7 @@ public class Macros {
 
         public static final String MEN = "Men";
         public static final String WOMEN = "Women";
-
-        public static final int SUGGESTION_PERCENTAGE = 75;
-
         public static final String LIKED = "Liked";
-        public static final String INFO = "Info";
-        public static final String UNLIKED = "Unliked";
         public static final String FAVOURITE = "favorite";
         public static final String PREFERRED_ITEMS = "Preferred items";
     }
@@ -125,9 +121,9 @@ public class Macros {
         };
 
         public static final String[] FAV_LINES = {
-                "Great choice!", "Nice!", "Very good choice", "You gonna love it!" ,
+                "Great choice!", "Nice!", "Good choice", "You're gonna love it!" ,
                 "Hey, We like it too!", "Very nice taste", "Lots of buyers for this one",
-                "It's worth it","חדלות פירעון!","Hello Peachy Breezyyy",
+                "It's worth it",
         };
 
         public static final String[] RIPPED = {"ripped"};
@@ -277,7 +273,7 @@ public class Macros {
                 "Bellfield", "Benefit", "Berghaus", "Bershka", "Billabong", "Birkenstock", "Blank NYC",
                 "Bleach London", "Blend", "BLFD", "BlueBella", "Blume Maternity", "Bobbi Brown",
                 "Body Glove", "Bolongaro Trevor", "Bondi Sands", "BOSS", "Boux Avenue", "Bravado",
-                "Brave Soul", "Bronx", "Buffalo", "Bumble and bumble", "By Malina", "BYBI",
+                "Brave Soul", "Bronx", "Buffalo", "Bumble and bumble", "By Malina", "BYBI","Abercrombie & Fitch",
                 "Calm Club", "Calvin Klein", "Camper", "Candypants", "Cantu", "Capulet", "Carhartt WIP",
                 "Carmex", "Carvela", "Casio", "Caterpillar", "Caudalie", "CeraVe", "Champion",
                 "Charlie Holiday","TERMINAL X","Valentino by Mario Valentino","Produkt","Call It Spring",
@@ -548,7 +544,7 @@ public class Macros {
         }
 
         public static String[] getAllItemTypes(){
-            return new String[]{BAG,SHOES,JEANS,DRESS,SHIRT,SUNGLASSES,SWIMWEAR,JACKETS,JEWELLERY,WATCH};
+            return new String[]{BAG,SHOES,JEANS,DRESS,SHIRT,SUNGLASSES,SWIMWEAR,JACKETS,JEWELLERY,WATCH,ACCESSORIES,LINGERIE};
         }
 
         public static final String MEN_JACKET_IC = "https://ae01.alicdn.com/kf/HTB1_6q2NXXXXXbGXVXXq6xXFXXXv/Men-s-suit-new-men-denim-jacket-spring-small-men-s-cultivate-one-s-morality-leisure.jpg";
@@ -568,6 +564,10 @@ public class Macros {
         public static final String MENS_SHIRTS_IC = "https://cdn3.volusion.com/ba3tg.hs2vg/v/vspfiles/photos/m-10602-100-2.jpg?v-cache=1570606546";
         public static final String WOMENS_SWIM_IC = "https://jhonpeters.com/wp-content/uploads/2019/05/Untitled-6-33.jpg";
         public static final String MENS_SWIM_IC = "https://images-na.ssl-images-amazon.com/images/I/71xMusbhIkL._UL1200_.jpg";
+        public static final String WOMEN_ACCESSORIES_IC = "https://review.chinabrands.com/chinabrands/seo/image/20180912/wholesale%20fashion%20accessories.jpg";
+        public static final String MEN_ACCESSORIES_IC = "https://ae01.alicdn.com/kf/HTB1ZvyEOhnaK1RjSZFBq6AW7VXa8/Stone-Beads-Bracelet-Men-Accessories-Crown-Braclets-Handmade-2-Piece-Set-Erkek-Bileklik-Skull-Jewelry-Mens.jpg" ;
+        public static final String WOMEN_LINGERIE_IC = "https://ae01.alicdn.com/kf/HTB1854TexrI8KJjy0Fpq6z5hVXaU/Christmas-Sexy-Red-Women-Lingerie-Sleepwear-Underwear-Bowknot-Bodysuit.jpg_960x960.jpg";
+        public static final String MEN_UNDERWEAR_IC = "https://i1.wp.com/jp.smpclippingpath.com/wp-content/uploads/2020/01/lkh0.png?fit=450%2C450&ssl=1";
 
         public static final String TOTE_RES = "https://cdn.shopify.com/s/files/1/0166/6656/products/Oh_honey_tote022.jpg?v=1563184080";
         public static final String CROSS_RES = "https://cdn-com.thelittlegreenbag.com/upload/artikelen/Matt-Nat/ss20/bee-dwell-crossbody-bag/Matt-Nat-Bee-Dwell-Crossbody-bag-SS20-crossbody-tas-mojito-crossbody-bag-model-600.jpg";
@@ -576,38 +576,45 @@ public class Macros {
         public static final String BUM_RES = "https://www.mohito.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/X/Y/XY082-99X-020_1.jpg";
         public static final String CLUTCH_RES = "https://ae01.alicdn.com/kf/HTB14qFGLpXXXXX.aXXXq6xXFXXXb/women-genuine-leather-evening-clutch-bag-stone-pattern-flap-handbag-for-female-wristlet-purse-fashion-shoulder.jpg";
 
-        public static final String WOMEN_DENIM_JACKETS_RES ="https://images-na.ssl-images-amazon.com/images/I/514zli1feNL.jpg";
-        public static final String WOMEN_LEATHER_JACKETS_RES = "https://ae01.alicdn.com/kf/HTB1UnSaXjDuK1Rjy1zjq6zraFXa3/2018-Hot-Women-Winter-Warm-Faux-Leather-Jackets-with-Fur-Collar-Lady-White-Black-Pink-Wine.jpg";
-        public static final String WOMEN_COAT_JACKETS_RES ="https://images-na.ssl-images-amazon.com/images/I/51lP12bg6PL._AC_UX385_.jpg";
-        public static final String WOMEN_BOMBER_JACKETS_RES ="https://imcut.jollychic.com//uploads/jollyimg/imageService/img/goods/2019/11/11/18/40/523ac1d8-7d4e-49ff-b161-f8cfa668413f.jpg";
+        public static final String WOMEN_DENIM_JACKETS_RES ="https://www1.assets-gap.com/webcontent/0018/557/707/cn18557707.jpg";
+        public static final String WOMEN_LEATHER_JACKETS_RES = "https://d4zpg1jklewne.cloudfront.net/steak/spree-variant/000-012-blk-5/black-leather-moto-jacket-product.jpg?1546447623";
+        public static final String WOMEN_PUFFER_JACKETS_RES = "https://i.pinimg.com/564x/9d/95/9a/9d959a0c5a3ec05c572769613011565c.jpg";
+        public static final String WOMEN_TEDDY_JACKETS_RES = "https://cdn.shopify.com/s/files/1/2033/1473/products/shopify_9f083e8613ffd5621849c28434d1935e_teddy-jacket-tan_1230x1230.jpg?v=1571594952";
+        public static final String WOMEN_JACKET_JACKETS_RES = "https://sc01.alicdn.com/kf/HTB1BpMGOFXXXXcDXpXXq6xXFXXXM.jpg";
+        public static final String WOMEN_COAT_JACKETS_RES ="https://i.pinimg.com/736x/69/fd/9e/69fd9e9fefe519f0a6dafeadb43b4d95.jpg";
+        public static final String WOMEN_BOMBER_JACKETS_RES ="https://cdn.shopify.com/s/files/1/0033/4757/8993/products/hypest-fit-outerwear-women-mist-bomber-jacket-6492655779953.png?v=1564579304";
 
         public static final String MEN_LEATHER_JACKETS_RES = "https://images-na.ssl-images-amazon.com/images/I/81gPumH6e1L._AC_UL1500_.jpg";
-        public static final String MEN_PUFFER_JACKETS_RES = "https://ae01.alicdn.com/kf/HTB1h.XdNkvoK1RjSZFDq6xY3pXaE/ZOGAA-Mens-Winter-Cotton-Hooded-Coat-Jacket-Brand-New-Casual-Men-Puffer-Jacket-Solid-Color-Men.jpg";
+        public static final String MEN_PUFFER_JACKETS_RES = "https://theinscribermag.com/wp-content/uploads/2018/10/puffer-coat-mens-puffer-padded-jacket-winter-style-puffer-coat-mens-river-island.jpg";
         public static final String MEN_DENIM_JACKETS_RES = "https://www.thefashionisto.com/wp-content/uploads/2019/09/HM-Men-Skinny-Jeans.jpg";
         public static final String MEN_TRENCH_JACKETS_RES = "https://i.pinimg.com/originals/41/b1/7a/41b17ad4c3d86eb07c038d8d0e4c6d3a.png";
         public static final String MEN_BOMBER_JACKETS_RES = "https://fasbest.com/wp-content/uploads/2017/04/Top-Best-Model-Men-Bomber-Jacket-Outfit-22.jpg";
 
-        public static final String FLAT_SANDALS_RES = "https://shoedazed.com/image/cache/catalog/AIMEIGAO1//AIMEIGAO-2019-New-Summer-Sandals-Women-Casual-Flat-Sandals-Comfortable-Sandals-For-Women-Large-Size--32972219136-1711-550x550.jpeg";
+        public static final String FLAT_SHOES_RES = "https://shoedazed.com/image/cache/catalog/AIMEIGAO1//AIMEIGAO-2019-New-Summer-Sandals-Women-Casual-Flat-Sandals-Comfortable-Sandals-For-Women-Large-Size--32972219136-1711-550x550.jpeg";
         public static final String WOMEN_BOOTS_RES = "https://c4.wallpaperflare.com/wallpaper/53/168/878/kendall-jenner-women-model-brunette-boots-hd-wallpaper-preview.jpg";
         public static final String WOMEN_HEELS_RES = "https://cdn.shopify.com/s/files/1/0727/7899/products/Fashion-Summer-High-Heels-Shoes-Women-s-Sandals-Strap-Ladies-Ankle-High-Heels-Size-35-43.jpg_640x640_35a7641d-8003-4da0-a38d-a1bad21dd539_1024x1024.jpg?v=1571438898";
         public static final String WOMEN_SLIDERS_RES = "https://www.twinset.com/on/demandware.static/-/Sites-master-catalog/default/dwaab16f5b/images/TwinSet/Images/Catalog/201TCT022-00519-0S.JPG";
+        public static final String WOMEN_SLIPPERS_RES = "https://c4.wallpaperflare.com/wallpaper/53/168/878/kendall-jenner-women-model-brunette-boots-hd-wallpaper-preview.jpg";
+        public static final String WOMEN_TRAINERS_RES = "https://cdn.shopify.com/s/files/1/0727/7899/products/Fashion-Summer-High-Heels-Shoes-Women-s-Sandals-Strap-Ladies-Ankle-High-Heels-Size-35-43.jpg_640x640_35a7641d-8003-4da0-a38d-a1bad21dd539_1024x1024.jpg?v=1571438898";
+        public static final String WOMEN_SANDALS_RES = "https://sc02.alicdn.com/kf/HTB1EUgNPpXXXXc7XVXXq6xXFXXXS.jpg";
 
         public static final String MINI_DRESSES_RES = "https://i.pinimg.com/originals/c6/4a/2b/c64a2b4c4daa4a48b3a9f787353b1953.jpg";
-        public static final String MIDI_DRESS_RES = "https://d356cpcjxoolwe.cloudfront.net/media/catalog/product/cache/1/image/533x704/72b4a3c89279b6295f5413414e9ad668/6/4/6410424.01.6400_baa7f97.jpg";
-        public static final String TIE_WAIST_DRESS_RES = "https://bec2df9eb90bb6604cfc-660d71a7a33bc04488a7427f5fddcedf.ssl.cf3.rackcdn.com/uploads/product_image/photo/5dd2e44a791b5a6f483f7e06/large_2019_11_18_Jen_Mollie_AXparis234512.jpg";
-        public static final String SUNDRESS_DRESS_RES = "https://img.ltwebstatic.com/images2_pi/2019/04/30/15566129523968879493_thumbnail_600x799.webp";
-        public static final String PETITE_DRESS_RES = "https://www.chichiclothing.com/media/catalog/product/cache/3374943167b162b1b6d3bb58994d69bf/c/c/cchb021-_23.jpg";
-
-        public static final String WOMEN_LEATHER_SHOES = "https://i.ebayimg.com/images/g/PbEAAOSwCFNbW9SB/s-l300.jpg";
+        public static final String MIDI_DRESS_RES = "https://images.asos-media.com/products/liquorish-a-line-lace-detail-midi-dress/8881608-4?$XXL$&wid=513&fit=constrain";
+        public static final String PARTY_DRESS_RES = "https://cdn.iclothing.com/media/catalog/product/cache/1/thumbnail/1345x1992/9df78eab33525d08d6e5fb8d27136e95/g/r/green_sequin_dress_1.jpg";
+        public static final String EVENING_DRESS_RES = "https://www.mrslali.com/wp-content/uploads/2019/03/lookbook1904.jpg";
+        public static final String JUMPER_DRESS_RES = "https://dimg.dillards.com/is/image/DillardsZoom/mainProduct/love--piece-plaid-button-front-jumper-dress/05858227_zi_black_red_white.jpg";
+        public static final String MAXI_DRESS_RES = "https://is4.revolveassets.com/images/p4/n/d/PBTO-WD14_V1.jpg";
+        public static final String WEDDING_DRESS_RES = "https://cdn.alysonhaley.com/wp-content/uploads/2018/07/31154340/amalfi-church-instagram-spot-italy-alyson-haley-80.jpg";
 
         public static final String MEN_SLIM_JEANS_RES = "https://d4zpg1jklewne.cloudfront.net/steak/spree-variant/sks-009-blu-2-1547859752085/skinny-slim-jeans-in-dark-worn-wash-product.jpg?1547859758";
         public static final String MEN_SKINNY_JEANS_RES = "https://d4zpg1jklewne.cloudfront.net/steak/spree-variant/mens-skinny-jeans-in-faded-black-3/mens-faded-black-skinny-jeans-1-product.jpg?1527794179";
         public static final String MEN_SUPER_SKINNY_JEANS_RES = "https://i1.adis.ws/i/boohooamplience/mzz50622_black_xl?pdp.template";
         public static final String MEN_STRAIGHT_JEANS_RES = "https://d4zpg1jklewne.cloudfront.net/steak/spree-variant/straight-jeans-in-black-worn-05/straight-jeans-in-black-worn-product.jpg?1537903204";
+
         public static final String WOMEN_SLIM_JEANS_RES = "https://cdn11.bigcommerce.com/s-pkla4xn3/images/stencil/1280x1280/products/21185/187304/Skinny-Jeans-Woman-Autumn-New-2018-High-waist-Women-Fashion-Slim-Jeans-Female-washed-casual-skinny__35509.1546333221.jpg?c=2?imbypass=on";
         public static final String WOMEN_SKINNY_JEANS_RES = "https://www.argo-holidays.com/images/a/skinny%20jeans%20for%20women-942nkp.jpg";
         public static final String WOMEN_STRAIGHT_JEANS_RES = "https://www1.assets-gap.com/webcontent/0017/347/802/cn17347802.jpg";
-        public static final String WOMEN_RIPPED_JEANS_RES = "https://www.tmtopshop.com/wp-content/uploads/2018/12/IMG_2957.jpg";
+        public static final String WOMEN_RIPPED_JEANS_RES = "https://i.pinimg.com/originals/85/35/02/8535027a20707a4c3ae0f4e2ee2b6b51.jpg";
         public static final String WOMEN_JEGGINGS = "https://cottonon.com/dw/image/v2/BBDS_PRD/on/demandware.static/-/Sites-catalog-master-women/default/dwd3c519fd/241163/241163-207-2.jpg?sw=566&sh=849&sm=fit";
         public static final String WOMEN_HIGH_WAIST = "https://media.missguided.com/s/missguided/G1806691_set/1/blue-sinner-distressed-knee-high-waisted-jeans";
 
@@ -615,6 +622,7 @@ public class Macros {
         public static final String MEN_RING_RES = "https://www.anitolia.com/plain-model-black-stone-silver-ring-mens-ring-ani-yuzuk-749-14-B.jpg";
         public static final String MEN_BRACELET_RES = "https://www.ties.com/blog/wp-content/uploads/2015/10/Your_Guide_to_Men%E2%80%99s_Jewelry_01.jpg";
         public static final String MEN_EARRING_RES = "https://miro.medium.com/max/870/0*gigjbEBGJQ_0PIUQ.jpeg";
+
         public static final String WOMEN_NECKLACE_RES = "https://ae01.alicdn.com/kf/HLB1TVEBaizxK1RkSnaVq6xn9VXaT/Choker-Necklace-Heart-New-Design-Punk-Gold-Necklace-Boho-Gothic-Fashion-Jewelry-For-Women-Wicca-Chain.jpg";
         public static final String WOMEN_RING_RES = "https://cdn.shopify.com/s/files/1/0259/0713/products/DOC-R8121-M_Designer_Platinum_Ring_with_Diamonds_with_Partly_Rose_Gold_Polish_JL_PT_566_Model_View_showing_how_the_ring_looks_when_worn_in_hand_of_a_woman_grande.jpg?v=1520407031";
         public static final String WOMEN_BRACELET_RES = "https://images.neimanmarcus.com/ca/1/product_assets/Y/5/0/X/U/NMY50XU_la.jpg";
@@ -622,12 +630,13 @@ public class Macros {
         public static final String WOMEN_ANKLET_RES = "https://cdn.lisaangel.co.uk/image/cache/data/product-images/ss19/su-ss19/layered-beaded-anklet-in-grey-and-rose-gold-4x3a1249-515x515.jpg";
 
         public static final String MEN_ROUND_GLASSES_RES = "https://global2019-static-cdn.kikuu.com/upload-productImg-1533462659898_320_234.jpeg?";
-        public static final String WOMEN_ROUND_GLASSES_RES = "https://ae01.alicdn.com/kf/HTB1q60jdLjM8KJjSZFyq6xdzVXaC/DOKLY-New-Polarized-Mirror-Round-Sunglasses-women-Vintage-RetroWomen-Designer-Eyewear-Green-Color-UV400-Glasses-oculos.jpg";
         public static final String MEN_OVERSIZED_GLASSES_RES = "https://i.pinimg.com/736x/f7/07/c3/f707c36f92f10bb6afe727523e0e39ca.jpg";
-        public static final String WOMEN_CATEYE_GLASSES_RES = "https://ae01.alicdn.com/kf/HLB1YKs2LHvpK1RjSZFqq6AXUVXah.jpg";
         public static final String MEN_SQUARE_GLASSES_RES = "https://cdn.shopify.com/s/files/1/2403/6313/products/product-image-491666868_1200x1200.jpg?v=1571709186";
+
         public static final String WOMEN_SQUARE_GLASSES_RES = "https://ae01.alicdn.com/kf/H661c51c6971345b58d2c0fb61b7607c82/GIFANSEE-women-square-sunglasses-oversized-uxury-brand-glasses-vintage-design-eyewear-uv400.jpg";
         public static final String WOMEN_AVIATOR_GLASSES_RES = "https://cdn.shopify.com/s/files/1/0166/6656/products/Skinnydip_London_Rainbow_Aviator_Sunglasses_Model_Image_1_600x.jpg?v=1579790986";
+        public static final String WOMEN_CATEYE_GLASSES_RES = "https://ae01.alicdn.com/kf/HLB1YKs2LHvpK1RjSZFqq6AXUVXah.jpg";
+        public static final String WOMEN_ROUND_GLASSES_RES = "https://ae01.alicdn.com/kf/HTB1q60jdLjM8KJjSZFyq6xdzVXaC/DOKLY-New-Polarized-Mirror-Round-Sunglasses-women-Vintage-RetroWomen-Designer-Eyewear-Green-Color-UV400-Glasses-oculos.jpg";
 
         public static final String MEN_LOAFERS_RES = "https://cf.shopee.ph/file/906adc125c1045c1dd079ed0cdd8afb9";
         public static final String MEN_BOOTS_RES = "https://clarks.scene7.com/is/image/Pangaea2Build/db-winter-boots-2-854-wk31-aw19?wid=854&fmt=pjpeg";
@@ -635,12 +644,19 @@ public class Macros {
         public static final String MEN_SANDALS_RES = "https://ae01.alicdn.com/kf/HTB1Bmw.cWQoBKNjSZJnq6yw9VXaC/2018-New-Men-s-Sandals-Explosive-models-Half-Slippers-Couple-Mesh-Sandals-Lazy-Bird-Nest-Slippers.jpg";
         public static final String MEN_TRAINERS_RES = "https://5.imimg.com/data5/AP/NV/BK/SELLER-9615630/big-fox-men-s-running-training-walking-555-mesh-sports-shoes-500x500.jpg";
 
-        public static final String WOMEN_TSHIRT_RES = "https://ae01.alicdn.com/kf/HTB1ZMMqXPDuK1Rjy1zjq6zraFXac/2019-New-Women-T-shirts-Casual-Harajuku-Love-Printed-Tops-Tee-Summer-Female-T-shirt-Short.jpg";
-        public static final String WOMEN_LONG_RES = "https://image-tb.vova.com/image/500_500/filler/29/59/e4881c7ab0f98261bc11d55670bd2959.jpg?format=webp";
-        public static final String WOMEN_TANK_RES = "https://cdn11.bigcommerce.com/s-1js1zluvaj/images/stencil/1280x1280/products/34219/106790/ZAFUL-Butterfly-Embroidered-Scooped-Tank-Top-Casual-Women-Tank-Tops-Sexy-Short-Tops-Streetwear-Summer-Tanks__85470.1563288786.jpg?c=2&imbypass=on";
+        public static final String WOMEN_TSHIRT_RES = "https://cdn.shopify.com/s/files/1/0814/7533/products/Women_s-V-Neck-T-shirt-White-Front.jpg?v=1521696280";
+        public static final String WOMEN_LEOTARDS_RES = "https://i.pinimg.com/236x/fc/5e/a3/fc5ea3c7de82420781be536e7a76f800.jpg";
+        public static final String WOMEN_TANKS_RES = "https://www.vientoclothing.com/14264-thickbox_default/women-tank-top-black-dark-captain.jpg";
+        public static final String WOMEN_CAMIS_RES = "https://ae01.alicdn.com/kf/HTB1.UQpbo_rK1Rjy0Fcq6zEvVXaK/Women-Camis-Silk-Top-Women-Camisole-2020-Summer-Style-Sexy-Sleeveless-Vest-Slim-White-Tank-Top.jpg_q50.jpg";
+        public static final String WOMEN_EVENING_RES = "https://i.pinimg.com/originals/c8/56/1b/c8561bb9944669fdef60e4a489710094.jpg";
+        public static final String WOMEN_SUMMER_TOP_RES = "https://cartling.com/wp-content/uploads/2019/06/Plus-Size-5XL-Women-Tops-Blouse-Long-Sleeve-Solid-V-neck-Loose-Chiffon-Blouses-2019-Summer-10.jpg_640x640-10.jpg";
+        public static final String WOMEN_BLOUSES_RES = "https://ae01.alicdn.com/kf/HTB13y9scfWG3KVjSZFgq6zTspXaQ/Women-Blouses-Fashion-Long-Sleeve-Turn-Down-Collar-Office-Shirt-Chiffon-Blouse-Shirt-Casual-Tops-Plus.jpg_640x640.jpg";
+        public static final String WOMEN_HOODIES_RES = "https://i.pinimg.com/originals/8c/e1/37/8ce137b4560bb55d88e226c79372f178.jpg";
+        public static final String WOMEN_SWEATSHIRTS_RES = "https://i.pinimg.com/564x/06/25/d2/0625d21e19fffa33c03e9b01fdbe5434.jpg";
+
         public static final String MEN_TSHIRT_RES = "https://sc01.alicdn.com/kf/HT1IltqFOxbXXagOFbXg/220128135/HT1IltqFOxbXXagOFbXg.jpg";
         public static final String MEN_LONG_RES = "https://www.rankandstyle.com/media/products/j/james-perse-long-sleeve-t-shirt-mens-long-slee.jpg";
-        public static final String MEN_TANK_RES = "https://www.bellymonk.com/wp-content/uploads/2019/04/om_men_tank_model.png";
+        public static final String MEN_TANK_RES = "https://img1.g-star.com/product/c_fill,f_auto,h_630,q_80/v1586457099/D07206-124-110-Z01/g-star-raw-basic-tanktop-2-pack-white-model-front.jpg";
         public static final String MEN_OXFORD_RES = "https://sc01.alicdn.com/kf/HTB1Jd5iffjM8KJjSZFNq6zQjFXa7.jpg_350x350.jpg";
         public static final String MEN_MUSCLE_RES = "https://i1.adis.ws/i/boohooamplience/mzz70546_black_xl?pdp.template";
 
@@ -650,18 +666,23 @@ public class Macros {
         public static final String MEN_DIGITAL_RES = "https://www.micahtec.com/wp-content/uploads/2020/02/1815-b88b6f.jpg";
         public static final String MEN_CHRONOGRAPH_WATCH_RES = "https://cdn.shopify.com/s/files/1/0122/6748/7328/products/CURREN-Fashion-Watches-Men-Coffee-Clock-Men-Quartz-Wristwatch-Stainless-Steel-Band-Chronograph-Watch-Male-Relogio_849c3883-4623-41fc-91ac-d3a0910f3700_1024x1024.jpg?v=1568644053";
         public static final String MEN_MESH_WATCH_RES = "https://ae01.alicdn.com/kf/H1696f766eed6495b82173d648664483c0.jpg";
+        public static final String MEN_WATCHES_RES = "https://ae01.alicdn.com/kf/HTB17d9TmQ7mBKNjSZFyq6zydFXag/2019-Mens-Watches-AGELOCER-Swiss-Brand-Luxury-Saphire-Power-Reserve-Wristwatch-Leather-Strap-Male-Clock-watch.jpg_q50.jpg";
+
         public static final String WOMEN_DIGITAL_RES = "https://images-na.ssl-images-amazon.com/images/I/71LVIC%2B2kGL._AC_UX522_.jpg";
+        public static final String WOMEN_SMART_RES = "https://forthesmarthome.com/wp-content/uploads/2017/10/Michael-Kors-Sofie-Best-Smartwatches-for-Women.jpg";
+        public static final String WOMEN_WATCHES_RES = "https://www.stuhrling.com/wp-content/uploads/womens-watch-banner.jpg";
 
         public static final String MEN_SHORTS_SWIM_RES = "https://www.iciw.com/bilder/artiklar/zoom/10397-092_1.jpg";
         public static final String MEN_CO_ORD_SWIM_RES = "https://images.asos-media.com/products/asos-design-co-ord-swim-shorts-in-multi-coloured-stripe-short-length/14028780-1-multi?$n_480w$&wid=476&fit=constrain";
         public static final String MEN_PLUS_SWIM_RES = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTqBJ_k6Dg4LBHbXufOQ-6hsXS9Gjwo-DBCH-PP18fcA3wHM0Tc&usqp=CAU";
+
         public static final String WOMEN_BIKINI_RES = "https://ae01.alicdn.com/kf/HTB1GFvBRgHqK1RjSZFPq6AwapXaW/Trend-Plus-Size-2XL-Swimsuit-Women-Sexy-Bikini-Swimwear-Women-Bikini-Push-Up-Brazilian-Beach-Bathing.jpg";
         public static final String WOMEN_SWIMSUIT_RES = "https://www.womenfashionnista.com/wp-content/uploads/2019/06/costumi-curvy-9-1000-76.jpg";
+        public static final String WOMEN_ONE_PIECE_RES = "https://i.pinimg.com/736x/93/61/6a/93616a54b232233777faf3fa70b1356b.jpg";
+        public static final String WOMEN_SWIMMWEAR_RES = "https://i.pinimg.com/originals/97/f5/d0/97f5d0d7d08686f8d5b278b2d048a125.jpg";
 
         public static final String LIKED = "Liked";
         public static final String UNLIKED = "Unliked";
-        public static final String LIKES_NUM = "likes";
-        public static final String UNLIKES_NUM = "unlikes";
     }
 
     public static class Functions {
@@ -680,35 +701,22 @@ public class Macros {
         }
 
         public static void GlidePicture(Context context,String imageUrl, View view) {
-            RequestListener<Drawable> req = new RequestListener<Drawable>() {
-                @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    assert e != null;
-                    Log.d(TAG,"Glide Failed: " + model + " " + e.getMessage());
-                    return true;
-                }
 
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    if(view instanceof CircleImageView) {
-                        ((CircleImageView) view).setBorderColor(Color.WHITE);
-                        view.setElevation(10);
-                        view.setTranslationZ(10);
-                        ((CircleImageView) view).setBorderWidth(1);
-                        view.setBackground(resource);
-                        view.setTransitionName("company_logo");
-                    }
-                    else
-                        view.setBackground(resource);
-
-                    return true;
-                }
-            };
+            CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+            circularProgressDrawable.setArrowDimensions(10,10);
+            circularProgressDrawable.setCenterRadius(50);
+            circularProgressDrawable.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
+            circularProgressDrawable.setStrokeWidth(7);
+            circularProgressDrawable.start();
 
             if(view instanceof CircleImageView)
-                Glide.with(context).load(imageUrl).into((CircleImageView) view);//addListener(req).into((CircleImageView) view);
+                Glide.with(context).load(imageUrl).
+                        placeholder(circularProgressDrawable).
+                        into((CircleImageView) view);
             else
-                Glide.with(context).load(imageUrl).into((ImageView) view);//addListener(req).into((ImageView) view);
+                Glide.with(context).load(imageUrl).
+                        placeholder(circularProgressDrawable).
+                        into((ImageView) view);
         }
 
         public static void buy(Context context, String site_link) {
@@ -758,12 +766,11 @@ public class Macros {
             if(pair != null) {
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) context, pair);
                 context.startActivity(intent, options.toBundle());
-                ((Activity) context).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
             }
-            else {
+            else
                 context.startActivity(intent);
-                ((Activity) context).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
-            }
+
+            ((Activity) context).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
         }
 
         public static Pair<Integer, Integer> getCategoryNum(String gender, String sub_cat, String item_type) {
@@ -891,9 +898,10 @@ public class Macros {
                     return new Pair<>(26217, 1);
                 case "digital":
                     return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(11328, 1) : new Pair<>(29087, 1);
-                default:
+                case "stylish":
                     return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(5088, 2) : new Pair<>(19855, 3);
-                //All
+                default:
+                    return null;
             }
         }
 
@@ -1092,53 +1100,56 @@ public class Macros {
             }
         }
 
-        public static String translateCategoryTo247(String item_type) {
-            switch (item_type){
-                case JEANS:
-                    return "/bgdim/gi-nsim";
-                case BAG:
-                   return "tiqim";
-                case SHOES:
-                    return "neliim";
-                case SHIRT:
-                case DRESS:
-                    return "bgdim";
-                case SWIMWEAR:
-                    return "bgdim/bgdi-im";
-                case JACKETS:
-                    return "bgdim/covers";
-                case JEWELLERY:
-                    return "accessories/tkwitim";
-                case ACCESSORIES:
-                    return "accessories";
-                default:
-                    return null;
-            }
-        }
+        public static String translateCategoryTo247(String item_type, String gender) {
 
-        public static String translateCategoryToShein(String item_type,String gender) {
-            switch (item_type) {
-                case JEANS:
-                    return "Denim-c-" + (gender.equals(CustomerMacros.WOMEN) ? "1930" : "1973");
-                case BAG:
-                    return "Bags-c-2043";
-                case SHOES:
-                    return "shoes-c-" + (gender.equals(CustomerMacros.WOMEN) ? "1745" : "2089");
-                case SHIRT:
-                    return "Tops-c-" + (gender.equals(CustomerMacros.WOMEN) ? "2223" : "1970");
-                case DRESS:
-                    return "dresses-c-1727";
-                case SWIMWEAR:
-                    return (gender.equals(CustomerMacros.WOMEN) ? "Beachwear-c-2039" : "Swimwear-c-2025");
-                case JACKETS:
-                    return "Coats-Jackets-c-" + (gender.equals(CustomerMacros.WOMEN) ? "2037" : "1983");
-                case SUNGLASSES:
-                    return "Sunglasses-c-" + (gender.equals(CustomerMacros.WOMEN) ? "1770" : "2137");
-                case JEWELLERY:
-                    return "Jewelry-c-" + (gender.equals(CustomerMacros.WOMEN) ? "1760" : "2028");
-                default:
-                    return null;
+            if(gender.equals(CustomerMacros.WOMEN)) {
+                switch (item_type) {
+                    case JEANS:
+                        return "bgdim/gi-nsim";
+                    case BAG:
+                        return "tiqim";
+                    case SHOES:
+                        return "neliim";
+                    case SHIRT:
+                    case DRESS:
+                        return "bgdim";
+                    case SWIMWEAR:
+                        return "bgdim/bgdi-im";
+                    case JACKETS:
+                        return "bgdim/covers";
+                    case JEWELLERY:
+                        return "accessories/tkwitim";
+                    case ACCESSORIES:
+                        return "accessories";
+                    default:
+                        return null;
+                }
             }
+            else{
+                switch (item_type) {
+                    case JEANS:
+                        return "bgdim/gi-nsim";
+                    case BAG:
+                        return "tiqim";
+                    case SHOES:
+                        return "neliim";
+                    case SHIRT:
+                        return "bgdim";
+                    case SWIMWEAR:
+                        return "bgdim/bgdi-im";
+                    case JACKETS:
+                        return "bgdim/covers";
+                    case JEWELLERY:
+                        return "accessories/tkwitim";
+                    case ACCESSORIES:
+                        return "aqssvriz";
+                    case LINGERIE:
+                        return "bgdim/grbiim-vthtvnim";
+                    default:
+                        return null;
+                }
+            }
+
         }
 
         public static String translateCategoryToCastro(String category) {
@@ -1263,42 +1274,54 @@ public class Macros {
             }
         }
 
-        public static String translateSubCategoryTo247(String item_sub_category) {
-            switch (item_sub_category){
-                case "heels" :
-                    return "neliim2";
-                case "trainers" :
-                    return "neliim1";
-                case "sandals" :
-                case "slippers" :
-                case "sliders":
-                    return "kpkpim";
-                case "socks" :
-                    return "grbivnim";
-                case "belts" :
-                    return "hgvrvt";
-                case "backpack" :
-                    return "tiqim2";
-                case "clutch" :
-                case "bum" :
-                case "cross body" :
-                    return "pavc-im";
-                case "t-shirts":
-                    return "t-shirts1";
-                case "summer-top":
-                    return "t-shirts";
-                case "hoodies" :
-                case "camis":
-                case "evening":
-                    return "hvlcvt-arig";
-                case "pyjamas":
-                    return "pig-mvt";
-                case "mini":
-                case "midi":
-                case "maxi":
-                    return "wmlvt";
-                default:
-                    return null;
+        public static String translateSubCategoryTo247(String item_sub_category,String gender) {
+            if(gender.equals(CustomerMacros.WOMEN)) {
+                switch (item_sub_category) {
+                    case "heels":
+                        return "neliim2";
+                    case "trainers":
+                        return "neliim1";
+                    case "sandals":
+                    case "slippers":
+                    case "sliders":
+                        return "kpkpim";
+                    case "socks":
+                        return "grbivnim";
+                    case "belts":
+                        return "hgvrvt";
+                    case "backpack":
+                        return "tiqim2";
+                    case "clutch":
+                    case "bum":
+                    case "cross body":
+                        return "pavc-im";
+                    case "t-shirts":
+                        return "t-shirts1";
+                    case "summer-top":
+                        return "t-shirts";
+                    case "hoodies":
+                    case "camis":
+                    case "evening":
+                        return "hvlcvt-arig";
+                    case "pyjamas":
+                        return "pig-mvt";
+                    case "mini":
+                    case "midi":
+                    case "maxi":
+                        return "wmlvt";
+                    default:
+                        return null;
+                }
+            }
+            else{
+                switch (item_sub_category) {
+                    case "trainers":
+                        return "sniqrs";
+                    case "tank":
+                        return "gvpivt";
+                    default:
+                        return "";
+                }
             }
         }
     }

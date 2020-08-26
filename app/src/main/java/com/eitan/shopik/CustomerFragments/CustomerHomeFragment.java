@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -50,8 +53,7 @@ public class CustomerHomeFragment extends Fragment {
     private SwipeFlingAdapterView flingContainer;
     private MainModel mainModel;
     private boolean isSwiped;
-    private TextView textView;
-    private int items_count;
+    private TextView percentage;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -64,6 +66,7 @@ public class CustomerHomeFragment extends Fragment {
         item_gender = genderModel.getGender().getValue();
         item_type = genderModel.getType().getValue();
         item_sub_category = genderModel.getSub_category().getValue();
+
     }
 
     @Override
@@ -72,7 +75,7 @@ public class CustomerHomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_customer_home, container, false);
 
         flingContainer = view.findViewById(R.id.frame);
-        textView = view.findViewById(R.id.cards_count);
+        percentage = view.findViewById(R.id.percentage);
 
         return view;
     }
@@ -87,30 +90,42 @@ public class CustomerHomeFragment extends Fragment {
         isSwiped = false;
 
         mainModel.getAll_items().observe(requireActivity(), shoppingItems -> {
+
             swipesModel.clearAllItems();
             arrayAdapter.notifyDataSetChanged();
 
             long size = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue();
-            items_count = 0;
-            textView.setText("There are " + items_count + " more cards to swipe !");
+
             for( ShoppingItem shoppingItem : shoppingItems ) {
                 if(shoppingItem.getPage_num() == size && !shoppingItem.isSeen()) {
                     swipesModel.addToItems(shoppingItem);
-                    items_count++;
-                    textView.setText("There are " + items_count + " more cards to swipe !");
+                    arrayAdapter.notifyDataSetChanged();
                 }
                 if ((Objects.requireNonNull(swipesModel.getItems().getValue()).size() % Macros.SWIPES_TO_AD == 0)
                         && swipesModel.getItems().getValue().size() > 0) {
-
                     ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
                     if (shoppingItemAd != null) {
-                        shoppingItemAd.setAd(true);
+                        ShoppingItem adItem = new ShoppingItem();
+                        adItem.setNativeAd(shoppingItemAd.getNativeAd());
+                        adItem.setAd(true);
                         swipesModel.addToItems(shoppingItemAd);
+                        arrayAdapter.notifyDataSetChanged();
                     }
                 }
             }
+
             arrayAdapter.notifyDataSetChanged();
             flingContainer.setAdapter(arrayAdapter);
+        });
+
+        mainModel.getTotalItems().observe(requireActivity(), integer -> {
+            percentage.setVisibility(View.VISIBLE);
+            String text = integer + "%";
+            percentage.setText(text);
+            if( integer == 100 ) {
+                percentage.setVisibility(View.INVISIBLE);
+                arrayAdapter.notifyDataSetChanged();
+            }
         });
 
         SwipeFlingAdapterView.onFlingListener onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
@@ -119,7 +134,6 @@ public class CustomerHomeFragment extends Fragment {
                 isSwiped = true;
                 arrayAdapter.remove(arrayAdapter.getItem(0));
                 arrayAdapter.notifyDataSetChanged();
-                textView.setText("There are " + --items_count + " more cards to swipe !");
             }
 
             @Override
@@ -137,8 +151,8 @@ public class CustomerHomeFragment extends Fragment {
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
                 if (itemsInAdapter == 0 && isSwiped) {
-                    updateCurrentPage();
                     isSwiped = false;
+                    updateCurrentPage();
                 }
             }
 
@@ -150,7 +164,6 @@ public class CustomerHomeFragment extends Fragment {
                     view.findViewById(R.id.item_swipe_left_indicator).setAlpha(scrollProgressPercent > 0 ? scrollProgressPercent : 0);
                 }
             }
-
         };
 
         flingContainer.setFlingListener(onFlingListener);
@@ -181,8 +194,7 @@ public class CustomerHomeFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void onItemLiked(Object dataObject) {
 
-        final MediaPlayer mp = MediaPlayer.create(requireContext(), R.raw.swipe);
-        mp.start();
+        final MediaPlayer mp = MediaPlayer.create(requireContext(), R.raw.ding);
         final ShoppingItem shoppingItem = (ShoppingItem) dataObject;
         Database connection = new Database();
         if (!shoppingItem.isAd()) {
@@ -199,6 +211,7 @@ public class CustomerHomeFragment extends Fragment {
                 String action;
 
                 if (isFavorite) {
+                    mp.start();
                     dialog = new Dialog(requireContext());
                     showFavoritesDialog(imageUrl);
                     action = Macros.CustomerMacros.FAVOURITE;
@@ -223,8 +236,7 @@ public class CustomerHomeFragment extends Fragment {
     }
 
     private void onItemUnliked(Object dataObject) {
-        final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.swipe);
-        mp.start();
+
         final ShoppingItem shoppingItem = (ShoppingItem) dataObject;
         if (!shoppingItem.isAd()) {
 
