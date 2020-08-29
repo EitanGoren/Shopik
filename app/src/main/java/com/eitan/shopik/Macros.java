@@ -5,26 +5,17 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
-import com.agrawalsuneet.dotsloader.loaders.CircularDotsLoader;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.eitan.shopik.Company.CompanyProfileActivity;
-import com.eitan.shopik.Customer.CustomerMainActivity;
 import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Items.ShoppingItem;
@@ -126,77 +117,7 @@ public class Macros {
                 "It's worth it",
         };
 
-        public static final String[] RIPPED = {"ripped"};
         public static final String[] PRICES = {"between 50 to 100", "above 100" ,"less than 50"};
-        public static final String[] SANDALS = {"sandals","sandal"};
-        public static final String[] SUPER_SIZE = {"super","oversize","oversized","plus"};
-        public static final String[] MATERNITY = {"maternity","mom","mother"};
-        public static final String[] JEGGINGS = {"jeggings","jegging"};
-        public static final String[] PUFFER = {"puffer","puff"};
-        public static final String[] RUNNING = {"run","running","training","train","sport","track","track-suit","tracksuit"};
-        public static final String[] SLIM = {"slim"};
-        public static final String[] MINI = {"mini"};
-        public static final String[] MIDI = {"midi","maxi"};
-        public static final String[] STRAIGHT = {"straight"};
-        public static final String[] SKINNY = {"skinny","skiny"};
-        public static final String[] RINGS = {"ring","rings"};
-        public static final String[] STRETCH = {"stretch"};
-        public static final String[] SUPER_SKINNY = {"super","skinny","super-skinny"};
-        public static final String[] BRACELET = {"bracelet","bracelets"};
-        public static final String[] NECKLACE = {"necklace","neclaces"};
-        public static final String[] EARRINGS = {"earrings","earring"};
-        public static final String[] ROUND = {"round"};
-        public static final String[] SQUARE = {"square","rectangle","rect"};
-        public static final String[] CAT_EYE = {"cat","cat-aye"};
-        public static final String[] CLASSIC = {"class","classic"};
-        public static final String[] LOAFERS = {"loafers","loafer"};
-        public static final String[] BOAT = {"boat"};
-        public static final String[] ESPADRILLES = {"espadrilles"};
-        public static final String[] LONG = {"long"};
-        public static final String[] TANK = {"tank","tanks"};
-        public static final String[] T_SHIRT = {"t","t-shirt"};
-        public static final String[] OXFORD = {"oxford"};
-        public static final String[] MUSCLE = {"muscle","muscle-fit"};
-        public static final String[] SMART = {"smart"};
-        public static final String[] DIGITAL = {"digital"};
-        public static final String[] MESH = {"mesh"};
-        public static final String[] SHORTS = {"short","shorts"};
-        public static final String[] CO_ORD = {"co-ord","co-ords","ord","ords","coord","coords"};
-        public static final String[] LEATHER = {"leather"};
-        public static final String[] BUM = {"bum"};
-        public static final String[] CLUTCH = {"clutch"};
-        public static final String[] BACKPACK = {"backpack"};
-        public static final String[] CROSS = {"cross","shoulder","crossbody","croc"};
-        public static final String[] TOTE = {"tote"};
-        public static final String[] PETITE = {"petite","small"};
-        public static final String[] SUNDRESS = {"sundress"};
-        public static final String[] DENIM = {"denim"};
-        public static final String[] COAT = {"coat","coats"};
-        public static final String[] BOMBER = {"bomber","bombers","puff"};
-        public static final String[] BOOTS = {"boots","boot"};
-        public static final String[] HEELS = {"heel","heels"};
-        public static final String[] SLIDERS = {"sliders"};
-        public static final String[] EVENING = {"evening"};
-        public static final String[] WEDDING = {"wedding"};
-        public static final String[] JUMPER = {"jumper"};
-        public static final String[] ANKLET = {"anklet"};
-        public static final String[] BIKINI = {"bikini"};
-        public static final String[] SWIMSUIT = {"swimsuit","swim","suit"};
-        public static final String[] TRAINERS = {"train","trainers","sport","workout"};
-        public static final String[] TRENCH = {"trench"};
-        public static final String[] BIKER = {"biker","bikers"};
-        public static final String[] HOODIES = {"hoodies","hoodie"};
-        public static final String[] HIGH_WAIST = {"high-waist"};
-        public static final String[] PARTY = {"party"};
-        public static final String[] SWEATSHIRTS = {"sweatshirt","shirt"};
-        public static final String[] BLOUSES = {"blouse"};
-        public static final String[] CAMIS = {"camis","cami"};
-        public static final String[] SUMMER_TOP = {"summer-top","top","summer"};
-        public static final String[] AVIATOR = {"aviator","aviation"};
-        public static final String[] WINTER = {"winter"};
-        public static final String[] TEDDY = {"teddy"};
-        public static final String[] JACKET = {"jacket","jackets"};
-        public static final String[] OVERCOAT = {"overcoat"};
     }
 
     public static class Items {
@@ -366,182 +287,12 @@ public class Macros {
                 "Zulu & Zephyr", "ZYA"
     };
 
-     /*   public static final String[] cuts = {
-                "Petite","Maternity","Curve","Tall","Plus","plus","tall","curve","maternity","petite","Super","super",
-        };
-
-        public static final String[] styles = {
-                "square","neck","off","shoulder","mini","short","sleeve","button","front","smock","tie","back",
-                "drawstring","waist","kimono","polka","dot","blouson","Shoulder","Lace","Satin","pleated",
-                "cami","cut","out","bodycon","wedding","shoulder","stripe","work","casual","oxford","revere",
-                "cord","smart","check","floral","print","polo","Polo","mocassin","cuban","heel","loafer","edpadrilles",
-                "brogue s","foldover","cross","body","coin","pouch","chain","arm","bum","quilted","purse","shoulder",
-                "backpack","phone","zip","snake","ring","strap","asymetric","chunky","jelly","flatform","snake","sport","t-shirt",
-                "tee","short","long","SHAHD","shahd","Shahd"
-        };
-
-        public static final String[] jeans_fit = {
-                "super","comfort","skinny","mini","Baroque","slim","knee","spray","cropped","stretch",
-                "classic","rips","washed","midi","maxi","relaxed","muscle","Wide","wide","Big","big",
-                "carrot","plus","Plus"
-        };
-*/
         static final String[] shit_words = {
                 "fit","size","up",".", "#", "$", "[", "]" ,"with", "&" ,
                 "design","in","t","and","asos","'farleigh'","waist","waisted","jean","jeans",
                 "at","x","to","by","pu","the","tea","sunglasses","sandals","shoes","sandal","shirt","t-shirt",
                 "bag","watch","swim","boots","jacket","dress","swimsuit",
         };
-
-        public static String[] getList(String sub_category) {
-
-            switch(sub_category){
-                case "swimsuit":
-                    return Arrays.SWIMSUIT;
-                case "ripped":
-                    return Arrays.RIPPED;
-                case "slim-fit":
-                    return Arrays.SLIM;
-                case "jeggings":
-                    return Arrays.JEGGINGS;
-                case "oversized":
-                    return Arrays.SUPER_SIZE;
-                case "maternity":
-                    return Arrays.MATERNITY;
-                case "sandals":
-                    return Arrays.SANDALS;
-                case "leather":
-                    return Arrays.LEATHER;
-                case "running":
-                    return Arrays.RUNNING;
-                case "mini":
-                    return Arrays.MINI;
-                case "midi":
-                    return Arrays.MIDI;
-                case "skinny":
-                    return Arrays.SKINNY;
-                case "ring":
-                    return Arrays.RINGS;
-                case "loafers":
-                    return Arrays.LOAFERS;
-                case "necklace":
-                    return Arrays.NECKLACE;
-                case "sundress":
-                    return Arrays.SUNDRESS;
-                case "slim":
-                    return Arrays.SLIM;
-                case "straight":
-                    return Arrays.STRAIGHT;
-                case "puffer":
-                    return Arrays.PUFFER;
-                case "super-skinny":
-                    return Arrays.SUPER_SKINNY;
-                case "bracelet":
-                    return Arrays.BRACELET;
-                case "round":
-                    return Arrays.ROUND;
-                case "earrings":
-                    return Arrays.EARRINGS;
-                case "square":
-                    return Arrays.SQUARE;
-                case "classic":
-                    return Arrays.CLASSIC;
-                case "cat-eye":
-                    return Arrays.CAT_EYE;
-                case "boat":
-                    return Arrays.BOAT;
-                case "espadrilles":
-                    return Arrays.ESPADRILLES;
-                case "tank":
-                    return Arrays.TANK;
-                case "t-shirt":
-                case "t-shirts":
-                    return Arrays.T_SHIRT;
-                case "oxford":
-                    return Arrays.OXFORD;
-                case "muscle":
-                    return Arrays.MUSCLE;
-                case "smart":
-                    return Arrays.SMART;
-                case "mesh":
-                    return Arrays.MESH;
-                case "digital":
-                    return Arrays.DIGITAL;
-                case "shorts":
-                    return Arrays.SHORTS;
-                case "co-ord":
-                    return Arrays.CO_ORD;
-                case "long":
-                    return Arrays.LONG;
-                case "bum":
-                    return Arrays.BUM;
-                case "clutch":
-                    return Arrays.CLUTCH;
-                case "backpack":
-                    return Arrays.BACKPACK;
-                case "cross body":
-                    return Arrays.CROSS;
-                case "tote":
-                    return Arrays.TOTE;
-                case "petite":
-                    return Arrays.PETITE;
-                case "denim":
-                    return Arrays.DENIM;
-                case "coat":
-                    return Arrays.COAT;
-                case "bomber":
-                    return Arrays.BOMBER;
-                case "boots":
-                    return Arrays.BOOTS;
-                case "heels":
-                    return Arrays.HEELS;
-                case "sliders":
-                    return Arrays.SLIDERS;
-                case "anklet":
-                    return Arrays.ANKLET;
-                case "bikini":
-                    return Arrays.BIKINI;
-                case "stretch":
-                    return Arrays.STRETCH;
-                case "trainers":
-                    return Arrays.TRAINERS;
-                case "trench":
-                    return Arrays.TRENCH;
-                case "evening":
-                    return Arrays.EVENING;
-                case "wedding":
-                    return Arrays.WEDDING;
-                case "jumper":
-                    return Arrays.JUMPER;
-                case "hoodies":
-                    return Arrays.HOODIES;
-                case "biker":
-                    return Arrays.BIKER;
-                case "high-waist":
-                    return Arrays.HIGH_WAIST;
-                case "party":
-                    return Arrays.PARTY;
-                case "sweatshirts":
-                    return Arrays.SWEATSHIRTS;
-                case "blouses":
-                    return Arrays.BLOUSES;
-                case "camis":
-                    return Arrays.CAMIS;
-                case "summer-top":
-                    return Arrays.SUMMER_TOP;
-                case "aviator":
-                    return Arrays.AVIATOR;
-                case "winter":
-                    return Arrays.WINTER;
-                case "teddy":
-                    return Arrays.TEDDY;
-                case "jacket":
-                    return Arrays.JACKET;
-                case "overcoat":
-                    return Arrays.OVERCOAT;
-            }
-            return null;
-        }
 
         public static String[] getAllItemTypes(){
             return new String[]{BAG,SHOES,JEANS,DRESS,SHIRT,SUNGLASSES,SWIMWEAR,JACKETS,JEWELLERY,WATCH,ACCESSORIES,LINGERIE};
@@ -703,20 +454,17 @@ public class Macros {
         public static void GlidePicture(Context context,String imageUrl, View view) {
 
             CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
-            circularProgressDrawable.setArrowDimensions(10,10);
+            circularProgressDrawable.setArrowDimensions(12,12);
             circularProgressDrawable.setCenterRadius(50);
             circularProgressDrawable.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
             circularProgressDrawable.setStrokeWidth(7);
             circularProgressDrawable.start();
 
-            if(view instanceof CircleImageView)
-                Glide.with(context).load(imageUrl).
-                        placeholder(circularProgressDrawable).
-                        into((CircleImageView) view);
+            if(view instanceof CircleImageView) Glide.with(context).load(imageUrl).
+                        placeholder(circularProgressDrawable).into((CircleImageView) view);
             else
                 Glide.with(context).load(imageUrl).
-                        placeholder(circularProgressDrawable).
-                        into((ImageView) view);
+                        placeholder(circularProgressDrawable).into((ImageView) view);
         }
 
         public static void buy(Context context, String site_link) {
@@ -727,7 +475,7 @@ public class Macros {
             context.startActivity(browserIntent);
         }
 
-        public static void fullscreen(Context context, Object item,Pair<View, String> pair) {
+        public static void fullscreen(Context context, Object item, Pair<View, String> pair) {
             Intent intent = new Intent(context, FullscreenImageActivity.class);
             Bundle bundle = new Bundle();
             if (item instanceof RecyclerItem) {
@@ -739,23 +487,8 @@ public class Macros {
                 bundle.putSerializable("item", shoppingItem);
             }
             intent.putExtra("bundle", bundle);
-            context.startActivity(intent);
-        }
-
-        public static void goToCustomerMain(Context context, RecyclerItem item, Pair<View,String> pair) {
-
-            ActivityOptions options = ActivityOptions.
-                    makeSceneTransitionAnimation(((Activity)context), pair);
-            Intent intent = new Intent(context, CustomerMainActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("gender", item.getGender());
-            bundle.putString("type", item.getType());
-            bundle.putString("imageUrl", item.getUserImageUrl());
-            bundle.putString("sub_category", item.getItem_sub_category());
-            intent.putExtra("bundle", bundle);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            context.startActivity(intent,options.toBundle());
-            ((Activity) context).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) context, pair);
+            context.startActivity(intent, options.toBundle());
         }
 
         public static void sellerProfile(Context context, String sellerId,Pair<View, String> pair) {

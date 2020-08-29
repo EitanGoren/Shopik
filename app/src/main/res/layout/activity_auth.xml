@@ -4,37 +4,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/nnn"
+    android:background="@drawable/bg8"
     android:layout_centerInParent="true">
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="90dp"
-        android:layout_marginTop="150dp"
-        android:layout_centerHorizontal="true">
-
-        <ImageView
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:src="@drawable/tooki"
-            android:layout_above="@id/shopik"
-            android:layout_alignEnd="@id/shopik"
-            android:layout_marginBottom="-22dp"
-            android:transitionName="tooki"
-            android:layout_marginEnd="15dp"/>
 
         <TextView
             android:id="@+id/shopik"
+            android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:fontFamily="cursive"
             android:text="Welcome to Shopik"
-            android:textColor="#FFFFFF"
-            android:textSize="48sp"
+            android:textColor="#000000"
+            android:textSize="53sp"
             android:textStyle="bold" />
 
-    </RelativeLayout>
+    <ImageView
+        android:layout_width="105dp"
+        android:layout_height="105dp"
+        android:layout_above="@id/shopik"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="15dp"
+        android:src="@drawable/tooki"
+        android:transitionName="tooki"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -72,12 +63,9 @@
             android:id="@+id/facebook_card"
             android:layout_width="280dp"
             android:layout_height="40dp"
-            android:layout_below="@id/google_card"
-            android:layout_centerHorizontal="true"
             app:cardCornerRadius="20dp"
             android:elevation="10sp"
             android:translationZ="10sp"
-            android:layout_centerInParent="true"
             android:layout_marginTop="20dp">
 
             <Button
@@ -100,9 +88,6 @@
             android:id="@+id/email_card"
             android:layout_width="280dp"
             android:layout_height="40dp"
-            android:layout_below="@id/facebook_card"
-            android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true"
             android:elevation="10sp"
             android:translationZ="10sp"
             android:layout_marginTop="20dp"

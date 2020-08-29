@@ -7,7 +7,6 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -40,6 +38,7 @@ import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CustomerHomeFragment extends Fragment {
 
@@ -54,6 +53,8 @@ public class CustomerHomeFragment extends Fragment {
     private MainModel mainModel;
     private boolean isSwiped;
     private TextView percentage;
+    private Observer<CopyOnWriteArrayList<ShoppingItem>> items_observer;
+    private Observer<Integer> total_items_observer;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -66,7 +67,6 @@ public class CustomerHomeFragment extends Fragment {
         item_gender = genderModel.getGender().getValue();
         item_type = genderModel.getType().getValue();
         item_sub_category = genderModel.getSub_category().getValue();
-
     }
 
     @Override
@@ -89,7 +89,7 @@ public class CustomerHomeFragment extends Fragment {
 
         isSwiped = false;
 
-        mainModel.getAll_items().observe(requireActivity(), shoppingItems -> {
+        items_observer = shoppingItems -> {
 
             swipesModel.clearAllItems();
             arrayAdapter.notifyDataSetChanged();
@@ -116,9 +116,10 @@ public class CustomerHomeFragment extends Fragment {
 
             arrayAdapter.notifyDataSetChanged();
             flingContainer.setAdapter(arrayAdapter);
-        });
+        };
+        mainModel.getAll_items().observe(requireActivity(),items_observer );
 
-        mainModel.getTotalItems().observe(requireActivity(), integer -> {
+        total_items_observer = integer -> {
             percentage.setVisibility(View.VISIBLE);
             String text = integer + "%";
             percentage.setText(text);
@@ -126,7 +127,8 @@ public class CustomerHomeFragment extends Fragment {
                 percentage.setVisibility(View.INVISIBLE);
                 arrayAdapter.notifyDataSetChanged();
             }
-        });
+        };
+        mainModel.getTotalItems().observe(requireActivity(), total_items_observer );
 
         SwipeFlingAdapterView.onFlingListener onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
             @Override
@@ -174,11 +176,13 @@ public class CustomerHomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         flingContainer = null;
+        mainModel.getAll_items().removeObserver(items_observer);
+        mainModel.getTotalItems().removeObserver(total_items_observer);
     }
 
     private void updateBadge() {
 
-        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.botton_nav);
+        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottom_nav);
         BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites);
 
         if (badgeDrawable.hasNumber()) {
@@ -313,5 +317,11 @@ public class CustomerHomeFragment extends Fragment {
                 child(item_type).
                 child(item_sub_category).
                 setValue(new_page);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        percentage = null;
     }
 }

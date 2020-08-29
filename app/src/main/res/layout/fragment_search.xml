@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:elevation="10dp"
@@ -172,9 +170,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="15dp"
-        android:src="@drawable/ic_arrow_downward"
+        android:fadingEdge="vertical"
         android:theme="@style/Widget.Design.FloatingActionButton"
-        app:backgroundTint="#FFFFFF"
+        android:fadingEdgeLength="20dp"
+        android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
+        app:backgroundTint="#ffffff"
         app:elevation="10dp"
         app:fabSize="mini"
         app:borderWidth="1.5dp"

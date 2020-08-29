@@ -95,7 +95,7 @@
                     android:drawablePadding="10dp"
                     android:fontFamily="@font/nunito_bold"
                     android:gravity="center_vertical"
-                    android:text="Hot Trending"
+                    android:text="@string/hot_trending"
                     android:textColor="#000000"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -120,17 +120,15 @@
                 android:id="@+id/layout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/textview_border_line"
                 android:clickable="true"
                 android:elevation="10dp"
                 android:focusable="true"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:translationZ="10dp">
+                android:foreground="?attr/selectableItemBackgroundBorderless">
 
-                <TextView
+                <ImageView
                     android:id="@+id/text_btn1"
                     android:layout_width="match_parent"
                     android:layout_height="350dp"
@@ -138,7 +136,7 @@
                     android:layout_marginTop="2.3dp"
                     android:layout_marginBottom="2.3dp"
                     android:gravity="center"
-                    android:padding="20dp"
+                    android:scaleType="centerCrop"
                     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
                 <TextView
@@ -151,7 +149,6 @@
                     android:background="#40000000"
                     android:fontFamily="@font/roboto_thin"
                     android:gravity="center"
-                    android:padding="20dp"
                     android:textAlignment="center"
                     android:textColor="#ffffff"
                     android:textSize="45sp"
@@ -171,10 +168,9 @@
                 android:elevation="10dp"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:translationZ="10dp"
                 app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-                <TextView
+                <ImageView
                     android:id="@+id/text_btn2"
                     android:layout_width="match_parent"
                     android:layout_height="350dp"
@@ -182,7 +178,7 @@
                     android:layout_marginTop="2.3dp"
                     android:layout_marginBottom="2.3dp"
                     android:gravity="center"
-                    android:padding="20dp"
+                    android:scaleType="centerCrop"
                     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
 
                 <TextView
@@ -215,15 +211,15 @@
                 android:elevation="10dp"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:translationZ="10dp"
                 app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-                <TextView
+                <ImageView
                     android:id="@+id/text_btn3"
                     android:layout_width="match_parent"
                     android:layout_height="500dp"
                     android:layout_centerInParent="true"
                     android:gravity="center"
+                    android:scaleType="centerCrop"
                     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
                 <TextView

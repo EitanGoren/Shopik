@@ -12,29 +12,21 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Items.Catagory;
 import com.eitan.shopik.Items.RecyclerItem;
-import com.eitan.shopik.Items.SubCategory;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
+public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
 
     private List<Catagory> items;
-    private String imageUrl;
-    private TextView main_header;
-    private RecyclerView recyclerView;
-    private TextView mLayout;
 
-    public ItemsCatagoriesListAdapter(List<Catagory> items, String imageUrl) {
+    public ItemsCategoriesListAdapter(List<Catagory> items) {
         this.items = items;
-        this.imageUrl = imageUrl;
     }
 
     @Override
@@ -44,7 +36,7 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return getGroup(groupPosition).getSubCategoriesSize() > 0 ? 1 : 0;
+        return getGroup(groupPosition).getRexyclerItemsSize() > 0 ? 1 : 0;
     }
 
     @Override
@@ -53,8 +45,8 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public SubCategory getChild(int groupPosition, int childPosition) {
-        return items.get(groupPosition).getSubCategory(childPosition);
+    public RecyclerItem getChild(int groupPosition, int childPosition) {
+        return items.get(groupPosition).getRecyclerItem(childPosition);
     }
 
     @Override
@@ -80,48 +72,24 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
         if(convertView == null){
             LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             assert layoutInflater != null;
-            convertView = layoutInflater.inflate(R.layout.category_group,null);
+            convertView = layoutInflater.inflate(R.layout.category_group, parent,false);
         }
 
         CircleImageView mImage = convertView.findViewById(R.id.cat_icon);
-        main_header = convertView.findViewById(R.id.main_header);
+        TextView main_header = convertView.findViewById(R.id.main_header);
         TextView sub_header = convertView.findViewById(R.id.sub_header);
 
-        setHeaderColor(parent.getContext(), catagory.getGender(), isExpanded);
-
-        StringBuilder sub_header_text = new StringBuilder();
-        main_header.setText(setMainHeader(catagory.getName()).toUpperCase());
-
-        for (int i = 0; i < catagory.getSubCategories().size(); ++i) {
-            if(i > 2) break;
-            String sub_name = catagory.getSubCategories().get(i).getName();
-            String first_letter = String.valueOf(sub_name.charAt(0)).toUpperCase();
-            sub_header_text.append(first_letter).append(sub_name.substring(1)).append(" | ");
-
-        }
-        sub_header_text.append("...");
-
-        sub_header.setText(sub_header_text.toString());
-
-        String icon = setmButtonIcon(catagory.getGender(),catagory.getName());
-        Macros.Functions.GlidePicture(parent.getContext(),icon,mImage);
-
-        return convertView;
-    }
-
-    private void setHeaderColor(Context context, String gender, boolean isExpanded) {
         int color;
         if(isExpanded)
-            color = gender.equals(Macros.CustomerMacros.MEN) ? context.getColor(R.color.menColor) : context.getColor(R.color.womenColor);
+            color = catagory.getGender().equals(Macros.CustomerMacros.MEN) ?
+                    parent.getContext().getColor(R.color.menColor) :
+                    parent.getContext().getColor(R.color.womenColor);
         else
             color = Color.BLACK;
 
         main_header.setTextColor(color);
-        main_header.setTextColor(color);
-    }
-
-    private String setMainHeader(String catagory) {
-        String name = catagory;
+        StringBuilder sub_header_text = new StringBuilder();
+        String name = catagory.getName().toUpperCase();
         switch (name) {
             case Macros.BAG:
                 name = "BAGS";
@@ -136,7 +104,22 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
                 name = "WATCHES";
                 break;
         }
-        return name;
+        main_header.setText(name);
+
+        for (int i = 0; i < catagory.getRexyclerItemsSize(); ++i) {
+            if(i > 2) break;
+            String sub_name = catagory.getRecyclerItem(i).getItem_sub_category();
+            String first_letter = String.valueOf(sub_name.charAt(0)).toUpperCase();
+            sub_header_text.append(first_letter).append(sub_name.substring(1)).append(" | ");
+        }
+        sub_header_text.append("...");
+
+        sub_header.setText(sub_header_text.toString());
+
+        String icon = setmButtonIcon(catagory.getGender(),catagory.getName());
+        Macros.Functions.GlidePicture(parent.getContext(),icon,mImage);
+
+        return convertView;
     }
 
     private String setmButtonIcon(String gender, String category){
@@ -185,55 +168,20 @@ public class ItemsCatagoriesListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, final ViewGroup parent) {
 
-        final ArrayList<SubCategory> subCategories = (getGroup(groupPosition)).getSubCategories();
-        String gender = subCategories.get(0).getGender();
-
-        ArrayList<RecyclerItem> recyclerItems = new ArrayList<>();
-        for ( SubCategory sub : subCategories ) {
-            RecyclerItem new_item = new RecyclerItem(sub.getName(),null);
-            new_item.setImage_resource(sub.getResource());
-            new_item.setType(items.get(groupPosition).getName());
-            new_item.setItem_sub_category(sub.getName());
-            new_item.setGender(sub.getGender());
-
-            String name = String.valueOf(sub.getName().charAt(0)).toUpperCase();
-            name += sub.getName().substring(1);
-            new_item.setText(name);
-
-            new_item.setUserImageUrl(imageUrl);
-            recyclerItems.add(new_item);
-        }
-
         if(convertView == null){
             LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().
                     getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             assert layoutInflater != null;
-            convertView = layoutInflater.inflate(R.layout.category_item,null);
+            convertView = layoutInflater.inflate(R.layout.category_item, parent,false);
         }
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(parent.getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView = convertView.findViewById(R.id.recycler);
+        LinearLayoutManager layoutManager = new LinearLayoutManager( parent.getContext(), LinearLayoutManager.HORIZONTAL,false );
+        RecyclerView recyclerView = convertView.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(recyclerItems, "SubCategory");
+        RecyclerAdapter recyclerAdapter = new RecyclerAdapter( (getGroup(groupPosition)).getRecyclerItems(),"SubCategory");
         recyclerView.setAdapter(recyclerAdapter);
-        recyclerView.setScrollbarFadingEnabled(true);
-
-        mLayout = convertView.findViewById(R.id.text_layout);
-
-        setLayoutColors(parent.getContext(), gender);
 
         return convertView;
-    }
-
-    private void setLayoutColors(Context context, String gender) {
-        if(gender.equals(Macros.CustomerMacros.WOMEN)){
-            recyclerView.setBackground(context.getDrawable(R.drawable.women_category_background));
-            mLayout.setBackground(context.getDrawable(R.drawable.women_category_background));
-        }
-        else{
-            recyclerView.setBackground(context.getDrawable(R.drawable.men_category_background));
-            mLayout.setBackground(context.getDrawable(R.drawable.men_category_background));
-        }
     }
 
     @Override

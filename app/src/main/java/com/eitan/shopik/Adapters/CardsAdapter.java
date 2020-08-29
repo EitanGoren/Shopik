@@ -1,13 +1,17 @@
 package com.eitan.shopik.Adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,6 +34,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
+import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
@@ -75,7 +80,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
         assert shoppingItem != null;
         if(shoppingItem.isAd() && shoppingItem.getNativeAd() != null && !shoppingItem.isDummyLastItem()) {
-            UnifiedNativeAdView adView = (UnifiedNativeAdView) LayoutInflater.from(getContext()).inflate(R.layout.native_card_ad_template,null);
+            UnifiedNativeAdView adView = (UnifiedNativeAdView) LayoutInflater.from(getContext()).inflate(R.layout.native_card_ad_template, parent,false);
             // Set the media view.
             adView.setMediaView(adView.findViewById(R.id.ad_media));
 
@@ -315,7 +320,8 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             });
 
             seller_logo.setOnClickListener(v -> Macros.Functions.
-                    sellerProfile(getContext(),shoppingItem.getSellerId(), Pair.create(seller_logo,"company_logo")));
+                    sellerProfile(getContext(),shoppingItem.getSellerId(),
+                            Pair.create(seller_logo,"company_logo")));
 
             String cur_price;
             if(shoppingItem.getSeller().equals("ASOS")) {
@@ -396,8 +402,18 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 });
             });
 
-            Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), shoppingItem, pair));
+
+            fullscreen.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("item", shoppingItem);
+                intent.putExtra("bundle", bundle);
+                ActivityOptions options = ActivityOptions.
+                        makeSceneTransitionAnimation((Activity) getContext(),
+                                Pair.create(brand_name,"company_name"),
+                                Pair.create(seller_logo,"company_logo"));
+                getContext().startActivity(intent, options.toBundle());
+            });
 
             String image = "";
             for(String img : shoppingItem.getImages()){

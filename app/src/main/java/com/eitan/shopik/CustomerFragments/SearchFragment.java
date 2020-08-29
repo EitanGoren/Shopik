@@ -1,7 +1,6 @@
 package com.eitan.shopik.CustomerFragments;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -29,6 +28,7 @@ import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.AllItemsModel;
+import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.chip.Chip;
@@ -56,6 +56,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private TextView header;
     private SearchView searchView;
     private Toolbar toolbar;
+    String item_type,item_gender,item_sub_category;
+    private long page = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -64,13 +66,18 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         allItemsModel = new ViewModelProvider(requireActivity()).get(AllItemsModel.class);
         mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
+        GenderModel genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         setHasOptionsMenu(true);
+
+        item_gender = genderModel.getGender().getValue();
+        item_type = genderModel.getType().getValue();
+        item_sub_category = genderModel.getSub_category().getValue();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
+        View view = inflater.inflate(R.layout.fragment_search, container,false);
 
         appBarLayout = view.findViewById(R.id.appbar);
 
@@ -171,6 +178,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         });
 
+        mainModel.getCurrent_page().observe(requireActivity(), aLong -> page = aLong);
+
         onScrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -182,7 +191,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 // ON TOP
                 else if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     scroll.setRotation(0);
+                    // ask if want more items
                 }
+              /*  else if(!recyclerView.canScrollVertically(1)){
+                    page++;
+                    mainModel.setCurrent_page(page);
+                }*/
             }
         };
 
@@ -205,7 +219,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         appBarLayout.addOnOffsetChangedListener(listener);
 
         mainModel.getTotalItems().observe(requireActivity(), integer -> {
-           // if (integer == 100)
+            if (integer == 100)
                 recyclerGridAdapter.notifyDataSetChanged();
         });
     }
@@ -271,7 +285,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         // Retrieve the SearchView and plug it into SearchManager
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.nav_search));
 
-        String queryHint = "Search something...";
+        String queryHint = "What's On Your Mind?";
         searchView.setQueryHint(queryHint);
         searchView.setOnClickListener(v -> searchView.onActionViewExpanded());
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

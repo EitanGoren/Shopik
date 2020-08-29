@@ -1,7 +1,10 @@
 package com.eitan.shopik.Adapters;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +14,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.eitan.shopik.Customer.CustomerMainActivity;
+import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -49,10 +55,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 selected = new RecyclerAdapter.RecyclerViewHolder(LayoutInflater.from(parent.getContext()).
                         inflate(R.layout.recycler_sub_category_item,parent,false));
                 break;
-            case "Market":
-                selected = new RecyclerAdapter.RecyclerViewHolder(LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.market_item,parent,false));
-                break;
         }
         assert selected != null;
         return selected;
@@ -75,7 +77,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     class RecyclerViewHolder extends RecyclerView.ViewHolder{
 
         private ImageView imageView;
-        private TextView sub_cat, brand, price, text;
+        private TextView sub_cat, brand, price;
         private Button link, full_screen;
 
         public RecyclerViewHolder(@NonNull View itemView) {
@@ -83,11 +85,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
             if(type.equals("SubCategory")){
                 imageView = itemView.findViewById(R.id.sub_category_image);
                 sub_cat = itemView.findViewById(R.id.sub_category_button);
-            }
-            else if(type.equals("Market")){
-                imageView = itemView.findViewById(R.id.image_market);
-                text = itemView.findViewById(R.id.name_market);
-                price = itemView.findViewById(R.id.price_market);
             }
             else if(type.equals("Item") || type.equals("New-Item")) {
                 imageView = itemView.findViewById(R.id.image_slider);
@@ -106,43 +103,58 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         public void setItem(final RecyclerItem item) {
 
             switch (type) {
-                case "Item": {
+                case "Item":
                     brand.setText(item.getText());
-                    brand.setCompoundDrawablesWithIntrinsicBounds(getContext().getDrawable(R.drawable.ic_thumb_up_blue), null, null, null);
+                    brand.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.
+                            getDrawable(getContext(),R.drawable.ic_thumb_up_blue),null,null,null);
                     brand.setCompoundDrawablePadding(20);
                     link.setOnClickListener(v -> Macros.Functions.buy(getContext(),item.getLink()));
                     Macros.Functions.GlidePicture(getContext(),item.getImages().get(0), imageView);
-                    Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
-                    full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
+                    full_screen.setOnClickListener(v -> {
+                        Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("item", item);
+                        intent.putExtra("bundle", bundle);
+                        ActivityOptions options = ActivityOptions.
+                                makeSceneTransitionAnimation((Activity) getContext(),
+                                        Pair.create(brand,"company_name"));
+                        getContext().startActivity(intent, options.toBundle());
+                    });
                     break;
-                }
-                case "Market": {
-                    Macros.Functions.GlidePicture(getContext(),item.getImage_resource(), imageView);
-
-                    price.setText(item.getPrice());
-                    text.setText(item.getText());
-                    break;
-                }
-                case "New-Item": {
+                case "New-Item":
                     brand.setText(item.getText());
                     price.setText(item.getPrice());
                     link.setOnClickListener(v -> Macros.Functions.buy(getContext(),item.getLink()));
                     Macros.Functions.GlidePicture(getContext(),item.getImages().get(0), imageView);
-                    Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
-                    full_screen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
+                    full_screen.setOnClickListener(v -> {
+                        Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("item", item);
+                        intent.putExtra("bundle", bundle);
+                        ActivityOptions options = ActivityOptions.
+                                makeSceneTransitionAnimation((Activity) getContext(),
+                                        Pair.create(brand,"company_name"));
+                        getContext().startActivity(intent, options.toBundle());
+                    });
                     break;
-                }
                 case "Brand":
                     brand.setText(item.getText());
                     break;
                 case "SubCategory":
-                    ImageView tooki = ((Activity)getContext()).findViewById(R.id.company_img_logo);
-
-                    Macros.Functions.GlidePicture(getContext(),item.getImage_resource(), imageView);
+                    Macros.Functions.GlidePicture(getContext(), item.getImage_resource(), imageView);
                     sub_cat.setText(item.getText());
-                    imageView.setOnClickListener(v -> Macros.Functions.
-                            goToCustomerMain(getContext(), item, Pair.create(tooki,"tooki")));
-
+                    imageView.setOnClickListener(v -> {
+                        Intent intent = new Intent(getContext(), CustomerMainActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("gender", item.getGender());
+                        bundle.putString("type", item.getType());
+                        bundle.putString("imageUrl", item.getUserImageUrl());
+                        bundle.putString("sub_category", item.getItem_sub_category());
+                        intent.putExtra("bundle", bundle);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        getContext().startActivity(intent);
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+                    });
                     break;
             }
         }

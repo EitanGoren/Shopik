@@ -22,6 +22,7 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -64,10 +65,6 @@ public class FullscreenImageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Window window = getWindow();
-        // set an enter transition
-     //   window.setEnterTransition(new Fade());
-        // set an exit transition
-     //   window.setExitTransition(new Fade());
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.TRANSPARENT);
 
@@ -81,7 +78,10 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
         init();
 
-        mClose.setOnClickListener(v -> this.supportFinishAfterTransition());
+        mClose.setOnClickListener(v -> {
+            this.supportFinishAfterTransition();
+            finishAfterTransition();
+        });
     }
 
     private void init() {
@@ -110,11 +110,11 @@ public class FullscreenImageActivity extends AppCompatActivity {
         mDot4 = findViewById(R.id.fullscreen_dot_4);
         mDot5 = findViewById(R.id.fullscreen_dot_5);
 
-        mDot1.setBackground(getDrawable(R.drawable.ic_lens_black_24dp));
-        mDot2.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-        mDot3.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-        mDot4.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-        mDot5.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
+        mDot1.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_lens_black_24dp));
+        mDot2.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_baseline_panorama_fish_eye));
+        mDot3.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_baseline_panorama_fish_eye));
+        mDot4.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_baseline_panorama_fish_eye));
+        mDot5.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_baseline_panorama_fish_eye));
 
         if(isFavorite) {
             mFavorite.setVisibility(View.VISIBLE);
@@ -164,7 +164,6 @@ public class FullscreenImageActivity extends AppCompatActivity {
         public fullscreenPicsAdapter(Object o){
             if(o instanceof ShoppingItem){
 
-
                 imagesUrl = ((ShoppingItem) o).getImages();
                 StringBuilder description = new StringBuilder();
                 if(((ShoppingItem) o).getName() != null) {
@@ -204,6 +203,34 @@ public class FullscreenImageActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return imagesUrl.size() + 1;
+        }
+
+        private void changeTabs(int position) {
+            switch (position){
+                case 0:
+                    mDot1.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_lens_black_24dp));
+                    mDot2.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_baseline_panorama_fish_eye));
+                    break;
+                case 1:
+                    mDot1.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_baseline_panorama_fish_eye));
+                    mDot2.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_lens_black_24dp));
+                    mDot3.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_baseline_panorama_fish_eye));
+                    break;
+                case 2:
+                    mDot2.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_baseline_panorama_fish_eye));
+                    mDot3.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_lens_black_24dp));
+                    mDot4.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_baseline_panorama_fish_eye));
+                    break;
+                case 3:
+                    mDot3.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_baseline_panorama_fish_eye));
+                    mDot4.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_lens_black_24dp));
+                    mDot5.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_baseline_panorama_fish_eye));
+                    break;
+                case 4:
+                    mDot4.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_baseline_panorama_fish_eye));
+                    mDot5.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_lens_black_24dp));
+                    break;
+            }
         }
 
         class PicsViewHolder extends RecyclerView.ViewHolder{
@@ -307,7 +334,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
                         getVideo(id);
                     }
                     catch (Exception e){
-                        //Log.d(Macros.TAG, "FullscreenActivity:getVideoLink: " + Objects.requireNonNull(e.getMessage()));
+                        Log.d(Macros.TAG, "FullscreenActivity:getVideoLink: " + Objects.requireNonNull(e.getMessage()));
                     }
                     return video_path;
                 }
@@ -369,34 +396,5 @@ public class FullscreenImageActivity extends AppCompatActivity {
                 }
             }
         }
-
-        private void changeTabs(int position) {
-            switch (position){
-                case 0:
-                    mDot1.setBackground(getDrawable(R.drawable.ic_lens_black_24dp));
-                    mDot2.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-                    break;
-                case 1:
-                    mDot1.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-                    mDot2.setBackground(getDrawable(R.drawable.ic_lens_black_24dp));
-                    mDot3.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-                    break;
-                case 2:
-                    mDot2.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-                    mDot3.setBackground(getDrawable(R.drawable.ic_lens_black_24dp));
-                    mDot4.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-                    break;
-                case 3:
-                    mDot3.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-                    mDot4.setBackground(getDrawable(R.drawable.ic_lens_black_24dp));
-                    mDot5.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-                    break;
-                case 4:
-                    mDot4.setBackground(getDrawable(R.drawable.ic_baseline_panorama_fish_eye));
-                    mDot5.setBackground(getDrawable(R.drawable.ic_lens_black_24dp));
-                    break;
-            }
-        }
     }
-
 }

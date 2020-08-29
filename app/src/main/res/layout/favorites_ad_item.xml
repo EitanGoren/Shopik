@@ -13,6 +13,12 @@
             android:layout_height="450dp"
             android:layout_gravity="top">
 
+            <TextView
+                android:id="@+id/AD"
+                style="@style/AppTheme.AdAttribution"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="7dp"/>
+
             <com.google.android.gms.ads.formats.MediaView
                 android:id="@+id/ad_media"
                 android:layout_width="match_parent"
@@ -52,22 +58,18 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/ad_store"
+                android:id="@+id/ad_card_seller_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@id/ad_media"
-                android:layout_alignBottom="@id/ad_media"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                android:textSize="14sp"/>
-
-            <TextView
-                android:id="@+id/AD"
-                style="@style/AppTheme.AdAttribution"
-                android:layout_alignBottom="@id/ad_media"
+                android:layout_above="@id/item_info_social"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="7dp" />
+                android:fontFamily="@font/nunito_semibold"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:textAlignment="viewStart"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
 
             <RelativeLayout
                 android:id="@+id/item_info_social"
@@ -75,6 +77,16 @@
                 android:layout_height="90dp"
                 android:layout_alignParentBottom="true"
                 android:background="#FFFFFF">
+
+                <TextView
+                    android:id="@+id/ad_store"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_above="@id/ad_action_button"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="10dp"
+                    android:textAlignment="viewStart"
+                    android:textSize="22sp"/>
 
                 <Button
                     android:id="@+id/ad_action_button"
@@ -84,7 +96,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentBottom="true"
                     android:fontFamily="@font/nunito_bold"
-                    android:text="click"
+                    android:text="@string/click"
                     android:textAlignment="center"
                     android:theme="@style/GridBuyButtons"
                     android:textColor="#6A6A6A"
@@ -104,24 +116,12 @@
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/ad_card_seller_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="7dp"
-                    android:fontFamily="@font/nunito_semibold"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
             </RelativeLayout>
 
             <RatingBar
                 android:id="@+id/ad_stars"
                 style="?android:attr/ratingBarStyleSmall"
-                android:layout_width="wrap_content"
+                android:layout_width="95dp"
                 android:layout_height="wrap_content"
                 android:layout_above="@id/ad_logo"
                 android:layout_alignStart="@id/ad_logo"
@@ -134,8 +134,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ad_logo"
-                android:layout_width="65dp"
-                android:layout_height="65dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="bottom|end"

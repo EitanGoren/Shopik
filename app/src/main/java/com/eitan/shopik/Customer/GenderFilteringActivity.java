@@ -20,6 +20,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.ActivityNavigator;
 import androidx.viewpager.widget.ViewPager;
 
 import com.eitan.shopik.Database;
@@ -71,8 +72,10 @@ public class GenderFilteringActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         overridePendingTransition(R.anim.fadein,R.anim.fadeout);
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+
         setContentView(R.layout.activity_gender_filtering);
 
         if(!isConnectedToInternet()){
@@ -92,12 +95,8 @@ public class GenderFilteringActivity extends AppCompatActivity {
         topNavListener = item -> {
             Intent selectedIntent = null;
             switch (item.getTitle().toString()) {
-                case "Purchase History":
-                    //  selectedFragment = new PurchaseHistoryFragment();
-                    break;
                 case "Log Out":
                     FirebaseAuth.getInstance().signOut();
-                    //TODO SIGN OUT FROM SMART LOCK
                     if(FirebaseAuth.getInstance().getCurrentUser() == null ) {
                         selectedIntent = new Intent(GenderFilteringActivity.this, LandingPageActivity.class);
                         startActivity(selectedIntent);
@@ -132,24 +131,23 @@ public class GenderFilteringActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 model.setGender(parent.getItemAtPosition(position).toString());
                 gender = parent.getItemAtPosition(position).toString();
-                model.setGender(gender);
                 model.setImageUrl(imageUrl);
                 model.setName(name);
                 setColors();
 
+                Objects.requireNonNull(entranceModel.getItems().getValue()).clear();
+
                 //LIKED ITEMM
-                new fetchLikedItems().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new fetchLikedItems().execute();
 
                 //Outlet Items
                 int num = gender.equals(Macros.CustomerMacros.WOMEN) ? WOMEN_OUTLET_NUM : MEN_OUTLET_NUM;
-                new fetchOutlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num,1);
+                new fetchOutlet().execute(num,1);
 
-                if (gender.equals(Macros.CustomerMacros.WOMEN)) {
-                    new fetchNewInWomen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, 1);
-                }
-                else {
-                    new fetchNewInMen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, 1);
-                }
+                if (gender.equals(Macros.CustomerMacros.WOMEN))
+                    new fetchNewInWomen().execute(1);
+                else
+                    new fetchNewInMen().execute(1);
             }
 
             @Override
@@ -343,12 +341,10 @@ public class GenderFilteringActivity extends AppCompatActivity {
         //we are connected to a network
         if(Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)).getState() == NetworkInfo.State.CONNECTED ||
                 Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)).getState() == NetworkInfo.State.CONNECTED){
-
             return internetIsConnected();
         }
         else
             return false;
-
     }
 
     public boolean internetIsConnected() {
@@ -361,14 +357,22 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        ActivityNavigator.applyPopAnimationsToPendingTransition(this);
+    }
+
     private class fetchLikedItems extends AsyncTask<Void,Void,Void> {
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected Void doInBackground(Void... voids) {
+
+            entranceModel.clearLiked();
             // Liked Items
             for (String type : Macros.Items.getAllItemTypes()) {
-                FirebaseDatabase.getInstance().
-                        getReference().
+                FirebaseDatabase.getInstance().getReference().
                         child(Macros.ITEMS).
                         child(gender).
                         child(type).
@@ -377,8 +381,8 @@ public class GenderFilteringActivity extends AppCompatActivity {
                             @RequiresApi(api = Build.VERSION_CODES.N)
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                entranceModel.removeAllType(type,gender);
                                 if (snapshot.exists()) {
-                                    entranceModel.removeAllType(type, gender);
                                     long count = 0;
                                     long max = 0;
                                     String item_id = "";
@@ -417,13 +421,14 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
                                     recyclerItem.setImages(list);
 
-                                    if (gender.equals(Macros.CustomerMacros.WOMEN))
+                                    if(gender.equals(Macros.CustomerMacros.WOMEN)) {
                                         entranceModel.addWomenLikedItem(recyclerItem);
-                                    else
+                                    }
+                                    else{
                                         entranceModel.addMenLikedItem(recyclerItem);
-
-                                    entranceModel.setLiked_items(gender);
+                                    }
                                 }
+                                entranceModel.setLiked_items(gender);
                             }
 
                             @Override
@@ -449,7 +454,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
         protected Void doInBackground(Integer... integers) {
             try {
 
-                String outlet_data = "";
+                String outlet_data;
 
                 Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + integers[0] + "&page=" + integers[1]).get();
                 DataNode node = (DataNode) document.childNode(2).childNode(2).childNode(28).childNode(0);
@@ -535,6 +540,12 @@ public class GenderFilteringActivity extends AppCompatActivity {
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            outletsModel.postOutlets();
+        }
     }
 
     private class fetchNewInMen extends AsyncTask<Integer,Integer,Void> {
@@ -557,7 +568,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                             cat = Macros.NEW_TRENDING;
                     }
 
-                    String new_items_data = "";
+                    String new_items_data;
                     entranceModel.addMen_new_num(cat, 0);
 
                     Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + page_num[0]).get();
@@ -626,9 +637,9 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         }
 
                         entranceModel.addMenItem(recyclerItem);
-                        entranceModel.setList(gender);
                     }
                 }
+                entranceModel.setList(gender);
             }
             catch (Exception e ) {
                 Log.d(Macros.TAG,"GenderFiltering::fetchNewInMen() " +  Objects.requireNonNull(e.getMessage()));
@@ -734,9 +745,9 @@ public class GenderFilteringActivity extends AppCompatActivity {
                             recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
 
                         entranceModel.addWomenItem(recyclerItem);
-                        entranceModel.setList(gender);
                     }
                 }
+                entranceModel.setList(gender);
             }
             catch (Exception e ) {
                 Log.d(Macros.TAG,"GenderFiltering::fetchNewInWomen() " +  Objects.requireNonNull(e.getMessage()));

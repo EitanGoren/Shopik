@@ -10,14 +10,6 @@
         android:icon="@drawable/ic_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"
-        android:title="search" />
-
-    <item
-        android:id="@+id/nav_about"
-        android:orderInCategory="2"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="never"
-        android:title="About" />
-
+        android:title="Search" />
 
 </menu>

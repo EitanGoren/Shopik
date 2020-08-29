@@ -14,9 +14,9 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.eitan.shopik.Adapters.ItemsCatagoriesListAdapter;
+import com.eitan.shopik.Adapters.ItemsCategoriesListAdapter;
 import com.eitan.shopik.Items.Catagory;
-import com.eitan.shopik.Items.SubCategory;
+import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.EntranceViewModel;
@@ -30,10 +30,10 @@ import java.util.Objects;
 
 public class E2Fragment extends Fragment {
 
-    private ItemsCatagoriesListAdapter adapter;
+    private ItemsCategoriesListAdapter adapter;
     private ArrayList<Catagory> categories;
     private String gender, imageUrl;
-    private ArrayList<SubCategory> sub_jackets,sub_shoes, sub_bags,sub_dress,sub_jeans,
+    private ArrayList<RecyclerItem> sub_jackets,sub_shoes,sub_bags,sub_dress,sub_jeans,
                                    sub_jewellery,sub_shirts,sub_glasses,sub_watches,sub_swim,
                                    sub_accessories,sub_lingerie;
     private GenderModel model;
@@ -48,8 +48,13 @@ public class E2Fragment extends Fragment {
     private Catagory swimwear;
     private Catagory lingerie;
     private Catagory accessories;
-
     private EntranceViewModel viewModel;
+    private androidx.lifecycle.Observer<String> observer;
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,7 +79,7 @@ public class E2Fragment extends Fragment {
                     collection(Macros.CUSTOMERS).
                     document(user.getUid()).get().
                     addOnSuccessListener(documentSnapshot ->
-                    imageUrl = documentSnapshot.get("imageUrl") != null ?
+                            imageUrl = documentSnapshot.get("imageUrl") != null ?
                     Objects.requireNonNull(documentSnapshot.get("imageUrl")).toString() : null
             );
         }
@@ -86,13 +91,15 @@ public class E2Fragment extends Fragment {
             viewModel.setList(gender);
         }
 
-        adapter = new ItemsCatagoriesListAdapter(categories, imageUrl);
+        adapter = new ItemsCategoriesListAdapter(categories);
         adapter.notifyDataSetChanged();
+
         ExpandableListView listContainer = requireView().findViewById(R.id.e2_list);
+
         listContainer.setAdapter(adapter);
         listContainer.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 
-        model.getGender().observe(getViewLifecycleOwner(), s -> {
+        observer = s -> {
             if(!gender.equals(s)) {
                 gender = s;
                 setCategories();
@@ -100,13 +107,14 @@ public class E2Fragment extends Fragment {
                 adapter.collapseAll(listContainer);
             }
             adapter.notifyDataSetChanged();
-        });
+        };
+        model.getGender().observe(getViewLifecycleOwner(), observer);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        model.getGender().removeObservers(getViewLifecycleOwner());
+        model.getGender().removeObserver(observer);
     }
 
     private void init() {
@@ -185,7 +193,6 @@ public class E2Fragment extends Fragment {
             addWatchesSubCategory("mesh",Macros.Items.MEN_MESH_WATCH_RES,Macros.CustomerMacros.MEN);
             addWatchesSubCategory("bracelet",Macros.Items.MEN_BRACELET_WATCH_RES,Macros.CustomerMacros.MEN);
             addWatchesSubCategory("stylish",Macros.Items.MEN_WATCHES_RES,Macros.CustomerMacros.MEN);
-
 
             addSwimwearSubCategory("shorts", Macros.Items.MEN_SHORTS_SWIM_RES,Macros.CustomerMacros.MEN);
             addSwimwearSubCategory("co-ord", Macros.Items.MEN_CO_ORD_SWIM_RES,Macros.CustomerMacros.MEN);
@@ -333,51 +340,184 @@ public class E2Fragment extends Fragment {
     }
 
     private void addJacketsSubCategory(String name, String res_url, String _gender) {
-        SubCategory jackets = new SubCategory(name,res_url, _gender);
-        sub_jackets.add(jackets);
+      //  SubCategory jackets = new SubCategory(name,res_url, _gender);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.JACKETS);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(_gender);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_jackets.add(new_item);
     }
     private void addJeansSubCategory(String name,String res_url,String _gender) {
-        SubCategory jeans = new SubCategory(name,res_url, _gender);
-        sub_jeans.add(jeans);
+       // SubCategory jeans = new SubCategory(name,res_url, _gender);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.JEANS);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(_gender);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_jeans.add(new_item);
     }
     private void addBagsSubCategory(String name,String res_url) {
-        SubCategory bags = new SubCategory(name,res_url, Macros.CustomerMacros.WOMEN);
-        sub_bags.add(bags);
+      //  SubCategory bags = new SubCategory(name,res_url, Macros.CustomerMacros.WOMEN);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.BAG);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(Macros.CustomerMacros.WOMEN);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_bags.add(new_item);
+        //sub_bags.add(bags);
     }
     private void addShoesSubCategory(String name,String res_url,String _gender) {
-        SubCategory shoes = new SubCategory(name,res_url, _gender);
-        sub_shoes.add(shoes);
+       // SubCategory shoes = new SubCategory(name,res_url, _gender);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.SHOES);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(_gender);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_shoes.add(new_item);
     }
     private void addDressSubCategory(String name,String res_url) {
-        SubCategory dress = new SubCategory(name,res_url, Macros.CustomerMacros.WOMEN);
-        sub_dress.add(dress);
+      //  SubCategory dress = new SubCategory(name,res_url, Macros.CustomerMacros.WOMEN);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.DRESS);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(Macros.CustomerMacros.WOMEN);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_dress.add(new_item);
     }
     private void addJewellerySubCategory(String name,String res_url,String _gender) {
-        SubCategory jewellery = new SubCategory(name,res_url, _gender);
-        sub_jewellery.add(jewellery);
+      //  SubCategory jewellery = new SubCategory(name,res_url, _gender);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.JEWELLERY);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(_gender);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_jewellery.add(new_item);
     }
     private void addWatchesSubCategory(String name,String res_url,String _gender) {
-        SubCategory watch = new SubCategory(name,res_url, _gender);
-        sub_watches.add(watch);
+       // SubCategory watch = new SubCategory(name,res_url, _gender);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.WATCH);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(_gender);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_watches.add(new_item);
     }
     private void addGlassesSubCategory(String name,String res_url,String _gender) {
-        SubCategory glasses = new SubCategory(name,res_url, _gender);
-        sub_glasses.add(glasses);
+      //  SubCategory glasses = new SubCategory(name,res_url, _gender);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.SUNGLASSES);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(_gender);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_glasses.add(new_item);
     }
     private void addSwimwearSubCategory(String name,String res_url,String _gender) {
-        SubCategory swim = new SubCategory(name,res_url, _gender);
-        sub_swim.add(swim);
+       // SubCategory swim = new SubCategory(name,res_url, _gender);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.SWIMWEAR);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(_gender);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_swim.add(new_item);
     }
     private void addShirtsSubCategory(String name,String res_url,String _gender) {
-        SubCategory shirts = new SubCategory(name,res_url, _gender);
-        sub_shirts.add(shirts);
+      // SubCategory shirts = new SubCategory(name,res_url, _gender);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.SHIRT);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(_gender);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_shirts.add(new_item);
     }
     private void addLingerieSubCategory(String name,String res_url,String _gender) {
-        SubCategory lingerie = new SubCategory(name,res_url, _gender);
-        sub_lingerie.add(lingerie);
+      //  SubCategory lingerie = new SubCategory(name,res_url, _gender);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.LINGERIE);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(_gender);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_lingerie.add(new_item);
     }
     private void addAccessoriesSubCategory(String name,String res_url,String _gender) {
-        SubCategory accessories = new SubCategory(name,res_url, _gender);
-        sub_accessories.add(accessories);
+      // SubCategory accessories = new SubCategory(name,res_url, _gender);
+        RecyclerItem new_item = new RecyclerItem(name,null);
+        new_item.setImage_resource(res_url);
+        new_item.setType(Macros.ACCESSORIES);
+        new_item.setItem_sub_category(name);
+        new_item.setGender(_gender);
+
+        String _name = String.valueOf(name.charAt(0)).toUpperCase();
+        _name += name.substring(1);
+        new_item.setText(_name);
+
+        new_item.setUserImageUrl(imageUrl);
+        sub_accessories.add(new_item);
     }
 }

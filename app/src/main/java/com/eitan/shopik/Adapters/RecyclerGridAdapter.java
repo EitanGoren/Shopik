@@ -1,11 +1,15 @@
 package com.eitan.shopik.Adapters;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
@@ -100,8 +105,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        mainModel = new ViewModelProvider((ViewModelStoreOwner)parent.getContext()).get(MainModel.class);
         recyclerView = parent.findViewById(R.id.list_recycler_view);
+        mainModel = new ViewModelProvider((ViewModelStoreOwner) parent.getContext()).get(MainModel.class);
 
         if(viewType == TYPE_AD) {
             UnifiedNativeAdView view = (UnifiedNativeAdView) LayoutInflater.from(parent.getContext()).
@@ -172,10 +177,9 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             // Set the media view.
             itemView.setMediaView(itemView.findViewById(R.id.ad_media));
+            itemView.getMediaView().setImageScaleType(ImageView.ScaleType.CENTER_CROP);
             itemView.setHeadlineView(itemView.findViewById(R.id.ad_brand_name));
 
-            // Set other ad assets.
-            itemView.setAdChoicesView(itemView.findViewById(R.id.ad_choice));
           //  itemView.setAdChoicesView(itemView.findViewById(R.id.ad_image));
             itemView.setBodyView(itemView.findViewById(R.id.ad_body));
             itemView.setPriceView(itemView.findViewById(R.id.ad_price));
@@ -185,6 +189,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemView.setCallToActionView(itemView.findViewById(R.id.ad_action_button));
             seller_name = itemView.findViewById(R.id.ad_card_seller_name);
             itemView.setAdvertiserView(seller_name);
+
         }
 
         public Context getContext() {return itemView.getContext();}
@@ -264,6 +269,18 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     ((UnifiedNativeAdView)itemView).getAdvertiserView().setVisibility(View.VISIBLE);
                 }
 
+              /*  VideoController vc = temp_ad.getVideoController();
+                if(vc.hasVideoContent()) {
+                    vc.setVideoLifecycleCallbacks(new VideoController.VideoLifecycleCallbacks() {
+                        public void onVideoEnd() {
+                            // Here apps can take action knowing video playback is finished.
+                            // It's always a good idea to wait for playback to complete before
+                            // replacing or refreshing a native ad, for example.
+                            super.onVideoEnd();
+                        }
+                    });
+                }*/
+
                 // This method tells the Google Mobile Ads SDK that you have finished populating your
                 // native ad view with this native ad.
                 ((UnifiedNativeAdView)itemView).setNativeAd(temp_ad);
@@ -277,8 +294,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView brand_name,buy,sale,sale_percentage,
-                price,old_price,description,percentage,
+        private TextView brand_name,buy,sale,sale_percentage,price,old_price,description,percentage,
                 percentage_header,seller_name,liked_text;
         private ViewPager viewPager;
         private Button fullscreen;
@@ -406,8 +422,17 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             viewPager.setAdapter(arrayAdapter);
 
-            Pair<View, String> pair = new Pair<>(viewPager,"fullscreen");
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
+            fullscreen.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("item", item);
+                intent.putExtra("bundle", bundle);
+                ActivityOptions options = ActivityOptions.
+                        makeSceneTransitionAnimation((Activity) getContext(),
+                                Pair.create(brand_name,"company_name"),
+                                Pair.create(logo,"company_logo"));
+                getContext().startActivity(intent, options.toBundle());
+            });
         }
 
         public Context getContext() { return itemView.getContext(); }
@@ -587,8 +612,17 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             });
 
-            Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
+            fullscreen.setOnClickListener(v -> {
+                    Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("item", item);
+                    intent.putExtra("bundle", bundle);
+                    ActivityOptions options = ActivityOptions.
+                            makeSceneTransitionAnimation((Activity) getContext(),
+                                    Pair.create(brand_name,"company_name"),
+                                    Pair.create(logo,"company_logo"));
+                    getContext().startActivity(intent, options.toBundle());
+            });
 
             if (item.isFavorite()) {
                 favorite.setVisibility(View.VISIBLE);
@@ -897,7 +931,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
                 notifyDataSetChanged();
             }
-            notifyDataSetChanged();
         }
     };
 }

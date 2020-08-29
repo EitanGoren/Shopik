@@ -2,10 +2,8 @@ package com.eitan.shopik.explanation;
 
 import android.animation.LayoutTransition;
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -14,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,14 +21,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.eitan.shopik.Adapters.DialogGridAdapter;
 import com.eitan.shopik.Adapters.RecyclerAdapter;
 import com.eitan.shopik.Items.RecyclerItem;
@@ -57,17 +54,17 @@ public class E1Fragment extends Fragment {
     private RelativeLayout layout;
     private TextView header;
     private RecyclerView recyclerView;
+    private Observer<String> observer;
+    private Observer<ArrayList<RecyclerItem>> recentObserver;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        closeKeyboard();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_e1, container, false);
 
         liked_counter = view.findViewById(R.id.best_sellers_count);
@@ -75,12 +72,8 @@ public class E1Fragment extends Fragment {
         layout2 = view.findViewById(R.id.layout3);
         layout3 = view.findViewById(R.id.layout4);
         layout = view.findViewById(R.id.layout1);
-        layout.getLayoutTransition().enableTransitionType(LayoutTransition.APPEARING);
         header = view.findViewById(R.id.header);
         recyclerView = view.findViewById(R.id.recycler);
-
-        ((ViewGroup) view.findViewById(R.id.root)).
-                getLayoutTransition().enableTransitionType(LayoutTransition.APPEARING);
 
         return view;
     }
@@ -92,19 +85,20 @@ public class E1Fragment extends Fragment {
 
         init();
 
-        model.getGender().observe(requireActivity(), s -> {
+        observer = s -> {
+
             if(!gender.equals(s)) {
                 gender = s;
-                entranceViewModel.setLiked_items(gender);
                 recyclerAdapter.notifyDataSetChanged();
-                liked_counter.setText("Loading...");
+                liked_counter.setText(R.string.loading);
 
                 if(gender.equals(Macros.CustomerMacros.WOMEN))
                     setWomenEntrance();
                 else
                     setMenEntrance();
             }
-        });
+        };
+        model.getGender().observe(getViewLifecycleOwner(),observer);
 
         layout1.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_CLOTHING));
         layout2.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_SHOES));
@@ -116,30 +110,21 @@ public class E1Fragment extends Fragment {
 
         entranceViewModel = new ViewModelProvider(requireActivity()).get(EntranceViewModel.class);
         recyclerAdapter = new RecyclerAdapter(entranceViewModel.getRecentLikedItems().getValue(),"Item");
-        entranceViewModel.getRecentLikedItems().observe(requireActivity(), recyclerItems -> {
+        recentObserver = recyclerItems -> {
             if(recyclerItems.isEmpty())
                 layout.setVisibility(View.GONE);
             else {
                 layout.setVisibility(View.VISIBLE);
 
                 for (int i = 1; i < recyclerItems.size() + 1; ++i) {
-                    liked_counter.setText("(" + i + " items)");
+                    String text = "(" + i + " items)";
+                    liked_counter.setText(text);
                 }
                 recyclerAdapter.notifyDataSetChanged();
                 recyclerView.setAdapter(recyclerAdapter);
             }
-        });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        model.getGender().removeObservers(getViewLifecycleOwner());
-        entranceViewModel.getRecentLikedItems().removeObservers(getViewLifecycleOwner());
-        layout3 = null;
-        layout = null;
-        layout2 = null;
-        layout1 = null;
+        };
+        entranceViewModel.getRecentLikedItems().observe(requireActivity(), recentObserver );
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -151,6 +136,9 @@ public class E1Fragment extends Fragment {
         dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.new_items_grid_dialog);
         dialogProgressBar = dialog.findViewById(R.id.progressBar);
+
+        ((ViewGroup) requireView().findViewById(R.id.root)).
+                getLayoutTransition().enableTransitionType(LayoutTransition.APPEARING);
 
         if(gender.equals(Macros.CustomerMacros.WOMEN))
             setWomenEntrance();
@@ -180,17 +168,19 @@ public class E1Fragment extends Fragment {
             if(recyclerItem.getType().equals(type)) {
                 new_items.add(recyclerItem);
                 ++i;
-                txt.setText("(" + i + " items)");
+                String text = "(" + i + " items)";
+                txt.setText(text);
             }
         }
         dialogProgressBar.setVisibility(View.INVISIBLE);
 
-        String text_header ="";
+        String text_header;
         if(type.equals(Macros.NEW_TRENDING)){
             text_header = "Trending Now";
             TextView header = dialog.findViewById(R.id.new_items_header);
             header.setText(text_header);
-            header.setCompoundDrawablesWithIntrinsicBounds(null,null, dialog.getContext().getDrawable(R.drawable.ic_baseline_trending_up),null);
+            header.setCompoundDrawablesWithIntrinsicBounds(null,null, ContextCompat.
+                    getDrawable(dialog.getContext(),R.drawable.ic_baseline_trending_up),null);
             header.setCompoundDrawablePadding(20);
         }
         else{
@@ -220,47 +210,23 @@ public class E1Fragment extends Fragment {
         String second_header = "OUR NEWEST SHOES COLLECTION";
         String third_header = "MOST TRENDING NOW";
 
-        TextView textView1 = requireView().findViewById(R.id.text_btn1);
-        TextView textView2 = requireView().findViewById(R.id.text_btn2);
-        TextView textView3 = requireView().findViewById(R.id.text_btn3);
+        setAnimation();
+
+        ImageView textView1 = requireView().findViewById(R.id.text_btn1);
+        ImageView textView2 = requireView().findViewById(R.id.text_btn2);
+        ImageView textView3 = requireView().findViewById(R.id.text_btn3);
 
         TextView text_header1 = requireView().findViewById(R.id.text_header1);
-        text_header1.setText(first_header);
-        Glide.with(this).asDrawable().load(Macros.WOMEN_FIRST_PIC).into(new CustomTarget<Drawable>() {
-            @Override
-            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                textView1.setBackground(resource);
-            }
-
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {}
-        });
-
         TextView text_header2 = requireView().findViewById(R.id.text_header2);
-        text_header2.setText(second_header);
-        Glide.with(this).asDrawable().load(Macros.WOMEN_SECOND_PIC).into(new CustomTarget<Drawable>() {
-            @Override
-            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                textView2.setBackground(resource);
-            }
-
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {}
-        });
-
         TextView text_header3 = requireView().findViewById(R.id.text_header3);
+
+        text_header1.setText(first_header);
+        text_header2.setText(second_header);
         text_header3.setText(third_header);
-        Glide.with(this).asDrawable().load(Macros.WOMEN_THIRD_PIC).into(new CustomTarget<Drawable>() {
-            @Override
-            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                textView3.setBackground(resource);
-            }
 
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {}
-        });
-
-        setAnimation();
+        Macros.Functions.GlidePicture(getContext(),Macros.WOMEN_FIRST_PIC,textView1);
+        Macros.Functions.GlidePicture(getContext(),Macros.WOMEN_SECOND_PIC,textView2);
+        Macros.Functions.GlidePicture(getContext(),Macros.WOMEN_THIRD_PIC,textView3);
     }
 
     private void setMenEntrance() {
@@ -271,53 +237,31 @@ public class E1Fragment extends Fragment {
 
         setAnimation();
 
-        final TextView textView1 = requireView().findViewById(R.id.text_btn1);
+        ImageView textView1 = requireView().findViewById(R.id.text_btn1);
+        ImageView textView2 = requireView().findViewById(R.id.text_btn2);
+        ImageView textView3 = requireView().findViewById(R.id.text_btn3);
+
         TextView text_header1 = requireView().findViewById(R.id.text_header1);
+        TextView text_header2 = requireView().findViewById(R.id.text_header2);
+        TextView text_header3 = requireView().findViewById(R.id.text_header3);
+
         text_header1.setText(first_header);
-        Glide.with(this).asDrawable().load(Macros.MEN_FIRST_PIC).into(new CustomTarget<Drawable>() {
-            @Override
-            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                textView1.setBackground(resource);
-            }
-
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {}
-        });
-
-        final TextView textView2 = getView().findViewById(R.id.text_btn2);
-        TextView text_header2 = getView().findViewById(R.id.text_header2);
         text_header2.setText(second_header);
-        Glide.with(this).asDrawable().load(Macros.MEN_SECOND_PIC).into(new CustomTarget<Drawable>() {
-            @Override
-            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                textView2.setBackground(resource);
-            }
-
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {}
-        });
-
-        final TextView textView3 = getView().findViewById(R.id.text_btn3);
-        TextView text_header3 = getView().findViewById(R.id.text_header3);
         text_header3.setText(third_header);
-        Glide.with(this).asDrawable().load(Macros.MEN_THIRD_PIC).into(new CustomTarget<Drawable>() {
-            @Override
-            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                textView3.setBackground(resource);
-            }
 
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {}
-        });
+        Macros.Functions.GlidePicture(getContext(),Macros.MEN_FIRST_PIC,textView1);
+        Macros.Functions.GlidePicture(getContext(),Macros.MEN_SECOND_PIC,textView2);
+        Macros.Functions.GlidePicture(getContext(),Macros.MEN_THIRD_PIC,textView3);
     }
 
-    private void closeKeyboard(){
-        View view = requireActivity().getCurrentFocus();
-        if( view != null ){
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            assert imm != null;
-            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
-        }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        model.getGender().removeObserver(observer);
+        entranceViewModel.getRecentLikedItems().removeObserver(recentObserver);
+        layout = null;
+        layout1 = null;
+        layout2 = null;
+        layout3 = null;
     }
-
 }

@@ -130,6 +130,9 @@ public class MainModel extends ViewModel {
     public void addAd(ShoppingItem shoppingItem){
         this.shoppingAdsArray.add(shoppingItem);
     }
+    public int getAdsSize(){
+        return this.shoppingAdsArray.size();
+    }
     public Object getNextAd() {
         Random random = new Random();
         if( shoppingAdsArray.size() > 0) {

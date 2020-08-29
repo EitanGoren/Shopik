@@ -6,13 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="20dp"
-    android:translationZ="20dp"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorTransparentWhite">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:id="@+id/image_viewPager"
@@ -26,8 +24,7 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:scaleType="centerCrop"
-                android:transitionName="fullscreen" />
+                android:scaleType="centerCrop" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="170dp"
@@ -122,6 +119,7 @@
                 android:id="@+id/seller_logo2"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:transitionName="company_logo"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="15dp"
@@ -182,6 +180,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
+                    android:transitionName="company_name"
                     android:layout_toStartOf="@id/likes_layout"
                     android:fontFamily="@font/nobile"
                     android:paddingStart="5dp"
@@ -289,6 +288,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:fontFamily="@font/nobile"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"

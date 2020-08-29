@@ -29,8 +29,6 @@ import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
@@ -48,7 +46,6 @@ public class FavoritesFragment extends Fragment {
     private TextView header;
     private CopyOnWriteArrayList<ShoppingItem> fav_list;
     private SearchView searchView;
-
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -214,7 +211,6 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
-        // Retrieve the SearchView and plug it into SearchManager
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.nav_search));
 
         String queryHint = "Search something...";

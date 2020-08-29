@@ -35,6 +35,9 @@ public class OutletsModel extends AndroidViewModel {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addToOutlets(RecyclerItem recyclerItem) {
         Objects.requireNonNull(this.outlets.getValue()).add(recyclerItem);
+    }
+
+    public void postOutlets() {
         CopyOnWriteArrayList<RecyclerItem> temp = this.outlets.getValue();
         this.outlets.postValue(temp);
     }

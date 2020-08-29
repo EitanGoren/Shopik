@@ -10,26 +10,29 @@
         android:id="@+id/nav_bgImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:contentDescription="bg"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/greeting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#45000000"
+        android:gravity="bottom"
+        android:padding="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_pic"
         android:layout_width="65dp"
         android:layout_height="65dp"
-        android:layout_above="@id/greeting"
         android:layout_marginStart="16dp"
-        android:elevation="15dp"
-        app:civ_border_color="#FFFFFF"
-        app:civ_border_width="1dp"/>
-
-    <TextView
-        android:id="@+id/greeting"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:padding="8dp"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"/>
+        android:layout_marginBottom="40dp"
+        android:elevation="15dp"
+        app:civ_border_color="#ffffff"
+        app:civ_border_width="1dp"/>
 
 </RelativeLayout>

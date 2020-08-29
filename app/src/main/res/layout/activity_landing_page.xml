@@ -17,7 +17,8 @@
         android:layout_marginBottom="-45dp"
         android:transitionName="tooki"
         android:padding="5dp"
-        android:src="@drawable/tooki"/>
+        android:contentDescription="@string/logo"
+        android:src="@drawable/tooki" />
 
     <TextView
         android:id="@+id/shopik"
@@ -29,22 +30,6 @@
         android:textColor="@color/SplashScreenBackground"
         android:textSize="65sp"
         android:textStyle="bold"/>
-
-  <!--  <com.agrawalsuneet.dotsloader.loaders.LazyLoader
-        android:id="@+id/lazyloader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/shopik"
-        android:layout_centerHorizontal="true"
-        app:lazyloader_animDur="800"
-        app:lazyloader_dotsDist="10dp"
-        app:lazyloader_dotsRadius="6dp"
-        app:lazyloader_firstDelayDur="150"
-        app:lazyloader_firstDotColor="@color/SplashScreenBackground"
-        app:lazyloader_interpolator="@android:anim/decelerate_interpolator"
-        app:lazyloader_secondDelayDur="300"
-        app:lazyloader_secondDotColor="#01BAC1"
-        app:lazyloader_thirdDotColor="#00F6FF"/> -->
 
     <com.agrawalsuneet.dotsloader.loaders.TashieLoader
         android:layout_width="wrap_content"
@@ -59,18 +44,6 @@
         app:tashieloader_dotsRadius="5.5dp"
         app:tashieloader_interpolator="@android:anim/accelerate_interpolator"
         app:tashieloader_noOfDots="6" />
-
- <!--   <com.agrawalsuneet.dotsloader.loaders.ZeeLoader
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/shopik"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        app:zee_animDuration="320"
-        app:zee_distanceMultiplier="4"
-        app:zee_dotsRadius="12dp"
-        app:zee_firstDotsColor="@color/SplashScreenBackground"
-        app:zee_secondDotsColor="#01BAC1" /> -->
 
     <TextView
         android:id="@+id/copyright_text"

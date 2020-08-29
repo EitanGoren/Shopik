@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="215dp"
                 android:layout_gravity="top"
-                android:transitionName="fullscreen"
+                android:contentDescription="@string/image_slider"
                 android:scaleType="centerCrop" />
 
             <Button
@@ -29,7 +29,7 @@
                 android:layout_width="80dp"
                 android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
-                android:text="SHOP"
+                android:text="@string/shop"
                 android:textStyle="bold"
                 android:textColor="#000000"
                 android:background="@color/fui_transparent"
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:textAllCaps="true"
-                android:text="SALE"
+                android:text="@string/sale"
                 android:textSize="16sp"
                 android:textAlignment="center"
                 android:gravity="center"
@@ -96,6 +96,7 @@
                 android:layout_marginStart="5dp"
                 android:src="@drawable/ic_new"
                 android:scaleType="centerCrop"
+                android:contentDescription="@string/new_ic"
                 android:visibility="invisible">
 
             </ImageView>

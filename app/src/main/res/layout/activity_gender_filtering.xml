@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="cursive"
                 android:layout_gravity="center"
-                android:text="Shopik"
+                android:text="@string/app_name"
                 android:textAllCaps="false"
                 android:textColor="@color/SplashScreenBackground"
                 android:textSize="40sp"
@@ -44,7 +44,8 @@
                 android:layout_gravity="bottom"
                 android:layout_marginStart="12dp"
                 android:transitionName="tooki"
-                android:src="@drawable/tooki"/>
+                android:contentDescription="@string/logo"
+                android:src="@drawable/tooki" />
 
             <Spinner
                 android:id="@+id/gender_spinner"
@@ -77,7 +78,7 @@
             android:id="@+id/top_home"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="home"
+            android:text="@string/home"
             android:tag="home"/>
 
         <com.google.android.material.tabs.TabItem
@@ -85,13 +86,13 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:tag="categories"
-            android:text="categories"/>
+            android:text="@string/categories"/>
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/top_new_in"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="new in"
+            android:text="@string/new_in"
             android:tag="new_in"/>
 
     </com.google.android.material.tabs.TabLayout>
@@ -128,15 +129,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/brands_roller"/>
-    <ProgressBar
-        android:id="@+id/progressBar_landing"
-        android:layout_width="200dp"
-        android:layout_height="20dp"
-        android:visibility="invisible"
-        tools:visibility="visible"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:indeterminate="true"
-        android:layout_centerInParent="true">
-    </ProgressBar>
 
 </RelativeLayout>

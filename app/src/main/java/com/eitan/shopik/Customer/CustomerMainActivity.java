@@ -1,15 +1,13 @@
 package com.eitan.shopik.Customer;
 
-import android.app.SearchManager;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,10 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -43,14 +39,12 @@ import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
-import com.facebook.ads.AdSettings;
-import com.facebook.ads.AudienceNetworkAds;
 import com.facebook.ads.CacheFlag;
 import com.facebook.ads.InterstitialAdListener;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
@@ -80,7 +74,6 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
@@ -88,10 +81,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.facebook.ads.AdSettings.IntegrationErrorMode.INTEGRATION_ERROR_CRASH_DEBUG_MODE;
 import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_LEFT;
 
 public class CustomerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -105,12 +98,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private FirebaseAuth mAuth;
     private String customerFirstName, imageUrl;
     private String userId;
-    private String cover,image;
+    public static final int NUM_OF_ADS = 12;
     private BottomNavigationView bottomNavigationView;
-    private ValueEventListener valueEventListener;
-    private UnifiedNativeAd tempAd;
     private com.facebook.ads.InterstitialAd interstitialAd;
-    public static final int NUM_OF_ADS = 10;
     private DrawerLayout drawerLayout;
     private View hView;
     private NavigationView navigationView;
@@ -122,6 +112,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private Map<String,String> favs;
     private ValueEventListener pageEventListener;
     private ValueEventListener fav_single_listener;
+    private static final int DELAY_AD_FETCH = 3500;
+    private String cover;
+    private ValueEventListener valueEventListener;
+    private UnifiedNativeAd tempAd;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -131,18 +125,16 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         overridePendingTransition(R.anim.fadein,R.anim.fadeout);
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
-        //Google Ads
-        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
-        RequestConfiguration configuration = new RequestConfiguration.Builder().
-                setTestDeviceIds(testDeviceIds).build();
-        MobileAds.setRequestConfiguration(configuration);
+        mainModel = new ViewModelProvider(this).get(MainModel.class);
 
-        //Facebook Ads
-        AdSettings.setIntegrationErrorMode(INTEGRATION_ERROR_CRASH_DEBUG_MODE);
-        AudienceNetworkAds.initialize(this);
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            for ( int i = 0; i < NUM_OF_ADS ; ++i ) {
+                loadAds();
+            }
+        }, DELAY_AD_FETCH);
 
         initFBInterstitial();
-
         setContentView(R.layout.activity_main);
 
         init();
@@ -150,7 +142,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         navigationView.setOnClickListener(v -> getCoverPic());
 
         TextView copyright = findViewById(R.id.nav_copyright_text);
-        copyright.setText("Shopik Version 1.0 " + System.lineSeparator() + getResources().getString(R.string.copy_right));
+        String text = "Shopik Version 1.0 " + System.lineSeparator() + getResources().getString(R.string.copy_right);
+        copyright.setText(text);
 
         getAllCompaniesInfo();
         for(String company : Macros.CompanyNames) {
@@ -167,7 +160,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                for ( Object item_id : ((Map) Objects.requireNonNull(dataSnapshot.getValue())).keySet() ) {
+                                Map<Object,Object> map = (Map<Object, Object>) dataSnapshot.getValue();
+                                assert map != null;
+                                Set<Object> set = map.keySet();
+                                for ( Object item_id : set ) {
                                     mainModel.addSwipedItemId(item_id.toString());
                                 }
                             }
@@ -204,9 +200,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         }
 
                     });
-        }
-        for( int i=0; i < NUM_OF_ADS; ++i ){
-            loadAds();
         }
 
         valueEventListener = new ValueEventListener() {
@@ -250,7 +243,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     mainModel.setCurrent_page(page);
                 }
                 else
-                    mainModel.setCurrent_page((long) 1);
+                    mainModel.setCurrent_page((long)1);
             }
 
             @Override
@@ -295,7 +288,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         setViewPager();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-
             switch(item.getItemId()) {
                 case R.id.bottom_swipe:
                     mainPager.setCurrentItem(0);
@@ -315,7 +307,46 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         });
     }
 
-    private void getCoverPic () {
+    private void loadAds() {
+
+        VideoOptions videoOptions = new VideoOptions.Builder().
+                setStartMuted(false).
+                setClickToExpandRequested(true).
+                build();
+
+        NativeAdOptions nativeAdOptions = new NativeAdOptions.Builder().
+                setAdChoicesPlacement(ADCHOICES_TOP_LEFT).
+                setRequestMultipleImages(true).
+                setVideoOptions(videoOptions).
+                build();
+
+        AdLoader adLoader = new AdLoader
+                .Builder(this, Macros.NATIVE_ADVANCED_AD)
+                .forUnifiedNativeAd(unifiedNativeAd -> tempAd = unifiedNativeAd)
+                .withAdListener(new AdListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onAdLoaded() {
+                        super.onAdLoaded();
+                        ShoppingItem dummy = new ShoppingItem();
+                        dummy.setAd(true);
+                        dummy.setNativeAd(tempAd);
+                        mainModel.addAd(dummy);
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                        super.onAdFailedToLoad(loadAdError);
+                        Log.d(Macros.TAG,"Failed to load native ad: " + loadAdError.getMessage());
+                    }
+                })
+                .withNativeAdOptions(nativeAdOptions)
+                .build();
+
+        adLoader.loadAd(new PublisherAdRequest.Builder().build());
+    }
+
+    private void getCoverPic() {
 
         String userid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
@@ -327,9 +358,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         cover = documentSnapshot.get("cover_photo") != null ?
                                 Objects.requireNonNull(documentSnapshot.get("cover_photo")).toString() :
                                 Macros.DEFAULT_COVER_PHOTO;
-                        image = documentSnapshot.get("imageUrl") != null ?
-                                Objects.requireNonNull(documentSnapshot.get("imageUrl")).toString() :
-                                Macros.DEFAULT_PROFILE_IMAGE;
                     }
                 }).addOnCompleteListener(task ->
                 Macros.Functions.GlidePicture(getApplicationContext(), cover, nav_bg));
@@ -380,20 +408,14 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                     case 0:
                         bottomNavigationView.getMenu().findItem(R.id.bottom_swipe).setChecked(true);
-                        bottomNavigationView.getMenu().findItem(R.id.bottom_swipe).
-                                setIconTintList(ColorStateList.valueOf(Color.RED));
                         break;
                     case 1:
                         bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setNumber(0);
                         bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setVisible(false);
                         bottomNavigationView.getMenu().findItem(R.id.bottom_favorites).setChecked(true);
-                        bottomNavigationView.getMenu().findItem(R.id.bottom_favorites).
-                                setIconTintList(ColorStateList.valueOf(Color.RED));
                         break;
                     case 2:
                         bottomNavigationView.getMenu().findItem(R.id.bottom_search).setChecked(true);
-                        bottomNavigationView.getMenu().findItem(R.id.bottom_search).
-                                setIconTintList(ColorStateList.valueOf(Color.RED));
                         break;
                     default:
                         throw new IllegalStateException("Unexpected Value "+ position);
@@ -425,14 +447,12 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
     private void init() {
 
-        mainModel = new ViewModelProvider(this).get(MainModel.class);
-
         setNavigationBarButtonsColor(getWindow().getNavigationBarColor());
         GenderModel genderModel = new ViewModelProvider(this).get(GenderModel.class);
 
         progressIndicator = findViewById(R.id.top_progress_bar);
         progressIndicator.setVisibility(View.VISIBLE);
-        bottomNavigationView = findViewById(R.id.botton_nav);
+        bottomNavigationView = findViewById(R.id.bottom_nav);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         hView = navigationView.getHeaderView(0);
@@ -492,7 +512,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         Toolbar toolbar = findViewById(R.id.customer_toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout, toolbar,
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.open_drawer,R.string.close_drawer);
 
         drawerLayout.addDrawerListener(toggle);
@@ -500,8 +520,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     }
 
     private void loadCustomerInfo() {
-
-
 
         getCoverPic();
 
@@ -536,6 +554,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
              msg = greeting + first_name;
 
         nav_greetings.setText(msg);
+        TextView name = findViewById(R.id.name);
+        String text = greeting + System.lineSeparator() + first_name;
+        name.setText(text);
     }
 
     @Override
@@ -652,13 +673,13 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            Map unliked_users = new HashMap<>();
-                            Map liked_users = new HashMap<>();
+                            HashMap<String,String> unliked_users = new HashMap<>();
+                            HashMap<String,String> liked_users = new HashMap<>();
 
                             //set likes num
                             if (dataSnapshot.hasChild(Macros.Items.LIKED)) {
                                 shoppingItem.setLikes(dataSnapshot.child(Macros.Items.LIKED).getChildrenCount());
-                                liked_users = (Map) dataSnapshot.child(Macros.Items.LIKED).getValue();
+                                liked_users = (HashMap<String,String>) dataSnapshot.child(Macros.Items.LIKED).getValue();
                             }
                             else {
                                 shoppingItem.setLikes(0);
@@ -667,7 +688,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             //set unlikes num
                             if (dataSnapshot.hasChild(Macros.Items.UNLIKED)) {
                                 shoppingItem.setUnlikes(dataSnapshot.child(Macros.Items.UNLIKED).getChildrenCount());
-                                unliked_users = (Map) dataSnapshot.child(Macros.Items.UNLIKED).getValue();
+                                unliked_users = (HashMap<String,String>) dataSnapshot.child(Macros.Items.UNLIKED).getValue();
                             }
                             else {
                                 shoppingItem.setUnlikes(0);
@@ -741,22 +762,30 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         customerDB.removeEventListener(valueEventListener);
         pageListener.removeEventListener(pageEventListener);
 
+        for(String company : Macros.CompanyNames){
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(userId).
+                    child(item_gender).
+                    child(Macros.Items.LIKED).
+                    child(company).
+                    child(item_type).
+                    child(item_sub_category).
+                    removeEventListener(fav_single_listener);
+        }
+
         mainModel.getCustomers_info().removeObservers(this);
         mainModel.getCompanies_info().removeObservers(this);
         mainModel.getPreferred().removeObservers(this);
-
-        if (interstitialAd != null) {
-            interstitialAd.destroy();
-            interstitialAd = null;
-        }
-
-       // mainModel.clearAds();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        if (interstitialAd != null) {
+            interstitialAd.destroy();
+        }
         mainModel.clearAds();
+        super.onDestroy();
     }
 
     private void initFBInterstitial() {
@@ -766,15 +795,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             interstitialAd = null;
         }
 
-        // Create the interstitial unit with a placement ID (generate your own on the Facebook app settings).
-        // Use different ID for each ad placement in your app.
-        AdSettings.addTestDevice("34464d11-359b-4022-86a5-22489c17269d");
+     // AdSettings.addTestDevice("34464d11-359b-4022-86a5-22489c17269d");
         interstitialAd = new com.facebook.ads.InterstitialAd(this, Macros.FB_PLACEMENT_ID);
 
         // Set a listener to get notified on changes or when the user interact with the ad.
         interstitialAd.setAdListener(new InterstitialAdListener() {
             @Override
-            public void onInterstitialDisplayed(Ad ad) {}
+            public void onInterstitialDisplayed(Ad ad) {
+
+            }
 
             @Override
             public void onInterstitialDismissed(Ad ad) {
@@ -791,10 +820,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
             @Override
             public void onAdLoaded(Ad ad) {
-                if (interstitialAd != null && interstitialAd.isAdLoaded()) {
-                    // Ad was loaded, show it!
-                    interstitialAd.show();
-                }
+                // Interstitial ad is loaded and ready to be displayed
+                Log.d(Macros.TAG, "Interstitial ad is loaded and ready to be displayed!");
+                // Show the ad
+                interstitialAd.show();
             }
 
             @Override
@@ -809,7 +838,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         });
 
         // Load a new interstitial.
-        interstitialAd.loadAd(EnumSet.of(CacheFlag.VIDEO));
+        interstitialAd.loadAd(EnumSet.of(CacheFlag.IMAGE));
     }
 
     @Override
@@ -819,37 +848,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             drawerLayout.closeDrawer(GravityCompat.START);
         else
             super.onBackPressed();
-    }
-
-    private void loadAds() {
-
-        NativeAdOptions nativeAdOptions = new NativeAdOptions.Builder().
-                setAdChoicesPlacement(ADCHOICES_TOP_LEFT).
-                build();
-
-        AdLoader adLoader = new AdLoader
-                .Builder(this, Macros.NATIVE_ADVANCED_AD)
-                .forUnifiedNativeAd(unifiedNativeAd -> tempAd = unifiedNativeAd)
-                .withAdListener(new AdListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void onAdLoaded() {
-                        super.onAdLoaded();
-                        ShoppingItem dummy = new ShoppingItem();
-                        dummy.setAd(true);
-                        dummy.setNativeAd(tempAd);
-                        mainModel.addAd(dummy);
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad ( int errorCode ) {
-                        Log.d(Macros.TAG,"Failed to load native ad: " + errorCode);
-                    }
-                })
-                .withNativeAdOptions(nativeAdOptions)
-                .build();
-
-        adLoader.loadAd(new PublisherAdRequest.Builder().build());
     }
 
     @Override
@@ -1053,7 +1051,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     for ( int page = 1; page < page_num[0] + 1; ++page ) {
 
                         Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num.first + "&page=" + page).get();
-                        DataNode node = (DataNode) document.childNode(2).childNode(2).childNode(28).childNode(0);
+                        DataNode node = (DataNode) document.childNode(3).childNode(3).childNode(28).childNode(0);
 
                         data = node.getWholeData();
                         String[] data_split = data.split("\"products\":",2);
@@ -1419,7 +1417,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             total_items_found += values[0];
-           // totalItems.postValue(values[0]);
         }
 
         @Override

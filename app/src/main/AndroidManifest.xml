@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.eitan.shopik">
+    package="com.eitan.shopik" >
 
-    <!-- Include required permissions for Google Mobile Ads to run. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
-    <application
+    <application android:name="com.eitan.shopik.ShopikApplicationActivity"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_shopik_round"
         android:label="@string/app_name"
@@ -18,6 +18,10 @@
         android:supportsRtl="true"
         android:theme="@style/farts">
 
+        <activity
+            android:name=".ShopikApplicationActivity"
+            android:label="@string/title_activity_shopik_application">
+        </activity>
         <!--
         This is the sample AdMob App ID. Insert your own AdMob App ID in quotes
         https://googlemobileadssdk.page.link/admob-android-update-manifest
@@ -49,15 +53,12 @@
             android:name=".CustomerLoginActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".NewCompanyRegistrationActivity"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".NewCustomerRegistrationActivity"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".Customer.CustomerMainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleTop" />
+        <activity
+            android:name="com.facebook.ads.AudienceNetworkActivity"
+            android:hardwareAccelerated="true" />
         <activity
             android:name=".LandingPageActivity"
             android:theme="@style/AppTheme">
@@ -67,31 +68,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="${applicationId}.braintree" />
-            </intent-filter>
-        </activity>
-
-        <service
-            android:name="com.google.firebase.messaging.FirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
-        <meta-data android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
-            android:value="true"/>
-        <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
-            android:value="true"/>
+        <meta-data
+            android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+            android:value="true" />
+        <meta-data
+            android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
+            android:value="true" />
         <!--
         Set custom default icon. This is used when no icon is set for incoming notification messages.
         See README(https://goo.gl/l4GJaQ) for more.
@@ -110,6 +93,7 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"
             tools:replace="android:value" />
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -136,6 +120,7 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
         <uses-library
             android:name="android.test.runner"
             android:required="false" />
@@ -145,6 +130,7 @@
         <uses-library
             android:name="android.test.mock"
             android:required="false" />
+
         <meta-data
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />

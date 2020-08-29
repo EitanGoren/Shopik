@@ -61,11 +61,9 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     private String address;
     private String city;
     private String phone;
-    private String email;//TODO: RETURN THIS EMAIL SHIT...
     private DocumentReference customerFS;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout appBar;
-    private Map data;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -99,33 +97,17 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                     byte[] data2 = baos.toByteArray();
 
                     UploadTask uploadTask = filePath.putBytes(data2);
-                    uploadTask.addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d(Macros.TAG, "failed to load customer picture:" + e.getMessage());
-                        }
-                    });
+                    uploadTask.addOnFailureListener(e -> Log.d(Macros.TAG, "failed to load customer picture:" + e.getMessage()));
 
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    uploadTask.addOnSuccessListener(taskSnapshot -> filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Map<String, Object> userInfo = new HashMap<String, Object>();
-                                    userInfo.put("imageUrl", uri.toString());
-                                    profileImageUrl = uri.toString();
-                                    customerFS.update(userInfo);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    Log.d(Macros.TAG, "failed to load customer picture:" + exception.getMessage());
-                                }
-                            });
+                        public void onSuccess(Uri uri) {
+                            Map<String, Object> userInfo = new HashMap<String, Object>();
+                            userInfo.put("imageUrl", uri.toString());
+                            profileImageUrl = uri.toString();
+                            customerFS.update(userInfo);
                         }
-                    });
-
+                    }).addOnFailureListener(exception -> Log.d(Macros.TAG, "failed to load customer picture:" + exception.getMessage())));
                 }
             }
         }
@@ -155,33 +137,22 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                     byte[] data2 = baos.toByteArray();
 
                     UploadTask uploadTask = filePath.putBytes(data2);
-                    uploadTask.addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            return;
-                        }
+                    uploadTask.addOnFailureListener(e -> {
+                        return;
                     });
 
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    uploadTask.addOnSuccessListener(taskSnapshot -> filePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                        Map<String, Object> userInfo = new HashMap<>();
+                        userInfo.put("cover_photo", uri.toString());
+                        cover = uri.toString();
+                        customerFS.update(userInfo);
+                    }).addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Map<String, Object> userInfo = new HashMap<String, Object>();
-                                    userInfo.put("cover_photo", uri.toString());
-                                    cover = uri.toString();
-                                    customerFS.update(userInfo);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    Log.d(Macros.TAG, "failed to load customer picture:" + exception.getMessage());
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.d(Macros.TAG, "failed to load customer picture:" + exception.getMessage());
 
-                                }
-                            });
                         }
-                    });
+                    }));
                 }
             }
         }
@@ -203,12 +174,9 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                 city =  documentSnapshot.get("city") != null ? Objects.requireNonNull(documentSnapshot.get("city")).toString() : null;
                 phone = documentSnapshot.get("phone") != null ? Objects.requireNonNull(documentSnapshot.get("phone")).toString() : null;
                 profileImageUrl = documentSnapshot.get("imageUrl") != null ? Objects.requireNonNull(documentSnapshot.get("imageUrl")).toString() : Macros.DEFAULT_PROFILE_IMAGE;
-                email = documentSnapshot.get("email") != null ? Objects.requireNonNull(documentSnapshot.get("email")).toString() : null;
                 cover = documentSnapshot.get("cover_photo") != null ? Objects.requireNonNull(documentSnapshot.get("cover_photo")).toString() : Macros.DEFAULT_COVER_PHOTO;
             }
-        }).
-                addOnCompleteListener(task -> {
-
+        }).addOnCompleteListener(task -> {
             mFirstNameField.setText(first_name);
             mLastNameField.setText(last_name);
             Glide.with(getApplicationContext()).load(profileImageUrl).into(mProfileImage);
@@ -222,8 +190,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             setTitle();
             setCollapsingBar();
 
-        }).
-                addOnFailureListener(e -> Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage())));
+        }).addOnFailureListener(e -> Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage())));
 
         appBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
             if(verticalOffset <= -300) {
@@ -335,7 +302,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             age = mAge.getText().toString();
             address = mAddress.getText().toString();
 
-            Map<String, Object> userInfo = new HashMap<String, Object>();
+            Map<String, Object> userInfo = new HashMap<>();
             userInfo.put("first_name", first_name);
             userInfo.put("last_name", last_name);
             userInfo.put("age", age);

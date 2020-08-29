@@ -9,13 +9,12 @@
         android:id="@+id/e2_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:dividerHeight="0.7dp"
-        android:clickable="true"
+        android:divider="@null"
+        android:dividerHeight="0dp"
         android:background="#ffffff"
-        android:footerDividersEnabled="true"
-        android:headerDividersEnabled="true"
-        android:divider="#8F8F8F"
-        android:focusable="true"
-        tools:ignore="RtlSymmetry" />
+        android:groupIndicator="@null"
+        android:paddingTop="7.5dp"
+        android:paddingBottom="7.5dp"
+        android:scrollbars="none"/>
 
 </RelativeLayout>

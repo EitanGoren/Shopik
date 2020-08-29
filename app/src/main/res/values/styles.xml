@@ -36,7 +36,7 @@
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="color">#000000</item>
-        <item name="selectorSize">20dp</item>
+        <item name="selectorSize">28dp</item>
     </style>
 
     <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">

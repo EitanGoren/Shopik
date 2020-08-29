@@ -42,6 +42,7 @@
 
             <TextView
                 android:id="@+id/brand_name"
+                android:transitionName="company_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -182,6 +183,7 @@
                 android:layout_height="30dp"
                 android:layout_margin="5dp"
                 android:elevation="1.8dp"
+                android:transitionName="company_logo"
                 android:scaleType="centerCrop"
                 android:translationZ="1.8dp"/>
 
