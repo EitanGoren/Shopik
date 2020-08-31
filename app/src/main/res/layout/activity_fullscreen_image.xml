@@ -16,7 +16,7 @@
     <RelativeLayout
         android:id="@+id/buttons_layout"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_marginTop="20dp"
         android:background="#9A000000">
 
@@ -30,20 +30,16 @@
             android:fontFamily="cursive"
             android:textColor="#ffffff"
             android:textStyle="bold"
-            android:textSize="30sp"
+            android:textSize="31sp"
             android:text="@string/app_name" />
-
-        <RelativeLayout
-            android:id="@+id/dots"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
 
             <LinearLayout
                 android:id="@+id/fullscreen_dotsLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:background="#00FFFFFF"
+                android:orientation="horizontal"
                 android:padding="5dp">
 
                 <ImageView
@@ -51,6 +47,7 @@
                     android:layout_width="10dp"
                     android:layout_height="10dp"
                     android:layout_marginEnd="7dp"
+                    android:contentDescription="@string/dot"
                     android:src="@drawable/ic_baseline_panorama_fish_eye" />
 
                 <ImageView
@@ -59,6 +56,7 @@
                     android:layout_height="10dp"
                     android:layout_marginStart="7dp"
                     android:layout_marginEnd="7dp"
+                    android:contentDescription="@string/dot"
                     android:src="@drawable/ic_baseline_panorama_fish_eye"/>
 
                 <ImageView
@@ -67,7 +65,8 @@
                     android:layout_height="10dp"
                     android:layout_marginStart="7dp"
                     android:layout_marginEnd="7dp"
-                    android:src="@drawable/ic_baseline_panorama_fish_eye" />
+                    android:contentDescription="@string/dot"
+                    android:src="@drawable/ic_baseline_panorama_fish_eye"/>
 
                 <ImageView
                     android:id="@+id/fullscreen_dot_4"
@@ -75,6 +74,7 @@
                     android:layout_height="10dp"
                     android:layout_marginStart="7dp"
                     android:layout_marginEnd="7dp"
+                    android:contentDescription="@string/dot"
                     android:src="@drawable/ic_baseline_panorama_fish_eye" />
 
                 <ImageView
@@ -82,11 +82,34 @@
                     android:layout_width="10dp"
                     android:layout_height="10dp"
                     android:layout_marginStart="7dp"
+                    android:contentDescription="@string/dot"
                     android:src="@drawable/ic_baseline_panorama_fish_eye" />
 
             </LinearLayout>
 
-        </RelativeLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/comp_logo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/fullscreen_dotsLayout"
+            android:scaleType="centerCrop"
+            android:transitionName="company_logo"/>
+
+        <TextView
+            android:id="@+id/comp_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/comp_logo"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:transitionName="company_name"/>
 
     </RelativeLayout>
 
@@ -98,8 +121,9 @@
         android:layout_marginStart="20dp"
         android:layout_below="@id/buttons_layout"
         android:src="@drawable/ic_favorite_black_24dp"
-        android:transitionName="favorite"
-        android:visibility="invisible"/>
+        android:contentDescription="@string/favorite"
+        android:transitionName="@string/favorite"
+        android:visibility="invisible" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/close_card"
@@ -118,39 +142,11 @@
             android:id="@+id/fullscreen_close_x"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="close"
+            android:text="@string/close"
             android:textAlignment="center"
             android:textColor="#ffffff"
             android:background="#9A000000" />
 
     </androidx.cardview.widget.CardView>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/comp_logo"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:scaleType="centerCrop"
-        android:transitionName="company_logo"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="50dp"
-        android:layout_marginStart="25dp"
-        app:civ_border_width="1dp"
-        app:civ_border_color="#000000"
-        app:civ_border_overlay="true"/>
-
-    <TextView
-        android:id="@+id/comp_name"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_alignTop="@id/comp_logo"
-        android:layout_alignBottom="@id/comp_logo"
-        android:layout_toEndOf="@id/comp_logo"
-        android:textColor="#000000"
-        android:gravity="center_vertical"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:transitionName="company_name"/>
 
 </RelativeLayout>

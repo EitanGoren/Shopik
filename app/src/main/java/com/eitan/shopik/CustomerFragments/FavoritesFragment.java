@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -46,6 +47,7 @@ public class FavoritesFragment extends Fragment {
     private TextView header;
     private CopyOnWriteArrayList<ShoppingItem> fav_list;
     private SearchView searchView;
+    private SearchView.OnQueryTextListener queryTextListener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -79,6 +81,20 @@ public class FavoritesFragment extends Fragment {
 
         init();
 
+        queryTextListener = new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                closeKeyboard();
+                recyclerGridAdapter.getFilter().filter(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                recyclerGridAdapter.getFilter().filter(newText);
+                return true;
+            }
+        };
         mainModel.getFavorite().observe(requireActivity(), shoppingItems -> {
 
             fav_list.clear();
@@ -110,6 +126,7 @@ public class FavoritesFragment extends Fragment {
                 text = "NO ITEMS FOUND";
 
             header.setText(text);
+            recyclerGridAdapter.setAllItems(fav_list);
             recyclerGridAdapter.notifyDataSetChanged();
 
         });
@@ -163,9 +180,16 @@ public class FavoritesFragment extends Fragment {
     private void init(){
         fav_list = new CopyOnWriteArrayList<>();
         recyclerGridAdapter = new RecyclerGridAdapter(fav_list,"favorites");
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(requireActivity(),DividerItemDecoration.VERTICAL);
-        dividerItemDecoration.setDrawable(Objects.requireNonNull(requireActivity().getDrawable(R.drawable.recycler_divider)));
-        mLayoutManager = new LinearLayoutManager(requireActivity(),LinearLayoutManager.VERTICAL,false);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(requireActivity(),
+                DividerItemDecoration.VERTICAL);
+
+        dividerItemDecoration.setDrawable(Objects.requireNonNull(ContextCompat.
+                getDrawable(requireContext(),R.drawable.recycler_divider)));
+
+        mLayoutManager = new LinearLayoutManager(requireActivity(),
+                LinearLayoutManager.VERTICAL,false);
+
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerGridAdapter);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
@@ -202,7 +226,8 @@ public class FavoritesFragment extends Fragment {
     private void closeKeyboard(){
         View view = requireActivity().getCurrentFocus();
         if( view != null ){
-            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) requireActivity().
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
             assert imm != null;
             imm.hideSoftInputFromWindow(view.getWindowToken(),0);
         }
@@ -211,25 +236,13 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
+        // Retrieve the SearchView and plug it into SearchManager
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.nav_search));
 
-        String queryHint = "Search something...";
+        String queryHint = "What's On Your Mind?";
         searchView.setQueryHint(queryHint);
         searchView.setOnClickListener(v -> searchView.onActionViewExpanded());
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                closeKeyboard();
-                recyclerGridAdapter.getFilter().filter(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                recyclerGridAdapter.getFilter().filter(newText);
-                return true;
-            }
-        });
+        searchView.setOnQueryTextListener(queryTextListener);
 
         super.onCreateOptionsMenu(menu,inflater);
     }

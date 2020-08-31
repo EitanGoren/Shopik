@@ -34,6 +34,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
@@ -181,6 +183,11 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.swipe_item, parent,false);
 
             ImageView favorite = convertView.findViewById(R.id.swipe_favorite_button);
+            YoYo.with(Techniques.Pulse)
+                    .duration(950)
+                    .repeat(YoYo.INFINITE)
+                    .playOn(favorite);
+
             ImageView imageView = convertView.findViewById(R.id.swipe_image);
             ImageButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
             TextView sale = convertView.findViewById(R.id.swipe_discount);
@@ -238,6 +245,12 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             toolbar.setSoundEffectsEnabled(true);
 
             TextView likes = convertView.findViewById(R.id.like);
+
+            YoYo.with(Techniques.Shake)
+                    .duration(1000)
+                    .repeat(1)
+                    .playOn(likes);
+
             TextView unlikes = convertView.findViewById(R.id.unlike);
             likes.setText(String.valueOf(shoppingItem.getLikes()));
             unlikes.setText(String.valueOf(shoppingItem.getUnlikes()));
@@ -264,29 +277,13 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             likes.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.zoomin);
                 final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike1);
+
                 likes.startAnimation(animation);
                 likes.setText(String.valueOf(shoppingItem.getLikes() + 1));
 
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        mp.start();
-                    }
+                mp.start();
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-
-                mp.setOnCompletionListener(mp1 -> {
-                    flingCardContainer.getTopCardListener().selectRight();
-                });
+                mp.setOnCompletionListener(mp1 -> flingCardContainer.getTopCardListener().selectRight());
 
             });
             unlikes.setOnClickListener(v -> {
@@ -296,26 +293,9 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 unlikes.startAnimation(animation);
                 unlikes.setText(String.valueOf(shoppingItem.getUnlikes() + 1));
 
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        mp.start();
-                    }
+                mp.start();
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-
-                mp.setOnCompletionListener(mp1 -> {
-                    flingCardContainer.getTopCardListener().selectLeft();
-                });
+                mp.setOnCompletionListener(mp1 -> flingCardContainer.getTopCardListener().selectLeft());
 
             });
 
@@ -402,7 +382,6 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 });
             });
 
-
             fullscreen.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
                 Bundle bundle = new Bundle();
@@ -411,7 +390,8 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 ActivityOptions options = ActivityOptions.
                         makeSceneTransitionAnimation((Activity) getContext(),
                                 Pair.create(brand_name,"company_name"),
-                                Pair.create(seller_logo,"company_logo"));
+                                Pair.create(seller_logo,"company_logo"),
+                                Pair.create(favorite,"favorite"));
                 getContext().startActivity(intent, options.toBundle());
             });
 
@@ -444,8 +424,8 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
         ListView listView = dialog.findViewById(R.id.likes_list);
 
-        header.setCompoundDrawablesRelativeWithIntrinsicBounds(dialog.getContext().
-                getDrawable(R.drawable.ic_thumb_up_seleste),null,null,null);
+        header.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.
+                getDrawable(dialog.getContext(), R.drawable.ic_thumb_up_seleste),null,null,null);
         header.setCompoundDrawablePadding(20);
 
         listView.setAdapter(likedListAdapter);
@@ -461,7 +441,8 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
     private void showUnlikesListDialog(ArrayList<LikedUser> unliked_items){
 
         Dialog dialog = new Dialog(getContext());
-        LikesListAdapter unlikedListAdapter = new LikesListAdapter(dialog.getContext(), R.layout.likes_list_item, unliked_items);
+        LikesListAdapter unlikedListAdapter = new LikesListAdapter(dialog.getContext(),
+                R.layout.likes_list_item, unliked_items);
         unlikedListAdapter.notifyDataSetChanged();
 
         dialog.setContentView(R.layout.likes_list_dialog);
@@ -471,7 +452,9 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
         ListView listView = dialog.findViewById(R.id.likes_list);
 
-        header.setCompoundDrawablesRelativeWithIntrinsicBounds(dialog.getContext().getDrawable(R.drawable.ic_thumb_down_pink),null,null,null);
+        header.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.
+                getDrawable(dialog.getContext(),
+                        R.drawable.ic_thumb_down_pink),null,null,null);
         header.setCompoundDrawablePadding(20);
 
         listView.setAdapter(unlikedListAdapter);

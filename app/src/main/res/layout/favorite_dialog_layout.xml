@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.cardview.widget.CardView
-
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="365dp"
-    android:layout_height="380dp"
-    app:cardCornerRadius="30dp"
-    android:layout_gravity="center"
-    android:layout_centerInParent="true"
-    android:backgroundTint="#00FFFFFF"
-    android:backgroundTintMode="screen"
-    app:cardUseCompatPadding="true"
-    app:cardBackgroundColor="#4036F33E">
+    <androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/dialog2"
+        android:layout_width="365dp"
+        android:layout_height="380dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:backgroundTint="#00FFFFFF"
+        android:backgroundTintMode="screen"
+        app:cardBackgroundColor="#404FF856"
+        app:cardCornerRadius="30dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -33,7 +34,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="160dp"
                 android:layout_height="195dp"
-                android:rotationY="7"
+                android:rotationY="8"
                 app:cardCornerRadius="15dp"
                 app:cardUseCompatPadding="true"
                 android:layout_marginStart="25dp"
@@ -47,7 +48,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="#ffffff"
-                    android:scaleType="centerCrop"/>
+                    android:contentDescription="@string/favorite"
+                    android:scaleType="centerCrop" />
 
                 <ImageView
                     android:id="@+id/heart"
@@ -57,7 +59,8 @@
                     android:scaleType="centerCrop"
                     android:layout_gravity="end|top"
                     android:layout_marginTop="5dp"
-                    android:layout_marginEnd="5dp" />
+                    android:layout_marginEnd="5dp"
+                    android:contentDescription="@string/heart" />
 
             </androidx.cardview.widget.CardView>
 
@@ -67,7 +70,8 @@
                 android:layout_height="125dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="25dp"/>
+                android:layout_marginEnd="25dp"
+                android:contentDescription="@string/favorite" />
 
             <TextView
                 android:id="@+id/footer"
@@ -84,5 +88,3 @@
         </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
-
-

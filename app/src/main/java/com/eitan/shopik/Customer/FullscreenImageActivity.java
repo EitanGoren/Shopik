@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.ActivityNavigator;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -56,17 +58,20 @@ public class FullscreenImageActivity extends AppCompatActivity {
     private RelativeLayout videoLayout,anchor;
     private TextView no_video;
     private TextView textView;
-    private RelativeLayout dots;
+    private LinearLayout dots;
     private CardView button;
     private RelativeLayout buttons_layout;
     private String path;
+    private String category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.TRANSPARENT);
+        overridePendingTransition(R.anim.fadein,R.anim.fadeout);
 
         setContentView(R.layout.activity_fullscreen_image);
 
@@ -98,10 +103,12 @@ public class FullscreenImageActivity extends AppCompatActivity {
             isFavorite = ((ShoppingItem) item).isFavorite();
             Macros.Functions.GlidePicture(this,((ShoppingItem) item).getSellerLogoUrl(), company);
             name.setText(((ShoppingItem) item).getBrand());
+            category = ((ShoppingItem) item).getType();
         }
         else if(item instanceof RecyclerItem){
             Macros.Functions.GlidePicture(this,((RecyclerItem) item).getSellerLogoUrl(), company);
             name.setText(((RecyclerItem) item).getBrand());
+            category = ((RecyclerItem) item).getType();
         }
 
         mDot1 = findViewById(R.id.fullscreen_dot_1);
@@ -155,6 +162,12 @@ public class FullscreenImageActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY ;
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        ActivityNavigator.applyPopAnimationsToPendingTransition(this);
+    }
+
     private class fullscreenPicsAdapter extends RecyclerView.Adapter<fullscreenPicsAdapter.PicsViewHolder> {
 
         private ArrayList<String> imagesUrl;
@@ -190,8 +203,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
         @NonNull
         @Override
         public PicsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new PicsViewHolder(LayoutInflater.
-                    from(parent.getContext()).
+            return new PicsViewHolder(LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.fullscreen_pic,parent,false));
         }
 
@@ -245,7 +257,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
                 anchor = view.findViewById(R.id.video);
                 textView = view.findViewById(R.id.fullscreen_item_info);
                 no_video = view.findViewById(R.id.No_video_text);
-                dots = findViewById(R.id.dots);
+                dots = findViewById(R.id.fullscreen_dotsLayout);
                 button = findViewById(R.id.close_card);
                 buttons_layout = findViewById(R.id.buttons_layout);
             }
@@ -283,7 +295,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
                                 mVideoView.setMediaController(videoMediaController);
                                 no_video.setVisibility(View.INVISIBLE);
                             }
-                            else {
+                            else if(category.equals("ASOS")){
                                getVideoLink getVideoLink = new getVideoLink(item_id);
                                getVideoLink.execute();
                             }

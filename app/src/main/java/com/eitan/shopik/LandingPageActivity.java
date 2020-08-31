@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.Company.CompanyMainActivity;
 import com.eitan.shopik.Customer.GenderFilteringActivity;
 import com.facebook.AccessToken;
@@ -52,14 +54,12 @@ public class LandingPageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
-
-        overridePendingTransition(R.anim.fadein,R.anim.fadeout);
-
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         setContentView(R.layout.activity_landing_page);
 
         init();
 
-        // FirebaseAuth.getInstance().signOut();
+        //FirebaseAuth.getInstance().signOut();
         if(!isConnectedToInternet()){
             RelativeLayout LandingLayout = findViewById(R.id.LandingLayout);
             Macros.Functions.showSnackbar (
@@ -235,23 +235,26 @@ public class LandingPageActivity extends AppCompatActivity {
     }
 
     private void goToCustomer() {
+
+        //Animate tooki
         ImageView tooki = findViewById(R.id.imageView);
+        YoYo.with(Techniques.Hinge).duration(4500).playOn(tooki);
+
         ActivityOptions options = ActivityOptions.
                 makeSceneTransitionAnimation(this, Pair.create(tooki,"tooki"));
+
         Intent intent = new Intent(LandingPageActivity.this, GenderFilteringActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("imageUrl",imageUrl);
         bundle.putString("name",user.getDisplayName());
         intent.putExtra("bundle",bundle);
 
-        final Handler handler = new Handler();
+        Handler handler = new Handler();
         handler.postDelayed(() -> {
-
             startActivity(intent, options.toBundle());
-            this.supportFinishAfterTransition();
-            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-
-        }, DELAY_MILLIS);
+            supportFinishAfterTransition();
+            finishAfterTransition();
+        },4500);
     }
 
     private void goToCompany() {
@@ -366,4 +369,5 @@ public class LandingPageActivity extends AppCompatActivity {
             return false;
         }
     }
+
 }

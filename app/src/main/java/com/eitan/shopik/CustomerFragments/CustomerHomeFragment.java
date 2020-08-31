@@ -16,11 +16,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Adapters.CardsAdapter;
 import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.ShoppingItem;
@@ -36,6 +36,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -52,9 +54,9 @@ public class CustomerHomeFragment extends Fragment {
     private SwipeFlingAdapterView flingContainer;
     private MainModel mainModel;
     private boolean isSwiped;
-    private TextView percentage;
     private Observer<CopyOnWriteArrayList<ShoppingItem>> items_observer;
     private Observer<Integer> total_items_observer;
+    private String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -73,9 +75,7 @@ public class CustomerHomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_customer_home, container, false);
-
         flingContainer = view.findViewById(R.id.frame);
-        percentage = view.findViewById(R.id.percentage);
 
         return view;
     }
@@ -85,7 +85,8 @@ public class CustomerHomeFragment extends Fragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        arrayAdapter = new CardsAdapter(requireContext(), R.layout.swipe_item, swipesModel.getItems().getValue());
+        arrayAdapter = new CardsAdapter(requireContext(),
+                R.layout.swipe_item, swipesModel.getItems().getValue());
 
         isSwiped = false;
 
@@ -120,6 +121,7 @@ public class CustomerHomeFragment extends Fragment {
         mainModel.getAll_items().observe(requireActivity(),items_observer );
 
         total_items_observer = integer -> {
+            TextView percentage = view.findViewById(R.id.percentage);
             percentage.setVisibility(View.VISIBLE);
             String text = integer + "%";
             percentage.setText(text);
@@ -228,12 +230,32 @@ public class CustomerHomeFragment extends Fragment {
 
                 updateLikes(shoppingItem);
                 updateBadge();
-                connection.onCustomerInteractWithItem(item_id, item_type, item_gender, item_sub_category, action, seller);
+
+                String temp_action = action;
+                if(action.equals(Macros.CustomerMacros.FAVOURITE))
+                    temp_action = Macros.CustomerMacros.LIKED;
+
+                Map<String,Object> map = new HashMap<>();
+                map.put(item_id, action);
+
+                FirebaseDatabase.getInstance().getReference().
+                        child(Macros.CUSTOMERS).
+                        child(userId).
+                        child(item_gender).
+                        child(temp_action).
+                        child(seller).
+                        child(item_type).
+                        child(item_sub_category).
+                        updateChildren(map);
 
                 // add user_id to items Liked field
                 connection.onItemAction(item_type, item_gender, item_id, action, seller, link, imageUrl);
 
-                connection.updatePreferredItem(shoppingItem, item_sub_category);
+                //TODO add parameters like color,brand,price,etc..
+
+                for (String attr : shoppingItem.getName()) {
+                    connection.increasePreferredFieldByOneRTDB(attr, item_type, item_gender, item_sub_category);
+                }
             }
         }
 
@@ -256,8 +278,19 @@ public class CustomerHomeFragment extends Fragment {
             Database connection = new Database();
 
             connection.onItemAction(item_type, item_gender, item_id, Macros.Items.UNLIKED, seller, link,imageUrl);
-            connection.onCustomerInteractWithItem(item_id, item_type, item_gender, item_sub_category,
-                    Macros.Items.UNLIKED, seller);
+
+            Map<String,Object> map = new HashMap<>();
+            map.put(item_id, Macros.Items.UNLIKED);
+
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(userId).
+                    child(item_gender).
+                    child(Macros.Items.UNLIKED).
+                    child(seller).
+                    child(item_type).
+                    child(item_sub_category).
+                    updateChildren(map);
             }
         }
     }
@@ -283,6 +316,7 @@ public class CustomerHomeFragment extends Fragment {
     private void showFavoritesDialog(String imageUrl) {
 
         dialog.setContentView(R.layout.favorite_dialog_layout);
+
         TextView header = dialog.findViewById(R.id.header);
         TextView footer = dialog.findViewById(R.id.footer);
         Random random = new Random();
@@ -290,12 +324,14 @@ public class CustomerHomeFragment extends Fragment {
         ImageView fav_item = dialog.findViewById(R.id.fav_item);
 
         ImageView fav_ic = dialog.findViewById(R.id.fav_ic);
-        fav_ic.setImageDrawable(dialog.getContext().getDrawable(R.drawable.ic_baseline_favorite));
-        fav_ic.setColorFilter(Color.WHITE);
+        fav_ic.setImageDrawable(ContextCompat.
+                getDrawable(dialog.getContext(),R.drawable.ic_baseline_favorite));
 
-        footer.setText("Added Successfully");
+        fav_ic.setColorFilter(Color.WHITE);
+        String text = "Added Successfully";
+        footer.setText(text);
         header.setText(rand_line);
-        Glide.with(dialog.getContext()).load(imageUrl).into(fav_item);
+        Macros.Functions.GlidePicture(dialog.getContext(),imageUrl,fav_item);
 
         Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.FavoriteSwipeAnimation;
@@ -317,11 +353,5 @@ public class CustomerHomeFragment extends Fragment {
                 child(item_type).
                 child(item_sub_category).
                 setValue(new_page);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        percentage = null;
     }
 }

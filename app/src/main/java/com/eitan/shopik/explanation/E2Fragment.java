@@ -144,18 +144,18 @@ public class E2Fragment extends Fragment {
 
         if(gender.equals(Macros.CustomerMacros.MEN)){
 
-            addAccessoriesSubCategory("belts", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
-            addAccessoriesSubCategory("hats", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
-            addAccessoriesSubCategory("ties", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
-            addAccessoriesSubCategory("scarves", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
+            addAccessoriesSubCategory("belts", Macros.Items.MEN_BELTS, Macros.CustomerMacros.MEN);
+            addAccessoriesSubCategory("hats", Macros.Items.MEN_HATS, Macros.CustomerMacros.MEN);
+            addAccessoriesSubCategory("ties", Macros.Items.MEN_TIES, Macros.CustomerMacros.MEN);
+            addAccessoriesSubCategory("scarves", Macros.Items.MEN_SCARVES, Macros.CustomerMacros.MEN);
 
-            addLingerieSubCategory("underwear", Macros.Items.MEN_BOOTS_RES, Macros.CustomerMacros.MEN);
-            addLingerieSubCategory("socks", Macros.Items.MEN_CHRONOGRAPH_WATCH_RES, Macros.CustomerMacros.MEN);
+            addLingerieSubCategory("underwear", Macros.Items.MEN_UNDERWEAR, Macros.CustomerMacros.MEN);
+            addLingerieSubCategory("socks", Macros.Items.MEN_SOCKS, Macros.CustomerMacros.MEN);
 
-            addJacketsSubCategory("overcoat", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
-            addJacketsSubCategory("biker", Macros.Items.MEN_TRENCH_JACKETS_RES, Macros.CustomerMacros.MEN);
-            addJacketsSubCategory("leather", Macros.Items.MEN_BOMBER_JACKETS_RES, Macros.CustomerMacros.MEN);
-            addJacketsSubCategory("denim", Macros.Items.MEN_LEATHER_JACKETS_RES, Macros.CustomerMacros.MEN);
+            addJacketsSubCategory("overcoat", Macros.Items.MEN_OVERCOAT_JACKETS_RES, Macros.CustomerMacros.MEN);
+            addJacketsSubCategory("biker", Macros.Items.MEN_BIKER_JACKETS_RES, Macros.CustomerMacros.MEN);
+            addJacketsSubCategory("leather", Macros.Items.MEN_LEATHER_JACKETS_RES, Macros.CustomerMacros.MEN);
+            addJacketsSubCategory("denim", Macros.Items.MEN_DENIM_JACKETS_RES, Macros.CustomerMacros.MEN);
             addJacketsSubCategory("trench", Macros.Items.MEN_TRENCH_JACKETS_RES, Macros.CustomerMacros.MEN);
             addJacketsSubCategory("puffer", Macros.Items.MEN_PUFFER_JACKETS_RES, Macros.CustomerMacros.MEN);
 
@@ -175,6 +175,7 @@ public class E2Fragment extends Fragment {
 
             addShoesSubCategory("loafers",Macros.Items.MEN_LOAFERS_RES,Macros.CustomerMacros.MEN);
             addShoesSubCategory("boots",Macros.Items.MEN_BOOTS_RES,Macros.CustomerMacros.MEN);
+            addShoesSubCategory("elegant",Macros.Items.MEN_PUFFER_JACKETS_RES,Macros.CustomerMacros.MEN);
             addShoesSubCategory("trainers",Macros.Items.MEN_TRAINERS_RES,Macros.CustomerMacros.MEN);
             addShoesSubCategory("sandals",Macros.Items.MEN_SANDALS_RES,Macros.CustomerMacros.MEN);
             addShoesSubCategory("sliders",Macros.Items.MEN_SLIDERS_RES,Macros.CustomerMacros.MEN);
@@ -200,17 +201,17 @@ public class E2Fragment extends Fragment {
         }
         else {
 
-            addAccessoriesSubCategory("belts", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
-            addAccessoriesSubCategory("scarves", Macros.Items.WOMEN_AVIATOR_GLASSES_RES, Macros.CustomerMacros.WOMEN);
-            addAccessoriesSubCategory("hats", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
-            addAccessoriesSubCategory("sport", Macros.Items.WOMEN_BOMBER_JACKETS_RES, Macros.CustomerMacros.WOMEN);
+            addAccessoriesSubCategory("belts", Macros.Items.WOMEN_BELTS, Macros.CustomerMacros.WOMEN);
+            addAccessoriesSubCategory("scarves", Macros.Items.WOMEN_SCARVES, Macros.CustomerMacros.WOMEN);
+            addAccessoriesSubCategory("hats", Macros.Items.WOMEN_HATS, Macros.CustomerMacros.WOMEN);
+            addAccessoriesSubCategory("sport", Macros.Items.WOMEN_SPORT, Macros.CustomerMacros.WOMEN);
 
-            addLingerieSubCategory("underwear", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
-            addLingerieSubCategory("socks", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
-            addLingerieSubCategory("bras", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
-            addLingerieSubCategory("shapewear", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
-            addLingerieSubCategory("pyjamas", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
-            addLingerieSubCategory("thongs", Macros.Items.WOMEN_ANKLET_RES, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("underwear", Macros.Items.WOMEN_UNDERWEAR, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("socks", Macros.Items.WOMEN_SOCKS, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("bras", Macros.Items.WOMEN_BRAS, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("shapewear", Macros.Items.WOMEN_SHAPEWEAR, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("pyjamas", Macros.Items.WOMEN_PYJAMAS, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("thongs", Macros.Items.WOMEN_THONGS, Macros.CustomerMacros.WOMEN);
 
             addBagsSubCategory("leather",Macros.Items.LEATHER_RES);
             addBagsSubCategory("bum",Macros.Items.BUM_RES);
@@ -218,6 +219,7 @@ public class E2Fragment extends Fragment {
             addBagsSubCategory("backpack",Macros.Items.BACKPACK_RES);
             addBagsSubCategory("cross body",Macros.Items.CROSS_RES);
             addBagsSubCategory("tote",Macros.Items.TOTE_RES);
+            addBagsSubCategory("wallets",Macros.Items.WALLETS_RES);
 
             addDressSubCategory("jumper",Macros.Items.JUMPER_DRESS_RES);
             addDressSubCategory("midi",Macros.Items.MIDI_DRESS_RES);

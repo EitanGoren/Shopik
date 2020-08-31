@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MenuItem;
@@ -27,8 +26,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.ActivityNavigator;
 import androidx.viewpager.widget.ViewPager;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.Adapters.MainPagerAdapter;
-import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.PreferredItem;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LandingPageActivity;
@@ -37,10 +37,6 @@ import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
-import com.facebook.ads.Ad;
-import com.facebook.ads.AdError;
-import com.facebook.ads.CacheFlag;
-import com.facebook.ads.InterstitialAdListener;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.LoadAdError;
@@ -75,13 +71,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -98,9 +92,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private FirebaseAuth mAuth;
     private String customerFirstName, imageUrl;
     private String userId;
-    public static final int NUM_OF_ADS = 12;
     private BottomNavigationView bottomNavigationView;
-    private com.facebook.ads.InterstitialAd interstitialAd;
     private DrawerLayout drawerLayout;
     private View hView;
     private NavigationView navigationView;
@@ -112,10 +104,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private Map<String,String> favs;
     private ValueEventListener pageEventListener;
     private ValueEventListener fav_single_listener;
-    private static final int DELAY_AD_FETCH = 3500;
     private String cover;
     private ValueEventListener valueEventListener;
-    private UnifiedNativeAd tempAd;
+    private ValueEventListener FavvalueEventListener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -125,16 +116,13 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         overridePendingTransition(R.anim.fadein,R.anim.fadeout);
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
+       // new setInterstitial().execute();
+
         mainModel = new ViewModelProvider(this).get(MainModel.class);
 
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            for ( int i = 0; i < NUM_OF_ADS ; ++i ) {
-                loadAds();
-            }
-        }, DELAY_AD_FETCH);
+        // LOAD NATIVE ADS
+        new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        initFBInterstitial();
         setContentView(R.layout.activity_main);
 
         init();
@@ -146,35 +134,39 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         copyright.setText(text);
 
         getAllCompaniesInfo();
+        FavvalueEventListener = new ValueEventListener() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if( dataSnapshot.getValue() instanceof Map ) {
+                        Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
+                        for ( Object item_id : map.keySet()) {
+                            mainModel.addSwipedItemId(item_id.toString());
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled()" + databaseError.getMessage());
+            }
+
+        };
+
         for(String company : Macros.CompanyNames) {
 
             FirebaseDatabase.getInstance().getReference().
                     child(Macros.CUSTOMERS).
                     child(userId).
                     child(item_gender).
-                    child(Macros.Items.LIKED).
+                    child(Macros.Items.UNLIKED).
                     child(company).
                     child(item_type).
                     child(item_sub_category).
-                    addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                Map<Object,Object> map = (Map<Object, Object>) dataSnapshot.getValue();
-                                assert map != null;
-                                Set<Object> set = map.keySet();
-                                for ( Object item_id : set ) {
-                                    mainModel.addSwipedItemId(item_id.toString());
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled()" + databaseError.getMessage());
-                        }
-
-                    });
+                    addValueEventListener(FavvalueEventListener);
 
             FirebaseDatabase.getInstance().getReference().
                     child(Macros.CUSTOMERS).
@@ -184,47 +176,34 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     child(company).
                     child(item_type).
                     child(item_sub_category).
-                    addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                for ( Object item_id : ((Map) Objects.requireNonNull(dataSnapshot.getValue())).keySet() ) {
-                                    mainModel.addSwipedItemId(item_id.toString());
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled()" + databaseError.getMessage());
-                        }
-
-                    });
+                    addValueEventListener(FavvalueEventListener);
         }
 
         valueEventListener = new ValueEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
+            @SuppressWarnings("unchecked")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    mainModel.setPreferred(new PreferredItem((Map) dataSnapshot.getValue()));
+                    mainModel.setPreferred(new PreferredItem((Map<String,Object>) dataSnapshot.getValue()));
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(Macros.TAG, "Suggested::getPreferred() " + Objects.requireNonNull(databaseError.getMessage()));
+                Log.e(Macros.TAG, "getPreferred() " + Objects.requireNonNull(databaseError.getMessage()));
             }
         };
         customerDB.addValueEventListener(valueEventListener);
 
         fav_single_listener = new ValueEventListener() {
             @Override
+            @SuppressWarnings("unchecked")
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()) {
-                    Map pook = (Map) snapshot.getValue();
-                    assert pook != null;
-                    favs.putAll(pook);
+                    Map<String,String> likes = (Map<String, String>) snapshot.getValue();
+                    assert likes != null;
+                    favs.putAll(likes);
                 }
             }
 
@@ -266,6 +245,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             new getCastro().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
             new getTFS().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
             new getTX().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
+            new getAldo().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
+            new getRenuar().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
 
         });
 
@@ -288,6 +269,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         setViewPager();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+
+            YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.logo_image));
+
             switch(item.getItemId()) {
                 case R.id.bottom_swipe:
                     mainPager.setCurrentItem(0);
@@ -307,44 +291,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         });
     }
 
-    private void loadAds() {
-
-        VideoOptions videoOptions = new VideoOptions.Builder().
-                setStartMuted(false).
-                setClickToExpandRequested(true).
-                build();
-
-        NativeAdOptions nativeAdOptions = new NativeAdOptions.Builder().
-                setAdChoicesPlacement(ADCHOICES_TOP_LEFT).
-                setRequestMultipleImages(true).
-                setVideoOptions(videoOptions).
-                build();
-
-        AdLoader adLoader = new AdLoader
-                .Builder(this, Macros.NATIVE_ADVANCED_AD)
-                .forUnifiedNativeAd(unifiedNativeAd -> tempAd = unifiedNativeAd)
-                .withAdListener(new AdListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void onAdLoaded() {
-                        super.onAdLoaded();
-                        ShoppingItem dummy = new ShoppingItem();
-                        dummy.setAd(true);
-                        dummy.setNativeAd(tempAd);
-                        mainModel.addAd(dummy);
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(LoadAdError loadAdError) {
-                        super.onAdFailedToLoad(loadAdError);
-                        Log.d(Macros.TAG,"Failed to load native ad: " + loadAdError.getMessage());
-                    }
-                })
-                .withNativeAdOptions(nativeAdOptions)
-                .build();
-
-        adLoader.loadAd(new PublisherAdRequest.Builder().build());
-    }
 
     private void getCoverPic() {
 
@@ -404,8 +350,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onPageSelected(int position) {
-                switch(position) {
 
+                YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.logo_image));
+
+                switch(position) {
                     case 0:
                         bottomNavigationView.getMenu().findItem(R.id.bottom_swipe).setChecked(true);
                         break;
@@ -670,6 +618,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 child(shoppingItem.getSeller() + "-" + shoppingItem.getId()).
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
+                    @SuppressWarnings("unchecked")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -772,6 +721,26 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     child(item_type).
                     child(item_sub_category).
                     removeEventListener(fav_single_listener);
+
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(userId).
+                    child(item_gender).
+                    child(Macros.Items.UNLIKED).
+                    child(company).
+                    child(item_type).
+                    child(item_sub_category).
+                    removeEventListener(FavvalueEventListener);
+
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(userId).
+                    child(item_gender).
+                    child(Macros.Items.LIKED).
+                    child(company).
+                    child(item_type).
+                    child(item_sub_category).
+                    removeEventListener(FavvalueEventListener);
         }
 
         mainModel.getCustomers_info().removeObservers(this);
@@ -781,64 +750,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
     @Override
     protected void onDestroy() {
-        if (interstitialAd != null) {
-            interstitialAd.destroy();
-        }
         mainModel.clearAds();
         super.onDestroy();
-    }
-
-    private void initFBInterstitial() {
-
-        if (interstitialAd != null) {
-            interstitialAd.destroy();
-            interstitialAd = null;
-        }
-
-     // AdSettings.addTestDevice("34464d11-359b-4022-86a5-22489c17269d");
-        interstitialAd = new com.facebook.ads.InterstitialAd(this, Macros.FB_PLACEMENT_ID);
-
-        // Set a listener to get notified on changes or when the user interact with the ad.
-        interstitialAd.setAdListener(new InterstitialAdListener() {
-            @Override
-            public void onInterstitialDisplayed(Ad ad) {
-
-            }
-
-            @Override
-            public void onInterstitialDismissed(Ad ad) {
-                // Cleanup.
-                interstitialAd.destroy();
-                interstitialAd = null;
-            }
-
-            @Override
-            public void onError(Ad ad, AdError adError) {
-                if(ad == interstitialAd)
-                    Log.d(Macros.TAG, adError.getErrorMessage());
-            }
-
-            @Override
-            public void onAdLoaded(Ad ad) {
-                // Interstitial ad is loaded and ready to be displayed
-                Log.d(Macros.TAG, "Interstitial ad is loaded and ready to be displayed!");
-                // Show the ad
-                interstitialAd.show();
-            }
-
-            @Override
-            public void onAdClicked(Ad ad) {
-                Log.d(Macros.TAG,"onAdClicked");
-            }
-
-            @Override
-            public void onLoggingImpression(Ad ad) {
-                Log.d(Macros.TAG,"FB Interstitial Ad");
-            }
-        });
-
-        // Load a new interstitial.
-        interstitialAd.loadAd(EnumSet.of(CacheFlag.IMAGE));
     }
 
     @Override
@@ -997,7 +910,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             ArrayList<String> name = new ArrayList<>(Arrays.asList(title.split(" ")));
                             shoppingItem.setName(name);
                             shoppingItem.setSeller("Terminal X");
-                            shoppingItem.setSub_category(tx_cat);
+                            shoppingItem.setSub_category(item_sub_category);
                             shoppingItem.setSellerId("KhrLuCxBoKc0DLAL8dA6WAbOFXT2");
                             shoppingItem.setImages(images);
                             shoppingItem.setVideo_link(null);
@@ -1122,11 +1035,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setColor(color);
                             ArrayList<String> images = new ArrayList<>();
 
-                            Database connection = new Database();
-                            images.add(connection.getASOSimageUrl(1, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-                            images.add(connection.getASOSimageUrl(2, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-                            images.add(connection.getASOSimageUrl(3, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
-                            images.add(connection.getASOSimageUrl(4, shoppingItem.getColor(), shoppingItem.getId_in_seller()));
+                            images.add("https://images.asos-media.com/products/0/" + id + "-1-" + color + "?$S$&wid=595&hei=760");
+                            images.add("https://images.asos-media.com/products/0/" + id + "-" + 2 + "?$S$&wid=595&hei=760");
+                            images.add("https://images.asos-media.com/products/0/" + id + "-" + 3 + "?$S$&wid=595&hei=760");
+                            images.add("https://images.asos-media.com/products/0/" + id + "-" + 4 + "?$S$&wid=595&hei=760");
 
                             shoppingItem.setBrand(branda);
                             shoppingItem.setType(item_type);
@@ -1175,6 +1087,93 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             super.onPostExecute(aVoid);
             isFinished.postValue(true);
             Log.d(Macros.TAG,"getASOS FINISHED");
+        }
+    }
+
+    private class getAldo extends AsyncTask <Long, Integer, Void> {
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Long... page_num) {
+
+            String aldo_cat = Macros.Functions.translateCategoryToAldo(item_gender,item_type);
+            String aldo_sub_cat = Macros.Functions.translateSubCategoryToAldo(item_gender,item_sub_category);
+
+            if(aldo_cat != null) {
+                try {
+
+                    for (int page = 1; page < page_num[0] + 1; ++page) {
+                        Document temp = Jsoup.connect("https://www.aldoshoes.co.il/" +
+                                item_gender.toLowerCase() +
+                                "/" + aldo_cat +
+                                "/" + aldo_sub_cat +
+                                "?p=" + page).get();
+
+                        Elements list_items = temp.getElementsByAttributeValue("id", "prod-list-cat");
+                        Elements products = list_items.get(0).getElementsByClass("cat-product");
+
+                        publishProgress(products.size());
+                        for(Element prod : products){
+
+                            Attributes attributes = prod.childNode(7).attributes();
+                            String link = attributes.get("href");
+                            String price = attributes.get("data-price");
+                            String description = attributes.get("data-name");
+                            ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
+                            String id = attributes.get("data-id");
+
+                            Document prod_page = Jsoup.connect(link).get();
+                            Elements prod_info = prod_page.getElementsByClass("product-image-gallery");
+                            Elements images_elements = prod_info.get(0).getElementsByClass("gallery-image-link");
+
+                            ShoppingItem shoppingItem = new ShoppingItem();
+
+                            ArrayList<String> images = new ArrayList<>();
+                            for(Node img : images_elements){
+                                images.add(img.attr("data-source"));
+                            }
+
+                            shoppingItem.setPrice(price);
+                            shoppingItem.setImages(images);
+                            shoppingItem.setBrand("Aldo");
+                            shoppingItem.setType(item_type);
+                            shoppingItem.setGender(item_gender);
+                            shoppingItem.setSeller("Aldo");
+                            shoppingItem.setSub_category(item_sub_category);
+                            shoppingItem.setSellerId("wnh2WvYzTsajbN7WDPWNA5ij3Vr1");
+                            shoppingItem.setId(id);
+                            shoppingItem.setName(name);
+                            shoppingItem.setSite_link(link);
+                            shoppingItem.setSeen(mainModel.isSwiped(id));
+                            shoppingItem.setPage_num(page);
+
+                            if (favs.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            }
+                            getLikes(shoppingItem, products.size());
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.d(Macros.TAG, "getAldo() " + e.getMessage());
+                }
+            }
+            else{
+                publishProgress(0);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            total_items_found += values[0];
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            isFinished.postValue(true);
+            Log.d(Macros.TAG,"getAldo FINISHED");
         }
     }
 
@@ -1275,7 +1274,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setType(item_type);
                             shoppingItem.setGender(item_gender);
                             shoppingItem.setSeller("TwentyFourSeven");
-                            shoppingItem.setSub_category(cat);
+                            shoppingItem.setSub_category(item_sub_category);
                             shoppingItem.setSellerId("7yIoEtn3uMXoIb5WGxHT84h7mQs1");
                             shoppingItem.setId(id);
                             shoppingItem.setName(name);
@@ -1387,7 +1386,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setType(item_type);
                             shoppingItem.setGender(item_gender);
                             shoppingItem.setSeller("Castro");
-                            shoppingItem.setSub_category(cat);
+                            shoppingItem.setSub_category(item_sub_category);
                             shoppingItem.setSellerId("P6qfLsJbruQZbciTMF4oWnIjuZ63");
                             shoppingItem.setId(id);
                             shoppingItem.setName(description);
@@ -1424,6 +1423,167 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             super.onPostExecute(aVoid);
             isFinished.postValue(true);
             Log.d(Macros.TAG,"getCASTRO FINISHED");
+        }
+    }
+
+    private class getRenuar extends AsyncTask <Long, Integer, Void> {
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Long... page_num) {
+
+            String cat = Macros.Functions.translateCategoryToRenuar(item_gender,item_type);
+            String sub_cat = Macros.Functions.translateSubCategoryToRenuar(item_gender,item_sub_category);
+
+            if(cat != null){
+                try {
+                    for (int page = 1; page < page_num[0] + 1; ++page) {
+
+                        Document document = Jsoup.connect("https://www.renuar.co.il/he/" +
+                                item_gender.toLowerCase()
+                                + "/" + cat
+                                + "/" + sub_cat + ".html"
+                                + "?p=" + page).get();
+
+                        Elements elements = document.getElementsByClass("products-grid");
+                        Elements products = elements.get(0).getElementsByClass("item");
+
+                        publishProgress(products.size());
+                        for (Node node : products) {
+
+                            ShoppingItem shoppingItem = new ShoppingItem();
+
+                            String id = node.attr("data-sku");
+
+                            String name = node.childNode(3).childNode(3).childNode(0).attr("title");
+                            String link = node.childNode(3).childNode(3).childNode(0).attr("href");
+
+                            Document item_doc = null;
+                            try {
+                                item_doc = Jsoup.connect(link).get();
+                            }
+                            catch(HttpStatusException se){
+                                Log.d(Macros.TAG,"404: " + se.getUrl());
+                            }
+                            if(item_doc == null)
+                                continue;
+
+                            Elements item_elements = item_doc.getElementsByClass("images-slideshow");
+                            Elements images_elements = item_elements.get(0).getElementsByClass("item");
+
+                            ArrayList<String> images = new ArrayList<>();
+                            for(Element img : images_elements){
+                                Elements pook = img.getElementsByClass("zoom");
+                                images.add(pook.get(0).attr("src"));
+                            }
+
+                            ArrayList<String> description = new ArrayList<>(Arrays.asList(name.split(" ")));
+
+                            Element price_box = item_doc.getElementsByClass("price-box").get(0);
+
+                            if(price_box.hasClass("old-price")){
+                               shoppingItem.setPrice(price_box.getElementsByClass("old-price").get(0).
+                                        childNode(1).childNode(1).childNode(0).nodeName().replace("&nbsp;₪",""));
+                               shoppingItem.setReduced_price(price_box.getElementsByClass("special-price").get(0).
+                                        childNode(1).childNode(1).childNode(0).nodeName().replace("&nbsp;₪",""));
+                                shoppingItem.setOn_sale(true);
+                            }
+                            else {
+                                shoppingItem.setPrice(price_box.childNode(1).childNode(1).childNode(0).toString().replace("&nbsp;₪", ""));
+                            }
+
+                            shoppingItem.setImages(images);
+                            shoppingItem.setBrand("Renuar");
+                            shoppingItem.setType(item_type);
+                            shoppingItem.setGender(item_gender);
+                            shoppingItem.setSeller("Renuar");
+                            shoppingItem.setSub_category(item_sub_category);
+                            shoppingItem.setSellerId("ohmrSuMPLScbofAVksQsohMaBeJ2");
+                            shoppingItem.setId(id);
+                            shoppingItem.setName(description);
+                            shoppingItem.setSite_link(link);
+                            shoppingItem.setVideo_link(null);
+                            shoppingItem.setExclusive(name.contains("exclusive"));
+                            shoppingItem.setSeen(mainModel.isSwiped(id));
+                            shoppingItem.setPage_num(page);
+
+                            if (favs.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            }
+                            getLikes(shoppingItem, products.size());
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.d(Macros.TAG, "getRenuar() Failed " + e.getMessage());
+                }
+            }
+            else{
+                publishProgress(0);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            total_items_found += values[0];
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            isFinished.postValue(true);
+            Log.d(Macros.TAG,"getRenuar FINISHED");
+        }
+    }
+
+    private class getAds extends AsyncTask <Void, Void, Void> {
+
+        private UnifiedNativeAd tempAd;
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            int NUM_OF_ADS = 20;
+            for (int i = 0; i < NUM_OF_ADS; ++i ) {
+                VideoOptions videoOptions = new VideoOptions.Builder().
+                        setStartMuted(false).
+                        setClickToExpandRequested(true).
+                        build();
+
+                NativeAdOptions nativeAdOptions = new NativeAdOptions.Builder().
+                        setAdChoicesPlacement(ADCHOICES_TOP_LEFT).
+                        setRequestMultipleImages(true).
+                        setVideoOptions(videoOptions).
+                        build();
+
+                AdLoader adLoader = new AdLoader
+                        .Builder(getApplicationContext(), Macros.NATIVE_ADVANCED_AD)
+                        .forUnifiedNativeAd(unifiedNativeAd -> tempAd = unifiedNativeAd)
+                        .withAdListener(new AdListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.N)
+                            @Override
+                            public void onAdLoaded() {
+                                super.onAdLoaded();
+                                ShoppingItem dummy = new ShoppingItem();
+                                dummy.setAd(true);
+                                dummy.setNativeAd(tempAd);
+                                mainModel.addAd(dummy);
+                            }
+
+                            @Override
+                            public void onAdFailedToLoad(LoadAdError loadAdError) {
+                                super.onAdFailedToLoad(loadAdError);
+                                Log.d(Macros.TAG, "Failed to load native ad: " + loadAdError.getMessage());
+                            }
+                        })
+                        .withNativeAdOptions(nativeAdOptions)
+                        .build();
+
+                adLoader.loadAd(new PublisherAdRequest.Builder().build());
+            }
+            return null;
         }
     }
 }

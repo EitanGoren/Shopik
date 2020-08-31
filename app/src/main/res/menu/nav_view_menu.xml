@@ -4,31 +4,31 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="Home"/>
+            android:title="@string/home"/>
         <item
             android:id="@+id/nav_orders"
             android:icon="@drawable/ic_local_grocery_store_black_24dp"
-            android:title="My Orders"/>
+            android:title="@string/my_orders"/>
     </group>
 
-    <item android:title="Your Info">
+    <item android:title="@string/your_info">
         <menu>
             <item
                 android:id="@+id/nav_profile"
                 android:icon="@drawable/ic_person_black"
-                android:title="My Profile"/>
+                android:title="@string/my_profile"/>
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_input_black_24dp"
-                android:title="Log Out"/>
+                android:title="@string/log_out"/>
         </menu>
     </item>
-    <item android:title="About">
+    <item android:title="@string/about">
         <menu>
             <item
                 android:id="@+id/nav_website"
                 android:icon="@drawable/website"
-                android:title="Visit Me"/>
+                android:title="@string/visit_me"/>
         </menu>
     </item>
 </menu>

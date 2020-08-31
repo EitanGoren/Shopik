@@ -30,6 +30,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
@@ -292,6 +293,128 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    Filter filter = new Filter() {
+        //runs in background thread
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            ArrayList<ShoppingItem> filteredList = new ArrayList<>();
+
+            if(constraint.toString().isEmpty()){
+                filteredList.addAll(AllItemsList);
+            }
+            else {
+                for (ShoppingItem item : AllItemsList) {
+                    if (item.getName() != null) {
+                        StringBuilder description = new StringBuilder();
+                        for (String word : item.getName()) {
+                            description.append(word).append(" ");
+                        }
+                        description.append(item.getBrand()).append(item.getSeller());
+                        if( description.toString().contains(constraint)) {
+                            filteredList.add(item);
+                        }
+                    }
+                }
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            filterResults.count = filteredList.size();
+
+            return filterResults;
+        }
+
+        //runs in UI thread
+        @Override
+        @SuppressWarnings("unchecked")
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if(results.values == null ) return;
+
+            ItemsList.clear();
+            int count = 0;
+            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
+                ItemsList.add(item);
+                count++;
+                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
+                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
+                }
+                notifyDataSetChanged();
+            }
+        }
+    };
+    Filter sorting = new Filter() {
+        //runs in background thread
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            ArrayList<ShoppingItem> filteredList = new ArrayList<>(AllItemsList);
+
+            if(constraint.toString().isEmpty()){
+                filteredList.addAll(AllItemsList);
+            }
+            else if(constraint.equals("price")) {
+                filteredList.sort((o1, o2) -> {
+
+                    double price1 = o1.getReduced_price() != null ? Double.parseDouble(o1.getReduced_price()) :
+                            Double.parseDouble(o1.getPrice());
+
+                    double price2 = o2.getReduced_price() != null ? Double.parseDouble(o2.getReduced_price()) :
+                            Double.parseDouble(o2.getPrice());
+
+                    if(o1.getSeller().equals("ASOS")) {
+                        price1 *= Macros.POUND_TO_ILS;
+                    }
+                    if(o2.getSeller().equals("ASOS")) {
+                        price2 *= Macros.POUND_TO_ILS;
+                    }
+
+                    return (int) Math.ceil((price2 - price1));
+
+                });
+            }
+            else if(constraint.equals("match")) {
+                filteredList.sort((o1, o2) -> o2.getPercentage() - o1.getPercentage());
+            }
+            else if(constraint.equals("sale")) {
+                filteredList.sort((o1, o2) -> Boolean.compare(o2.isOn_sale(),o1.isOn_sale()));
+            }
+            else if(constraint.equals("favorites")) {
+                filteredList.sort((o1, o2) -> Boolean.compare(o2.isFavorite(), o1.isFavorite()));
+            }
+            else if(constraint.equals("company")) {
+                filteredList.sort((o1, o2) -> o1.getSeller().compareTo(o2.getSeller()));
+            }
+            else if(constraint.equals("brand")) {
+                filteredList.sort((o1, o2) -> o1.getBrand().compareTo(o2.getBrand()));
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            filterResults.count = filteredList.size();
+
+            return filterResults;
+        }
+
+        //runs in UI thread
+        @Override
+        @SuppressWarnings("unchecked")
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if( results.values == null ) return;
+            ItemsList.clear();
+            int count = 0;
+            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
+                ItemsList.add(item);
+                count++;
+                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
+                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
+                }
+                notifyDataSetChanged();
+            }
+        }
+    };
+
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private TextView brand_name,buy,sale,sale_percentage,price,old_price,description,percentage,
@@ -335,7 +458,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             description.setText(item_description);
 
             if(item.isFavorite()){
-                liked_text.setText("Your Favorite");
+                String text = "Your Favorite";
+                liked_text.setText(text);
                 liked_text.setVisibility(View.VISIBLE);
             }
             else
@@ -385,7 +509,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 percentage_header.setVisibility(View.VISIBLE);
                 String match_txt = "Item & You: ";
                 percentage_header.setText(match_txt);
-                percentage.setText(item.getPercentage() + "%");
+                String text = item.getPercentage() + "%";
+                percentage.setText(text);
             }
             else {
                 percentage.setVisibility(View.GONE);
@@ -461,28 +586,36 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 LayoutInflater layoutInflater = (LayoutInflater) container.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-                final int[] i = {position};
+                final int[] index = {0};
                 assert layoutInflater != null;
                 View view = layoutInflater.inflate(R.layout.grid_images_item,container,false);
                 ImageView imageView = view.findViewById(R.id.image_item);
 
-                Macros.Functions.GlidePicture(container.getContext(),imagesUrl.get((i[0])%4), imageView);
+                Macros.Functions.GlidePicture(container.getContext(), imagesUrl.get(index[0]), imageView);
                 container.addView(view);
 
                 Button mNext = view.findViewById(R.id.next);
                 Button mPrev = view.findViewById(R.id.previous);
 
+                Animation fadein = AnimationUtils.loadAnimation(getContext(),R.anim.fadein);
+
                 mNext.setOnClickListener(v -> {
-                    container.removeView(view);
-                    Macros.Functions.GlidePicture(container.getContext(),imagesUrl.get((i[0] + 1)%4), imageView);
-                    container.addView(view);
-                    i[0]++;
+                    if(index[0] >=0 && index[0] < 3) {
+                        index[0]++;
+                        container.removeView(view);
+                        Macros.Functions.GlidePicture(container.getContext(), imagesUrl.get(index[0]), imageView);
+                        container.addView(view);
+                        imageView.startAnimation(fadein);
+                    }
                 });
                 mPrev.setOnClickListener(v -> {
-                    container.removeView(view);
-                    Macros.Functions.GlidePicture(container.getContext(),imagesUrl.get(Math.abs(i[0] + 3)%4), imageView);
-                    container.addView(view);
-                    --i[0];
+                    if(index[0] > 0 && index[0] <= 3) {
+                        index[0]--;
+                        container.removeView(view);
+                        Macros.Functions.GlidePicture(container.getContext(), imagesUrl.get(index[0]), imageView);
+                        container.addView(view);
+                        imageView.startAnimation(fadein);
+                    }
                 });
 
                 return view;
@@ -544,10 +677,10 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             final int[] index = {0};
 
-            mDot1.setBackground(getContext().getDrawable(R.drawable.ic_lens_black));
-            mDot2.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
-            mDot3.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
-            mDot4.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+            mDot1.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_lens_black));
+            mDot2.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+            mDot3.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+            mDot4.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
 
             likes.setText(String.valueOf(item.getLikes()));
             unlikes.setText(String.valueOf(item.getUnlikes()));
@@ -576,8 +709,10 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 String item_gender = item.getGender();
                 updateCustomerDB(item_id,item_type,item_gender,item.getSub_category());
                 updateItemsDB(item_id,item_type,item_gender);
+
                 // remove(item);
-                Macros.Functions.showSnackbar(recyclerView, "Removed Successfully", Objects.requireNonNull(getContext()),R.drawable.ic_thumb_down_pink);
+                Macros.Functions.showSnackbar(recyclerView,"Removed Successfully",
+                        Objects.requireNonNull(getContext()),R.drawable.ic_thumb_down_pink);
             });
 
             String image = "";
@@ -620,7 +755,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     ActivityOptions options = ActivityOptions.
                             makeSceneTransitionAnimation((Activity) getContext(),
                                     Pair.create(brand_name,"company_name"),
-                                    Pair.create(logo,"company_logo"));
+                                    Pair.create(logo,"company_logo"),
+                                    Pair.create(favorite,"favorite"));
                     getContext().startActivity(intent, options.toBundle());
             });
 
@@ -646,10 +782,14 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (item.isOutlet() || item.isOn_sale()) {
                 int discount = (int) (100 - Math.ceil(100 * (Double.parseDouble(item.getReduced_price()) / Double.parseDouble(item.getPrice()))));
 
-                if (item.isOn_sale())
-                    sale.setText("SALE" + " -" + discount + "%");
-                else if (item.isOutlet())
-                    sale.setText("OUTLET"  + " -" + discount + "%");
+                if (item.isOn_sale()) {
+                    String text = "SALE" + " -" + discount + "%";
+                    sale.setText(text);
+                }
+                else if (item.isOutlet()) {
+                    String text = "OUTLET" + " -" + discount + "%";
+                    sale.setText(text);
+                }
 
                 sale.setVisibility(View.VISIBLE);
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.blink_anim);
@@ -699,22 +839,22 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private void changeTabs(int position) {
             switch (position){
                 case 0:
-                    mDot1.setBackground(getContext().getDrawable(R.drawable.ic_lens_black));
-                    mDot2.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot1.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_lens_black));
+                    mDot2.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
                     break;
                 case 1:
-                    mDot1.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
-                    mDot2.setBackground(getContext().getDrawable(R.drawable.ic_lens_black));
-                    mDot3.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot1.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot2.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_lens_black));
+                    mDot3.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
                     break;
                 case 2:
-                    mDot2.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
-                    mDot3.setBackground(getContext().getDrawable(R.drawable.ic_lens_black));
-                    mDot4.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot2.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot3.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_lens_black));
+                    mDot4.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
                     break;
                 case 3:
-                    mDot3.setBackground(getContext().getDrawable(R.drawable.ic_panorama_fish_eye_black_24dp));
-                    mDot4.setBackground(getContext().getDrawable(R.drawable.ic_lens_black));
+                    mDot3.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot4.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_lens_black));
                     break;
             }
         }
@@ -780,11 +920,13 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             dialog.setContentView(R.layout.likes_list_dialog);
             TextView header = dialog.findViewById(R.id.likes_header);
-            header.setText( Macros.Items.LIKED + " this item");
+            String text = Macros.Items.LIKED + " this item";
+            header.setText(text);
 
             ListView listView = dialog.findViewById(R.id.likes_list);
 
-            header.setCompoundDrawablesRelativeWithIntrinsicBounds(dialog.getContext().getDrawable(R.drawable.ic_thumb_up_seleste),null,null,null);
+            header.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.getDrawable(dialog.getContext(),
+                    R.drawable.ic_thumb_up_seleste),null,null,null);
             header.setCompoundDrawablePadding(20);
 
             listView.setAdapter(likedListAdapter);
@@ -801,11 +943,13 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             dialog.setContentView(R.layout.likes_list_dialog);
             TextView header = dialog.findViewById(R.id.likes_header);
-            header.setText( Macros.Items.UNLIKED + " this item");
+            String text =  Macros.Items.UNLIKED + " this item";
+            header.setText(text);
 
             ListView listView = dialog.findViewById(R.id.likes_list);
 
-            header.setCompoundDrawablesRelativeWithIntrinsicBounds(dialog.getContext().getDrawable(R.drawable.ic_thumb_down_pink),null,null,null);
+            header.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.
+                    getDrawable(dialog.getContext(),R.drawable.ic_thumb_down_pink),null,null,null);
             header.setCompoundDrawablePadding(20);
 
             listView.setAdapter(unlikedListAdapter);
@@ -814,123 +958,4 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             dialog.show();
         }
     }
-
-    Filter sorting = new Filter() {
-        //runs in background thread
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            ArrayList<ShoppingItem> filteredList = new ArrayList<>(AllItemsList);
-
-            if(constraint.toString().isEmpty()){
-                filteredList.addAll(AllItemsList);
-            }
-            else if(constraint.equals("price")) {
-                filteredList.sort((o1, o2) -> {
-
-                    double price1 = o1.getReduced_price() != null ? Double.parseDouble(o1.getReduced_price()) :
-                            Double.parseDouble(o1.getPrice());
-
-                    double price2 = o2.getReduced_price() != null ? Double.parseDouble(o2.getReduced_price()) :
-                            Double.parseDouble(o2.getPrice());
-
-                    if(o1.getSeller().equals("ASOS")) {
-                        price1 *= Macros.POUND_TO_ILS;
-                    }
-                    if(o2.getSeller().equals("ASOS")) {
-                        price2 *= Macros.POUND_TO_ILS;
-                    }
-
-                    return (int) Math.ceil((price2 - price1));
-
-                });
-            }
-            else if(constraint.equals("match")) {
-                filteredList.sort((o1, o2) -> o2.getPercentage() - o1.getPercentage());
-            }
-            else if(constraint.equals("sale")) {
-                filteredList.sort((o1, o2) -> Boolean.compare(o2.isOn_sale(),o1.isOn_sale()));
-            }
-            else if(constraint.equals("favorites")) {
-                filteredList.sort((o1, o2) -> Boolean.compare(o2.isFavorite(), o1.isFavorite()));
-            }
-            else if(constraint.equals("company")) {
-                filteredList.sort((o1, o2) -> o1.getSeller().compareTo(o2.getSeller()));
-            }
-            else if(constraint.equals("brand")) {
-                filteredList.sort((o1, o2) -> o1.getBrand().compareTo(o2.getBrand()));
-            }
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            filterResults.count = filteredList.size();
-
-            return filterResults;
-        }
-
-        //runs in UI thread
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            if( results.values == null ) return;
-            ItemsList.clear();
-            int count = 0;
-            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
-                ItemsList.add(item);
-                count++;
-                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
-                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
-                }
-                notifyDataSetChanged();
-            }
-        }
-    };
-    Filter filter = new Filter() {
-        //runs in background thread
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            ArrayList<ShoppingItem> filteredList = new ArrayList<>();
-
-            if(constraint.toString().isEmpty()){
-                filteredList.addAll(AllItemsList);
-            }
-            else {
-                for (ShoppingItem item : AllItemsList) {
-                    if (item.getName() != null) {
-                        StringBuilder description = new StringBuilder();
-                        for (String word : item.getName()) {
-                            description.append(word).append(" ");
-                        }
-                        if( description.toString().contains(constraint)) {
-                            filteredList.add(item);
-                        }
-                    }
-                }
-            }
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            filterResults.count = filteredList.size();
-
-            return filterResults;
-        }
-
-        //runs in UI thread
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            if(results.values == null ) return;
-
-            ItemsList.clear();
-            int count = 0;
-            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
-                ItemsList.add(item);
-                count++;
-                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
-                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
-                }
-                notifyDataSetChanged();
-            }
-        }
-    };
 }

@@ -326,6 +326,27 @@ public class Macros {
         public static final String BACKPACK_RES = "https://i.pinimg.com/236x/67/4f/a0/674fa0e41bcc893f8a4112c288ca9442.jpg";
         public static final String BUM_RES = "https://www.mohito.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/X/Y/XY082-99X-020_1.jpg";
         public static final String CLUTCH_RES = "https://ae01.alicdn.com/kf/HTB14qFGLpXXXXX.aXXXq6xXFXXXb/women-genuine-leather-evening-clutch-bag-stone-pattern-flap-handbag-for-female-wristlet-purse-fashion-shoulder.jpg";
+        public static final String WALLETS_RES = "https://pipiluxury.com/wp-content/uploads/2019/12/Fashion-Brand-Long-Wallets-Women-Leather-Women-Wallets-Wristlet-Handbags-Long-Money-Bag-Zipper-Coin-Purse.jpg";
+
+        public static final String WOMEN_BELTS = "https://ae01.alicdn.com/kf/H4d419aefdf194531ab0bfdd7ed5c9051v/Fashion-PU-Leather-Belts-Simple-Round-Leopard-Print-Buckle-Women-Belts-Vintage-Jeans-Dress-Decor-Waistbands.jpg";
+        public static final String WOMEN_SCARVES = "https://image.made-in-china.com/43f34j00JUYfpSuGbmoK/New-Winter-Scarf-Fashion-Women-Scarf-Luxury-Plaid-Cashmere-Scarves-Women-Triangle-Wholesale-Scarf.jpg";
+        public static final String WOMEN_HATS = "https://images-na.ssl-images-amazon.com/images/I/61IxpKIPAgL._AC_UX385_.jpg";
+        public static final String WOMEN_SPORT = "https://cdn.shopify.com/s/files/1/0028/8102/8131/products/0_600x.jpg?v=1576219316";
+
+        public static final String MEN_BELTS = "https://5.imimg.com/data5/UN/ED/MY-35870101/tb148lm2b-men-belts-250x250.png";
+        public static final String MEN_HATS = "https://ae01.alicdn.com/kf/HTB1skoVm22H8KJjy0Fcq6yDlFXap.jpg_q50.jpg";
+        public static final String MEN_TIES = "https://contestimg.wish.com/api/webimage/59d1c9867526fb2fbf6f0aec-large.jpg?cache_buster=f536d0e7dc88b92a2cc7611bcb5d3556";
+        public static final String MEN_SCARVES = "https://images-na.ssl-images-amazon.com/images/I/61HolmRyimL._AC_UY1000_.jpg";
+
+        public static final String MEN_UNDERWEAR = "https://cdn.pricearchive.org/images/aliexpress.com/32918630258/Men-Underwear-Boxers-Plaid-Loose-Shorts-Men-Panties-Cotton-Soft-Large-Arrow-Pants-At-Home-Underwear.jpg";
+        public static final String MEN_SOCKS = "https://billybelt.com/5988-large_default/cotton-socks-khaki-striped.jpg";
+
+        public static final String WOMEN_UNDERWEAR = "https://img.joomcdn.net/96f1579fa8a9573dc13b3324e1edb4824ab9d7cb_400_400.jpeg";
+        public static final String WOMEN_SOCKS = "https://ae01.alicdn.com/kf/HTB1SrWzPQvoK1RjSZFDq6xY3pXa6/Solid-Color-No-Show-Socks-Women-Boat-Invisible-Girls-Cotton-Women-Socks-Slippers-1-Pair.jpg_q50.jpg";
+        public static final String WOMEN_BRAS = "https://img.joomcdn.net/517caacbae366bd288a824d31a35e36aa33e7390_400_400.jpeg";
+        public static final String WOMEN_SHAPEWEAR = "https://i5.walmartimages.com/asr/c52237fe-5bb5-4349-8217-5d782a4b63aa_1.4413efef7927471436bbc3ddd4d47a78.jpeg";
+        public static final String WOMEN_PYJAMAS = "https://sc02.alicdn.com/kf/HTB1Ya2WKFXXXXbIXFXXq6xXFXXX4.jpg_350x350.jpg";
+        public static final String WOMEN_THONGS = "https://ae01.alicdn.com/kf/H9c48cec89f3049d0a4431a9bf18ec6a5E/Women-Thongs-Sexy-Seamless-G-string-Thong-Fashion-pink-letters-print-Low-Waist-Shorts-Briefs-woman.jpg";
 
         public static final String WOMEN_DENIM_JACKETS_RES ="https://www1.assets-gap.com/webcontent/0018/557/707/cn18557707.jpg";
         public static final String WOMEN_LEATHER_JACKETS_RES = "https://d4zpg1jklewne.cloudfront.net/steak/spree-variant/000-012-blk-5/black-leather-moto-jacket-product.jpg?1546447623";
@@ -333,13 +354,13 @@ public class Macros {
         public static final String WOMEN_TEDDY_JACKETS_RES = "https://cdn.shopify.com/s/files/1/2033/1473/products/shopify_9f083e8613ffd5621849c28434d1935e_teddy-jacket-tan_1230x1230.jpg?v=1571594952";
         public static final String WOMEN_JACKET_JACKETS_RES = "https://sc01.alicdn.com/kf/HTB1BpMGOFXXXXcDXpXXq6xXFXXXM.jpg";
         public static final String WOMEN_COAT_JACKETS_RES ="https://i.pinimg.com/736x/69/fd/9e/69fd9e9fefe519f0a6dafeadb43b4d95.jpg";
-        public static final String WOMEN_BOMBER_JACKETS_RES ="https://cdn.shopify.com/s/files/1/0033/4757/8993/products/hypest-fit-outerwear-women-mist-bomber-jacket-6492655779953.png?v=1564579304";
 
+        public static final String MEN_BIKER_JACKETS_RES = "https://redbridgejeans.de/media/image/product/65309/lg/m6013_red-bridge-mens-faux-leather-jacket-biker-jacket-biker-quilted-jacket_5.jpg";
         public static final String MEN_LEATHER_JACKETS_RES = "https://images-na.ssl-images-amazon.com/images/I/81gPumH6e1L._AC_UL1500_.jpg";
         public static final String MEN_PUFFER_JACKETS_RES = "https://theinscribermag.com/wp-content/uploads/2018/10/puffer-coat-mens-puffer-padded-jacket-winter-style-puffer-coat-mens-river-island.jpg";
         public static final String MEN_DENIM_JACKETS_RES = "https://www.thefashionisto.com/wp-content/uploads/2019/09/HM-Men-Skinny-Jeans.jpg";
         public static final String MEN_TRENCH_JACKETS_RES = "https://i.pinimg.com/originals/41/b1/7a/41b17ad4c3d86eb07c038d8d0e4c6d3a.png";
-        public static final String MEN_BOMBER_JACKETS_RES = "https://fasbest.com/wp-content/uploads/2017/04/Top-Best-Model-Men-Bomber-Jacket-Outfit-22.jpg";
+        public static final String MEN_OVERCOAT_JACKETS_RES = "https://cdn.shopify.com/s/files/1/1083/6796/products/product-image-1237256389_1024x1024.jpg?v=1578625267";
 
         public static final String FLAT_SHOES_RES = "https://shoedazed.com/image/cache/catalog/AIMEIGAO1//AIMEIGAO-2019-New-Summer-Sandals-Women-Casual-Flat-Sandals-Comfortable-Sandals-For-Women-Large-Size--32972219136-1711-550x550.jpeg";
         public static final String WOMEN_BOOTS_RES = "https://c4.wallpaperflare.com/wallpaper/53/168/878/kendall-jenner-women-model-brunette-boots-hd-wallpaper-preview.jpg";
@@ -451,17 +472,17 @@ public class Macros {
             snackbar.show();
         }
 
-        public static void GlidePicture(Context context,String imageUrl, View view) {
+        public static void GlidePicture(Context context, String imageUrl, View view) {
 
             CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
-            circularProgressDrawable.setArrowDimensions(12,12);
+            circularProgressDrawable.setArrowDimensions(12, 12);
             circularProgressDrawable.setCenterRadius(50);
-            circularProgressDrawable.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
+            circularProgressDrawable.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN);
             circularProgressDrawable.setStrokeWidth(7);
             circularProgressDrawable.start();
 
-            if(view instanceof CircleImageView) Glide.with(context).load(imageUrl).
-                        placeholder(circularProgressDrawable).into((CircleImageView) view);
+            if (view instanceof CircleImageView) Glide.with(context).load(imageUrl).
+                    placeholder(circularProgressDrawable).into((CircleImageView) view);
             else
                 Glide.with(context).load(imageUrl).
                         placeholder(circularProgressDrawable).into((ImageView) view);
@@ -481,8 +502,7 @@ public class Macros {
             if (item instanceof RecyclerItem) {
                 RecyclerItem recyclerItem = (RecyclerItem) item;
                 bundle.putSerializable("item", recyclerItem);
-            }
-            else if (item instanceof ShoppingItem) {
+            } else if (item instanceof ShoppingItem) {
                 ShoppingItem shoppingItem = (ShoppingItem) item;
                 bundle.putSerializable("item", shoppingItem);
             }
@@ -491,25 +511,24 @@ public class Macros {
             context.startActivity(intent, options.toBundle());
         }
 
-        public static void sellerProfile(Context context, String sellerId,Pair<View, String> pair) {
+        public static void sellerProfile(Context context, String sellerId, Pair<View, String> pair) {
             Intent intent = new Intent(context, CompanyProfileActivity.class);
             intent.putExtra("id", sellerId);
             intent.putExtra("customer_id", Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
 
-            if(pair != null) {
+            if (pair != null) {
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) context, pair);
                 context.startActivity(intent, options.toBundle());
-            }
-            else
+            } else
                 context.startActivity(intent);
 
-            ((Activity) context).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+            ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         }
 
         public static Pair<Integer, Integer> getCategoryNum(String gender, String sub_cat, String item_type) {
             switch (item_type) {
                 case BAG:
-                    return getBag(gender,sub_cat);
+                    return getBag(gender, sub_cat);
                 case JEANS:
                     return getJeans(gender, sub_cat);
                 case SHOES:
@@ -531,7 +550,7 @@ public class Macros {
                 case LINGERIE:
                     return getLingerie(gender, sub_cat);
                 case SWIMWEAR:
-                    return getSwimwear(gender,sub_cat);
+                    return getSwimwear(gender, sub_cat);
                 default:
                     return null;
             }
@@ -567,11 +586,11 @@ public class Macros {
                 case "sandals":
                     return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(17170, 1) : new Pair<>(6593, 1);
                 case "trainers":
-                    return Pair.create(6456,12);
+                    return Pair.create(6456, 12);
                 case "flat-shoes":
-                    return Pair.create(6459,3);
+                    return Pair.create(6459, 3);
                 case "slippers":
-                    return Pair.create(6457,3);
+                    return Pair.create(6457, 3);
                 default:
                     return null;
             }
@@ -692,7 +711,7 @@ public class Macros {
             }
         }
 
-        private static Pair<Integer, Integer> getSwimwear(String gender,String sub_cat) {
+        private static Pair<Integer, Integer> getSwimwear(String gender, String sub_cat) {
             switch (sub_cat) {
                 case "bikini":
                     return new Pair<>(10117, 20);
@@ -706,10 +725,10 @@ public class Macros {
             }
         }
 
-        private static Pair<Integer, Integer> getBag(String gender,String sub_cat) {
+        private static Pair<Integer, Integer> getBag(String gender, String sub_cat) {
             switch (sub_cat) {
 
-                case "purses":
+                case "wallets":
                     return new Pair<>(11304, 1);
                 case "clutches":
                     return new Pair<>(11305, 1);
@@ -723,25 +742,27 @@ public class Macros {
                     return new Pair<>(15122, 1);
                 case "bum":
                     return new Pair<>(21804, 1);
-                default:
+                case "tote":
                     return new Pair<>(15142, 1);
+                default:
+                    return null;
             }
         }
 
-        private static Pair<Integer, Integer> getAccessories(String gender,String sub_cat) {
+        private static Pair<Integer, Integer> getAccessories(String gender, String sub_cat) {
             switch (sub_cat) {
                 case "belts":
                     return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(6448, 2) : new Pair<>(6474, 3);
                 case "hats":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(6449, 3) : Pair.create(6517,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(6449, 3) : Pair.create(6517, 1);
                 case "scarves":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(6452, 1) : Pair.create(6518,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(6452, 1) : Pair.create(6518, 1);
                 case "sport":
                     return new Pair<>(27162, 1);
                 case "ties":
-                    return Pair.create(6520,1);
+                    return Pair.create(6520, 1);
                 case "face coverings":
-                    return gender.equals(CustomerMacros.WOMEN) ? Pair.create(50035,1) : Pair.create(50036,1);
+                    return gender.equals(CustomerMacros.WOMEN) ? Pair.create(50035, 1) : Pair.create(50036, 1);
                 default:
                     return null;
             }
@@ -750,9 +771,9 @@ public class Macros {
         private static Pair<Integer, Integer> getLingerie(String gender, String sub_cat) {
             switch (sub_cat) {
                 case "underwear":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(7724, 1) : Pair.create(20317,5);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(7724, 1) : Pair.create(20317, 5);
                 case "socks":
-                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(7657, 3) : Pair.create(16329,4);
+                    return gender.equals(CustomerMacros.WOMEN) ? new Pair<>(7657, 3) : Pair.create(16329, 4);
                 case "bras":
                     return new Pair<>(6576, 5);
                 case "shapewear":
@@ -760,7 +781,7 @@ public class Macros {
                 case "pyjamas":
                     return new Pair<>(18099, 3);
                 case "thongs":
-                    return Pair.create(26392,5);
+                    return Pair.create(26392, 5);
                 default:
                     return null;
             }
@@ -835,7 +856,7 @@ public class Macros {
 
         public static String translateCategoryTo247(String item_type, String gender) {
 
-            if(gender.equals(CustomerMacros.WOMEN)) {
+            if (gender.equals(CustomerMacros.WOMEN)) {
                 switch (item_type) {
                     case JEANS:
                         return "bgdim/gi-nsim";
@@ -857,8 +878,7 @@ public class Macros {
                     default:
                         return null;
                 }
-            }
-            else{
+            } else {
                 switch (item_type) {
                     case JEANS:
                         return "bgdim/gi-nsim";
@@ -943,7 +963,7 @@ public class Macros {
         }
 
         public static long translateSubCategoryToCastro(String item_sub_category) {
-            switch (item_sub_category){
+            switch (item_sub_category) {
                 case "mini":
                     return 2039;
                 case "maxi":
@@ -1007,8 +1027,8 @@ public class Macros {
             }
         }
 
-        public static String translateSubCategoryTo247(String item_sub_category,String gender) {
-            if(gender.equals(CustomerMacros.WOMEN)) {
+        public static String translateSubCategoryTo247(String item_sub_category, String gender) {
+            if (gender.equals(CustomerMacros.WOMEN)) {
                 switch (item_sub_category) {
                     case "heels":
                         return "neliim2";
@@ -1045,13 +1065,221 @@ public class Macros {
                     default:
                         return null;
                 }
-            }
-            else{
+            } else {
                 switch (item_sub_category) {
                     case "trainers":
                         return "sniqrs";
                     case "tank":
                         return "gvpivt";
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        public static String translateCategoryToAldo(String item_gender, String category) {
+            if (item_gender.equals(CustomerMacros.WOMEN)) {
+                switch (category) {
+                    case BAG:
+                        return "handbag";
+                    case SHOES:
+                        return "footwear";
+                    case WATCH:
+                        return "accessories/watches";
+                    case ACCESSORIES:
+                    case JEWELLERY:
+                        return "accessories";
+                    case SUNGLASSES:
+                        return "accessories/sunglasses";
+                    default:
+                        return null;
+                }
+            } else {
+                switch (category) {
+                    case SHOES:
+                        return "footwear";
+                    case WATCH:
+                        return "handbags-and-accessories/watches";
+                    case ACCESSORIES:
+                    case JEWELLERY:
+                        return "handbags-and-accessories";
+                    case SUNGLASSES:
+                        return "handbags-and-accessories/sunglasses";
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        public static String translateSubCategoryToAldo(String item_gender, String item_sub_category) {
+            if (item_gender.equals(CustomerMacros.WOMEN)) {
+                switch (item_sub_category) {
+                    case "heels":
+                        return "shoes/mid-heels";
+                    case "trainers":
+                        return "shoes/sneakers";
+                    case "sandals":
+                    case "slippers":
+                        return "sandals";
+                    case "boots":
+                        return "boots";
+                    case "flat shoes":
+                    case "sliders":
+                        return "shoes/low-heel-flat-shoes";
+                    case "socks":
+                        return "socks-legwear";
+                    case "bum":
+                    case "tote":
+                    case "leather":
+                        return "shoulder-bags-totes";
+                    case "clutch":
+                    case "cross body":
+                        return "clutches-evening-bags";
+                    case "wallets":
+                        return "wallets";
+                    case "ring":
+                        return "rings";
+                    case "bracelet":
+                        return "bracelets";
+                    case "earrings":
+                        return "earrings";
+                    case "necklace":
+                        return "necklaces";
+                    case "belts":
+                        return "belts";
+                    default:
+                        return "";
+                }
+            } else {
+                switch (item_sub_category) {
+                    case "trainers":
+                        return "shoes/sneakers";
+                    case "sandals":
+                    case "sliders":
+                    case "slippers":
+                        return "sandals";
+                    case "loafers":
+                        return "shoes/casual-shoes";
+                    case "elegant":
+                        return "shoes/dress-shoes";
+                    case "boots":
+                        return "boots";
+                    case "socks":
+                        return "socks";
+                    case "ring":
+                        return "rings";
+                    case "bracelet":
+                        return "bracelets";
+                    case "earrings":
+                        return "earrings";
+                    case "necklace":
+                        return "necklaces";
+                    case "belts":
+                        return "belts";
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        public static String translateCategoryToRenuar(String gender, String category) {
+            switch (category) {
+                case BAG:
+                    return "accessories/bags";
+                case DRESS:
+                    return "bgdim/dresses";
+                case SHIRT:
+                    return "bgdim/";
+                case JEANS:
+                    return "bgdim/jeans";
+                case SWIMWEAR:
+                    return "bgdim/swimwear";
+                case SHOES:
+                    return "shoes";
+                case JACKETS:
+                    return "bgdim/coatsandjackets";
+                case ACCESSORIES:
+                    return "accessories";
+                default:
+                    return null;
+            }
+        }
+
+        public static String translateSubCategoryToRenuar(String item_gender, String item_sub_category) {
+            if (item_gender.equals(CustomerMacros.WOMEN)) {
+                switch (item_sub_category) {
+                    case "sandals":
+                        return "sndlim";
+                    case "trainers":
+                        return "filter/sniqrs";
+                    case "socks":
+                        return "grbivnim";
+                    case "backpack":
+                        return "filter/tiq_gb";
+                    case "clutch":
+                    case "cross body":
+                        return "filter/tiq_qtn";
+                    case "wallets":
+                        return "filter/arnq";
+                    case "underwear":
+                        return "zvg-hbilvt-thtvnim-b-49-90";
+                    case "midi":
+                        return "filter/midi_";
+                    case "maxi":
+                        return "filter/maxi_";
+                    case "mini":
+                        return "filter/mini_";
+                    case "tank":
+                        return "shirts/filter/gvpih";
+                    case "sweatshirts":
+                    case "blouses":
+                        return "shirts/filter/tiwirt";
+                    case "camis":
+                        return "shirts/filter/qrvp";
+                    case "t-shirts":
+                        return "shirts1/filter/tiwirt";
+                    case "straight":
+                        return "filter/iwr";
+                    case "super-skini":
+                    case "skini":
+                        return "filter/sqini";
+                    case "slim":
+                        return "filter/bviprnd";
+                    case "heels":
+                        return "filter/nel_eqb";
+                    case "flat shoes":
+                        return "filter/sndl_wtvh";
+                    case "sliders":
+                        return "filter/kpkp";
+                    default:
+                        return "";
+                }
+            } else {
+                switch (item_sub_category) {
+                    case "trainers":
+                        return "shoes/sneakers";
+                    case "sandals":
+                    case "sliders":
+                    case "slippers":
+                        return "sandals";
+                    case "loafers":
+                        return "shoes/casual-shoes";
+                    case "elegant":
+                        return "shoes/dress-shoes";
+                    case "boots":
+                        return "boots";
+                    case "socks":
+                        return "socks";
+                    case "ring":
+                        return "rings";
+                    case "bracelet":
+                        return "bracelets";
+                    case "earrings":
+                        return "earrings";
+                    case "necklace":
+                        return "necklaces";
+                    case "belts":
+                        return "belts";
                     default:
                         return "";
                 }

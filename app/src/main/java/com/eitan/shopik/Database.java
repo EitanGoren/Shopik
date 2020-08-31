@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi;
 
 import com.eitan.shopik.Company.Company;
 import com.eitan.shopik.Customer.Customer;
-import com.eitan.shopik.Items.ShoppingItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,7 +24,8 @@ import java.util.Objects;
 
 public class Database {
 
-    private static CollectionReference companiesFS, customersFS, itemsFS;
+    private static CollectionReference companiesFS;
+    private static CollectionReference customersFS;
     private static String userId;
 
     public Database() {
@@ -34,7 +34,6 @@ public class Database {
             userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
             companiesFS = FirebaseFirestore.getInstance().collection(Macros.COMPANIES);
             customersFS = FirebaseFirestore.getInstance().collection(Macros.CUSTOMERS);
-            itemsFS = FirebaseFirestore.getInstance().collection(Macros.ITEMS);
         }
     }
 
@@ -47,7 +46,7 @@ public class Database {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    private void increasePreferredFieldByOneRTDB(String attribute, final String type, final String gender, final String sub_category) {
+    public void increasePreferredFieldByOneRTDB(String attribute, final String type, final String gender, final String sub_category) {
 
         if (attribute.equals("")
                 || sub_category.contains(attribute)
@@ -77,7 +76,7 @@ public class Database {
                 addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                long num = 1;
+                long num;
                 if(dataSnapshot.exists() && attr.equals(dataSnapshot.getKey())){
                     num = (long) dataSnapshot.getValue();
                     num++;
@@ -112,28 +111,6 @@ public class Database {
         });
     }
 
-    public void onCustomerInteractWithItem(String itemId, String type, String gender,
-                                           String sub_category, String action,
-                                           String company) {
-
-        String temp_action = action;
-        if(action.equals(Macros.CustomerMacros.FAVOURITE))
-            temp_action = Macros.CustomerMacros.LIKED;
-
-        Map<String,Object> map = new HashMap<>();
-        map.put(itemId, action);
-
-        FirebaseDatabase.getInstance().getReference().
-                child(Macros.CUSTOMERS).
-                child(userId).
-                child(gender).
-                child(temp_action).
-                child(company).
-                child(type).
-                child(sub_category).
-                updateChildren(map);
-    }
-
     public void onItemAction(String type, String gender, String item_id, String action,String company,String link, String image){
 
         String temp_action = action;
@@ -162,29 +139,6 @@ public class Database {
                 child(company + "-" + item_id).
                 child("Info").
                 setValue(info);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void updatePreferredItem(ShoppingItem shoppingItem, String sub_category) {
-        String item_type = shoppingItem.getType();
-        String item_gender = shoppingItem.getGender();
-        String price = Float.parseFloat(shoppingItem.getPrice()) < 50 ?
-                "less than 50" : (Float.parseFloat(shoppingItem.getPrice()) < 100 ? "between 50 to 100" : "above 100"
-        );
-
-        //TODO add parameters like color,brand,price,etc..
-
-        shoppingItem.getName().add(price);
-        for (String attr : shoppingItem.getName()) {
-            increasePreferredFieldByOneRTDB(attr, item_type, item_gender, sub_category);
-        }
-    }
-
-    public String getASOSimageUrl(int imageNum, String color, String item_id_in_seller) {
-        if (imageNum == 1)
-            return "https://images.asos-media.com/products/0/" + item_id_in_seller + "-1-" + color + "?$S$&wid=595&hei=760";
-        else
-            return "https://images.asos-media.com/products/0/" + item_id_in_seller + "-" + imageNum + "?$S$&wid=595&hei=760";
     }
 
     public ArrayList<String> getASOSRecyclerImage(String type, String color, String item_id_in_seller) {

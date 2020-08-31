@@ -23,17 +23,12 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 selectedFragment = new FavoritesFragment();
                 break;
-         //   case 2:
-         //       selectedFragment = new SuggestedFragment();
-         //       break;
             case 2:
                 selectedFragment = new SearchFragment();
                 break;
             default:
                 selectedFragment = new CustomerHomeFragment();
         }
-       // selectedFragment.setEnterTransition(androidx.transition.R.anim.abc_fade_in);
-       // selectedFragment.setExitTransition(androidx.transition.R.anim.abc_fade_out);
         return selectedFragment;
     }
 

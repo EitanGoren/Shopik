@@ -1,310 +1,311 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="20dp"
-    android:orientation="vertical">
+    android:elevation="20dp">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:id="@+id/image_viewPager"
+        android:layout_width="wrap_content"
+        android:layout_height="415dp"
+        android:background="#1E737373">
 
-        <RelativeLayout
-            android:id="@+id/image_viewPager"
-            android:layout_width="wrap_content"
-            android:layout_height="405dp"
-            android:background="#1E737373">
-
-            <ImageView
-                android:id="@+id/image_item"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:scaleType="centerCrop" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="170dp"
-                android:layout_height="40dp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="8dp"
-                android:hapticFeedbackEnabled="true"
-                app:cardBackgroundColor="#83EFEFEF"
-                app:cardCornerRadius="20dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/fui_transparent">
-
-                    <Button
-                        android:id="@+id/previous"
-                        android:layout_width="22sp"
-                        android:layout_height="22sp"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="7dp"
-                        android:background="@drawable/ic_baseline_keyboard_arrow_left_white"
-                        android:padding="10dp" />
-
-                    <LinearLayout
-                        android:id="@+id/dotsLayout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toStartOf="@id/next"
-                        android:layout_toEndOf="@id/previous"
-
-                        android:padding="5dp">
-
-                        <ImageView
-                            android:id="@+id/fullscreen_dot_1"
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_marginStart="7dp"
-                            android:layout_marginEnd="7dp"/>
-
-                        <ImageView
-                            android:id="@+id/fullscreen_dot_2"
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_marginStart="7dp"
-                            android:layout_marginEnd="7dp" />
-
-                        <ImageView
-                            android:id="@+id/fullscreen_dot_3"
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_marginStart="7dp"
-                            android:layout_marginEnd="7dp" />
-
-                        <ImageView
-                            android:id="@+id/fullscreen_dot_4"
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_marginStart="7dp"
-                            android:layout_marginEnd="7dp" />
-
-                    </LinearLayout>
-
-                    <Button
-                        android:id="@+id/next"
-                        android:layout_width="22sp"
-                        android:layout_height="22sp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="7dp"
-                        android:background="@drawable/ic_baseline_keyboard_arrow_right_white"
-                        android:padding="10dp"/>
-
-                </RelativeLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/seller_info"
+        <ImageView
+            android:id="@+id/image_item"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="3dp"
-            android:background="@color/colorTransparentWhite">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/seller_logo2"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:transitionName="company_logo"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="15dp"
-                android:elevation="1.8dp"
-                android:scaleType="centerCrop"/>
-
-            <TextView
-                android:id="@+id/seller_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@id/seller_logo2"
-                android:fontFamily="@font/nobile"
-                android:textAlignment="viewStart"
-                android:textColor="#2E2E2E"
-                android:textSize="17sp"/>
-
-            <ImageView
-                android:id="@+id/list_item_favourite_icon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="15dp"
-                android:src="@drawable/ic_favorite_black_24dp"
-                android:visibility="invisible"
-                tools:visibility="visible"/>
-
-        </RelativeLayout>
-
-        <Button
-            android:id="@+id/fullscreen_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignEnd="@id/image_viewPager"
-            android:layout_alignBottom="@id/image_viewPager"
-            android:layout_margin="5dp"
-            android:background="@drawable/ic_fullscreen_black"
-            android:elevation="10dp"
-            android:translationZ="10dp"/>
-
-        <LinearLayout
-            android:id="@+id/info_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/image_viewPager"
+            android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:background="#ffffff"
-            android:orientation="vertical">
+            android:layout_alignParentBottom="true"
+            android:contentDescription="@string/image_item"
+            android:scaleType="centerCrop" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            app:cardBackgroundColor="#83EFEFEF"
+            app:cardCornerRadius="20dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp">
+                android:layout_height="match_parent"
+                android:background="@color/fui_transparent">
 
-                <TextView
-                    android:id="@+id/brand_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:transitionName="company_name"
-                    android:layout_toStartOf="@id/likes_layout"
-                    android:fontFamily="@font/nobile"
-                    android:paddingStart="5dp"
-                    android:paddingTop="5dp"
-                    android:paddingEnd="5dp"
-                    android:textAlignment="viewStart"
-                    android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                <Button
+                    android:id="@+id/previous"
+                    android:layout_width="22sp"
+                    android:layout_height="22sp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="7dp"
+                    android:background="@drawable/ic_baseline_keyboard_arrow_left_white"
+                    android:padding="10dp" />
 
                 <LinearLayout
-                    android:id="@+id/likes_layout"
+                    android:id="@+id/dotsLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_margin="5dp"
-                    android:orientation="horizontal">
+                    android:layout_toStartOf="@id/next"
+                    android:layout_toEndOf="@id/previous"
 
-                    <TextView
-                        android:id="@+id/list_unlike"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:drawableStart="@drawable/ic_thumb_down_pink"
-                        android:drawablePadding="10dp"
-                        android:elevation="15dp"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:text="0"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:theme="@style/Buttons"
-                        android:translationZ="15dp" />
+                    android:padding="5dp">
 
-                    <TextView
-                        android:id="@+id/list_like"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="0dp"
-                        android:drawableStart="@drawable/ic_thumb_up_seleste"
-                        android:drawablePadding="10dp"
-                        android:elevation="15dp"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:text="0"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:theme="@style/Buttons"
-                        android:translationZ="15dp" />
+                    <ImageView
+                        android:id="@+id/fullscreen_dot_1"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginEnd="7dp"
+                        android:contentDescription="@string/dot" />
+
+                    <ImageView
+                        android:id="@+id/fullscreen_dot_2"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginEnd="7dp"
+                        android:contentDescription="@string/dot" />
+
+                    <ImageView
+                        android:id="@+id/fullscreen_dot_3"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginEnd="7dp"
+                        android:contentDescription="@string/dot" />
+
+                    <ImageView
+                        android:id="@+id/fullscreen_dot_4"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginEnd="7dp"
+                        android:contentDescription="@string/dot" />
 
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/next"
+                    android:layout_width="22sp"
+                    android:layout_height="22sp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="7dp"
+                    android:background="@drawable/ic_baseline_keyboard_arrow_right_white"
+                    android:padding="10dp"/>
+
             </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:orientation="horizontal"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp">
-
-                <TextView
-                    android:id="@+id/updated_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:fontFamily="@font/nunito_semibold"
-                    android:textAlignment="viewStart"
-                    android:textColor="#000000"
-                    android:textSize="19sp" />
-
-                <TextView
-                    android:id="@+id/old_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito_semibold"
-                    android:textAlignment="viewStart"
-                    android:textColor="#000000"
-                    android:textSize="17sp" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/discount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:fontFamily="@font/nobile"
-                android:gravity="center"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:text="SALE"
-                android:textColor="#FF0000"
-                android:textSize="17sp"
-                android:visibility="gone"
-                tools:visibility="visible"/>
-
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:fontFamily="@font/nobile"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:textAlignment="viewStart"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/list_item_buy_button"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:textColor="#6A6A6A"
-            android:layout_below="@id/info_layout"
-            android:theme="@style/GridBuyButtons" />
+        </com.google.android.material.card.MaterialCardView>
 
     </RelativeLayout>
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/seller_info"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="3dp"
+        android:background="@color/colorTransparentWhite">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/seller_logo2"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="15dp"
+            android:elevation="1.8dp"
+            android:scaleType="centerCrop"
+            android:transitionName="company_logo"/>
+
+        <TextView
+            android:id="@+id/seller_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/seller_logo2"
+            android:fontFamily="@font/nobile"
+            android:textAlignment="viewStart"
+            android:textColor="#2E2E2E"
+            android:textSize="17sp"/>
+
+        <ImageView
+            android:id="@+id/list_item_favourite_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:contentDescription="@string/favorite"
+            android:src="@drawable/ic_favorite_black_24dp"
+            android:transitionName="@string/favorite"
+            android:visibility="invisible"
+            tools:visibility="visible" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/fullscreen_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignEnd="@id/image_viewPager"
+        android:layout_alignBottom="@id/image_viewPager"
+        android:layout_margin="5dp"
+        android:background="@drawable/ic_fullscreen_black"
+        android:elevation="10dp"
+        android:translationZ="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_viewPager"
+        android:layout_alignParentEnd="true"
+        android:background="#ffffff"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <TextView
+                android:id="@+id/brand_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_toStartOf="@id/likes_layout"
+                android:fontFamily="@font/nobile"
+                android:paddingStart="5dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="5dp"
+                android:textAlignment="viewStart"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:transitionName="company_name" />
+
+            <LinearLayout
+                android:id="@+id/likes_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/list_unlike"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:drawableStart="@drawable/ic_thumb_down_pink"
+                    android:drawablePadding="10dp"
+                    android:elevation="15dp"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="@string/_0"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:theme="@style/Buttons"
+                    android:translationZ="15dp"
+                    tools:ignore="UseCompatTextViewDrawableXml" />
+
+                <TextView
+                    android:id="@+id/list_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="0dp"
+                    android:drawableStart="@drawable/ic_thumb_up_seleste"
+                    android:drawablePadding="10dp"
+                    android:elevation="15dp"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="@string/_0"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:theme="@style/Buttons"
+                    android:translationZ="15dp"
+                    tools:ignore="UseCompatTextViewDrawableXml" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
+
+            <TextView
+                android:id="@+id/updated_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:fontFamily="@font/nunito_semibold"
+                android:textAlignment="viewStart"
+                android:textColor="#000000"
+                android:textSize="19sp" />
+
+            <TextView
+                android:id="@+id/old_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_semibold"
+                android:textAlignment="viewStart"
+                android:textColor="#000000"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/discount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/nobile"
+            android:gravity="center"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/sale"
+            android:textColor="#FF0000"
+            android:textSize="17sp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="@font/nobile"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textAlignment="viewStart"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/list_item_buy_button"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@id/info_layout"
+        android:textColor="#6A6A6A"
+        android:theme="@style/GridBuyButtons" />
+
+</RelativeLayout>

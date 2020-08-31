@@ -20,7 +20,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.ActivityNavigator;
 import androidx.viewpager.widget.ViewPager;
 
 import com.eitan.shopik.Database;
@@ -32,6 +31,7 @@ import com.eitan.shopik.ViewModels.EntranceViewModel;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.OutletsModel;
 import com.eitan.shopik.explanation.ExplanationPagerViewAdapter;
+import com.facebook.ads.CacheFlag;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -48,6 +48,7 @@ import org.jsoup.nodes.Document;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
 
@@ -73,7 +74,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
         setContentView(R.layout.activity_gender_filtering);
@@ -358,9 +359,17 @@ public class GenderFilteringActivity extends AppCompatActivity {
     }
 
     @Override
-    public void finish() {
-        super.finish();
-        ActivityNavigator.applyPopAnimationsToPendingTransition(this);
+    protected void onResume() {
+        super.onResume();
+
+        //new setInterstitial().execute();
+        if (model.getInterstitialAd() != null) {
+            model.destroyInterstitialAd();
+        }
+        // AdSettings.addTestDevice("34464d11-359b-4022-86a5-22489c17269d");
+        model.setInterstitialAd(new com.facebook.ads.InterstitialAd(getApplicationContext(), Macros.FB_PLACEMENT_ID));
+        // Load a new interstitial.
+        model.getInterstitialAd().loadAd(EnumSet.of(CacheFlag.VIDEO));
     }
 
     private class fetchLikedItems extends AsyncTask<Void,Void,Void> {
@@ -379,6 +388,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         orderByChild(Macros.CustomerMacros.LIKED).
                         addListenerForSingleValueEvent(new ValueEventListener() {
                             @RequiresApi(api = Build.VERSION_CODES.N)
+                            @SuppressWarnings("unchecked")
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 entranceModel.removeAllType(type,gender);
@@ -457,7 +467,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 String outlet_data;
 
                 Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + integers[0] + "&page=" + integers[1]).get();
-                DataNode node = (DataNode) document.childNode(2).childNode(2).childNode(28).childNode(0);
+                DataNode node = (DataNode) document.childNode(3).childNode(3).childNode(28).childNode(0);
 
                 outlet_data = node.getWholeData();
 
@@ -572,7 +582,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     entranceModel.addMen_new_num(cat, 0);
 
                     Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + page_num[0]).get();
-                    DataNode node = (DataNode) document.childNode(2).childNode(2).childNode(28).childNode(0);
+                    DataNode node = (DataNode) document.childNode(3).childNode(3).childNode(28).childNode(0);
 
                     new_items_data = node.getWholeData();
                     String[] data_split = new_items_data.split("\"products\":", 2);
@@ -671,7 +681,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     entranceModel.addWomen_new_num(cat, 0);
 
                     Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + integers[0]).get();
-                    DataNode node = (DataNode) document.childNode(2).childNode(2).childNode(28).childNode(0);
+                    DataNode node = (DataNode) document.childNode(3).childNode(3).childNode(28).childNode(0);
 
                     new_items_data = node.getWholeData();
 
