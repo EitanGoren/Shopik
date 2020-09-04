@@ -1,16 +1,13 @@
 package com.eitan.shopik;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.util.Pair;
-import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -47,14 +44,15 @@ public class LandingPageActivity extends AppCompatActivity {
     private static String type,provider,token,email,imageUrl,id_in_provider;
     private static FirebaseUser user;
     private FirebaseFirestore db;
-    private int currentApiVersion;
     private static final int DELAY_MILLIS = 4500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        // inside your activity (if you did not enable transitions in your theme)
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_landing_page);
 
         init();
@@ -68,29 +66,6 @@ public class LandingPageActivity extends AppCompatActivity {
                     this,
                      R.drawable.ic_baseline_signal_cellular
             );
-        }
-
-        currentApiVersion = android.os.Build.VERSION.SDK_INT;
-
-        // This work only for android 4.4+
-        if(currentApiVersion >= Build.VERSION_CODES.KITKAT) {
-            final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-
-            getWindow().getDecorView().setSystemUiVisibility(flags);
-            // Code below is to handle presses of Volume up or Volume down.
-            // Without this, after pressing volume buttons, the navigation bar will
-            // show up and won't hide
-            final View decorView = getWindow().getDecorView();
-            decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
-                if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                    decorView.setSystemUiVisibility(flags);
-                }
-            });
         }
 
         if(user == null){
@@ -236,12 +211,8 @@ public class LandingPageActivity extends AppCompatActivity {
 
     private void goToCustomer() {
 
-        //Animate tooki
         ImageView tooki = findViewById(R.id.imageView);
         YoYo.with(Techniques.Hinge).duration(4500).playOn(tooki);
-
-        ActivityOptions options = ActivityOptions.
-                makeSceneTransitionAnimation(this, Pair.create(tooki,"tooki"));
 
         Intent intent = new Intent(LandingPageActivity.this, GenderFilteringActivity.class);
         Bundle bundle = new Bundle();
@@ -251,9 +222,8 @@ public class LandingPageActivity extends AppCompatActivity {
 
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            startActivity(intent, options.toBundle());
-            supportFinishAfterTransition();
-            finishAfterTransition();
+            startActivity(intent);
+            this.supportFinishAfterTransition();
         },4500);
     }
 
@@ -330,21 +300,6 @@ public class LandingPageActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("NewApi")
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if(currentApiVersion >= Build.VERSION_CODES.KITKAT && hasFocus) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }
-    }
-
     private boolean isConnectedToInternet(){
 
         ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
@@ -370,4 +325,9 @@ public class LandingPageActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void finishAfterTransition() {
+        super.finishAfterTransition();
+        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
+    }
 }

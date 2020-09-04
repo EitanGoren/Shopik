@@ -42,22 +42,12 @@
 
         </RelativeLayout>
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="150dp"
-            android:layout_height="100dp"
-            android:padding="15dp"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            android:indeterminate="true"
-            android:layout_centerInParent="true">
-        </ProgressBar>
-
         <ImageView
             android:id="@+id/fullscreen_image_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/image_item"
+            android:transitionName="@string/image_item"
             android:scaleType="fitCenter" />
 
         <TextView

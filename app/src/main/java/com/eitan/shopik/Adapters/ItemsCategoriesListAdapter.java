@@ -68,6 +68,8 @@ public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, final ViewGroup parent) {
 
         final Catagory catagory = getGroup(groupPosition);
+       // if(isExpanded)
+       //     collapseAllexceptSelected((ExpandableListView) parent,groupPosition);
 
         if(convertView == null){
             LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -175,7 +177,8 @@ public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
             convertView = layoutInflater.inflate(R.layout.category_item, parent,false);
         }
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager( parent.getContext(), LinearLayoutManager.HORIZONTAL,false );
+        LinearLayoutManager layoutManager = new LinearLayoutManager( parent.getContext(),
+                LinearLayoutManager.HORIZONTAL,false );
         RecyclerView recyclerView = convertView.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(layoutManager);
         RecyclerAdapter recyclerAdapter = new RecyclerAdapter( (getGroup(groupPosition)).getRecyclerItems(),"SubCategory");
@@ -192,6 +195,12 @@ public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
     public void collapseAll(ExpandableListView listContainer){
         for( int i=0; i < getGroupCount(); ++i ){
             listContainer.collapseGroup(i);
+        }
+    }
+    public void collapseAllexceptSelected(ExpandableListView listContainer,int groupSelected ){
+        for( int i=0; i < getGroupCount() ; ++i ){
+            if( i != groupSelected)
+                listContainer.collapseGroup(i);
         }
     }
 }

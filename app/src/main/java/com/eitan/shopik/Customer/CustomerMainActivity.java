@@ -23,7 +23,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.ActivityNavigator;
 import androidx.viewpager.widget.ViewPager;
 
 import com.daimajia.androidanimations.library.Techniques;
@@ -56,12 +55,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
-import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -83,7 +79,7 @@ import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_L
 
 public class CustomerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private DatabaseReference customerDB,pageListener;
+    private DatabaseReference customerDB, pageListener;
     private String item_type;
     private String item_gender;
     private String item_sub_category;
@@ -106,23 +102,19 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private ValueEventListener fav_single_listener;
     private String cover;
     private ValueEventListener valueEventListener;
-    private ValueEventListener FavvalueEventListener;
+    private ValueEventListener favoriteValueEventListener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        overridePendingTransition(R.anim.fadein,R.anim.fadeout);
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
-       // new setInterstitial().execute();
-
         mainModel = new ViewModelProvider(this).get(MainModel.class);
-
         // LOAD NATIVE ADS
         new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
+       // overridePendingTransition(R.anim.slide_in_bottom,R.anim.slide_out_top);
         setContentView(R.layout.activity_main);
 
         init();
@@ -130,11 +122,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         navigationView.setOnClickListener(v -> getCoverPic());
 
         TextView copyright = findViewById(R.id.nav_copyright_text);
-        String text = "Shopik Version 1.0 " + System.lineSeparator() + getResources().getString(R.string.copy_right);
+        String text = "Shopik Version 1.0 " + System.lineSeparator() + getResources().getString(R.string.copy_right) ;
         copyright.setText(text);
 
         getAllCompaniesInfo();
-        FavvalueEventListener = new ValueEventListener() {
+        favoriteValueEventListener = new ValueEventListener() {
             @Override
             @SuppressWarnings("unchecked")
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -166,7 +158,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     child(company).
                     child(item_type).
                     child(item_sub_category).
-                    addValueEventListener(FavvalueEventListener);
+                    addValueEventListener(favoriteValueEventListener);
 
             FirebaseDatabase.getInstance().getReference().
                     child(Macros.CUSTOMERS).
@@ -176,7 +168,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     child(company).
                     child(item_type).
                     child(item_sub_category).
-                    addValueEventListener(FavvalueEventListener);
+                    addValueEventListener(favoriteValueEventListener);
         }
 
         valueEventListener = new ValueEventListener() {
@@ -247,6 +239,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             new getTX().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
             new getAldo().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
             new getRenuar().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
+            new getHoodies().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
 
         });
 
@@ -290,7 +283,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             return true;
         });
     }
-
 
     private void getCoverPic() {
 
@@ -670,7 +662,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list,int size) {
+    private void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list, int size) {
 
         assert unlikes_list != null;
         ArrayList<String> list = new ArrayList<>(unlikes_list.keySet());
@@ -730,7 +722,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     child(company).
                     child(item_type).
                     child(item_sub_category).
-                    removeEventListener(FavvalueEventListener);
+                    removeEventListener(favoriteValueEventListener);
 
             FirebaseDatabase.getInstance().getReference().
                     child(Macros.CUSTOMERS).
@@ -740,7 +732,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     child(company).
                     child(item_type).
                     child(item_sub_category).
-                    removeEventListener(FavvalueEventListener);
+                    removeEventListener(favoriteValueEventListener);
         }
 
         mainModel.getCustomers_info().removeObservers(this);
@@ -766,7 +758,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     @Override
     public void finish() {
         super.finish();
-        ActivityNavigator.applyPopAnimationsToPendingTransition(this);
+        overridePendingTransition(R.anim.fragment_fade_enter,R.anim.fragment_fade_exit);
     }
 
     public static class ZoomOutPageTransformer implements ViewPager.PageTransformer {
@@ -815,7 +807,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String tx_cat = Macros.Functions.translateCategoryToTerminalX(item_gender,item_type);
             String tx_sub_cat = Macros.Functions.translateSubCategoryToTerminalX(item_gender,item_sub_category);
 
+            int iteration = 0;
+            int total_items_num = 0;
             if(tx_cat != null && tx_sub_cat != null) {
+
                 try {
                     for (int page = 1; page < page_num[0] + 1; ++page) {
                         Document temp = Jsoup.connect("https://www.terminalx.com/" +
@@ -824,13 +819,14 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 "/" + tx_sub_cat +
                                 "?p=" + page).get();
 
-                        Elements list_items = temp.getElementsByAttributeValue("class", "products list items product-items");
-                        Elements items_photo = list_items.get(0).getElementsByAttributeValue("class", "product-item-photo-shop");
-                        Elements items_details = list_items.get(0).getElementsByAttributeValue("class", "product details product-item-details");
+                        Elements list_items = temp.getElementsByClass("products list items product-items");
+                        Elements items_photo = list_items.get(0).getElementsByClass("product-item-photo-shop");
+                        Elements items_details = list_items.get(0).getElementsByClass("product details product-item-details");
 
                         publishProgress(items_photo.size());
+                        total_items_num = items_photo.size();
                         for (int i = 0; i < items_photo.size(); ++i) {
-
+                            iteration++;
                             String link = items_photo.get(i).childNode(1).attr("href");
 
                             Attributes attributes = items_photo.get(i).childNode(1).
@@ -839,9 +835,18 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                             String title = attributes.get("alt");
 
-                            Document doc = Jsoup.connect(link).get();
-                            Elements info = doc.getElementsByAttributeValue("class", "product-info-main");
-                            Elements media = doc.getElementsByAttributeValue("class", "product media");
+                            Document doc;
+                            try {
+                                doc = Jsoup.connect(link).get();
+                            }
+                            catch (org.jsoup.HttpStatusException ex){
+                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
+                                total_items_found -= 1;
+                                continue;
+                            }
+
+                            Elements info = doc.getElementsByClass( "product-info-main");
+                            Elements media = doc.getElementsByClass( "product media");
 
                             String img_url = media.get(0).
                                     childNode(3).childNode(1).
@@ -857,7 +862,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             images.add(img_url.replace("-1", "-3"));
                             images.add(img_url.replace("-1", "-4"));
 
-                            Elements product_item_brand = info.get(0).getElementsByAttributeValue("class", "product-item-brand");
+                            Elements product_item_brand = info.get(0).getElementsByClass( "product-item-brand");
                             ShoppingItem shoppingItem = new ShoppingItem();
 
                             String brand;
@@ -924,8 +929,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             getLikes(shoppingItem, items_photo.size());
                         }
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Log.d(Macros.TAG, "getTerminalX() " + e.getMessage());
+                    total_items_found += total_items_num - iteration;
                 }
             }
             else{
@@ -937,7 +944,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            //totalItems.postValue(values[0]);
             total_items_found += values[0];
         }
 
@@ -951,109 +957,103 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
     private class getAsos extends AsyncTask <Long, Integer, Void> {
 
-        String data = "";
-
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected Void doInBackground(Long... page_num) {
 
             Pair<Integer, Integer> cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
 
+            int total_asos = 0;
             if(cat_num != null){
+                int iter = 0;
                 try {
                     for ( int page = 1; page < page_num[0] + 1; ++page ) {
 
                         Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num.first + "&page=" + page).get();
-                        DataNode node = (DataNode) document.childNode(3).childNode(3).childNode(28).childNode(0);
+                        Elements products = document.getElementsByAttributeValue("data-auto-id", "productTile");
 
-                        data = node.getWholeData();
-                        String[] data_split = data.split("\"products\":",2);
-                        String koko = data_split[1];
-                        koko = koko.replaceAll("u002F", "").
-                                replaceAll("urban", ".urban").
-                                replaceAll("gg-", "").
-                                replaceAll("under", ".under").
-                                replaceAll("ufluff", ".ufluff").
-                                replaceAll("upper", ".upper").
-                                replaceAll("uncommon", ".uncommon").
-                                replaceAll("uoh", ".uoh");
-
-                        data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
-
-                        JSONArray JA = new JSONArray(data);
-                        publishProgress(JA.length());
-                        for (int i = 0; i < JA.length(); ++i) {
-
-                            JSONObject JO = (JSONObject) JA.get(i);
-                            String imageUrl = "https://" + JO.get("image").toString().
-                                    replace(".com", ".com/").
-                                    replace("products", "products/");
-
-                            int opop = imageUrl.lastIndexOf("-");
-                            String id = JO.get("id").toString();
-
-                            String color = imageUrl.substring(opop + 1);
-
-                            String link = "https://www.asos.com/" + JO.get("url").toString().
-                                    replace("prd", "/prd/").
-                                    replace("asos-designasos", "asos-design/asos");
-
-                            String seller_name = "ASOS";
-                            String price = JO.get("price").toString();
-                            String branda = "";
-                            String seller_id = "gxGB5zUoNed0rizltWVC9y8FceA3";
+                        publishProgress(products.size());
+                        total_asos = products.size();
+                        for(Element prod : products) {
+                            ++iter;
 
                             ShoppingItem shoppingItem = new ShoppingItem();
-                            ArrayList<String> list = new ArrayList<>();
 
-                            boolean isExclusive = JO.get("description").toString().toLowerCase().contains("exclusive");
-                            shoppingItem.setExclusive(isExclusive);
+                            Elements pook = prod.getElementsByAttributeValue("data-auto-id", "productTilePrice");
+                            if(pook.size() == 1) {
+                                String price = pook.get(0).childNode(0).childNode(0).toString().replace("£", "");
+                                shoppingItem.setPrice(price);
+                            }
 
-                            String[] name = JO.get("description").toString().split(" ");
-                            for (String word : name) {
-                                if (!word.equals("")) {
-                                    list.add(word.toLowerCase());
+                            Elements pook2 = prod.getElementsByAttributeValue( "data-auto-id", "productTileSaleAmount");
+                            if(pook2.size() > 0){
+                                String red = pook2.get(0).childNode(0).toString().replace("£","");
+                                shoppingItem.setOn_sale(true);
+                                shoppingItem.setReduced_price(red);
+                            }
+
+                            String id = prod.attr("id").split("-")[1];
+                            Attributes attributes = prod.childNode(0).attributes();
+                            String link = attributes.get("href");
+                            String description = attributes.get("aria-label").split(",")[0];
+
+                            Document document2;
+                            try {
+                                document2 = Jsoup.connect(link).get();
+                            }
+                            catch (org.jsoup.HttpStatusException ex){
+                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
+                                total_items_found -= 1;
+                                continue;
+                            }
+                            Elements images_ele = document2.getElementsByClass("image-thumbnail");
+                            
+                            ArrayList<String> images = new ArrayList<>();
+                            for(Element img : images_ele){
+                                String _img = img.childNode(1).childNode(1).attr("src").
+                                        split("\\?")[0] + "?$XXL$&wid=513&fit=constrain";
+                                images.add(_img);
+                            }
+
+                            String brand;
+                            Elements brand_ele;
+                            try{
+                                brand_ele = document2.getElementsByClass("brand-description");
+                                Elements pop = brand_ele.get(0).getAllElements();
+                                brand = pop.get(4).childNode(0).toString().replace("&amp;","&");
+                                shoppingItem.setBrand(brand);
+                            }
+                            catch(IndexOutOfBoundsException ex){
+                                try {
+                                    brand_ele = document2.getElementsByClass("product-description");
+                                    brand = brand_ele.get(1).childNode(4).
+                                            childNode(0).childNode(1).toString().
+                                            replace(" by ", "");
+                                    shoppingItem.setBrand(brand);
+                                }
+                                catch (IndexOutOfBoundsException e){
+                                    shoppingItem.setBrand("ASOS");
                                 }
                             }
-                            for (String brand : Macros.Items.brands) {
-                                if (JO.get("description").toString().toLowerCase().contains(brand.toLowerCase()))
-                                    branda = brand;
-                            }
-                            if ((boolean) JO.get("isOutlet")) {
-                                shoppingItem.setOutlet(true);
-                                shoppingItem.setReduced_price(JO.get("reducedPrice").toString());
-                            } else
-                                shoppingItem.setOutlet(false);
 
-                            if ((boolean) JO.get("isSale")) {
-                                shoppingItem.setOn_sale(true);
-                                shoppingItem.setReduced_price(JO.get("reducedPrice").toString());
-                            } else
-                                shoppingItem.setOn_sale(false);
+                            String[] name = description.split(" ");
+
+                            String seller_name = "ASOS";
+                            String seller_id = "gxGB5zUoNed0rizltWVC9y8FceA3";
+                            boolean isExclusive = description.toLowerCase().contains("exclusive");
 
                             shoppingItem.setId_in_seller(id);
-                            shoppingItem.setColor(color);
-                            ArrayList<String> images = new ArrayList<>();
-
-                            images.add("https://images.asos-media.com/products/0/" + id + "-1-" + color + "?$S$&wid=595&hei=760");
-                            images.add("https://images.asos-media.com/products/0/" + id + "-" + 2 + "?$S$&wid=595&hei=760");
-                            images.add("https://images.asos-media.com/products/0/" + id + "-" + 3 + "?$S$&wid=595&hei=760");
-                            images.add("https://images.asos-media.com/products/0/" + id + "-" + 4 + "?$S$&wid=595&hei=760");
-
-                            shoppingItem.setBrand(branda);
                             shoppingItem.setType(item_type);
-                            shoppingItem.setName(list);
-                            shoppingItem.setPrice(price); //by POUND
+                            shoppingItem.setName(new ArrayList<>(Arrays.asList(name)));
                             shoppingItem.setSeller(seller_name);
                             shoppingItem.setSellerId(seller_id);
                             shoppingItem.setSite_link(link);
-                            shoppingItem.setPage_num(page_num[0]);
-                            shoppingItem.setCatagory_num(cat_num.first);
+                            shoppingItem.setPage_num(page);
                             shoppingItem.setGender(item_gender);
                             shoppingItem.setId(id);
                             shoppingItem.setSub_category(item_sub_category);
                             shoppingItem.setImages(images);
-                            shoppingItem.setExclusive(list.contains("exclusive"));
+                            shoppingItem.setExclusive(isExclusive);
                             shoppingItem.setSeen(mainModel.isSwiped(id));
                             shoppingItem.setPage_num(page);
 
@@ -1061,12 +1061,13 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
 
-                            getLikes(shoppingItem, JA.length());
+                            getLikes(shoppingItem,products.size());
                         }
                     }
                 }
                 catch (Exception e) {
-                    Log.d(Macros.TAG, "MainCustomerActivity::getASOS() " + e.getMessage());
+                    Log.d(Macros.TAG, "MainCustomerActivity::getASOS() :" +" iteration " + iter + e.getMessage());
+                    total_items_found += total_asos - iter;
                 }
             }
             else{
@@ -1099,7 +1100,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String aldo_cat = Macros.Functions.translateCategoryToAldo(item_gender,item_type);
             String aldo_sub_cat = Macros.Functions.translateSubCategoryToAldo(item_gender,item_sub_category);
 
-            if(aldo_cat != null) {
+            int total_aldo = 0;
+            int iteration = 0;
+            if(aldo_cat != null && !aldo_sub_cat.equals("")) {
                 try {
 
                     for (int page = 1; page < page_num[0] + 1; ++page) {
@@ -1112,9 +1115,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         Elements list_items = temp.getElementsByAttributeValue("id", "prod-list-cat");
                         Elements products = list_items.get(0).getElementsByClass("cat-product");
 
-                        publishProgress(products.size());
+                        total_aldo = products.size();
+                        publishProgress(total_aldo);
                         for(Element prod : products){
-
+                            iteration++;
                             Attributes attributes = prod.childNode(7).attributes();
                             String link = attributes.get("href");
                             String price = attributes.get("data-price");
@@ -1122,12 +1126,20 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
                             String id = attributes.get("data-id");
 
-                            Document prod_page = Jsoup.connect(link).get();
+                            Document prod_page;
+                            try {
+                                prod_page = Jsoup.connect(link).get();
+                            }
+                            catch (org.jsoup.HttpStatusException ex){
+                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
+                                total_items_found -= 1;
+                                continue;
+                            }
+
                             Elements prod_info = prod_page.getElementsByClass("product-image-gallery");
                             Elements images_elements = prod_info.get(0).getElementsByClass("gallery-image-link");
 
                             ShoppingItem shoppingItem = new ShoppingItem();
-
                             ArrayList<String> images = new ArrayList<>();
                             for(Node img : images_elements){
                                 images.add(img.attr("data-source"));
@@ -1150,11 +1162,13 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             if (favs.containsKey(shoppingItem.getId())) {
                                 shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
-                            getLikes(shoppingItem, products.size());
+                            getLikes(shoppingItem, total_aldo);
                         }
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Log.d(Macros.TAG, "getAldo() " + e.getMessage());
+                    total_items_found += total_aldo - iteration;
                 }
             }
             else{
@@ -1186,9 +1200,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String cat = Macros.Functions.translateCategoryTo247(item_type,item_gender);
             String sub_cat = Macros.Functions.translateSubCategoryTo247(item_sub_category,item_gender);
 
+            int iter = 0;
+            int total_tfs = 0;
             if(cat != null && sub_cat != null) {
                 try {
-
                     for (int page = 1; page < page_num[0] + 1; ++page) {
                         Document document = Jsoup.connect("https://www.twentyfourseven.co.il/he/" +
                                 item_gender.toLowerCase() + "/" + cat + "/" + sub_cat + ".html?p=" + page).get();
@@ -1197,13 +1212,22 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         Elements items = element.getElementsByClass("item");
 
                         publishProgress(items.size());
+                        total_tfs = items.size();
                         for (Node item_node : items) {
-
+                            iter++;
                             ShoppingItem shoppingItem = new ShoppingItem();
 
                             String link = item_node.childNode(3).childNode(0).attr("href");
 
-                            Document document1 = Jsoup.connect(link).get();
+                            Document document1;
+                            try {
+                                document1 = Jsoup.connect(link).get();
+                            }
+                            catch (org.jsoup.HttpStatusException ex){
+                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
+                                total_items_found -= 1;
+                                continue;
+                            }
                             Elements elements1 = document1.
                                     getElementsByClass("product-image product-image-zoom");
 
@@ -1290,8 +1314,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             getLikes(shoppingItem, item_node.childNodeSize());
                         }
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Log.d(Macros.TAG, "MainCustomerActivity::getTFS() " + e.getMessage());
+                    total_items_found += total_tfs - iter;
                 }
             }
             else{
@@ -1320,42 +1346,57 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         @Override
         protected Void doInBackground(Long... page_num) {
 
-            String cat = Macros.Functions.translateCategoryToCastro(item_type);
-            long sub_cat = Macros.Functions.translateSubCategoryToCastro(item_sub_category);
+            String cat = Macros.Functions.translateCategoryToCastro(item_type,item_sub_category,item_gender);
+            Integer sub_cat = Macros.Functions.translateSubCategoryToCastro(item_sub_category);
 
-            if(cat != null && sub_cat != 0){
+            int iter = 0;
+            int total_castro = 0;
+            if(cat != null){
                 try {
                     for (int page = 1; page < page_num[0] + 1; ++page) {
-
-                        Document document = Jsoup.connect("https://www.castro.com/" + item_gender.toLowerCase()
-                                + "/shop_by_product/" + cat + "?p=" + page + "&vrp_product_type=" + sub_cat).get();
+                        Document document;
+                        if(sub_cat == null){
+                            if(item_sub_category.equals("face masks") && item_gender.equals(Macros.CustomerMacros.MEN)){
+                                document = Jsoup.connect("https://www.castro.com/" + item_gender.toLowerCase()
+                                        + "/" + cat + "?p=" + page).get();
+                            }
+                            else {
+                                document = Jsoup.connect("https://www.castro.com/" + item_gender.toLowerCase()
+                                        + "/shop_by_product/" + cat + "?p=" + page).get();
+                            }
+                        }
+                        else {
+                            document = Jsoup.connect("https://www.castro.com/" + item_gender.toLowerCase()
+                                    + "/shop_by_product/" + cat + "?p=" + page + "&vrp_product_type=" + sub_cat).get();
+                        }
 
                         Elements elements = document.getElementsByClass("products list items product-items ");
                         Elements filtered_elements = elements.get(0).getElementsByAttributeValueStarting("id","product_category_");
 
                         publishProgress(filtered_elements.size());
+                        total_castro = filtered_elements.size();
                         for (Node node : filtered_elements) {
-
+                            iter++;
                             ShoppingItem shoppingItem = new ShoppingItem();
 
                             String id = node.childNode(0).childNode(4).childNode(0).childNode(0).childNode(0).childNode(0).attr("data-product-sku");
                             String link = node.childNode(0).childNode(4).childNode(0).childNode(0).childNode(0).childNode(0).attr("href");
 
-                            Document item_doc = null;
+                            Document item_doc;
                             try {
                                 item_doc = Jsoup.connect(link).get();
                             }
-                            catch(HttpStatusException se){
-                                Log.d(Macros.TAG,"404: " + se.getUrl());
-                            }
-                            if(item_doc == null)
+                            catch (org.jsoup.HttpStatusException ex){
+                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
+                                total_items_found -= 1;
                                 continue;
+                            }
 
                             Elements images_doc = item_doc.getElementsByClass("product_gallery");
 
-                            String price = "";
+                            String price;
                             Elements price_doc = item_doc.getElementsByClass("price");
-                            shoppingItem.setPrice(price);
+
                             if (price_doc.hasClass("old-price")) {
                                 price = price_doc.get(0).childNode(0).toString().replace("₪", "");
                                 String old_price = price_doc.get(1).childNode(0).toString().replace("₪", "");
@@ -1377,6 +1418,12 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                                 name = img.childNode(1).attr("alt");
                                 images.add(image);
+                            }
+
+                            if(images.size() < 4){
+                                for( int i=images.size(); i<5; ++i){
+                                    images.add(images.get(0));
+                                }
                             }
 
                             ArrayList<String> description = new ArrayList<>(Arrays.asList(name.split(" ")));
@@ -1402,8 +1449,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             getLikes(shoppingItem, filtered_elements.size());
                         }
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Log.d(Macros.TAG, "getCastro() Failed " + e.getMessage());
+                    total_items_found += total_castro - iter;
                 }
             }
             else{
@@ -1435,7 +1484,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String cat = Macros.Functions.translateCategoryToRenuar(item_gender,item_type);
             String sub_cat = Macros.Functions.translateSubCategoryToRenuar(item_gender,item_sub_category);
 
-            if(cat != null){
+            int iter=0;
+            int total_renuar=0;
+            if(cat != null && !sub_cat.equals("")){
                 try {
                     for (int page = 1; page < page_num[0] + 1; ++page) {
 
@@ -1449,8 +1500,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         Elements products = elements.get(0).getElementsByClass("item");
 
                         publishProgress(products.size());
+                        total_renuar = products.size();
                         for (Node node : products) {
-
+                            iter++;
                             ShoppingItem shoppingItem = new ShoppingItem();
 
                             String id = node.attr("data-sku");
@@ -1458,21 +1510,21 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             String name = node.childNode(3).childNode(3).childNode(0).attr("title");
                             String link = node.childNode(3).childNode(3).childNode(0).attr("href");
 
-                            Document item_doc = null;
+                            Document item_doc;
                             try {
                                 item_doc = Jsoup.connect(link).get();
                             }
-                            catch(HttpStatusException se){
-                                Log.d(Macros.TAG,"404: " + se.getUrl());
-                            }
-                            if(item_doc == null)
+                            catch (org.jsoup.HttpStatusException ex){
+                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
+                                total_items_found -= 1;
                                 continue;
+                            }
 
                             Elements item_elements = item_doc.getElementsByClass("images-slideshow");
                             Elements images_elements = item_elements.get(0).getElementsByClass("item");
 
                             ArrayList<String> images = new ArrayList<>();
-                            for(Element img : images_elements){
+                            for (Element img : images_elements) {
                                 Elements pook = img.getElementsByClass("zoom");
                                 images.add(pook.get(0).attr("src"));
                             }
@@ -1480,16 +1532,23 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             ArrayList<String> description = new ArrayList<>(Arrays.asList(name.split(" ")));
 
                             Element price_box = item_doc.getElementsByClass("price-box").get(0);
+                            Elements old_price = price_box.getElementsByClass("old-price");
 
-                            if(price_box.hasClass("old-price")){
-                               shoppingItem.setPrice(price_box.getElementsByClass("old-price").get(0).
-                                        childNode(1).childNode(1).childNode(0).nodeName().replace("&nbsp;₪",""));
-                               shoppingItem.setReduced_price(price_box.getElementsByClass("special-price").get(0).
-                                        childNode(1).childNode(1).childNode(0).nodeName().replace("&nbsp;₪",""));
+                            if( old_price.size() > 0 ) {
+                                Elements _price = old_price.get(0).getElementsByClass("price");
+                                String price = _price.get(0).childNode(0).toString().replace("&nbsp;₪ ","");
+
+                                Elements _reduced_price = price_box.getElementsByClass("special-price").get(0).
+                                        getElementsByClass("price");
+                                String reduced_price = _reduced_price.get(0).childNode(0).toString().replace("&nbsp;₪ ","");
+
+                                shoppingItem.setPrice(price);
+                                shoppingItem.setReduced_price(reduced_price);
                                 shoppingItem.setOn_sale(true);
                             }
                             else {
-                                shoppingItem.setPrice(price_box.childNode(1).childNode(1).childNode(0).toString().replace("&nbsp;₪", ""));
+                                String _price = price_box.childNode(1).childNode(1).childNode(0).toString().replace("&nbsp;₪", "");
+                                shoppingItem.setPrice(_price);
                             }
 
                             shoppingItem.setImages(images);
@@ -1513,8 +1572,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             getLikes(shoppingItem, products.size());
                         }
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Log.d(Macros.TAG, "getRenuar() Failed " + e.getMessage());
+                    total_items_found += total_renuar - iter;
                 }
             }
             else{
@@ -1534,6 +1595,122 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             super.onPostExecute(aVoid);
             isFinished.postValue(true);
             Log.d(Macros.TAG,"getRenuar FINISHED");
+        }
+    }
+
+    private class getHoodies extends AsyncTask <Long, Integer, Void> {
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Long... page_num) {
+
+            String cat = Macros.Functions.translateCategoryToHoodies(item_gender,item_type,item_sub_category);
+            String sub_cat = Macros.Functions.translateSubCategoryToHoodies(item_gender,item_sub_category);
+
+            int iter = 0;
+            int total_hoodies = 0;
+            if(cat != null) {
+                try {
+                    for (int page = 1; page < page_num[0] + 1; ++page) {
+
+                        Document document = Jsoup.connect("https://www.hoodies.co.il/" +
+                                item_gender.toLowerCase() + "/" + cat + "/"+ sub_cat + "?p=" + page).get();
+
+                        Elements elements = document.getElementsByClass("product-item-photo-shop");
+
+                        publishProgress(elements.size());
+                        total_hoodies = elements.size();
+                        for(Element element : elements){
+
+                            iter++;
+
+                            ShoppingItem shoppingItem = new ShoppingItem();
+
+                            String link = element.childNode(1).attr("href");
+
+                            Document prod_elements;
+                            try {
+                                prod_elements = Jsoup.connect(link).get();
+                            }
+                            catch (org.jsoup.HttpStatusException ex){
+                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
+                                total_items_found -= 1;
+                                continue;
+                            }
+
+                            Elements elements1 = prod_elements.getElementsByAttributeValue("type", "application/ld+json");
+                            Node json_node = elements1.get(0).childNode(0);
+                            String pook = json_node.toString();
+                            JSONObject jpook = new JSONObject(pook);
+                            String description = jpook.get("description").toString();
+                            ArrayList<String> description_array = new ArrayList<>(Arrays.asList(description.split(" ")));
+                            String name  = jpook.get("name").toString();
+                            String imageUrl = jpook.get("image").toString();
+                            ArrayList<String> images = new ArrayList<>();
+                            for(int i=0; i<4; ++i){
+                                images.add(imageUrl);
+                            }
+                            String id = jpook.get("sku").toString();
+                            JSONObject offers = new JSONObject(jpook.get("offers").toString());
+                            String price = offers.getString("price");
+
+                            String o_price;
+                            Elements old_price = prod_elements.getElementsByAttributeValue("data-price-type", "oldPrice");
+                            if(old_price.size() > 0) {
+                                o_price = old_price.get(0).childNode(0).childNode(0).toString().replace("&nbsp;₪", "");
+                                shoppingItem.setPrice(o_price);
+                                shoppingItem.setReduced_price(price);
+                                shoppingItem.setOn_sale(true);
+                            }
+                            else{
+                                shoppingItem.setPrice(price);
+                            }
+
+                            shoppingItem.setImages(images);
+                            shoppingItem.setBrand("Hoodies");
+                            shoppingItem.setType(item_type);
+                            shoppingItem.setGender(item_gender);
+                            shoppingItem.setSeller("Hoodies");
+                            shoppingItem.setSub_category(item_sub_category);
+                            shoppingItem.setSellerId("Tac7y6IhTEYbDAvfsm5FMFeuW1t2");
+                            shoppingItem.setId(id);
+                            shoppingItem.setName(description_array);
+                            shoppingItem.setSite_link(link);
+                            shoppingItem.setVideo_link(null);
+                            shoppingItem.setExclusive(name.contains("exclusive"));
+                            shoppingItem.setSeen(mainModel.isSwiped(id));
+                            shoppingItem.setPage_num(page);
+
+                            if (favs.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            }
+                            getLikes(shoppingItem, total_hoodies);
+
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    Log.d(Macros.TAG, "getHoodies() Failed " + e.getMessage());
+                    total_items_found += total_hoodies - iter;
+                }
+            }
+            else{
+                publishProgress(0);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            total_items_found += values[0];
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            isFinished.postValue(true);
+            Log.d(Macros.TAG,"getHoodies FINISHED");
         }
     }
 

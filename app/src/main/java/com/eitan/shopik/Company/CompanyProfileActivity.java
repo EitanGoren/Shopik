@@ -4,16 +4,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -21,13 +19,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -42,16 +37,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -59,17 +46,14 @@ import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CompanyProfileActivity extends AppCompatActivity { //} extends YouTubeBaseActivity {
+public class CompanyProfileActivity extends AppCompatActivity {
 
     private DocumentReference companyFS;
-    private String companyId,imageUrl,name,facebook,
-                    twitter,youtube,instagram,site,
+    private String companyId,imageUrl,name,facebook,twitter,youtube,instagram,site,
                     cover,customer_id,description,slogan;
-    private String youtube_link;
     private CircleImageView mProfile_image,toolbar_pic;
     private ImageView mFacebook,mTwitter,mSite,mInstagram,mYoutube,bgimage;
     private TextView mRaters,mDescription,mSlogan,mRatingNum;
-//    private TextView mVideoTitle;
     private RatingBar ratingBar,smallRating;
     private Map rating_map;
     private Float current_rating;
@@ -78,9 +62,6 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
     private boolean isCompany;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout appBar;
-//    private YouTubePlayerView youTubePlayerView;
-//    private YouTubePlayer player;
-//    private YouTubePlayer.OnInitializedListener initializedListener;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -186,6 +167,7 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
         // inside your activity (if you did not enable transitions in your theme)
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.fragment_my_profile);
@@ -208,13 +190,11 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
             cover = data.get("cover_image_url") != null ? Objects.requireNonNull(data.get("cover_image_url")).toString() : null;
             description = data.get("description") != null ? Objects.requireNonNull(data.get("description")).toString() : Macros.DEFAULT_DESCRIPTION;
             String youtube_key = data.get("youtube_link") != null ? Objects.requireNonNull(data.get("youtube_link")).toString() : null;
-            youtube_link = Macros.YOUTUBE_VIDEO + youtube_key;
             slogan = data.get("slogan") != null ? Objects.requireNonNull(data.get("slogan")).toString() : "Some slogan shit...";
 
             mDescription.setText(description);
             mSlogan.setText(slogan);
 
-      //    setYoutubeLink();
             setCollapsingBar();
             setRating();
             updateRating();
@@ -231,7 +211,6 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
                 return true;
             }
         });
-
         bgimage.setOnLongClickListener(v -> {
             if(!isCompany)
                 return false;
@@ -242,9 +221,9 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
                 return true;
             }
         });
-
         appBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
-            if(verticalOffset <= -550) {
+
+            if(verticalOffset <= -470) {
                 toolbar_pic.setVisibility(View.VISIBLE);
                 smallRating.setVisibility(View.VISIBLE);
                 mRatingNum.setVisibility(View.VISIBLE);
@@ -259,10 +238,9 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
                 mRaters.setVisibility(View.VISIBLE);
             }
         });
-
         ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
             if(fromUser) {
-                Float new_rating;
+                float new_rating;
                 if(!rating_map.containsKey(customer_id)) {
                     // calculate rating with the new user
                     new_rating = ((current_rating * raters) + rating) / (raters + 1);
@@ -317,31 +295,6 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtube));
             startActivity(browserIntent);
         });
-
-      /*  initializedListener = new YouTubePlayer.OnInitializedListener() {
-            @Override
-            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer,boolean b) {
-                youTubePlayer.loadVideo(youtube_link);
-                player = youTubePlayer;
-            }
-
-            @Override
-            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-                Log.d(Macros.TAG,"onInitializationFailure: " + youTubeInitializationResult.name());
-            }
-        };
-
-       */
-
-    }
-
-    private void setYoutubeLink() {
-      /*  if(youtube_link == null)
-            youtube_link = Macros.DEFAULT_YOUTUBE_VIDEO;
-
-        youTubePlayerView.initialize( Macros.API_KEY, initializedListener );
-        getVideoTitle getVideoTitle = new getVideoTitle();
-        getVideoTitle.execute(); */
     }
 
     private void setImages() {
@@ -350,7 +303,7 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
             Glide.with(getApplicationContext()).load(imageUrl).into(toolbar_pic);
         }
         if( cover != null ){
-            Glide.with(getApplicationContext()).load(cover).into(bgimage);
+            Macros.Functions.GlidePicture(getApplicationContext(),cover,bgimage);
         }
     }
 
@@ -402,41 +355,8 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
         collapsingToolbar.setContentScrimColor(getColor(R.color.CompanyProfileScrim));
 
         final ImageView imageView = bgimage;
-        Glide.with(getApplicationContext()).asBitmap().load(cover).into(new CustomTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+        Glide.with(getApplicationContext()).asBitmap().load(cover).into(imageView);
 
-                imageView.setImageBitmap(resource);
-                Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-
-                int height = bitmap.getHeight();
-
-                checkBottomLayoutColor(bitmap,height);
-            }
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {}
-        });
-
-    }
-
-    private void checkBottomLayoutColor(Bitmap bitmap, int height) {
-
-        int pixel_bottom_left = bitmap.getPixel(50, height - 50);
-        int red_bottom = Color.red(pixel_bottom_left);
-        int blue_bottom = Color.blue(pixel_bottom_left);
-        int green_bottom = Color.green(pixel_bottom_left);
-
-        if ((red_bottom < 115 && blue_bottom < 115) ||
-                (green_bottom < 115 && red_bottom < 115) ||
-                (green_bottom < 115 && blue_bottom < 115)){
-
-            collapsingToolbar.setExpandedTitleColor(Color.WHITE);
-            mProfile_image.setBorderColor(Color.WHITE);
-        }
-        else {
-            collapsingToolbar.setExpandedTitleColor(Color.BLACK);
-            mProfile_image.setBorderColor(Color.BLACK);
-        }
     }
 
     private void updateRating() {
@@ -460,10 +380,10 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
         }
     }
 
-    private Float calculateRating(Map map){
-        Map map2 = (Map) map.get("rating");
+    private Float calculateRating(Map<String, Object> map){
+        Map<String, Object> map2 = (Map<String, Object>) map.get("rating");
         assert map2 != null;
-        Set raters = map2.keySet();
+        Set<String> raters = map2.keySet();
         float rating = (float) 0;
         for(Object rater : raters){
             if(!rater.equals("total_rating") && !rater.equals("raters"))
@@ -476,8 +396,6 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
 
         setNavigationBarButtonsColor(getWindow().getNavigationBarColor());
 
-    //  youTubePlayerView = findViewById(R.id.youtube_video_company);
-    //  mVideoTitle  = findViewById(R.id.company_video_title);
         mProfile_image = findViewById(R.id.profile_company_profile);
         mFacebook = findViewById(R.id.company_facebook);
         mTwitter = findViewById(R.id.company_twitter);
@@ -511,76 +429,10 @@ public class CompanyProfileActivity extends AppCompatActivity { //} extends YouT
         companyFS = FirebaseFirestore.getInstance().collection(Macros.COMPANIES).document(companyId);
     }
 
-    private void setVideoTitle(String title){
-      //  mVideoTitle.setText(title);
-    }
-
-    private class getVideoTitle extends AsyncTask<Void,Void,String> {
-
-        String data = "";
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected String doInBackground(Void... voids) {
-            try {
-                return getTitle();
-            }
-            catch (Exception e ){
-                Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
-            }
-            return null;
-        }
-
-        private String getTitle() {
-
-            String title = "";
-            try {
-                URL url = new URL(Macros.YOUTUBE_API + "&id=" + youtube_link + "&key=" + Macros.API_KEY);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line = "";
-                while (line != null) {
-                    line = bufferedReader.readLine();
-                    data = data + line;
-                }
-
-                JSONObject JO = new JSONObject(data);
-                JSONObject jsonObject = JO.getJSONArray("items").getJSONObject(0);
-                JSONObject snippet = jsonObject.getJSONObject("snippet");
-                title = snippet.getString("title");
-            }
-            catch (JSONException | IOException e) {
-                e.printStackTrace();
-                Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
-            }
-            return title;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            setVideoTitle(s);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-      //  if(player != null) {
-      //      player.play();
-      //  }
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
-     //   if(player != null) {
-     //       player.pause();
-     //   }
-
-        Map map2 = new HashMap();
+        Map<String, Object> map2 = new HashMap<>();
         map2.put("rating", rating_map);
         companyFS.set(map2, SetOptions.merge());
     }

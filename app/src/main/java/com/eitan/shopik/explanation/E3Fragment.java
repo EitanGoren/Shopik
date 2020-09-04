@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.ArraySet;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,13 +134,14 @@ public class E3Fragment extends Fragment {
 
             link.setOnClickListener(v -> {
                 assert item != null;
-                Macros.Functions.buy(getContext(),item.getLink());
+                Macros.Functions.buy(getContext(), item.getLink());
             });
 
             assert item != null;
             final ArrayList<String> imagesUrl = item.getImages();
 
-            Macros.Functions.GlidePicture(getContext(),imagesUrl.get(0),imageView);
+            if(imagesUrl.size() > 0)
+                Macros.Functions.GlidePicture(getContext(),imagesUrl.get(0),imageView);
 
             if(item.isSale())
                 sale.setVisibility(View.VISIBLE);
@@ -169,8 +169,7 @@ public class E3Fragment extends Fragment {
                 price.setTextSize(16);
             }
 
-            Pair<View, String> pair = new Pair<>(imageView,"fullscreen");
-            fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, pair));
+            //fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, null));
 
             return convertView;
         }

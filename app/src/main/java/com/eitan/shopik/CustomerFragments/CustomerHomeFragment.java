@@ -62,7 +62,6 @@ public class CustomerHomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
         swipesModel = new ViewModelProvider(requireActivity()).get(SwipesModel.class);
         GenderModel genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
@@ -71,66 +70,15 @@ public class CustomerHomeFragment extends Fragment {
         item_sub_category = genderModel.getSub_category().getValue();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_customer_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_customer_home, container,false);
         flingContainer = view.findViewById(R.id.frame);
 
-        return view;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        arrayAdapter = new CardsAdapter(requireContext(),
+        arrayAdapter = new CardsAdapter(requireActivity(),
                 R.layout.swipe_item, swipesModel.getItems().getValue());
-
-        isSwiped = false;
-
-        items_observer = shoppingItems -> {
-
-            swipesModel.clearAllItems();
-            arrayAdapter.notifyDataSetChanged();
-
-            long size = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue();
-
-            for( ShoppingItem shoppingItem : shoppingItems ) {
-                if(shoppingItem.getPage_num() == size && !shoppingItem.isSeen()) {
-                    swipesModel.addToItems(shoppingItem);
-                    arrayAdapter.notifyDataSetChanged();
-                }
-                if ((Objects.requireNonNull(swipesModel.getItems().getValue()).size() % Macros.SWIPES_TO_AD == 0)
-                        && swipesModel.getItems().getValue().size() > 0) {
-                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
-                    if (shoppingItemAd != null) {
-                        ShoppingItem adItem = new ShoppingItem();
-                        adItem.setNativeAd(shoppingItemAd.getNativeAd());
-                        adItem.setAd(true);
-                        swipesModel.addToItems(shoppingItemAd);
-                        arrayAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-
-            arrayAdapter.notifyDataSetChanged();
-            flingContainer.setAdapter(arrayAdapter);
-        };
-        mainModel.getAll_items().observe(requireActivity(),items_observer );
-
-        total_items_observer = integer -> {
-            TextView percentage = view.findViewById(R.id.percentage);
-            percentage.setVisibility(View.VISIBLE);
-            String text = integer + "%";
-            percentage.setText(text);
-            if( integer == 100 ) {
-                percentage.setVisibility(View.INVISIBLE);
-                arrayAdapter.notifyDataSetChanged();
-            }
-        };
-        mainModel.getTotalItems().observe(requireActivity(), total_items_observer );
 
         SwipeFlingAdapterView.onFlingListener onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
             @Override
@@ -169,9 +117,61 @@ public class CustomerHomeFragment extends Fragment {
                 }
             }
         };
-
         flingContainer.setFlingListener(onFlingListener);
         arrayAdapter.setFlingContainer(flingContainer);
+
+        items_observer = shoppingItems -> {
+
+            swipesModel.clearAllItems();
+            arrayAdapter.notifyDataSetChanged();
+
+            long size = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue();
+
+
+            for( ShoppingItem shoppingItem : shoppingItems ) {
+                if(shoppingItem.getPage_num() == size && !shoppingItem.isSeen()) {
+                    swipesModel.addToItems(shoppingItem);
+                    arrayAdapter.notifyDataSetChanged();
+                }
+                if ((Objects.requireNonNull(swipesModel.getItems().getValue()).size() % Macros.SWIPES_TO_AD == 0)
+                        && swipesModel.getItems().getValue().size() > 0) {
+                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                    if (shoppingItemAd != null) {
+                        ShoppingItem adItem = new ShoppingItem();
+                        adItem.setNativeAd(shoppingItemAd.getNativeAd());
+                        adItem.setAd(true);
+                        swipesModel.addToItems(shoppingItemAd);
+                        arrayAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            arrayAdapter.notifyDataSetChanged();
+            flingContainer.setAdapter(arrayAdapter);
+        };
+        total_items_observer = integer -> {
+            TextView percentage = view.findViewById(R.id.percentage);
+            percentage.setVisibility(View.VISIBLE);
+            String text = integer + "%";
+            percentage.setText(text);
+            if( integer == 100 ) {
+                percentage.setVisibility(View.INVISIBLE);
+                arrayAdapter.notifyDataSetChanged();
+            }
+        };
+
+        return view;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        isSwiped = false;
+
+        mainModel.getAll_items().observe(requireActivity(),items_observer );
+        mainModel.getTotalItems().observe(requireActivity(), total_items_observer );
     }
 
     @Override
@@ -179,6 +179,8 @@ public class CustomerHomeFragment extends Fragment {
         super.onDestroyView();
         flingContainer = null;
         mainModel.getAll_items().removeObserver(items_observer);
+        items_observer = null;
+        total_items_observer = null;
         mainModel.getTotalItems().removeObserver(total_items_observer);
     }
 
@@ -258,7 +260,6 @@ public class CustomerHomeFragment extends Fragment {
                 }
             }
         }
-
     }
 
     private void onItemUnliked(Object dataObject) {
@@ -354,4 +355,5 @@ public class CustomerHomeFragment extends Fragment {
                 child(item_sub_category).
                 setValue(new_page);
     }
+
 }

@@ -144,6 +144,7 @@ public class E2Fragment extends Fragment {
 
         if(gender.equals(Macros.CustomerMacros.MEN)){
 
+            addAccessoriesSubCategory("face masks", Macros.Items.MEN_FACE_MASK, Macros.CustomerMacros.MEN);
             addAccessoriesSubCategory("belts", Macros.Items.MEN_BELTS, Macros.CustomerMacros.MEN);
             addAccessoriesSubCategory("hats", Macros.Items.MEN_HATS, Macros.CustomerMacros.MEN);
             addAccessoriesSubCategory("ties", Macros.Items.MEN_TIES, Macros.CustomerMacros.MEN);
@@ -201,6 +202,7 @@ public class E2Fragment extends Fragment {
         }
         else {
 
+            addAccessoriesSubCategory("face masks", Macros.Items.WOMEN_FACE_MASK, Macros.CustomerMacros.WOMEN);
             addAccessoriesSubCategory("belts", Macros.Items.WOMEN_BELTS, Macros.CustomerMacros.WOMEN);
             addAccessoriesSubCategory("scarves", Macros.Items.WOMEN_SCARVES, Macros.CustomerMacros.WOMEN);
             addAccessoriesSubCategory("hats", Macros.Items.WOMEN_HATS, Macros.CustomerMacros.WOMEN);
@@ -342,7 +344,6 @@ public class E2Fragment extends Fragment {
     }
 
     private void addJacketsSubCategory(String name, String res_url, String _gender) {
-      //  SubCategory jackets = new SubCategory(name,res_url, _gender);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.JACKETS);
@@ -357,7 +358,6 @@ public class E2Fragment extends Fragment {
         sub_jackets.add(new_item);
     }
     private void addJeansSubCategory(String name,String res_url,String _gender) {
-       // SubCategory jeans = new SubCategory(name,res_url, _gender);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.JEANS);
@@ -372,7 +372,6 @@ public class E2Fragment extends Fragment {
         sub_jeans.add(new_item);
     }
     private void addBagsSubCategory(String name,String res_url) {
-      //  SubCategory bags = new SubCategory(name,res_url, Macros.CustomerMacros.WOMEN);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.BAG);
@@ -388,7 +387,6 @@ public class E2Fragment extends Fragment {
         //sub_bags.add(bags);
     }
     private void addShoesSubCategory(String name,String res_url,String _gender) {
-       // SubCategory shoes = new SubCategory(name,res_url, _gender);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.SHOES);
@@ -403,7 +401,6 @@ public class E2Fragment extends Fragment {
         sub_shoes.add(new_item);
     }
     private void addDressSubCategory(String name,String res_url) {
-      //  SubCategory dress = new SubCategory(name,res_url, Macros.CustomerMacros.WOMEN);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.DRESS);
@@ -418,7 +415,6 @@ public class E2Fragment extends Fragment {
         sub_dress.add(new_item);
     }
     private void addJewellerySubCategory(String name,String res_url,String _gender) {
-      //  SubCategory jewellery = new SubCategory(name,res_url, _gender);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.JEWELLERY);
@@ -433,7 +429,6 @@ public class E2Fragment extends Fragment {
         sub_jewellery.add(new_item);
     }
     private void addWatchesSubCategory(String name,String res_url,String _gender) {
-       // SubCategory watch = new SubCategory(name,res_url, _gender);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.WATCH);
@@ -448,7 +443,6 @@ public class E2Fragment extends Fragment {
         sub_watches.add(new_item);
     }
     private void addGlassesSubCategory(String name,String res_url,String _gender) {
-      //  SubCategory glasses = new SubCategory(name,res_url, _gender);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.SUNGLASSES);
@@ -463,7 +457,6 @@ public class E2Fragment extends Fragment {
         sub_glasses.add(new_item);
     }
     private void addSwimwearSubCategory(String name,String res_url,String _gender) {
-       // SubCategory swim = new SubCategory(name,res_url, _gender);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.SWIMWEAR);
@@ -478,7 +471,6 @@ public class E2Fragment extends Fragment {
         sub_swim.add(new_item);
     }
     private void addShirtsSubCategory(String name,String res_url,String _gender) {
-      // SubCategory shirts = new SubCategory(name,res_url, _gender);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.SHIRT);
@@ -493,7 +485,6 @@ public class E2Fragment extends Fragment {
         sub_shirts.add(new_item);
     }
     private void addLingerieSubCategory(String name,String res_url,String _gender) {
-      //  SubCategory lingerie = new SubCategory(name,res_url, _gender);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.LINGERIE);
@@ -508,7 +499,6 @@ public class E2Fragment extends Fragment {
         sub_lingerie.add(new_item);
     }
     private void addAccessoriesSubCategory(String name,String res_url,String _gender) {
-      // SubCategory accessories = new SubCategory(name,res_url, _gender);
         RecyclerItem new_item = new RecyclerItem(name,null);
         new_item.setImage_resource(res_url);
         new_item.setType(Macros.ACCESSORIES);

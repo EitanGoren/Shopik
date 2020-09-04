@@ -63,11 +63,11 @@
                 android:id="@+id/brand_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:transitionName="company_name"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="13dp"
                 android:layout_marginTop="8dp"
+                android:transitionName="company_name"
                 android:fontFamily="@font/nunito_bold"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
@@ -120,6 +120,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="430dp"
                 android:layout_centerVertical="true"
+                android:transitionName="@string/image_item"
                 android:scaleType="centerCrop"/>
 
             <TextView
@@ -206,6 +207,7 @@
             android:transitionName="company_logo"
             app:civ_border_color="@color/borderLine"
             android:translationZ="10dp"
+            android:contentDescription="@string/image_item"
             android:elevation="10dp"
             app:civ_border_width="2dp" />
 

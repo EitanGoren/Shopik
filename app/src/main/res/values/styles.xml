@@ -4,6 +4,7 @@
         <item name="android:windowActivityTransitions">true</item>
         <item name="android:statusBarColor">#ffffff</item>
         <item name="android:windowLightStatusBar">true</item>
+
         <!-- navigation buttons etc.. -->
         <item name="colorPrimary">#DC333333</item>
         <item name="android:navigationBarColor">#000000</item>
@@ -20,7 +21,6 @@
     <style name="farts" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:statusBarColor">#ffffff</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowActivityTransitions">true</item>
 
         <!-- navigation buttons etc.. -->
         <item name="colorPrimary">#DC333333</item>
@@ -32,6 +32,9 @@
         <item name="colorPrimaryDark">#000000</item>
 
         <item name="colorAccent">#000000</item>
+    </style>
+
+    <style name="AppTheme.Fullscreen">
     </style>
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">

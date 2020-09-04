@@ -19,6 +19,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -35,6 +36,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SearchFragment extends Fragment implements View.OnClickListener{
 
@@ -58,6 +60,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private Toolbar toolbar;
     String item_type,item_gender,item_sub_category;
     private long page = 0;
+    private Observer<CopyOnWriteArrayList<ShoppingItem>> listObserver;
+    private Observer<Integer> integerObserver;
+    private Observer<Long> longObserver;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -82,6 +87,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         appBarLayout = view.findViewById(R.id.appbar);
 
         mRecyclerView = view.findViewById(R.id.grid_recycler_view);
+        mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 
         scroll = view.findViewById(R.id.scroll_up_down);
         header = view.findViewById(R.id.text);
@@ -91,6 +97,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         brand = view.findViewById(R.id.brand_chip);
         company = view.findViewById(R.id.company_chip);
         toolbar = view.findViewById(R.id.toolbar);
+
+        Chip favorite = view.findViewById(R.id.favorites_chip);
+        price.setOnClickListener(this);
+        sale.setOnClickListener(this);
+        company.setOnClickListener(this);
+        brand.setOnClickListener(this);
+        match.setOnClickListener(this);
+        favorite.setOnClickListener(this);
 
         return view;
     }
@@ -103,19 +117,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         scrollUp = false;
 
         recyclerGridAdapter = new RecyclerGridAdapter(allItemsModel.getItems().getValue(),null);
-        mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerGridAdapter);
 
-        Chip favorite = requireView().findViewById(R.id.favorites_chip);
-        price.setOnClickListener(this);
-        sale.setOnClickListener(this);
-        company.setOnClickListener(this);
-        brand.setOnClickListener(this);
-        match.setOnClickListener(this);
-        favorite.setOnClickListener(this);
-
-        mainModel.getAll_items().observe(requireActivity(), shoppingItems -> {
+        listObserver = shoppingItems -> {
 
             allItemsModel.clearItems();
             recyclerGridAdapter.notifyDataSetChanged();
@@ -160,8 +165,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
             recyclerGridAdapter.setAllItems(Objects.requireNonNull(allItemsModel.getItems().getValue()));
             recyclerGridAdapter.notifyDataSetChanged();
-
-        });
+        };
+        mainModel.getAll_items().observe(requireActivity(),listObserver );
 
         scroll.setOnClickListener(v -> {
 
@@ -178,7 +183,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         });
 
-        mainModel.getCurrent_page().observe(requireActivity(), aLong -> page = aLong);
+        longObserver = aLong -> page = aLong;
+        mainModel.getCurrent_page().observe(requireActivity(),longObserver);
 
         onScrollListener = new RecyclerView.OnScrollListener() {
             @Override
@@ -193,10 +199,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                     scroll.setRotation(0);
                     // ask if want more items
                 }
-              /*  else if(!recyclerView.canScrollVertically(1)){
-                    page++;
-                    mainModel.setCurrent_page(page);
-                }*/
             }
         };
 
@@ -218,25 +220,34 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         };
         appBarLayout.addOnOffsetChangedListener(listener);
 
-        mainModel.getTotalItems().observe(requireActivity(), integer -> {
+        integerObserver = integer -> {
             if (integer == 100)
                 recyclerGridAdapter.notifyDataSetChanged();
-        });
+        };
+        mainModel.getTotalItems().observe(requireActivity(),integerObserver );
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
 
-        allItemsModel.getItems().removeObservers(getViewLifecycleOwner());
+        mainModel.getCurrent_page().removeObserver(longObserver);
+        allItemsModel.getItems().removeObserver(listObserver);
+        mainModel.getTotalItems().removeObserver(integerObserver);
         appBarLayout.removeOnOffsetChangedListener(listener);
+        mLayoutManager = null;
         appBarLayout = null;
         price = null;
         sale = null;
         match = null;
         brand = null;
         company = null;
+        scroll = null;
+        toolbar = null;
+        header = null;
         mRecyclerView.removeOnScrollListener(onScrollListener);
+        mRecyclerView.removeAllViewsInLayout();
+        mRecyclerView = null;
     }
 
     private void closeKeyboard(){

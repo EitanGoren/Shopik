@@ -9,13 +9,9 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_above="@id/shopik"
-        android:layout_alignEnd="@id/shopik"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="-45dp"
-        android:transitionName="tooki"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_centerInParent="true"
         android:padding="5dp"
         android:contentDescription="@string/logo"
         android:src="@drawable/tooki" />
@@ -24,17 +20,19 @@
         android:id="@+id/shopik"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
         android:fontFamily="cursive"
         android:text="@string/app_name"
         android:textColor="@color/SplashScreenBackground"
-        android:textSize="65sp"
+        android:textSize="35sp"
         android:textStyle="bold"/>
 
     <com.agrawalsuneet.dotsloader.loaders.TashieLoader
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/shopik"
+        android:layout_below="@id/imageView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"
         app:tashieloader_animDelay="80"
@@ -45,7 +43,7 @@
         app:tashieloader_interpolator="@android:anim/accelerate_interpolator"
         app:tashieloader_noOfDots="6" />
 
-    <TextView
+   <!-- <TextView
         android:id="@+id/copyright_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,6 +53,6 @@
         android:text="@string/copy_right"
         android:textAlignment="center"
         android:textColor="@color/SplashScreenBackground"
-        android:textSize="13sp"/>
+        android:textSize="13sp"/>-->
 
 </RelativeLayout>

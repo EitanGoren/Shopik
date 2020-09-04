@@ -1,127 +1,65 @@
 package com.eitan.shopik.Customer;
 
-import android.graphics.Color;
-import android.media.MediaPlayer;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.MediaController;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.VideoView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-import androidx.navigation.ActivityNavigator;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.eitan.shopik.Items.RecyclerItem;
-import com.eitan.shopik.Items.ShoppingItem;
+import com.eitan.shopik.Adapters.FullscreenAdapter;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FullscreenImageActivity extends AppCompatActivity {
 
     private Button mClose;
-    private ViewPager2 viewPager;
-    private ImageView mDot1,mDot2,mDot3,mDot4,mDot5;
-    private View decorView;
-    private boolean isClicked = false;
-    private VideoView mVideoView;
-    private MediaController videoMediaController;
-    private ImageView photoView;
-    private RelativeLayout videoLayout,anchor;
-    private TextView no_video;
-    private TextView textView;
-    private LinearLayout dots;
-    private CardView button;
-    private RelativeLayout buttons_layout;
-    private String path;
-    private String category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(Color.TRANSPARENT);
-        overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
+        // inside your activity (if you did not enable transitions in your theme)
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_fullscreen_image);
-
-        setDecorView();
-
-        decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
-            if(visibility == 0) decorView.setSystemUiVisibility(hideSystemBars());
-        });
 
         init();
 
-        mClose.setOnClickListener(v -> {
-            this.supportFinishAfterTransition();
-            finishAfterTransition();
-        });
+        mClose.setOnClickListener(v -> this.supportFinishAfterTransition());
     }
 
     private void init() {
 
-        boolean isFavorite = false;
-        Bundle bundle = getIntent().getBundleExtra("bundle");
         ImageView mFavorite = findViewById(R.id.favorite_sign);
         CircleImageView company = findViewById(R.id.comp_logo);
         TextView name = findViewById(R.id.comp_name);
 
-        assert bundle != null;
-        Object item = bundle.getSerializable("item");
-        if(item instanceof ShoppingItem) {
-            isFavorite = ((ShoppingItem) item).isFavorite();
-            Macros.Functions.GlidePicture(this,((ShoppingItem) item).getSellerLogoUrl(), company);
-            name.setText(((ShoppingItem) item).getBrand());
-            category = ((ShoppingItem) item).getType();
-        }
-        else if(item instanceof RecyclerItem){
-            Macros.Functions.GlidePicture(this,((RecyclerItem) item).getSellerLogoUrl(), company);
-            name.setText(((RecyclerItem) item).getBrand());
-            category = ((RecyclerItem) item).getType();
-        }
+        String brand = getIntent().getStringExtra("brand");
+        name.setText(brand);
+        String seller_logo = getIntent().getStringExtra("seller_logo");
+        Macros.Functions.GlidePicture(this, seller_logo, company);
+        String category = getIntent().getStringExtra("type");
+        boolean isFavorite = getIntent().getBooleanExtra("isFav", false);
+        String description = getIntent().getStringExtra("description");
+        String id = getIntent().getStringExtra("id");
 
-        mDot1 = findViewById(R.id.fullscreen_dot_1);
-        mDot2 = findViewById(R.id.fullscreen_dot_2);
-        mDot3 = findViewById(R.id.fullscreen_dot_3);
-        mDot4 = findViewById(R.id.fullscreen_dot_4);
-        mDot5 = findViewById(R.id.fullscreen_dot_5);
-
-        mDot1.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_lens_black_24dp));
-        mDot2.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_baseline_panorama_fish_eye));
-        mDot3.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_baseline_panorama_fish_eye));
-        mDot4.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_baseline_panorama_fish_eye));
-        mDot5.setBackground(ContextCompat.getDrawable(this,R.drawable.ic_baseline_panorama_fish_eye));
+        ArrayList<String> imagesUrl = new ArrayList<>();
+        imagesUrl.add(getIntent().getStringExtra("img1"));
+        imagesUrl.add(getIntent().getStringExtra("img2"));
+        imagesUrl.add(getIntent().getStringExtra("img3"));
+        imagesUrl.add(getIntent().getStringExtra("img4"));
 
         if(isFavorite) {
             mFavorite.setVisibility(View.VISIBLE);
@@ -132,73 +70,12 @@ public class FullscreenImageActivity extends AppCompatActivity {
             mFavorite.setVisibility(View.INVISIBLE);
 
         mClose = findViewById(R.id.fullscreen_close_x);
-        viewPager = findViewById(R.id.fullscreen_image_viewPager);
-        fullscreenPicsAdapter picsAdapter = new fullscreenPicsAdapter(item);
-        viewPager.setAdapter(picsAdapter);
+        ViewPager2 viewPager = findViewById(R.id.fullscreen_image_viewPager);
+        viewPager.setAdapter(new FullscreenAdapter(imagesUrl,description,id,category));
     }
 
-    private void setDecorView() {
-        decorView = getWindow().getDecorView();
-        View decorView = getWindow().getDecorView();
-        // Hide the status bar.
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            decorView.setSystemUiVisibility(hideSystemBars());
-        }
-    }
-
-    private int hideSystemBars(){
-        return View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY ;
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        ActivityNavigator.applyPopAnimationsToPendingTransition(this);
-    }
-
+    /*
     private class fullscreenPicsAdapter extends RecyclerView.Adapter<fullscreenPicsAdapter.PicsViewHolder> {
-
-        private ArrayList<String> imagesUrl;
-        private String text = "";
-        private String item_id;
-
-        public fullscreenPicsAdapter(Object o){
-            if(o instanceof ShoppingItem){
-
-                imagesUrl = ((ShoppingItem) o).getImages();
-                StringBuilder description = new StringBuilder();
-                if(((ShoppingItem) o).getName() != null) {
-                    for (String word : ((ShoppingItem) o).getName()) {
-                        description.append(word.toLowerCase().concat(" "));
-                    }
-                    text = description.toString();
-                }
-                item_id = ((ShoppingItem) o).getId();
-            }
-            else {
-                imagesUrl = ((RecyclerItem) o).getImages();
-                if(((RecyclerItem) o).getDescription() != null) {
-                    StringBuilder description = new StringBuilder();
-                    for (String word : ((RecyclerItem) o).getDescription()) {
-                        description.append(word.toLowerCase().concat(" "));
-                    }
-                    text = description.toString();
-                }
-                item_id = ((RecyclerItem) o).getId();
-            }
-        }
 
         @NonNull
         @Override
@@ -263,7 +140,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
             }
 
             private void setData(int position){
-                textView.setText(text);
+                textView.setText(description);
                 String no_video_text = "No video for this item";
                 no_video.setText(no_video_text);
 
@@ -284,7 +161,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
                     @Override
                     public void onPageSelected(int pos) {
                         changeTabs(pos);
-                        if(pos == imagesUrl.size()) {
+                        if(category.equals("ASOS") && (pos == imagesUrl.size())) {
                             dots.setVisibility(View.VISIBLE);
                             button.setVisibility(View.VISIBLE);
                             buttons_layout.setVisibility(View.VISIBLE);
@@ -295,8 +172,8 @@ public class FullscreenImageActivity extends AppCompatActivity {
                                 mVideoView.setMediaController(videoMediaController);
                                 no_video.setVisibility(View.INVISIBLE);
                             }
-                            else if(category.equals("ASOS")){
-                               getVideoLink getVideoLink = new getVideoLink(item_id);
+                            else {
+                               getVideoLink getVideoLink = new getVideoLink(id);
                                getVideoLink.execute();
                             }
 
@@ -408,5 +285,11 @@ public class FullscreenImageActivity extends AppCompatActivity {
                 }
             }
         }
+    }*/
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.supportFinishAfterTransition();
     }
 }

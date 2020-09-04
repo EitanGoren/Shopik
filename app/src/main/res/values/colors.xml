@@ -35,6 +35,7 @@
     <color name="SnackbarBackground">#FFFAD7</color>
     <color name="FavoritesInfoLine">#D8D8D8</color>
     <color name="collapsingBG">#6249F1</color>
+    <color name="GroupCategoryBG">#C1E6FF</color>
 
 
 </resources>

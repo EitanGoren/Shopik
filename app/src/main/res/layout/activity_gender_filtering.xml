@@ -43,7 +43,6 @@
                 android:layout_height="50dp"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="12dp"
-                android:transitionName="tooki"
                 android:contentDescription="@string/logo"
                 android:src="@drawable/tooki" />
 
@@ -101,9 +100,9 @@
         android:id="@+id/brands_roller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#00FFFFFF"
-        android:elevation="15dp"
-        android:translationZ="15dp"
+        android:background="#FFFFFF"
+        android:elevation="5dp"
+        android:translationZ="5dp"
         android:layout_below="@id/gender_top_nav">
 
         <TextView
@@ -115,8 +114,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:elevation="15dp"
-            android:translationZ="15dp"
             android:textColor="#000000"
             android:textStyle="bold"
             android:textSize="16sp"

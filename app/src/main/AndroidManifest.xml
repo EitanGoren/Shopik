@@ -10,7 +10,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
-    <application android:name="com.eitan.shopik.ShopikApplicationActivity"
+    <application
+        android:name="com.eitan.shopik.ShopikApplicationActivity"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_shopik_round"
         android:label="@string/app_name"
@@ -38,11 +39,10 @@
             android:name=".Customer.GenderFilteringActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleTop" />
-        <activity android:name=".Adapters.MultipleItemsList" />
         <activity android:name=".MainRegistrationActivity" />
         <activity
             android:name=".Customer.FullscreenImageActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.Fullscreen" />
         <activity
             android:name=".Company.CompanyMainActivity"
             android:theme="@style/AppTheme" />
@@ -55,7 +55,7 @@
         <activity
             android:name=".Customer.CustomerMainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"/>
         <activity
             android:name="com.facebook.ads.AudienceNetworkActivity"
             android:hardwareAccelerated="true" />
@@ -98,6 +98,7 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
+
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">

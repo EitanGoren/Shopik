@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eitan.shopik.Adapters.RecyclerGridAdapter;
+import com.eitan.shopik.CustomItemAnimator;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -95,6 +96,7 @@ public class FavoritesFragment extends Fragment {
                 return true;
             }
         };
+        mRecyclerView.setItemAnimator(new CustomItemAnimator());
         mainModel.getFavorite().observe(requireActivity(), shoppingItems -> {
 
             fav_list.clear();
@@ -104,14 +106,14 @@ public class FavoritesFragment extends Fragment {
             for (ShoppingItem shoppingItem : shoppingItems) {
 
                 fav_list.add(shoppingItem);
-                recyclerGridAdapter.notifyDataSetChanged();
+                recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount()-1);
 
                 if(( fav_list.size() % Macros.FAV_TO_AD == 0 ) && fav_list.size() > 0 ) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
                     if(shoppingItemAd != null) {
                         count_ads++;
                         fav_list.add(shoppingItemAd);
-                        recyclerGridAdapter.notifyDataSetChanged();
+                        recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount()-1);
                     }
                 }
             }
@@ -123,12 +125,10 @@ public class FavoritesFragment extends Fragment {
                 text = cat.toUpperCase() + " | " + sub_cat.toUpperCase() + " | " + (fav_list.size() - count_ads) + " ITEMS";
             }
             else
-                text = "NO ITEMS FOUND";
+                text = "NO FAVORITES YET";
 
             header.setText(text);
             recyclerGridAdapter.setAllItems(fav_list);
-            recyclerGridAdapter.notifyDataSetChanged();
-
         });
 
         scroll.setOnClickListener(v -> {

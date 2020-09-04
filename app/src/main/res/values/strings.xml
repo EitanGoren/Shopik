@@ -16,6 +16,9 @@
     <string name="start_level">Level 1</string>
     <string name="next_level">Next Level</string>
     <string name="level_text">Level %1$d</string>
+
+    <string name="transition_photo">transition_photo</string>
+    <string name="transition_author">transition_text</string>
     <!-- -
     This is an ad unit ID for an interstitial test ad. Replace with your own interstitial ad unit id.
     For more information, see https://support.google.com/admob/answer/3052638
@@ -41,7 +44,7 @@
     <string name="image_slider">image_slider</string>
     <string name="shop">SHOP</string>
     <string name="new_ic">new_ic</string>
-    <string name="home">home</string>
+    <string name="home">Home</string>
     <string name="categories">categories</string>
     <string name="new_in">new in</string>
     <string name="favorite">favorite</string>
@@ -62,4 +65,5 @@
     <string name="signin_with_email">Signin with Email</string>
     <string name="close">close</string>
     <string name="dot1">dot1</string>
+    <string name="like">like</string>
 </resources>

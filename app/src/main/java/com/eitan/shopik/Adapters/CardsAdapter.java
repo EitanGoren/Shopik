@@ -1,8 +1,6 @@
 package com.eitan.shopik.Adapters;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,6 +31,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.Customer.FullscreenImageActivity;
@@ -183,10 +181,6 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.swipe_item, parent,false);
 
             ImageView favorite = convertView.findViewById(R.id.swipe_favorite_button);
-            YoYo.with(Techniques.Pulse)
-                    .duration(950)
-                    .repeat(YoYo.INFINITE)
-                    .playOn(favorite);
 
             ImageView imageView = convertView.findViewById(R.id.swipe_image);
             ImageButton fullscreen = convertView.findViewById(R.id.fullscreen_button);
@@ -217,7 +211,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                     case R.id.card_favorites:
                         if(!isFavorite[0]) {
                             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.like_swing);
-                            final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike1);
+                            final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.like);
                             favorite.startAnimation(animation);
                             isFavorite[0] = !isFavorite[0];
                             animation.setAnimationListener(new Animation.AnimationListener() {
@@ -245,6 +239,11 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             toolbar.setSoundEffectsEnabled(true);
 
             TextView likes = convertView.findViewById(R.id.like);
+
+            StringBuilder description = new StringBuilder();
+            for(String word : shoppingItem.getName()){
+                description.append(word);
+            }
 
             YoYo.with(Techniques.Shake)
                     .duration(1000)
@@ -276,7 +275,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
             likes.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.zoomin);
-                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike1);
+                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.unlike);
 
                 likes.startAnimation(animation);
                 likes.setText(String.valueOf(shoppingItem.getLikes() + 1));
@@ -288,7 +287,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             });
             unlikes.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.zoomout);
-                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike1);
+                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.unlike);
 
                 unlikes.startAnimation(animation);
                 unlikes.setText(String.valueOf(shoppingItem.getUnlikes() + 1));
@@ -299,9 +298,12 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
             });
 
+            ArrayList<Pair<View,String>> pairs = new ArrayList<>();
+            pairs.add(Pair.create(seller_logo,"company_logo"));
+            pairs.add(Pair.create(brand_name,"company_name"));
+
             seller_logo.setOnClickListener(v -> Macros.Functions.
-                    sellerProfile(getContext(),shoppingItem.getSellerId(),
-                            Pair.create(seller_logo,"company_logo")));
+                    sellerProfile(getContext(), shoppingItem.getSellerId(), pairs));
 
             String cur_price;
             if(shoppingItem.getSeller().equals("ASOS")) {
@@ -316,7 +318,8 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             }
 
             if(shoppingItem.isOutlet() || shoppingItem.isOn_sale()) {
-                int discount = (int) (100 - Math.ceil(100*(Double.parseDouble(shoppingItem.getReduced_price())/Double.parseDouble(shoppingItem.getPrice()))));
+                int discount = (int) (100 - Math.ceil(100*(Double.parseDouble(shoppingItem.
+                        getReduced_price())/Double.parseDouble(shoppingItem.getPrice()))));
 
                 if(shoppingItem.isOn_sale())
                     sale.setText( "SALE" + System.lineSeparator() + "-" + discount + "%" );
@@ -357,13 +360,13 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             else
                 exclusive.setVisibility(View.INVISIBLE);
 
-            Macros.Functions.GlidePicture(getContext(),shoppingItem.getSellerLogoUrl(),seller_logo);
+            Glide.with(getContext()).load(shoppingItem.getSellerLogoUrl()).into(seller_logo);
 
             brand_name.setText(shoppingItem.getBrand());
 
             favorite.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.like_swing);
-                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike1);
+                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.ding);
                 favorite.startAnimation(animation);
                 isFavorite[0] = !isFavorite[0];
                 animation.setAnimationListener(new Animation.AnimationListener() {
@@ -383,16 +386,24 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             });
 
             fullscreen.setOnClickListener(v -> {
+
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("item", shoppingItem);
-                intent.putExtra("bundle", bundle);
-                ActivityOptions options = ActivityOptions.
-                        makeSceneTransitionAnimation((Activity) getContext(),
-                                Pair.create(brand_name,"company_name"),
-                                Pair.create(seller_logo,"company_logo"),
-                                Pair.create(favorite,"favorite"));
-                getContext().startActivity(intent, options.toBundle());
+                intent.putExtra("isFav", shoppingItem.isFavorite());
+                intent.putExtra("brand", shoppingItem.getBrand());
+                intent.putExtra("id", shoppingItem.getId());
+                intent.putExtra("img1", shoppingItem.getImages().get(0));
+                intent.putExtra("img2", shoppingItem.getImages().get(1));
+                intent.putExtra("img3", shoppingItem.getImages().get(2));
+                intent.putExtra("img4", shoppingItem.getImages().get(3));
+                intent.putExtra("seller_logo", shoppingItem.getSellerLogoUrl());
+                intent.putExtra("description", description.toString());
+                intent.putExtra("type", shoppingItem.getType());
+
+                ArrayList<Pair<View,String>> _pairs = new ArrayList<>();
+                _pairs.add(Pair.create(seller_logo,"company_logo"));
+                _pairs.add(Pair.create(brand_name,"company_name"));
+
+                Macros.Functions.fullscreen( getContext(), intent, _pairs);
             });
 
             String image = "";
@@ -402,8 +413,9 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                     break;
                 }
             }
-            Macros.Functions.GlidePicture(getContext(),image,imageView);
+            Macros.Functions.GlidePicture(getContext(), image, imageView);
         }
+
         return convertView;
     }
 
@@ -431,7 +443,6 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
         listView.setAdapter(likedListAdapter);
 
         Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.setTitle("POOK");
         dialog.getWindow().setElevation(25);
         dialog.getWindow().setAllowEnterTransitionOverlap(true);
         dialog.getWindow().setAllowReturnTransitionOverlap(true);
@@ -459,7 +470,8 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
         listView.setAdapter(unlikedListAdapter);
 
-        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Objects.requireNonNull(dialog.getWindow()).
+                setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
 

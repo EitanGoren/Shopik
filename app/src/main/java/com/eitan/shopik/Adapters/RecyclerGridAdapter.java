@@ -1,7 +1,5 @@
 package com.eitan.shopik.Adapters;
 
-import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
@@ -59,6 +57,8 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
@@ -465,19 +465,24 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             else
                 liked_text.setVisibility(View.GONE);
 
-            Macros.Functions.GlidePicture(getContext(), item.getSellerLogoUrl(), logo);
+            Glide.with(getContext()).load(item.getSellerLogoUrl()).into(logo);
             seller_name.setText(item.getSeller());
 
-            String cur_price;
-            if (item.getSeller().equals("ASOS")) {
-                cur_price = new DecimalFormat("##.##").
-                        format(Double.parseDouble(item.getPrice()) * Macros.POUND_TO_ILS) +
-                        Currency.getInstance("ILS").getSymbol();
+            String cur_price = " ";
+            try {
+                if (item.getSeller().equals("ASOS")) {
+                    cur_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(item.getPrice()) * Macros.POUND_TO_ILS) +
+                            Currency.getInstance("ILS").getSymbol();
+                }
+                else {
+                    cur_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(item.getPrice())) +
+                            Currency.getInstance("ILS").getSymbol();
+                }
             }
-            else {
-                cur_price = new DecimalFormat("##.##").
-                        format(Double.parseDouble(item.getPrice())) +
-                        Currency.getInstance("ILS").getSymbol();
+            catch (NumberFormatException ex){
+                System.out.println(item.getSeller() +" " +item.getName());
             }
 
             if (item.isOutlet() || item.isOn_sale()) {
@@ -549,14 +554,22 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             fullscreen.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("item", item);
-                intent.putExtra("bundle", bundle);
-                ActivityOptions options = ActivityOptions.
-                        makeSceneTransitionAnimation((Activity) getContext(),
-                                Pair.create(brand_name,"company_name"),
-                                Pair.create(logo,"company_logo"));
-                getContext().startActivity(intent, options.toBundle());
+                intent.putExtra("isFav", item.isFavorite());
+                intent.putExtra("brand", brand);
+                intent.putExtra("id", item.getId());
+                intent.putExtra("img1", item.getImages().get(0));
+                intent.putExtra("img2", item.getImages().get(1));
+                intent.putExtra("img3", item.getImages().get(2));
+                intent.putExtra("img4", item.getImages().get(3));
+                intent.putExtra("seller_logo", item.getSellerLogoUrl());
+                intent.putExtra("description", item_description.toString());
+                intent.putExtra("type", item.getType());
+
+                ArrayList<Pair<View,String>> pairs = new ArrayList<>();
+                pairs.add(Pair.create(logo,"company_logo"));
+                pairs.add(Pair.create(brand_name,"company_name"));
+
+                Macros.Functions.fullscreen(getContext(),intent,pairs);
             });
         }
 
@@ -584,37 +597,48 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             @Override
             public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
 
-                LayoutInflater layoutInflater = (LayoutInflater) container.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater layoutInflater = (LayoutInflater) container.getContext().
+                        getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
                 final int[] index = {0};
                 assert layoutInflater != null;
-                View view = layoutInflater.inflate(R.layout.grid_images_item,container,false);
+                View view = layoutInflater.inflate(R.layout.grid_images_item, container,false);
                 ImageView imageView = view.findViewById(R.id.image_item);
 
-                Macros.Functions.GlidePicture(container.getContext(), imagesUrl.get(index[0]), imageView);
+                Glide.with(getContext()).
+                        load(imagesUrl.get(index[0])).
+                        transition(withCrossFade(900)).
+                        into(imageView);
+
                 container.addView(view);
 
                 Button mNext = view.findViewById(R.id.next);
                 Button mPrev = view.findViewById(R.id.previous);
 
-                Animation fadein = AnimationUtils.loadAnimation(getContext(),R.anim.fadein);
-
                 mNext.setOnClickListener(v -> {
                     if(index[0] >=0 && index[0] < 3) {
                         index[0]++;
                         container.removeView(view);
-                        Macros.Functions.GlidePicture(container.getContext(), imagesUrl.get(index[0]), imageView);
+
+                        Glide.with(getContext()).
+                                load(imagesUrl.get(index[0])).
+                                transition(withCrossFade(900)).
+                                into(imageView);
+
                         container.addView(view);
-                        imageView.startAnimation(fadein);
                     }
                 });
                 mPrev.setOnClickListener(v -> {
                     if(index[0] > 0 && index[0] <= 3) {
                         index[0]--;
                         container.removeView(view);
-                        Macros.Functions.GlidePicture(container.getContext(), imagesUrl.get(index[0]), imageView);
+
+                        Glide.with(getContext()).
+                                load(imagesUrl.get(index[0])).
+                                transition(withCrossFade(900)).
+                                into(imageView);
+
                         container.addView(view);
-                        imageView.startAnimation(fadein);
                     }
                 });
 
@@ -707,10 +731,10 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 String item_id = item.getId();
                 String item_type = item.getType();
                 String item_gender = item.getGender();
-                updateCustomerDB(item_id,item_type,item_gender,item.getSub_category());
+                updateCustomerDB(item_id,item_type,item_gender,item.getSub_category(),item.getSeller());
                 updateItemsDB(item_id,item_type,item_gender);
 
-                // remove(item);
+                removeItem(item.getId());
                 Macros.Functions.showSnackbar(recyclerView,"Removed Successfully",
                         Objects.requireNonNull(getContext()),R.drawable.ic_thumb_down_pink);
             });
@@ -726,38 +750,52 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(), item.getSite_link()));
 
-            Macros.Functions.GlidePicture(getContext(), item.getSellerLogoUrl(), logo);
-
-            Animation fadein = AnimationUtils.loadAnimation(getContext(),R.anim.fadein);
+            Glide.with(getContext()).load(item.getSellerLogoUrl()).into(logo);
 
             mNext.setOnClickListener(v -> {
                 if(index[0] >=0 && index[0] < 3){
                     index[0]++;
                     changeTabs(index[0]);
-                    Macros.Functions.GlidePicture(getContext(), item.getImages().get(index[0]), imageView);
-                    imageView.startAnimation(fadein);
+                    Glide.with(getContext()).
+                            load(item.getImages().get(index[0])).
+                            transition(withCrossFade(900)).
+                            into(imageView);
                 }
             });
             mPrev.setOnClickListener(v -> {
                 if(index[0] > 0 && index[0] <= 3) {
                     index[0]--;
                     changeTabs(index[0]);
-                    Macros.Functions.GlidePicture(getContext(), item.getImages().get(index[0]), imageView);
-                    imageView.startAnimation(fadein);
+                    Glide.with(getContext()).
+                            load(item.getImages().get(index[0])).
+                            transition(withCrossFade(900)).
+                            into(imageView);
                 }
             });
 
+            StringBuilder desc = new StringBuilder();
+            for(String word : item.getName()){
+                desc.append(word).append(" ");
+            }
+
             fullscreen.setOnClickListener(v -> {
-                    Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("item", item);
-                    intent.putExtra("bundle", bundle);
-                    ActivityOptions options = ActivityOptions.
-                            makeSceneTransitionAnimation((Activity) getContext(),
-                                    Pair.create(brand_name,"company_name"),
-                                    Pair.create(logo,"company_logo"),
-                                    Pair.create(favorite,"favorite"));
-                    getContext().startActivity(intent, options.toBundle());
+                Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
+                intent.putExtra("isFav", item.isFavorite());
+                intent.putExtra("brand", item.getBrand());
+                intent.putExtra("id", item.getId());
+                intent.putExtra("img1", item.getImages().get(0));
+                intent.putExtra("img2", item.getImages().get(1));
+                intent.putExtra("img3", item.getImages().get(2));
+                intent.putExtra("img4", item.getImages().get(3));
+                intent.putExtra("seller_logo", item.getSellerLogoUrl());
+                intent.putExtra("description", desc.toString());
+                intent.putExtra("type", item.getType());
+
+                ArrayList<Pair<View,String>> pairs = new ArrayList<>();
+                pairs.add(Pair.create(logo,"company_logo"));
+                pairs.add(Pair.create(brand_name,"cmpany_name"));
+
+                Macros.Functions.fullscreen(getContext(), intent, pairs);
             });
 
             if (item.isFavorite()) {
@@ -779,17 +817,11 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         format(Double.parseDouble(item.getPrice())) +
                         Currency.getInstance("ILS").getSymbol();
 
-            if (item.isOutlet() || item.isOn_sale()) {
+            if (item.isOn_sale()) {
                 int discount = (int) (100 - Math.ceil(100 * (Double.parseDouble(item.getReduced_price()) / Double.parseDouble(item.getPrice()))));
 
-                if (item.isOn_sale()) {
-                    String text = "SALE" + " -" + discount + "%";
-                    sale.setText(text);
-                }
-                else if (item.isOutlet()) {
-                    String text = "OUTLET" + " -" + discount + "%";
-                    sale.setText(text);
-                }
+                String text = "SALE" + " -" + discount + "%";
+                sale.setText(text);
 
                 sale.setVisibility(View.VISIBLE);
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.blink_anim);
@@ -821,16 +853,15 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
 
             seller_name.setText(item.getSeller());
-            seller_name.setOnClickListener(v -> Macros.Functions.
-                    sellerProfile(getContext(),item.getSellerId(),Pair.create(logo,"company_logo")));
+
+            ArrayList<Pair<View,String>> pairs = new ArrayList<>();
+            pairs.add(Pair.create(logo,"company_logo"));
+            pairs.add(Pair.create(brand_name,"company_name"));
+
             logo.setOnClickListener(v -> Macros.Functions.
-                    sellerProfile(getContext(),item.getSellerId(),Pair.create(logo,"company_logo")));
+                    sellerProfile(getContext(), item.getSellerId(), pairs));
 
             brand_name.setText(item.getBrand());
-            StringBuilder desc = new StringBuilder();
-            for(String word : item.getName()){
-                desc.append(word).append(" ");
-            }
             description.setText(desc);
         }
 
@@ -886,20 +917,23 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     updateChildren(unliked);
         }
 
-        private void updateCustomerDB(String item_id,String item_type, String item_gender, String item_sub_category) {
-            Map<String,Object> map = new HashMap<>();
-            map.put(item_id, null);
+        private void updateCustomerDB(String item_id,String item_type, String item_gender, String item_sub_category,String seller) {
+
+          //  Map<String,Object> map = new HashMap<>();
+          //  map.put(item_id, null);
             // remove from liked
             FirebaseDatabase.getInstance().getReference().
                     child(Macros.CUSTOMERS).
                     child(user_id).
                     child(item_gender).
                     child(Macros.Items.LIKED).
+                    child(seller).
                     child(item_type).
                     child(item_sub_category).
-                    updateChildren(map);
+                    child(item_id).removeValue();
+                    //updateChildren(map);
 
-            map.clear();
+            Map<String,Object> map = new HashMap<>();
             map.put(item_id,Macros.Items.UNLIKED);
             // add to unliked
             FirebaseDatabase.getInstance().getReference().
@@ -907,6 +941,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     child(user_id).
                     child(item_gender).
                     child(Macros.Items.UNLIKED).
+                    child(seller).
                     child(item_type).
                     child(item_sub_category).
                     updateChildren(map);
@@ -956,6 +991,28 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.show();
+        }
+
+        private void removeItem(String item_id){
+            for(int i=0; i < AllItemsList.size(); ++i) {
+                if(AllItemsList.get(i).getId().equals(item_id)) {
+                    AllItemsList.remove(i);
+                    break;
+                }
+            }
+            for(int i=0; i < items.size(); ++i) {
+                if(items.get(i).getId().equals(item_id)) {
+                    items.remove(i);
+                    break;
+                }
+            }
+            for(int i=0; i < ItemsList.size(); ++i) {
+                if(ItemsList.get(i).getId().equals(item_id)) {
+                    ItemsList.remove(i);
+                    notifyItemRemoved(i);
+                    return;
+                }
+            }
         }
     }
 }

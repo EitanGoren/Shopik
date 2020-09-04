@@ -1,10 +1,10 @@
 package com.eitan.shopik.Adapters;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +26,7 @@ import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
-import com.facebook.ads.InterstitialAdExtendedListener;
+import com.facebook.ads.InterstitialAdListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -83,8 +82,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     class RecyclerViewHolder extends RecyclerView.ViewHolder{
 
         private ImageView imageView;
-        private TextView sub_cat, brand, price;
-        private Button link, full_screen;
+        private TextView sub_cat, brand;
+        private Button full_screen;
 
         public RecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -95,13 +94,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
             else if(type.equals("Item") || type.equals("New-Item")) {
                 imageView = itemView.findViewById(R.id.image_slider);
                 brand = itemView.findViewById(R.id.slider_brand);
-                link = itemView.findViewById(R.id.store_link);
                 full_screen = itemView.findViewById(R.id.fullscreen_button);
-                price = itemView.findViewById(R.id.price_tag);
             }
             else {
                 brand = itemView.findViewById(R.id.slider_brand);
-                link = itemView.findViewById(R.id.store_link);
                 full_screen = itemView.findViewById(R.id.fullscreen_button);
             }
         }
@@ -110,37 +106,27 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
             switch (type) {
                 case "Item":
-                    brand.setText(item.getText());
-                    brand.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.
-                            getDrawable(getContext(),R.drawable.ic_thumb_up_blue),null,null,null);
-                    brand.setCompoundDrawablePadding(20);
-                    link.setOnClickListener(v -> Macros.Functions.buy(getContext(),item.getLink()));
-                    Macros.Functions.GlidePicture(getContext(),item.getImages().get(0), imageView);
-                    full_screen.setOnClickListener(v -> {
-                        Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("item", item);
-                        intent.putExtra("bundle", bundle);
-                        ActivityOptions options = ActivityOptions.
-                                makeSceneTransitionAnimation((Activity) getContext(),
-                                        Pair.create(brand,"company_name"));
-                        getContext().startActivity(intent, options.toBundle());
-                    });
-                    break;
                 case "New-Item":
                     brand.setText(item.getText());
-                    price.setText(item.getPrice());
-                    link.setOnClickListener(v -> Macros.Functions.buy(getContext(),item.getLink()));
-                    Macros.Functions.GlidePicture(getContext(),item.getImages().get(0), imageView);
+                    Macros.Functions.GlidePicture(getContext(),item.getImages().get(0),imageView);
                     full_screen.setOnClickListener(v -> {
+
                         Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("item", item);
-                        intent.putExtra("bundle", bundle);
-                        ActivityOptions options = ActivityOptions.
-                                makeSceneTransitionAnimation((Activity) getContext(),
-                                        Pair.create(brand,"company_name"));
-                        getContext().startActivity(intent, options.toBundle());
+                        intent.putExtra("isFav",false);
+                        intent.putExtra("brand", item.getBrand());
+                        intent.putExtra("id", item.getId());
+                        intent.putExtra("img1", item.getImages().get(0));
+                        intent.putExtra("img2", item.getImages().get(1));
+                        intent.putExtra("img3", item.getImages().get(2));
+                        intent.putExtra("img4", item.getImages().get(3));
+                        intent.putExtra("seller_logo", item.getSellerLogoUrl());
+                        intent.putExtra("description", item.toString());
+                        intent.putExtra("type", item.getType());
+
+                        ArrayList<Pair<View,String>> pairs = new ArrayList<>();
+                        pairs.add(Pair.create(brand,"company_name"));
+
+                        Macros.Functions.fullscreen(getContext(),intent,pairs);
                     });
                     break;
                 case "Brand":
@@ -154,9 +140,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                     sub_cat.setText(item.getText());
                     imageView.setOnClickListener(v -> {
 
-                        if(model.getInterstitialAd().isAdLoaded())
-                            model.getInterstitialAd().show();
-
                         Intent intent = new Intent(getContext(), CustomerMainActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putString("gender", item.getGender());
@@ -166,13 +149,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                         intent.putExtra("bundle", bundle);
                         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                        model.getInterstitialAd().setAdListener(new InterstitialAdExtendedListener() {
-                            @Override
-                            public void onInterstitialActivityDestroyed() {
-                            }
+                        if(model.getInterstitialAd().isAdLoaded())
+                            model.getInterstitialAd().show();
+                        else{
+                            getContext().startActivity(intent);
+                            ((Activity) getContext()).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+                        }
 
+                        model.getInterstitialAd().setAdListener(new InterstitialAdListener() {
                             @Override
                             public void onInterstitialDisplayed(Ad ad) {
+
                             }
 
                             @Override
@@ -183,7 +170,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
                             @Override
                             public void onError(Ad ad, AdError adError) {
-
+                                Log.d(Macros.TAG,adError.getErrorMessage());
                             }
 
                             @Override
@@ -198,21 +185,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
                             @Override
                             public void onLoggingImpression(Ad ad) {
-
-                            }
-
-                            @Override
-                            public void onRewardedAdCompleted() {
-
-                            }
-
-                            @Override
-                            public void onRewardedAdServerSucceeded() {
-
-                            }
-
-                            @Override
-                            public void onRewardedAdServerFailed() {
 
                             }
                         });

@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -42,11 +43,15 @@ import com.google.firebase.database.ValueEventListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Currency;
 import java.util.EnumSet;
 import java.util.Map;
@@ -74,9 +79,12 @@ public class GenderFilteringActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
+        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
+        // inside your activity (if you did not enable transitions in your theme)
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_gender_filtering);
 
         if(!isConnectedToInternet()){
@@ -462,91 +470,92 @@ public class GenderFilteringActivity extends AppCompatActivity {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected Void doInBackground(Integer... integers) {
+            int i=0;
             try {
-
-                String outlet_data;
-
                 Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + integers[0] + "&page=" + integers[1]).get();
-                DataNode node = (DataNode) document.childNode(3).childNode(3).childNode(28).childNode(0);
+                Elements products = document.getElementsByAttributeValue("data-auto-id", "productTile");
 
-                outlet_data = node.getWholeData();
+                for (Element prod : products) {
+                    ++i;
+                    RecyclerItem recyclerItem = new RecyclerItem(null, null);
 
-                String[] data_split = outlet_data.split("\"products\":", 2);
-                String koko = data_split[1];
-                koko = koko.replaceAll("u002F", "").
-                        replaceAll("urban", ".urban").
-                        replaceAll("gg-", "").
-                        replaceAll("under", ".under").
-                        replaceAll("ufluff", ".ufluff").
-                        replaceAll("upper", ".upper").
-                        replaceAll("uncommon", ".uncommon").
-                        replaceAll("uoh",".uoh");
+                    // PRICE
+                    String price = "", red = "";
+                    Elements pook = prod.getElementsByAttributeValue("data-auto-id", "productTilePrice");
+                    if (pook.size() == 1) {
+                        try {
+                            price = pook.get(0).childNode(2).childNode(0).toString().replace("£", "");
+                        }
+                        catch (IndexOutOfBoundsException ex){
+                            price = pook.get(0).childNode(0).childNode(0).toString().replace("£", "");
+                        }
+                        recyclerItem.setPrice(price);
+                    }
+                    Elements pook2 = prod.getElementsByAttributeValue("data-auto-id", "productTileSaleAmount");
+                    if (pook2.size() > 0) {
+                        red = pook2.get(0).childNode(0).toString().replace("£", "");
+                        recyclerItem.setSale(true);
+                        recyclerItem.setReduced_price(red);
+                    }
 
-                outlet_data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
+                    //ID
+                    String id = prod.attr("id").split("-")[1];
 
-                JSONArray JA = new JSONArray(outlet_data);
-                int total_items =  JA.length();
-                for (int i = 0; i < total_items; ++i) {
+                    //LINK + DESCRIPTION
+                    Attributes attributes = prod.childNode(0).attributes();
+                    String link = attributes.get("href");
+                    String description = attributes.get("aria-label").split(",")[0];
 
-                    JSONObject JO = (JSONObject) JA.get(i);
-                    String imageUrl = "https://" + JO.get("image").toString().
-                            replace(".com", ".com/").
-                            replace("products", "products/");
-                    int opop = imageUrl.lastIndexOf("-");
+                    //IMAGES
+                    Document document2 = Jsoup.connect(link).get();
+                    Elements images_ele = document2.getElementsByClass("image-thumbnail");
+                    ArrayList<String> images = new ArrayList<>();
+                    for (Element img : images_ele) {
+                        String _img = img.childNode(1).childNode(1).attr("src").
+                                split("\\?")[0] + "?$XXL$&wid=513&fit=constrain";
+                        images.add(_img);
+                    }
 
-                    String color = imageUrl.substring(opop + 1);
-                    String id = JO.get("id").toString();
-                    String link = "https://www.asos.com/" + JO.get("url").toString().
-                            replace("prd", "/prd/").
-                            replace("asos-designasos", "asos-design/asos");
-                    String price = JO.get("price").toString();
-                    String branda = "ASOS";
-
-                    ArrayList<String> list = new ArrayList<>();
-                    String[] name = JO.get("description").toString().split(" ");
-                    for(String word : name){
-                        if (!word.equals(""))
-                            list.add(word.toLowerCase());
+                    //BRAND
+                    String brand = "";
+                    Elements brand_ele;
+                    try {
+                        brand_ele = document2.getElementsByClass("brand-description");
+                        Elements pop = brand_ele.get(0).getAllElements();
+                        brand = pop.get(4).childNode(0).toString().replace("&amp;", "&");
+                        recyclerItem.setBrand(brand);
+                    } catch (IndexOutOfBoundsException ex) {
+                        try {
+                            brand_ele = document2.getElementsByClass("product-description");
+                            brand = brand_ele.get(1).childNode(4).
+                                    childNode(0).childNode(1).toString().
+                                    replace(" by ", "");
+                            recyclerItem.setBrand(brand);
+                        } catch (IndexOutOfBoundsException e) {
+                            recyclerItem.setBrand("ASOS");
+                        }
                     }
 
                     Currency shekel = Currency.getInstance("ILS");
                     String currency_symbol = shekel.getSymbol();
                     Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
-                    price = new DecimalFormat("##.##").format(current) + currency_symbol;
-                    RecyclerItem recyclerItem = new RecyclerItem(branda, link);
-                    recyclerItem.setPrice(price);
+                    String _price = new DecimalFormat("##.##").format(current) + currency_symbol;
+
+                    recyclerItem.setSeller("ASOS");
+                    recyclerItem.setImages(images);
+                    recyclerItem.setPrice(_price);
+                    recyclerItem.setReduced_price(red);
                     recyclerItem.setLink(link);
-                    recyclerItem.setDescription(list);
                     recyclerItem.setId(id);
+                    recyclerItem.setDescription(new ArrayList<>(Arrays.asList(description.split(" "))));
                     recyclerItem.setType("OUTLET");
 
-                    if((boolean) JO.get("isOutlet") ){
-                        recyclerItem.setOutlet(true);
-                        recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                    }
-                    else
-                        recyclerItem.setOutlet(false);
-
-                    if((boolean) JO.get("isSale") ){
-                        recyclerItem.setSale(true);
-                        recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                    }
-                    else
-                        recyclerItem.setSale(false);
-
-                    Database connection = new Database();
-
-                    if (JO.get("url").toString().contains("prd"))
-                        recyclerItem.setImages(connection.getASOSRecyclerImage("product", color, id));
-                    else
-                        recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
-
                     outletsModel.addToOutlets(recyclerItem);
-                    publishProgress(i+1,total_items,integers[1]);
+                    publishProgress(i, products.size(), integers[1]);
                 }
             }
             catch (Exception e ) {
-                Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
+                Log.d(Macros.TAG,"outlets failed : iteration :" + i + ", " + Objects.requireNonNull(e.getMessage()));
             }
             return null;
         }
@@ -765,4 +774,5 @@ public class GenderFilteringActivity extends AppCompatActivity {
             return null;
         }
     }
+
 }

@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.eitan.shopik.Adapters.DialogGridAdapter;
 import com.eitan.shopik.Adapters.RecyclerAdapter;
+import com.eitan.shopik.CustomItemAnimator;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -86,7 +87,6 @@ public class E1Fragment extends Fragment {
         init();
 
         observer = s -> {
-
             if(!gender.equals(s)) {
                 gender = s;
                 recyclerAdapter.notifyDataSetChanged();
@@ -104,9 +104,11 @@ public class E1Fragment extends Fragment {
         layout2.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_SHOES));
         layout3.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_TRENDING));
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL,false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity(),
+                LinearLayoutManager.HORIZONTAL,false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setScrollbarFadingEnabled(true);
+        recyclerView.setItemAnimator(new CustomItemAnimator());
 
         entranceViewModel = new ViewModelProvider(requireActivity()).get(EntranceViewModel.class);
         recyclerAdapter = new RecyclerAdapter(entranceViewModel.getRecentLikedItems().getValue(),"Item");
@@ -116,10 +118,10 @@ public class E1Fragment extends Fragment {
             else {
                 layout.setVisibility(View.VISIBLE);
 
-                for (int i = 1; i < recyclerItems.size() + 1; ++i) {
-                    String text = "(" + i + " items)";
+                //for (int i = 1; i < recyclerItems.size() + 1; ++i) {
+                    String text = "(" + recyclerItems.size() + " items)";
                     liked_counter.setText(text);
-                }
+               // }
                 recyclerAdapter.notifyDataSetChanged();
                 recyclerView.setAdapter(recyclerAdapter);
             }
@@ -153,7 +155,7 @@ public class E1Fragment extends Fragment {
 
     private void showNewItemsDialog(String type) {
 
-        DialogGridAdapter gridAdapter = new DialogGridAdapter(dialog.getContext(), R.layout.e3_grid_item, new_items);
+        DialogGridAdapter gridAdapter = new DialogGridAdapter(requireActivity(), R.layout.e3_grid_item, new_items);
         GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
         gridAdapter.notifyDataSetChanged();
         gridContainer.setAdapter(gridAdapter);
