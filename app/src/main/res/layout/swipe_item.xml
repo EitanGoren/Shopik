@@ -121,7 +121,8 @@
                 android:layout_height="430dp"
                 android:layout_centerVertical="true"
                 android:transitionName="@string/image_item"
-                android:scaleType="centerCrop"/>
+                android:contentDescription="@string/image_item"
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/exclusive"
@@ -151,17 +152,18 @@
                 android:layout_alignEnd="@id/swipe_image"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
-                android:background="@drawable/ic_fullscreen_black" />
+                android:background="@drawable/ic_fullscreen_black"
+                android:contentDescription="@string/fullscreen_button" />
 
             <TextView
                 android:id="@+id/swipe_discount"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:fontFamily="@font/baloo"
-                android:padding="7dp"
+                android:padding="5dp"
                 android:layout_marginTop="5dp"
                 android:textColor="#FF0000"
-                android:textSize="26sp"
+                android:textSize="25sp"
                 android:layout_alignParentTop="true"
                 android:layout_toStartOf="@id/customer_toolbar"
                 android:translationZ="5dp"
@@ -221,6 +223,7 @@
             android:scaleType="centerCrop"
             android:elevation="5dp"
             android:translationZ="5dp"
+            android:contentDescription="@string/favorite"
             android:src="@drawable/ic_favorite_black_24dp" />
 
     </androidx.cardview.widget.CardView>

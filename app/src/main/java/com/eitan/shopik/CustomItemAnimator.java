@@ -19,4 +19,14 @@ public class CustomItemAnimator extends DefaultItemAnimator {
         holder.itemView.setAnimation(AnimationUtils.loadAnimation(holder.itemView.getContext(),R.anim.viewholder_add_item));
         return super.animateAdd(holder);
     }
+
+    @Override
+    public long getAddDuration() {
+        return 400;
+    }
+
+    @Override
+    public long getRemoveDuration() {
+        return 450;
+    }
 }

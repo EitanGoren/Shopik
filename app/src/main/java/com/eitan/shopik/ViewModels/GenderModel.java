@@ -6,12 +6,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.facebook.ads.InterstitialAd;
-
 public class GenderModel extends AndroidViewModel {
 
     private MutableLiveData<String> gender, type, imageUrl,name, sub_category;
-    private com.facebook.ads.InterstitialAd interstitialAd;
 
     public GenderModel(Application application){
         super(application);
@@ -60,18 +57,5 @@ public class GenderModel extends AndroidViewModel {
 
     public void setSub_category(String sub_category) {
         this.sub_category.setValue(sub_category);
-    }
-
-    public InterstitialAd getInterstitialAd() {
-        return interstitialAd;
-    }
-
-    public void setInterstitialAd(InterstitialAd interstitialAd) {
-        this.interstitialAd = interstitialAd;
-    }
-
-    public void destroyInterstitialAd(){
-        this.interstitialAd.destroy();
-        this.interstitialAd = null;
     }
 }

@@ -30,7 +30,6 @@ public class Macros {
     public static final String TAG = "com.eitan.shopik";
     public static final String COMPANIES = "Companies";
     public static final String DEFAULT_DESCRIPTION = "Write something here...";
-    public static final String YOUTUBE_VIDEO = "https://www.youtube.com/watch?v=";
     public static final String DEFAULT_COVER_PHOTO = "https://i.pinimg.com/originals/10/50/61/1050612a07b764970e4df8227caf8e1c.jpg";
     public static final String DEFAULT_PROFILE_IMAGE = "https://clipartart.com/images/account-profile-clipart-4.png";
     public static final String CUSTOMERS = "Customers";
@@ -44,16 +43,12 @@ public class Macros {
     public static final String PAGE_NUM = "page_num";
     public static final String NATIVE_ADVANCED_AD = "ca-app-pub-3940256099942544/2247696110";
     public static final String FB_PLACEMENT_ID = "555191575133910_605556963430704";
-    public static final String YOUTUBE_API = "https://www.googleapis.com/youtube/v3/videos?part=id%2C+snippet";
     public static final String VIDEO_LINK = "https://video.asos-media.com/products/ASOS/_media_";
     public static final String BAG = "Bag";
     public static final String SHOES = "Shoes";
-    public static final String FACE_MASKS = "face masks";
     public static final String JEANS = "Jeans";
     public static final String ACCESSORIES = "Accessories";
     public static final String LINGERIE = "Lingerie";
-    public static final String FACE_AND_BODY = "Face&Body";
-    public static final String ACTIVE_WEAR = "ActiveWear";
     public static final String DRESS = "Dress";
     public static final String SHIRT = "Shirt";
     public static final String SUNGLASSES = "Sunglasses";
@@ -77,10 +72,10 @@ public class Macros {
     public static final String INSTAGRAM_IC = "https://www.kartisyarok.co.il/wp-content/uploads/2018/09/instagram-logo-png-7.png";
 
     public static final double POUND_TO_ILS = 5.2483;
-    public static final int SWIPES_TO_AD = 20;
-    public static final int FAV_TO_AD = 20;
-    public static final int SEARCH_TO_AD = 20;
-    public static final int SUGGESTED_TO_AD = 20;
+    public static final int SWIPES_TO_AD = 16;
+    public static final int FAV_TO_AD = 16;
+    public static final int SEARCH_TO_AD = 16;
+    public static final int SUGGESTED_TO_AD = 16;
 
     public static class Providers {
         public static final String FACEBOOK = "facebook.com";
@@ -397,7 +392,6 @@ public class Macros {
         public static final String WOMEN_FACE_MASK = "https://cdn.shopify.com/s/files/1/0098/8990/6788/products/SAFE0046_3.jpg?v=1590787101";
         public static final String MEN_FACE_MASK = "https://www.headcovers.com/media/catalog/product/cache/ba642c93a0efc71830935b1d4e0de39d/m/e/medical-surgical-face-mask-for-men-solid-black.jpg";
 
-
         public static final String WOMEN_NECKLACE_RES = "https://ae01.alicdn.com/kf/HLB1TVEBaizxK1RkSnaVq6xn9VXaT/Choker-Necklace-Heart-New-Design-Punk-Gold-Necklace-Boho-Gothic-Fashion-Jewelry-For-Women-Wicca-Chain.jpg";
         public static final String WOMEN_RING_RES = "https://cdn.shopify.com/s/files/1/0259/0713/products/DOC-R8121-M_Designer_Platinum_Ring_with_Diamonds_with_Partly_Rose_Gold_Polish_JL_PT_566_Model_View_showing_how_the_ring_looks_when_worn_in_hand_of_a_woman_grande.jpg?v=1520407031";
         public static final String WOMEN_BRACELET_RES = "https://images.neimanmarcus.com/ca/1/product_assets/Y/5/0/X/U/NMY50XU_la.jpg";
@@ -507,7 +501,8 @@ public class Macros {
         public static void fullscreen(Context context, Intent intent, ArrayList<Pair<View, String>> pairs) {
 
             if (pairs != null && pairs.size() > 0) {
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) context, pairs.get(0), pairs.get(1));
+                ActivityOptions options = ActivityOptions.
+                        makeSceneTransitionAnimation((Activity) context, pairs.get(0));
                 context.startActivity(intent, options.toBundle());
             }
             else

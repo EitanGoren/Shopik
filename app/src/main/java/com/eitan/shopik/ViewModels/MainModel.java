@@ -13,11 +13,9 @@ import com.eitan.shopik.Items.PreferredItem;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -27,7 +25,6 @@ public class MainModel extends ViewModel {
     private MutableLiveData<Map<String, LikedUser>> customers_info;
     private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> all_items;
     private Set<String> swipedItems;
-    private ArrayList<ShoppingItem> shoppingAdsArray;
     private MutableLiveData<PreferredItem> preferred;
     private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> favorites;
     private MutableLiveData<Long> current_page;
@@ -41,7 +38,6 @@ public class MainModel extends ViewModel {
         totalItems = new MutableLiveData<>();
 
         this.preferred = new MutableLiveData<>();
-        shoppingAdsArray = new ArrayList<>();
         current_page = new MutableLiveData<>();
 
         Map<String,Map<String,Object>> companies_info_map = new HashMap<>();
@@ -120,29 +116,6 @@ public class MainModel extends ViewModel {
         return swipedItems.contains(id);
     }
 
-    //ADS
-    public void clearAds(){
-        for(ShoppingItem item : shoppingAdsArray) {
-            item.destroyAd();
-        }
-        shoppingAdsArray.clear();
-    }
-    public void addAd(ShoppingItem shoppingItem){
-        this.shoppingAdsArray.add(shoppingItem);
-    }
-    public int getAdsSize(){
-        return this.shoppingAdsArray.size();
-    }
-    public Object getNextAd() {
-        Random random = new Random();
-        if( shoppingAdsArray.size() > 0) {
-            int idx = (random.nextInt(shoppingAdsArray.size()));
-            return shoppingAdsArray.get(idx);
-        }
-        else
-            return null;
-    }
-
     //PREFERRED
     public LiveData<PreferredItem> getPreferred(){
         return preferred;
@@ -170,7 +143,6 @@ public class MainModel extends ViewModel {
     }
 
     //TOTAL ITEMS NUM
-
     public MutableLiveData<Integer> getTotalItems() {
         return totalItems;
     }

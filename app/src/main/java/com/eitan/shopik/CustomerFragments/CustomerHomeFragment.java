@@ -3,7 +3,6 @@ package com.eitan.shopik.CustomerFragments;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +26,7 @@ import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
+import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.eitan.shopik.ViewModels.SwipesModel;
@@ -57,11 +57,13 @@ public class CustomerHomeFragment extends Fragment {
     private Observer<CopyOnWriteArrayList<ShoppingItem>> items_observer;
     private Observer<Integer> total_items_observer;
     private String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+    private SwipeFlingAdapterView.onFlingListener onFlingListener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
         swipesModel = new ViewModelProvider(requireActivity()).get(SwipesModel.class);
         GenderModel genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
@@ -73,14 +75,13 @@ public class CustomerHomeFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_customer_home, container,false);
         flingContainer = view.findViewById(R.id.frame);
 
-        arrayAdapter = new CardsAdapter(requireActivity(),
-                R.layout.swipe_item, swipesModel.getItems().getValue());
+        arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item,
+                swipesModel.getItems().getValue());
 
-        SwipeFlingAdapterView.onFlingListener onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
+        onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
                 isSwiped = true;
@@ -127,7 +128,6 @@ public class CustomerHomeFragment extends Fragment {
 
             long size = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue();
 
-
             for( ShoppingItem shoppingItem : shoppingItems ) {
                 if(shoppingItem.getPage_num() == size && !shoppingItem.isSeen()) {
                     swipesModel.addToItems(shoppingItem);
@@ -135,7 +135,7 @@ public class CustomerHomeFragment extends Fragment {
                 }
                 if ((Objects.requireNonNull(swipesModel.getItems().getValue()).size() % Macros.SWIPES_TO_AD == 0)
                         && swipesModel.getItems().getValue().size() > 0) {
-                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                    ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
                     if (shoppingItemAd != null) {
                         ShoppingItem adItem = new ShoppingItem();
                         adItem.setNativeAd(shoppingItemAd.getNativeAd());
@@ -170,8 +170,8 @@ public class CustomerHomeFragment extends Fragment {
 
         isSwiped = false;
 
-        mainModel.getAll_items().observe(requireActivity(),items_observer );
-        mainModel.getTotalItems().observe(requireActivity(), total_items_observer );
+        mainModel.getAll_items().observe(requireActivity(), items_observer);
+        mainModel.getTotalItems().observe(requireActivity(), total_items_observer);
     }
 
     @Override
@@ -179,9 +179,11 @@ public class CustomerHomeFragment extends Fragment {
         super.onDestroyView();
         flingContainer = null;
         mainModel.getAll_items().removeObserver(items_observer);
+        mainModel.getTotalItems().removeObserver(total_items_observer);
+        onFlingListener = null;
         items_observer = null;
         total_items_observer = null;
-        mainModel.getTotalItems().removeObserver(total_items_observer);
+        arrayAdapter = null;
     }
 
     private void updateBadge() {
@@ -202,7 +204,6 @@ public class CustomerHomeFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void onItemLiked(Object dataObject) {
 
-        final MediaPlayer mp = MediaPlayer.create(requireContext(), R.raw.ding);
         final ShoppingItem shoppingItem = (ShoppingItem) dataObject;
         Database connection = new Database();
         if (!shoppingItem.isAd()) {
@@ -219,7 +220,6 @@ public class CustomerHomeFragment extends Fragment {
                 String action;
 
                 if (isFavorite) {
-                    mp.start();
                     dialog = new Dialog(requireContext());
                     showFavoritesDialog(imageUrl);
                     action = Macros.CustomerMacros.FAVOURITE;

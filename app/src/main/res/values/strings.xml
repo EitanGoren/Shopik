@@ -66,4 +66,14 @@
     <string name="close">close</string>
     <string name="dot1">dot1</string>
     <string name="like">like</string>
+    <string name="about_us">Who we are</string>
+    <string name="nav_drawer_bg">bg</string>
+    <string name="go_to_store">Go to store</string>
+    <string name="seller_info">Seller info</string>
+    <string name="fullscreen_button">fullscreen_button</string>
+    <string name="facebook">facebook</string>
+    <string name="twitter">twitter</string>
+    <string name="youtube">youtube</string>
+    <string name="instagram">instagram</string>
+    <string name="site">site</string>
 </resources>

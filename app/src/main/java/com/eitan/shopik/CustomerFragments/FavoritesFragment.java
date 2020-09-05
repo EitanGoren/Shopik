@@ -29,6 +29,7 @@ import com.eitan.shopik.CustomItemAnimator;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
+import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -109,7 +110,7 @@ public class FavoritesFragment extends Fragment {
                 recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount()-1);
 
                 if(( fav_list.size() % Macros.FAV_TO_AD == 0 ) && fav_list.size() > 0 ) {
-                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                    ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
                     if(shoppingItemAd != null) {
                         count_ads++;
                         fav_list.add(shoppingItemAd);

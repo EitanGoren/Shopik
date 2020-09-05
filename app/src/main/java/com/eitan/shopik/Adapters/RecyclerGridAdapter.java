@@ -40,6 +40,7 @@ import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
+import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.ads.formats.UnifiedNativeAdView;
@@ -337,7 +338,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ItemsList.add(item);
                 count++;
                 if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
-                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
+                    ItemsList.add((ShoppingItem) ShopikApplicationActivity.getNextAd());
                 }
                 notifyDataSetChanged();
             }
@@ -408,7 +409,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ItemsList.add(item);
                 count++;
                 if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
-                    ItemsList.add((ShoppingItem) mainModel.getNextAd());
+                    ItemsList.add((ShoppingItem) ShopikApplicationActivity.getNextAd());
                 }
                 notifyDataSetChanged();
             }

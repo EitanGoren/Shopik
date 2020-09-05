@@ -2,6 +2,7 @@ package com.eitan.shopik.explanation;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -169,7 +171,21 @@ public class E3Fragment extends Fragment {
                 price.setTextSize(16);
             }
 
-            //fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item, null));
+            fullscreen.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
+                intent.putExtra("isFav", false);
+                intent.putExtra("brand", item.getBrand());
+                intent.putExtra("id", item.getId());
+                intent.putExtra("img1", item.getImages().get(0));
+                intent.putExtra("img2", item.getImages().get(1));
+                intent.putExtra("img3", item.getImages().get(2));
+                intent.putExtra("img4", item.getImages().get(3));
+                intent.putExtra("seller_logo", item.getSellerLogoUrl());
+                intent.putExtra("description", item.toString());
+                intent.putExtra("type", item.getType());
+
+                Macros.Functions.fullscreen(getContext(), intent, null);
+            });
 
             return convertView;
         }

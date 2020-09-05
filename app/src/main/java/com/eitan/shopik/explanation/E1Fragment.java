@@ -117,11 +117,8 @@ public class E1Fragment extends Fragment {
                 layout.setVisibility(View.GONE);
             else {
                 layout.setVisibility(View.VISIBLE);
-
-                //for (int i = 1; i < recyclerItems.size() + 1; ++i) {
-                    String text = "(" + recyclerItems.size() + " items)";
-                    liked_counter.setText(text);
-               // }
+                String text = "(" + recyclerItems.size() + " items)";
+                liked_counter.setText(text);
                 recyclerAdapter.notifyDataSetChanged();
                 recyclerView.setAdapter(recyclerAdapter);
             }

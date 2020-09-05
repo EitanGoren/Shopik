@@ -28,6 +28,7 @@ import com.eitan.shopik.Adapters.RecyclerGridAdapter;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
+import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.ViewModels.AllItemsModel;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
@@ -79,6 +80,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         item_sub_category = genderModel.getSub_category().getValue();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 
@@ -88,6 +90,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         mRecyclerView = view.findViewById(R.id.grid_recycler_view);
         mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recyclerGridAdapter = new RecyclerGridAdapter(allItemsModel.getItems().getValue(),null);
 
         scroll = view.findViewById(R.id.scroll_up_down);
         header = view.findViewById(R.id.text);
@@ -105,20 +108,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         brand.setOnClickListener(this);
         match.setOnClickListener(this);
         favorite.setOnClickListener(this);
-
-        return view;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        scrollUp = false;
-
-        recyclerGridAdapter = new RecyclerGridAdapter(allItemsModel.getItems().getValue(),null);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(recyclerGridAdapter);
 
         listObserver = shoppingItems -> {
 
@@ -139,7 +128,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                     recyclerGridAdapter.notifyDataSetChanged();
                 }
                 if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
-                    ShoppingItem shoppingItemAd = (ShoppingItem) mainModel.getNextAd();
+                    ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
                     if (shoppingItemAd != null) {
                         count_ads++;
                         ShoppingItem adItem = new ShoppingItem();
@@ -165,26 +154,27 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
             recyclerGridAdapter.setAllItems(Objects.requireNonNull(allItemsModel.getItems().getValue()));
             recyclerGridAdapter.notifyDataSetChanged();
+
         };
-        mainModel.getAll_items().observe(requireActivity(),listObserver );
-
-        scroll.setOnClickListener(v -> {
-
-            //scroll down
-            if (!scrollUp)
-                mLayoutManager.smoothScrollToPosition(mRecyclerView, null,
-                        Objects.requireNonNull(allItemsModel.getItems().getValue()).size() - 1);
-
-                //scroll down
-            else
-                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
-
-            scrollUp = !scrollUp;
-
-        });
-
         longObserver = aLong -> page = aLong;
-        mainModel.getCurrent_page().observe(requireActivity(),longObserver);
+        listener = (appBarLayout, verticalOffset) -> {
+
+            RelativeLayout relativeLayout = requireView().findViewById(R.id.info_layout);
+            // Collapsed
+            if (verticalOffset <= -140) {
+                relativeLayout.setVisibility(View.INVISIBLE);
+                toolbar.setVisibility(View.VISIBLE);
+            }
+            // Expanded
+            else {
+                toolbar.setVisibility(View.INVISIBLE);
+                relativeLayout.setVisibility(View.VISIBLE);
+            }
+        };
+        integerObserver = integer -> {
+            if (integer == 100)
+                recyclerGridAdapter.notifyDataSetChanged();
+        };
 
         onScrollListener = new RecyclerView.OnScrollListener() {
             @Override
@@ -201,29 +191,37 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 }
             }
         };
+        scroll.setOnClickListener(v -> {
 
+            //scroll down
+            if (!scrollUp)
+                mLayoutManager.smoothScrollToPosition(mRecyclerView, null,
+                        Objects.requireNonNull(allItemsModel.getItems().getValue()).size() - 1);
+
+                //scroll down
+            else
+                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
+
+            scrollUp = !scrollUp;
+
+        });
+
+        return view;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        scrollUp = false;
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(recyclerGridAdapter);
+        mainModel.getAll_items().observe(requireActivity(),listObserver );
+        mainModel.getCurrent_page().observe(requireActivity(),longObserver);
         mRecyclerView.addOnScrollListener(onScrollListener);
-
-        listener = (appBarLayout, verticalOffset) -> {
-
-            RelativeLayout relativeLayout = requireView().findViewById(R.id.info_layout);
-            // Collapsed
-            if (verticalOffset <= -140) {
-                relativeLayout.setVisibility(View.INVISIBLE);
-                toolbar.setVisibility(View.VISIBLE);
-            }
-            // Expanded
-            else {
-                toolbar.setVisibility(View.INVISIBLE);
-                relativeLayout.setVisibility(View.VISIBLE);
-            }
-        };
         appBarLayout.addOnOffsetChangedListener(listener);
-
-        integerObserver = integer -> {
-            if (integer == 100)
-                recyclerGridAdapter.notifyDataSetChanged();
-        };
         mainModel.getTotalItems().observe(requireActivity(),integerObserver );
     }
 
@@ -246,8 +244,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         toolbar = null;
         header = null;
         mRecyclerView.removeOnScrollListener(onScrollListener);
-        mRecyclerView.removeAllViewsInLayout();
         mRecyclerView = null;
+        recyclerGridAdapter = null;
     }
 
     private void closeKeyboard(){

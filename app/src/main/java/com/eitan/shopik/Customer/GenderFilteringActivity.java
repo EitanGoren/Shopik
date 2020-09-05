@@ -32,7 +32,6 @@ import com.eitan.shopik.ViewModels.EntranceViewModel;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.OutletsModel;
 import com.eitan.shopik.explanation.ExplanationPagerViewAdapter;
-import com.facebook.ads.CacheFlag;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -53,7 +52,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
-import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
 
@@ -65,15 +63,15 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
     private Spinner gender_spinner;
     private TabLayout tabLayout;
-    private String name,imageUrl;
+    private static String name,imageUrl;
     private TextView marquee;
     private GenderModel model;
-    private String gender;
+    private static String gender;
     private androidx.appcompat.widget.Toolbar toolbar;
     private ViewPager mMainPager;
     private androidx.appcompat.widget.Toolbar.OnMenuItemClickListener topNavListener;
-    private OutletsModel outletsModel;
-    private EntranceViewModel entranceModel;
+    private static OutletsModel outletsModel;
+    private static EntranceViewModel entranceModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +80,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
-        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         // inside your activity (if you did not enable transitions in your theme)
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_gender_filtering);
@@ -147,16 +145,16 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 Objects.requireNonNull(entranceModel.getItems().getValue()).clear();
 
                 //LIKED ITEMM
-                new fetchLikedItems().execute();
+                new fetchLikedItems().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                 //Outlet Items
                 int num = gender.equals(Macros.CustomerMacros.WOMEN) ? WOMEN_OUTLET_NUM : MEN_OUTLET_NUM;
-                new fetchOutlet().execute(num,1);
+                new fetchOutlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num,1);
 
                 if (gender.equals(Macros.CustomerMacros.WOMEN))
-                    new fetchNewInWomen().execute(1);
+                    new fetchNewInWomen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1);
                 else
-                    new fetchNewInMen().execute(1);
+                    new fetchNewInMen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1);
             }
 
             @Override
@@ -366,21 +364,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        //new setInterstitial().execute();
-        if (model.getInterstitialAd() != null) {
-            model.destroyInterstitialAd();
-        }
-        // AdSettings.addTestDevice("34464d11-359b-4022-86a5-22489c17269d");
-        model.setInterstitialAd(new com.facebook.ads.InterstitialAd(getApplicationContext(), Macros.FB_PLACEMENT_ID));
-        // Load a new interstitial.
-        model.getInterstitialAd().loadAd(EnumSet.of(CacheFlag.VIDEO));
-    }
-
-    private class fetchLikedItems extends AsyncTask<Void,Void,Void> {
+    private static class fetchLikedItems extends AsyncTask<Void,Void,Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
@@ -459,7 +443,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
     }
 
-    private class fetchOutlet extends AsyncTask<Integer,Integer,Void> {
+    private static class fetchOutlet extends AsyncTask<Integer,Integer,Void> {
 
         @Override
         protected void onPreExecute() {
@@ -517,7 +501,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     }
 
                     //BRAND
-                    String brand = "";
+                    String brand;
                     Elements brand_ele;
                     try {
                         brand_ele = document2.getElementsByClass("brand-description");
@@ -567,7 +551,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
     }
 
-    private class fetchNewInMen extends AsyncTask<Integer,Integer,Void> {
+    private static class fetchNewInMen extends AsyncTask<Integer,Integer,Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
@@ -667,7 +651,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
     }
 
-    private class fetchNewInWomen extends AsyncTask<Integer,Integer,Void> {
+    private static class fetchNewInWomen extends AsyncTask<Integer,Integer,Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override

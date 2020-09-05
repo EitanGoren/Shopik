@@ -30,7 +30,7 @@
     <color name="SignInColor">#FFFFFF</color>
     <color name="CollapsedBackground">#FFFFFF</color>
     <color name="EditTextLine">#000000</color>
-    <color name="CompanyProfileScrim">#292929</color>
+    <color name="CompanyProfileScrim">#47A9FF</color>
     <color name="EditTexrHintColor">#EF3232</color>
     <color name="SnackbarBackground">#FFFAD7</color>
     <color name="FavoritesInfoLine">#D8D8D8</color>

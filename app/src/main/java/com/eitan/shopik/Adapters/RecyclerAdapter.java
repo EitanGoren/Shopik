@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eitan.shopik.Customer.CustomerMainActivity;
@@ -23,10 +20,6 @@ import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.eitan.shopik.ViewModels.GenderModel;
-import com.facebook.ads.Ad;
-import com.facebook.ads.AdError;
-import com.facebook.ads.InterstitialAdListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -125,6 +118,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
                         ArrayList<Pair<View,String>> pairs = new ArrayList<>();
                         pairs.add(Pair.create(brand,"company_name"));
+                        pairs.add(Pair.create(imageView,"image_item"));
 
                         Macros.Functions.fullscreen(getContext(),intent,pairs);
                     });
@@ -133,9 +127,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                     brand.setText(item.getText());
                     break;
                 case "SubCategory":
-
-                    GenderModel model = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(GenderModel.class);
-
                     Macros.Functions.GlidePicture(getContext(), item.getImage_resource(), imageView);
                     sub_cat.setText(item.getText());
                     imageView.setOnClickListener(v -> {
@@ -149,46 +140,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                         intent.putExtra("bundle", bundle);
                         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                        if(model.getInterstitialAd().isAdLoaded())
-                            model.getInterstitialAd().show();
-                        else{
-                            getContext().startActivity(intent);
-                            ((Activity) getContext()).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
-                        }
-
-                        model.getInterstitialAd().setAdListener(new InterstitialAdListener() {
-                            @Override
-                            public void onInterstitialDisplayed(Ad ad) {
-
-                            }
-
-                            @Override
-                            public void onInterstitialDismissed(Ad ad) {
-                                getContext().startActivity(intent);
-                                ((Activity) getContext()).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
-                            }
-
-                            @Override
-                            public void onError(Ad ad, AdError adError) {
-                                Log.d(Macros.TAG,adError.getErrorMessage());
-                            }
-
-                            @Override
-                            public void onAdLoaded(Ad ad) {
-
-                            }
-
-                            @Override
-                            public void onAdClicked(Ad ad) {
-
-                            }
-
-                            @Override
-                            public void onLoggingImpression(Ad ad) {
-
-                            }
-                        });
-
+                        getContext().startActivity(intent);
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
                     });
                     break;
             }

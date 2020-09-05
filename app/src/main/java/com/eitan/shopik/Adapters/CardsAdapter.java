@@ -194,41 +194,11 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             androidx.appcompat.widget.Toolbar toolbar = convertView.findViewById(R.id.customer_toolbar);
             androidx.appcompat.widget.Toolbar.OnMenuItemClickListener topNavListener = item -> {
                 switch (item.getItemId()) {
-                    case R.id.card_cart:
-                        // TODO Make cart page & icon in Main Page
-                        Toast.makeText(getContext(),"Cart", Toast.LENGTH_SHORT).show();
-                        break;
                     case R.id.card_shop:
                         Macros.Functions.buy(getContext(),shoppingItem.getSite_link());
                         break;
-                    case R.id.card_info:
-                        // TODO Make an item info page
-                        Toast.makeText(getContext(),"Info", Toast.LENGTH_SHORT).show();
-                       break;
                     case R.id.card_seller:
                         Macros.Functions.sellerProfile(getContext(), shoppingItem.getSellerId(),null);
-                        break;
-                    case R.id.card_favorites:
-                        if(!isFavorite[0]) {
-                            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.like_swing);
-                            final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.like);
-                            favorite.startAnimation(animation);
-                            isFavorite[0] = !isFavorite[0];
-                            animation.setAnimationListener(new Animation.AnimationListener() {
-                                @Override
-                                public void onAnimationStart(Animation animation) {
-                                    mp.start();
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animation animation) {
-                                    flingCardContainer.getTopCardListener().selectRight();
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animation animation) {}
-                            });
-                        }
                         break;
                 }
                 return true;
@@ -245,55 +215,46 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 description.append(word);
             }
 
-            YoYo.with(Techniques.Shake)
-                    .duration(1000)
-                    .repeat(1)
-                    .playOn(likes);
+            YoYo.with(Techniques.Shake).duration(1000).playOn(likes);
 
             TextView unlikes = convertView.findViewById(R.id.unlike);
             likes.setText(String.valueOf(shoppingItem.getLikes()));
             unlikes.setText(String.valueOf(shoppingItem.getUnlikes()));
 
             likes.setOnLongClickListener(v -> {
-                if (shoppingItem.getLikedUsers() != null) {
+                if (shoppingItem.getLikedUsers() != null)
                     showLikesListDialog(shoppingItem.getLikedUsers());
-                }
-                else {
+                else
                     Toast.makeText(getContext(), "No Likes yet :)", Toast.LENGTH_SHORT).show();
-                }
                 return true;
             });
             unlikes.setOnLongClickListener(v -> {
-                if (shoppingItem.getUnlikedUsers() != null) {
+                if (shoppingItem.getUnlikedUsers() != null)
                     showUnlikesListDialog(shoppingItem.getUnlikedUsers());
-                }
-                else {
+                else
                     Toast.makeText(getContext(), "No Unlikes yet :)", Toast.LENGTH_SHORT).show();
-                }
                 return true;
             });
 
             likes.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.zoomin);
-                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.unlike);
+                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike1);
 
                 likes.startAnimation(animation);
                 likes.setText(String.valueOf(shoppingItem.getLikes() + 1));
 
                 mp.start();
-
                 mp.setOnCompletionListener(mp1 -> flingCardContainer.getTopCardListener().selectRight());
 
             });
             unlikes.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.zoomout);
-                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.unlike);
+                final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.fblike2);
 
                 unlikes.startAnimation(animation);
                 unlikes.setText(String.valueOf(shoppingItem.getUnlikes() + 1));
 
                 mp.start();
-
                 mp.setOnCompletionListener(mp1 -> flingCardContainer.getTopCardListener().selectLeft());
 
             });
@@ -401,7 +362,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
                 ArrayList<Pair<View,String>> _pairs = new ArrayList<>();
                 _pairs.add(Pair.create(seller_logo,"company_logo"));
-                _pairs.add(Pair.create(brand_name,"company_name"));
+               // _pairs.add(Pair.create(brand_name,"company_name"));
 
                 Macros.Functions.fullscreen( getContext(), intent, _pairs);
             });

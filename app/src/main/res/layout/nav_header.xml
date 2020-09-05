@@ -10,7 +10,7 @@
         android:id="@+id/nav_bgImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="bg"
+        android:contentDescription="@string/nav_drawer_bg"
         android:scaleType="centerCrop" />
 
     <TextView
