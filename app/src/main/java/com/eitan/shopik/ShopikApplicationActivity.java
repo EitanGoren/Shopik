@@ -34,7 +34,7 @@ import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_L
 
 public class ShopikApplicationActivity extends Application {
 
-    private static final int NUM_OF_ADS = 25;
+    private static final int NUM_OF_ADS = 12;
     private static ShopikApplicationActivity instance;
     private static com.facebook.ads.InterstitialAd interstitialAd;
     private static ArrayList<ShoppingItem> shoppingAdsArray;
@@ -99,7 +99,6 @@ public class ShopikApplicationActivity extends Application {
         RequestConfiguration configuration = new RequestConfiguration.Builder().
                 setTestDeviceIds(testDeviceIds).build();
         MobileAds.setRequestConfiguration(configuration);
-        new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         //Facebook Ads
         AdSettings.setIntegrationErrorMode(INTEGRATION_ERROR_CRASH_DEBUG_MODE);
@@ -109,6 +108,10 @@ public class ShopikApplicationActivity extends Application {
         interstitialAd = new com.facebook.ads.InterstitialAd(getApplicationContext(), Macros.FB_PLACEMENT_ID);
         // Load a new interstitial.
         interstitialAd.loadAd(EnumSet.of(CacheFlag.VIDEO));
+    }
+
+    public static void LoadAds(){
+        new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -130,7 +133,6 @@ public class ShopikApplicationActivity extends Application {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected Void doInBackground(Void... voids) {
-
             for (int i = 0; i < NUM_OF_ADS; ++i ) {
                 VideoOptions videoOptions = new VideoOptions.Builder().
                         setStartMuted(false).
@@ -169,6 +171,12 @@ public class ShopikApplicationActivity extends Application {
                 adLoader.loadAd(new PublisherAdRequest.Builder().build());
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            tempAd = null;
         }
     }
 }

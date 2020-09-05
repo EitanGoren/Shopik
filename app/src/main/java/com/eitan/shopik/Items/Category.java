@@ -3,16 +3,14 @@ package com.eitan.shopik.Items;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Catagory implements Serializable {
+public class Category implements Serializable {
 
     private String name,gender;
-  //  private ArrayList<SubCategory> subCategories;
     private ArrayList<RecyclerItem> recyclerItems;
 
-    public Catagory(String name ,String gender,ArrayList<RecyclerItem> recyclerItems ){//ArrayList<SubCategory> subCategories){
+    public Category(String name ,String gender,ArrayList<RecyclerItem> recyclerItems ){
         this.name = name;
         this.gender = gender;
-     //   this.subCategories = subCategories;
         this.recyclerItems = recyclerItems;
 
     }
@@ -33,28 +31,6 @@ public class Catagory implements Serializable {
         this.gender = gender;
     }
 
-  /*  public ArrayList<SubCategory> getSubCategories() {
-        return subCategories;
-    }
-    public void setSubCategories(ArrayList<SubCategory> subCategories) {
-        this.subCategories = subCategories;
-    }
-    public SubCategory getSubCategory(int position){
-        if(subCategories != null){
-            if( position >= 0 && position <= getSubCategoriesSize())
-                return subCategories.get(position);
-        }
-        return null;
-    }
-    public void addSubCategory(SubCategory subCategory){
-        subCategories.add(subCategory);
-    }
-    public int getSubCategoriesSize(){
-        return subCategories != null ? subCategories.size() : 0;
-    }
-
-   */
-
     public ArrayList<RecyclerItem> getRecyclerItems() {
         return recyclerItems;
     }
@@ -63,7 +39,7 @@ public class Catagory implements Serializable {
     }
     public RecyclerItem getRecyclerItem(int position){
         if(recyclerItems != null){
-            if( position >= 0 && position <= getRexyclerItemsSize())
+            if( position >= 0 && position <= getRecyclerItemsSize())
                 return recyclerItems.get(position);
         }
         return null;
@@ -71,7 +47,7 @@ public class Catagory implements Serializable {
     public void addRecyclerItem (RecyclerItem recyclerItem){
         recyclerItems.add(recyclerItem);
     }
-    public int getRexyclerItemsSize(){
+    public int getRecyclerItemsSize(){
         return recyclerItems != null ? recyclerItems.size() : 0;
     }
 }

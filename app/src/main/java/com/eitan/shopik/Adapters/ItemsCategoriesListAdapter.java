@@ -12,7 +12,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.eitan.shopik.Items.Catagory;
+import com.bumptech.glide.Glide;
+import com.eitan.shopik.Items.Category;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -23,9 +24,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
 
-    private List<Catagory> items;
+    private List<Category> items;
 
-    public ItemsCategoriesListAdapter(List<Catagory> items) {
+    public ItemsCategoriesListAdapter(List<Category> items) {
         this.items = items;
     }
 
@@ -36,11 +37,11 @@ public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return getGroup(groupPosition).getRexyclerItemsSize() > 0 ? 1 : 0;
+        return getGroup(groupPosition).getRecyclerItemsSize() > 0 ? 1 : 0;
     }
 
     @Override
-    public Catagory getGroup(int groupPosition) {
+    public Category getGroup(int groupPosition) {
         return items.get(groupPosition);
     }
 
@@ -56,7 +57,7 @@ public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
+        return 0;
     }
 
     @Override
@@ -67,10 +68,7 @@ public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, final ViewGroup parent) {
 
-        final Catagory catagory = getGroup(groupPosition);
-       // if(isExpanded)
-       //     collapseAllexceptSelected((ExpandableListView) parent,groupPosition);
-
+        final Category category = getGroup(groupPosition);
         if(convertView == null){
             LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             assert layoutInflater != null;
@@ -83,7 +81,7 @@ public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
 
         int color;
         if(isExpanded)
-            color = catagory.getGender().equals(Macros.CustomerMacros.MEN) ?
+            color = category.getGender().equals(Macros.CustomerMacros.MEN) ?
                     parent.getContext().getColor(R.color.menColor) :
                     parent.getContext().getColor(R.color.womenColor);
         else
@@ -91,35 +89,40 @@ public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
 
         main_header.setTextColor(color);
         StringBuilder sub_header_text = new StringBuilder();
-        String name = catagory.getName().toUpperCase();
-        switch (name) {
-            case Macros.BAG:
+        String name = category.getName().toUpperCase();
+        switch (category.getName()) {
+            case "Bag":
                 name = "BAGS";
                 break;
-            case Macros.SHIRT:
+            case "Shirt":
                 name = "SHIRTS";
                 break;
-            case Macros.DRESS:
+            case "Dress":
                 name = "DRESSES";
                 break;
-            case Macros.WATCH:
+            case "Watch":
                 name = "WATCHES";
                 break;
         }
         main_header.setText(name);
 
-        for (int i = 0; i < catagory.getRexyclerItemsSize(); ++i) {
-            if(i > 2) break;
-            String sub_name = catagory.getRecyclerItem(i).getItem_sub_category();
-            String first_letter = String.valueOf(sub_name.charAt(0)).toUpperCase();
-            sub_header_text.append(first_letter).append(sub_name.substring(1)).append(" | ");
+        for (int i = 0; i < category.getRecyclerItemsSize(); ++i) {
+            if( i < 2 ) {
+                String sub_name = category.getRecyclerItem(i).getItem_sub_category();
+                String first_letter = String.valueOf(sub_name.charAt(0)).toUpperCase();
+                sub_header_text.append(first_letter).append(sub_name.substring(1));
+            }
+            else if( i==2 )
+                sub_header_text.append(" | ");
+            else
+                break;
         }
         sub_header_text.append("...");
 
         sub_header.setText(sub_header_text.toString());
 
-        String icon = setmButtonIcon(catagory.getGender(),catagory.getName());
-        Macros.Functions.GlidePicture(parent.getContext(),icon,mImage);
+        String icon = setmButtonIcon(category.getGender(),category.getName());
+        Glide.with(parent.getContext()).load(icon).into(mImage);
 
         return convertView;
     }
@@ -195,12 +198,6 @@ public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
     public void collapseAll(ExpandableListView listContainer){
         for( int i=0; i < getGroupCount(); ++i ){
             listContainer.collapseGroup(i);
-        }
-    }
-    public void collapseAllexceptSelected(ExpandableListView listContainer,int groupSelected ){
-        for( int i=0; i < getGroupCount() ; ++i ){
-            if( i != groupSelected)
-                listContainer.collapseGroup(i);
         }
     }
 }

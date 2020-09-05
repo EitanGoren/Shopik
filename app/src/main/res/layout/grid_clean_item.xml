@@ -41,6 +41,18 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/seller_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/nobile"
+                android:padding="2dp"
+                android:textAlignment="viewStart"
+                android:textColor="#2E2E2E"
+                android:textSize="12sp" />
+
+            <TextView
                 android:id="@+id/brand_name"
                 android:transitionName="company_name"
                 android:layout_width="match_parent"
@@ -186,15 +198,6 @@
                 android:transitionName="company_logo"
                 android:scaleType="centerCrop"
                 android:translationZ="1.8dp"/>
-
-            <TextView
-                android:id="@+id/seller_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:fontFamily="@font/nobile"
-                android:textColor="#2E2E2E"
-                android:textSize="12sp" />
 
         </LinearLayout>
 

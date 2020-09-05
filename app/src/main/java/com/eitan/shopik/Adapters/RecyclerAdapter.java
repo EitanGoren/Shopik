@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.eitan.shopik.Customer.CustomerMainActivity;
 import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.RecyclerItem;
@@ -23,6 +23,8 @@ import com.eitan.shopik.R;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder> implements Serializable {
 
@@ -101,7 +103,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 case "Item":
                 case "New-Item":
                     brand.setText(item.getText());
-                    Macros.Functions.GlidePicture(getContext(),item.getImages().get(0),imageView);
+                    Glide.with(getContext()).load(item.getImages().get(0)).transition(withCrossFade(900)).into(imageView);
                     full_screen.setOnClickListener(v -> {
 
                         Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
@@ -116,11 +118,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                         intent.putExtra("description", item.toString());
                         intent.putExtra("type", item.getType());
 
-                        ArrayList<Pair<View,String>> pairs = new ArrayList<>();
-                        pairs.add(Pair.create(brand,"company_name"));
-                        pairs.add(Pair.create(imageView,"image_item"));
+                       // ArrayList<Pair<View,String>> pairs = new ArrayList<>();
+                       // pairs.add(Pair.create(brand,"company_name"));
+                      //  pairs.add(Pair.create(imageView,"image_item"));
 
-                        Macros.Functions.fullscreen(getContext(),intent,pairs);
+                        Macros.Functions.fullscreen(getContext(),intent,null);
                     });
                     break;
                 case "Brand":

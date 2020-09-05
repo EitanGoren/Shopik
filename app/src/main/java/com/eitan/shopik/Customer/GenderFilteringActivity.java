@@ -461,7 +461,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
                 for (Element prod : products) {
                     ++i;
-                    RecyclerItem recyclerItem = new RecyclerItem(null, null);
+                    RecyclerItem recyclerItem = new RecyclerItem(null,null);
 
                     // PRICE
                     String price = "", red = "";
@@ -508,14 +508,16 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         Elements pop = brand_ele.get(0).getAllElements();
                         brand = pop.get(4).childNode(0).toString().replace("&amp;", "&");
                         recyclerItem.setBrand(brand);
-                    } catch (IndexOutOfBoundsException ex) {
+                    }
+                    catch (IndexOutOfBoundsException ex) {
                         try {
                             brand_ele = document2.getElementsByClass("product-description");
                             brand = brand_ele.get(1).childNode(4).
                                     childNode(0).childNode(1).toString().
                                     replace(" by ", "");
                             recyclerItem.setBrand(brand);
-                        } catch (IndexOutOfBoundsException e) {
+                        }
+                        catch (IndexOutOfBoundsException e) {
                             recyclerItem.setBrand("ASOS");
                         }
                     }

@@ -559,9 +559,9 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 intent.putExtra("brand", brand);
                 intent.putExtra("id", item.getId());
                 intent.putExtra("img1", item.getImages().get(0));
-                intent.putExtra("img2", item.getImages().get(1));
-                intent.putExtra("img3", item.getImages().get(2));
-                intent.putExtra("img4", item.getImages().get(3));
+                intent.putExtra("img2", item.getImages().get(1) != null ? item.getImages().get(1) : item.getImages().get(0));
+                intent.putExtra("img3", item.getImages().get(2) != null ? item.getImages().get(2) : item.getImages().get(0));
+                intent.putExtra("img4", item.getImages().get(3) != null ? item.getImages().get(3) : item.getImages().get(0));
                 intent.putExtra("seller_logo", item.getSellerLogoUrl());
                 intent.putExtra("description", item_description.toString());
                 intent.putExtra("type", item.getType());

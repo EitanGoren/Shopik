@@ -355,5 +355,4 @@ public class CustomerHomeFragment extends Fragment {
                 child(item_sub_category).
                 setValue(new_page);
     }
-
 }

@@ -79,11 +79,7 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 public class CustomerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DatabaseReference customerDB, pageListener;
-    private static String item_type;
-    private static String item_gender;
-    private static String item_sub_category;
     private ProgressIndicator progressIndicator;
-    private static MainModel mainModel;
     private FirebaseAuth mAuth;
     private String customerFirstName, imageUrl;
     private String userId;
@@ -96,7 +92,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private static MutableLiveData<Boolean> isFinished;
     private static int item_count = 0;
     private static int total_items_found = 0;
-    private static Map<String,String> favs;
+    private static Map<String,String> favorites;
+    private static MainModel mainModel;
+    private static String item_type;
+    private static String item_gender;
+    private static String item_sub_category;
     private ValueEventListener pageEventListener;
     private ValueEventListener fav_single_listener;
     private String cover;
@@ -119,7 +119,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             Pair<Integer,Boolean> pair = Pair.create(++item_count,shoppingItem.isSeen());
             mainModel.getCurrentItem().postValue(pair);
 
-            if (favs.containsKey(shoppingItem.getId())){
+            if (favorites.containsKey(shoppingItem.getId())){
                 mainModel.addFavorite(shoppingItem);
             }
         }
@@ -280,7 +280,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         hView = navigationView.getHeaderView(0);
 
         isFinished = new MutableLiveData<>();
-        favs = new HashMap<>();
+        favorites = new HashMap<>();
 
         Bundle bundle = getIntent().getBundleExtra("bundle");
 
@@ -604,7 +604,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 if(snapshot.exists()) {
                     Map<String,String> likes = (Map<String, String>) snapshot.getValue();
                     assert likes != null;
-                    favs.putAll(likes);
+                    favorites.putAll(likes);
                 }
             }
 
@@ -840,18 +840,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         }
     }
 
-    @Override
-    public void onActivityReenter(int resultCode, Intent data) {
-        super.onActivityReenter(resultCode, data);
-        Log.d(Macros.TAG,"onActivityReenter");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(Macros.TAG,"onResume main");
-    }
-
     private static class getTX extends AsyncTask <Long, Integer, Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
@@ -862,7 +850,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String tx_sub_cat = Macros.Functions.translateSubCategoryToTerminalX(item_gender,item_sub_category);
 
             int iteration = 0;
-            int total_items_num = 0;
+            int total_tx = 0;
             if(tx_cat != null && tx_sub_cat != null) {
 
                 try {
@@ -878,7 +866,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         Elements items_details = list_items.get(0).getElementsByClass("product details product-item-details");
 
                         publishProgress(items_photo.size());
-                        total_items_num = items_photo.size();
+                        total_tx = items_photo.size();
                         for (int i = 0; i < items_photo.size(); ++i) {
                             iteration++;
                             String link = items_photo.get(i).childNode(1).attr("href");
@@ -895,7 +883,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found -= 1;
+                                total_items_found ++;
                                 continue;
                             }
 
@@ -977,8 +965,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setSeen(mainModel.isSwiped(id));
                             shoppingItem.setPage_num(page);
 
-                            if (favs.containsKey(shoppingItem.getId())) {
-                                shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            if (favorites.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             getLikes(shoppingItem, items_photo.size());
                         }
@@ -986,7 +974,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 }
                 catch (Exception e) {
                     Log.d(Macros.TAG, "getTerminalX() " + e.getMessage());
-                    total_items_found += total_items_num - iteration;
+                    total_items_found += (total_tx - iteration);
                 }
             }
             else{
@@ -1057,7 +1045,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found -= 1;
+                                total_items_found++;
                                 continue;
                             }
                             Elements images_ele = document2.getElementsByClass("image-thumbnail");
@@ -1111,8 +1099,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setSeen(mainModel.isSwiped(id));
                             shoppingItem.setPage_num(page);
 
-                            if (favs.containsKey(shoppingItem.getId())) {
-                                shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            if (favorites.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
 
                             getLikes(shoppingItem,products.size());
@@ -1185,7 +1173,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found -= 1;
+                                total_items_found++;
                                 continue;
                             }
 
@@ -1212,8 +1200,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setSeen(mainModel.isSwiped(id));
                             shoppingItem.setPage_num(page);
 
-                            if (favs.containsKey(shoppingItem.getId())) {
-                                shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            if (favorites.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             getLikes(shoppingItem, total_aldo);
                         }
@@ -1221,7 +1209,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 }
                 catch (Exception e) {
                     Log.d(Macros.TAG, "getAldo() " + e.getMessage());
-                    total_items_found += total_aldo - iteration;
+                    total_items_found += (total_aldo - iteration);
                 }
             }
             else{
@@ -1278,7 +1266,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found -= 1;
+                                total_items_found++;
                                 continue;
                             }
                             Elements elements1 = document1.
@@ -1361,8 +1349,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setSeen(mainModel.isSwiped(id));
                             shoppingItem.setPage_num(page);
 
-                            if (favs.containsKey(shoppingItem.getId())) {
-                                shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            if (favorites.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             getLikes(shoppingItem, item_node.childNodeSize());
                         }
@@ -1370,7 +1358,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 }
                 catch (Exception e) {
                     Log.d(Macros.TAG, "MainCustomerActivity::getTFS() " + e.getMessage());
-                    total_items_found += total_tfs - iter;
+                    total_items_found += (total_tfs - iter);
                 }
             }
             else{
@@ -1441,7 +1429,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found -= 1;
+                                total_items_found++;
                                 continue;
                             }
 
@@ -1496,8 +1484,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setSeen(mainModel.isSwiped(id));
                             shoppingItem.setPage_num(page);
 
-                            if (favs.containsKey(shoppingItem.getId())) {
-                                shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            if (favorites.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             getLikes(shoppingItem, filtered_elements.size());
                         }
@@ -1505,7 +1493,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 }
                 catch (Exception e) {
                     Log.d(Macros.TAG, "getCastro() Failed " + e.getMessage());
-                    total_items_found += total_castro - iter;
+                    total_items_found += (total_castro - iter);
                 }
             }
             else{
@@ -1569,7 +1557,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found -= 1;
+                                total_items_found++;
                                 continue;
                             }
 
@@ -1619,8 +1607,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setSeen(mainModel.isSwiped(id));
                             shoppingItem.setPage_num(page);
 
-                            if (favs.containsKey(shoppingItem.getId())) {
-                                shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            if (favorites.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             getLikes(shoppingItem, products.size());
                         }
@@ -1628,7 +1616,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 }
                 catch (Exception e) {
                     Log.d(Macros.TAG, "getRenuar() Failed " + e.getMessage());
-                    total_items_found += total_renuar - iter;
+                    total_items_found += (total_renuar - iter);
                 }
             }
             else{
@@ -1687,7 +1675,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found -= 1;
+                                total_items_found++;
                                 continue;
                             }
 
@@ -1734,8 +1722,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setSeen(mainModel.isSwiped(id));
                             shoppingItem.setPage_num(page);
 
-                            if (favs.containsKey(shoppingItem.getId())) {
-                                shoppingItem.setFavorite(Objects.equals(favs.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            if (favorites.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             getLikes(shoppingItem, total_hoodies);
 
@@ -1744,7 +1732,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 }
                 catch (Exception e) {
                     Log.d(Macros.TAG, "getHoodies() Failed " + e.getMessage());
-                    total_items_found += total_hoodies - iter;
+                    total_items_found += (total_hoodies - iter);
                 }
             }
             else{

@@ -211,20 +211,18 @@ public class LandingPageActivity extends AppCompatActivity {
 
     private void goToCustomer() {
 
-        ImageView tooki = findViewById(R.id.imageView);
-        YoYo.with(Techniques.Hinge).duration(4500).playOn(tooki);
-
         Intent intent = new Intent(LandingPageActivity.this, GenderFilteringActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("imageUrl",imageUrl);
         bundle.putString("name",user.getDisplayName());
         intent.putExtra("bundle",bundle);
 
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
+        ImageView tooki = findViewById(R.id.imageView);
+        YoYo.with(Techniques.Hinge).duration(3000).onEnd(animator -> {
+            ShopikApplicationActivity.LoadAds();
             startActivity(intent);
-            this.supportFinishAfterTransition();
-        },4500);
+            supportFinishAfterTransition();
+        }).playOn(tooki);
     }
 
     private void goToCompany() {

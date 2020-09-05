@@ -68,7 +68,6 @@ public class CompanyProfileActivity extends AppCompatActivity {
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), resultUri);
                     } catch (IOException e) {
-                        e.printStackTrace();
                         Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
                     }
 
@@ -193,9 +192,11 @@ public class CompanyProfileActivity extends AppCompatActivity {
         appBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
             if(verticalOffset <= -470) {
                 toolbar_pic.setVisibility(View.VISIBLE);
+                mProfile_image.setVisibility(View.INVISIBLE);
             }
             else {
                 toolbar_pic.setVisibility(View.INVISIBLE);
+                mProfile_image.setVisibility(View.VISIBLE);
             }
         });
         mSite.setOnClickListener(v -> {

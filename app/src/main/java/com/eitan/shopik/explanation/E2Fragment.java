@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.eitan.shopik.Adapters.ItemsCategoriesListAdapter;
-import com.eitan.shopik.Items.Catagory;
+import com.eitan.shopik.Items.Category;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -31,23 +31,23 @@ import java.util.Objects;
 public class E2Fragment extends Fragment {
 
     private ItemsCategoriesListAdapter adapter;
-    private ArrayList<Catagory> categories;
+    private ArrayList<Category> categories;
     private String gender, imageUrl;
     private ArrayList<RecyclerItem> sub_jackets,sub_shoes,sub_bags,sub_dress,sub_jeans,
                                    sub_jewellery,sub_shirts,sub_glasses,sub_watches,sub_swim,
                                    sub_accessories,sub_lingerie;
     private GenderModel model;
     private FirebaseUser user;
-    private Catagory shoes;
-    private Catagory jeans;
-    private Catagory shirts;
-    private Catagory watches;
-    private Catagory sunglasses;
-    private Catagory jackets;
-    private Catagory jewellery;
-    private Catagory swimwear;
-    private Catagory lingerie;
-    private Catagory accessories;
+    private Category shoes;
+    private Category jeans;
+    private Category shirts;
+    private Category watches;
+    private Category sunglasses;
+    private Category jackets;
+    private Category jewellery;
+    private Category swimwear;
+    private Category lingerie;
+    private Category accessories;
     private EntranceViewModel viewModel;
     private androidx.lifecycle.Observer<String> observer;
 
@@ -283,23 +283,23 @@ public class E2Fragment extends Fragment {
             addSwimwearSubCategory("one-piece", Macros.Items.WOMEN_ONE_PIECE_RES,Macros.CustomerMacros.WOMEN);
             addSwimwearSubCategory("swimwear", Macros.Items.WOMEN_SWIMMWEAR_RES,Macros.CustomerMacros.WOMEN);
 
-            Catagory bags = new Catagory(Macros.BAG, gender, sub_bags);
-            Catagory dresses = new Catagory(Macros.DRESS, gender, sub_dress);
+            Category bags = new Category(Macros.BAG, gender, sub_bags);
+            Category dresses = new Category(Macros.DRESS, gender, sub_dress);
 
             categories.add(bags);
             categories.add(dresses);
         }
 
-        jackets = new Catagory(Macros.JACKETS,gender,sub_jackets);
-        shoes = new Catagory(Macros.SHOES,gender,sub_shoes);
-        jeans = new Catagory(Macros.JEANS,gender,sub_jeans);
-        shirts = new Catagory(Macros.SHIRT,gender,sub_shirts);
-        watches = new Catagory(Macros.WATCH,gender,sub_watches);
-        sunglasses = new Catagory(Macros.SUNGLASSES,gender,sub_glasses);
-        jewellery = new Catagory(Macros.JEWELLERY,gender,sub_jewellery);
-        swimwear = new Catagory(Macros.SWIMWEAR,gender,sub_swim);
-        lingerie = new Catagory(Macros.LINGERIE,gender,sub_lingerie);
-        accessories = new Catagory(Macros.ACCESSORIES,gender,sub_accessories);
+        jackets = new Category(Macros.JACKETS,gender,sub_jackets);
+        shoes = new Category(Macros.SHOES,gender,sub_shoes);
+        jeans = new Category(Macros.JEANS,gender,sub_jeans);
+        shirts = new Category(Macros.SHIRT,gender,sub_shirts);
+        watches = new Category(Macros.WATCH,gender,sub_watches);
+        sunglasses = new Category(Macros.SUNGLASSES,gender,sub_glasses);
+        jewellery = new Category(Macros.JEWELLERY,gender,sub_jewellery);
+        swimwear = new Category(Macros.SWIMWEAR,gender,sub_swim);
+        lingerie = new Category(Macros.LINGERIE,gender,sub_lingerie);
+        accessories = new Category(Macros.ACCESSORIES,gender,sub_accessories);
 
        fillCategories();
 

@@ -97,7 +97,6 @@ public class FavoritesFragment extends Fragment {
                 return true;
             }
         };
-        mRecyclerView.setItemAnimator(new CustomItemAnimator());
         mainModel.getFavorite().observe(requireActivity(), shoppingItems -> {
 
             fav_list.clear();
@@ -194,6 +193,7 @@ public class FavoritesFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerGridAdapter);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
+        mRecyclerView.setItemAnimator(new CustomItemAnimator());
     }
 
     @Override
