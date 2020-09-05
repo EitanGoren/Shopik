@@ -80,7 +80,6 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
     public FullscreenAdapter.PicsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         init(parent.getContext());
-
         return new FullscreenAdapter.PicsViewHolder(LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.fullscreen_pic,parent,false));
     }
@@ -135,10 +134,12 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
             super(view);
             photoView = view.findViewById(R.id.fullscreen_image_item);
             mVideoView = view.findViewById(R.id.item_video);
+            mVideoView.setVisibility(View.GONE);
             videoMediaController = new MediaController(mVideoView.getContext());
             videoLayout = view.findViewById(R.id.video_layout);
-            videoLayout.setVisibility(View.INVISIBLE);
+            videoLayout.setVisibility(View.GONE);
             anchor = view.findViewById(R.id.video);
+            anchor.setVisibility(View.GONE);
             textView = view.findViewById(R.id.fullscreen_item_info);
             no_video = view.findViewById(R.id.No_video_text);
         }
@@ -166,12 +167,14 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
                 public void onPageSelected(int pos) {
                     changeTabs(pos);
                     if(category.equals("ASOS") && (pos == imagesUrl.size())) {
-                        dots.setVisibility(View.VISIBLE);
-                        button.setVisibility(View.VISIBLE);
-                        buttons_layout.setVisibility(View.VISIBLE);
+                        dots.setVisibility(View.INVISIBLE);
+                        button.setVisibility(View.INVISIBLE);
+                        buttons_layout.setVisibility(View.INVISIBLE);
 
                         if(path != null) {
                             videoLayout.setVisibility(View.VISIBLE);
+                            mVideoView.setVisibility(View.VISIBLE);
+                            anchor.setVisibility(View.VISIBLE);
                             mVideoView.setVideoPath(path);
                             mVideoView.setMediaController(videoMediaController);
                             no_video.setVisibility(View.INVISIBLE);
@@ -190,6 +193,9 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
                         mVideoView.setOnCompletionListener(MediaPlayer::start);
                     }
                     else
+                        videoLayout.setVisibility(View.GONE);
+                        mVideoView.setVisibility(View.GONE);
+                        anchor.setVisibility(View.GONE);
                         photoView.setOnLongClickListener(v -> {
                             if(isClicked){
                                 dots.setVisibility(View.VISIBLE);

@@ -350,7 +350,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
                 intent.putExtra("isFav", shoppingItem.isFavorite());
-                intent.putExtra("brand", shoppingItem.getBrand());
+                intent.putExtra("brand", shoppingItem.getSeller());
                 intent.putExtra("id", shoppingItem.getId());
                 intent.putExtra("img1", shoppingItem.getImages().get(0));
                 intent.putExtra("img2", shoppingItem.getImages().get(1));
@@ -362,7 +362,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
                 ArrayList<Pair<View,String>> _pairs = new ArrayList<>();
                 _pairs.add(Pair.create(seller_logo,"company_logo"));
-               // _pairs.add(Pair.create(brand_name,"company_name"));
+                _pairs.add(Pair.create(imageView,"image_item"));
 
                 Macros.Functions.fullscreen( getContext(), intent, _pairs);
             });

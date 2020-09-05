@@ -174,7 +174,7 @@ public class E3Fragment extends Fragment {
             fullscreen.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
                 intent.putExtra("isFav", false);
-                intent.putExtra("brand", item.getBrand());
+                intent.putExtra("brand", item.getSeller());
                 intent.putExtra("id", item.getId());
                 intent.putExtra("img1", item.getImages().get(0));
                 intent.putExtra("img2", item.getImages().get(1));

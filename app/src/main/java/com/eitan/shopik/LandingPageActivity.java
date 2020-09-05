@@ -47,6 +47,12 @@ public class LandingPageActivity extends AppCompatActivity {
     private static final int DELAY_MILLIS = 4500;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        ShopikApplicationActivity.LoadAds();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -218,8 +224,7 @@ public class LandingPageActivity extends AppCompatActivity {
         intent.putExtra("bundle",bundle);
 
         ImageView tooki = findViewById(R.id.imageView);
-        YoYo.with(Techniques.Hinge).duration(3000).onEnd(animator -> {
-            ShopikApplicationActivity.LoadAds();
+        YoYo.with(Techniques.Hinge).duration(4000).onEnd(animator -> {
             startActivity(intent);
             supportFinishAfterTransition();
         }).playOn(tooki);

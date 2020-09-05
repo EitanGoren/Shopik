@@ -232,7 +232,6 @@ public class E2Fragment extends Fragment {
             addDressSubCategory("mini",Macros.Items.MINI_DRESSES_RES);
 
             addJacketsSubCategory("leather",Macros.Items.WOMEN_LEATHER_JACKETS_RES,Macros.CustomerMacros.WOMEN);
-            addJacketsSubCategory("denim",Macros.Items.WOMEN_DENIM_JACKETS_RES,Macros.CustomerMacros.WOMEN);
             addJacketsSubCategory("coat",Macros.Items.WOMEN_COAT_JACKETS_RES,Macros.CustomerMacros.WOMEN);
             addJacketsSubCategory("teddy",Macros.Items.WOMEN_TEDDY_JACKETS_RES,Macros.CustomerMacros.WOMEN);
             addJacketsSubCategory("puffer",Macros.Items.WOMEN_PUFFER_JACKETS_RES,Macros.CustomerMacros.WOMEN);

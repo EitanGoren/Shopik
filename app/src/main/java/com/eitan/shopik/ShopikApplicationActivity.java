@@ -111,7 +111,7 @@ public class ShopikApplicationActivity extends Application {
     }
 
     public static void LoadAds(){
-        new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new getAds().execute();
     }
 
     @Override

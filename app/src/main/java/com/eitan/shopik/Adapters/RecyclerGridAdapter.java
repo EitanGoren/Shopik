@@ -556,7 +556,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             fullscreen.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
                 intent.putExtra("isFav", item.isFavorite());
-                intent.putExtra("brand", brand);
+                intent.putExtra("brand", seller);
                 intent.putExtra("id", item.getId());
                 intent.putExtra("img1", item.getImages().get(0));
                 intent.putExtra("img2", item.getImages().get(1) != null ? item.getImages().get(1) : item.getImages().get(0));

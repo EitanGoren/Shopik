@@ -472,7 +472,7 @@ public class Macros {
         public static void GlidePicture(Context context, String imageUrl, View view) {
 
             CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
-            circularProgressDrawable.setArrowDimensions(12, 12);
+            circularProgressDrawable.setArrowDimensions(12,12);
             circularProgressDrawable.setCenterRadius(50);
             circularProgressDrawable.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN);
             circularProgressDrawable.setStrokeWidth(7);
@@ -502,7 +502,7 @@ public class Macros {
 
             if (pairs != null && pairs.size() > 0) {
                 ActivityOptions options = ActivityOptions.
-                        makeSceneTransitionAnimation((Activity) context, pairs.get(0));
+                        makeSceneTransitionAnimation((Activity) context, pairs.get(0), pairs.get(1));
                 context.startActivity(intent, options.toBundle());
             }
             else

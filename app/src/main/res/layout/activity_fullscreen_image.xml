@@ -6,13 +6,11 @@
     android:layout_height="match_parent"
     android:id="@+id/layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorTransparentWhite"
     tools:context=".Customer.FullscreenImageActivity">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/fullscreen_image_viewPager"
         android:layout_width="match_parent"
-        android:background="@color/colorTransparentWhite"
         android:layout_height="match_parent" />
 
     <RelativeLayout

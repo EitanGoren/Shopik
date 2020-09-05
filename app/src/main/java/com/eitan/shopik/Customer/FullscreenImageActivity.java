@@ -77,6 +77,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
         this.supportFinishAfterTransition();
     }
 }
