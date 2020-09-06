@@ -46,6 +46,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Currency;
 import java.util.HashMap;
@@ -158,6 +159,15 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if(constraint.toString().isEmpty()){
                 filteredList.addAll(AllItemsList);
             }
+            else if(Arrays.asList(Macros.CompanyNames).contains(constraint.toString())){
+                for (ShoppingItem item : AllItemsList) {
+                    if (item.getSeller() != null) {
+                        if( item.getSeller().toLowerCase().contentEquals(constraint.toString().toLowerCase())) {
+                            filteredList.add(item);
+                        }
+                    }
+                }
+            }
             else {
                 for (ShoppingItem item : AllItemsList) {
                     if (item.getName() != null) {
@@ -196,6 +206,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
                 notifyDataSetChanged();
             }
+            notifyDataSetChanged();
         }
     };
 
@@ -298,17 +309,13 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemView.setMediaView(itemView.findViewById(R.id.ad_media));
             itemView.getMediaView().setImageScaleType(ImageView.ScaleType.CENTER_CROP);
             itemView.setHeadlineView(itemView.findViewById(R.id.ad_brand_name));
-
-          //  itemView.setAdChoicesView(itemView.findViewById(R.id.ad_image));
             itemView.setBodyView(itemView.findViewById(R.id.ad_body));
             itemView.setPriceView(itemView.findViewById(R.id.ad_price));
             itemView.setStarRatingView(itemView.findViewById(R.id.ad_stars));
             itemView.setStoreView(itemView.findViewById(R.id.ad_store));
             itemView.setIconView(itemView.findViewById(R.id.ad_logo));
             itemView.setCallToActionView(itemView.findViewById(R.id.ad_action_button));
-            seller_name = itemView.findViewById(R.id.ad_card_seller_name);
-            itemView.setAdvertiserView(seller_name);
-
+            itemView.setAdvertiserView(itemView.findViewById(R.id.ad_card_seller_name));
         }
 
         public Context getContext() {return itemView.getContext();}
@@ -377,35 +384,17 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     ((UnifiedNativeAdView)itemView).getAdvertiserView().setVisibility(View.GONE);
                 }
                 else {
-
-                    if(temp_ad.getAdvertiser().length() > 15){
-                        seller_name.setTextSize(12);
-                    }
-                    else
-                        seller_name.setTextSize(14);
-
                     ((TextView) ((UnifiedNativeAdView)itemView).getAdvertiserView()).setText(temp_ad.getAdvertiser());
                     ((UnifiedNativeAdView)itemView).getAdvertiserView().setVisibility(View.VISIBLE);
                 }
-
-              /*  VideoController vc = temp_ad.getVideoController();
-                if(vc.hasVideoContent()) {
-                    vc.setVideoLifecycleCallbacks(new VideoController.VideoLifecycleCallbacks() {
-                        public void onVideoEnd() {
-                            // Here apps can take action knowing video playback is finished.
-                            // It's always a good idea to wait for playback to complete before
-                            // replacing or refreshing a native ad, for example.
-                            super.onVideoEnd();
-                        }
-                    });
-                }*/
 
                 // This method tells the Google Mobile Ads SDK that you have finished populating your
                 // native ad view with this native ad.
                 ((UnifiedNativeAdView)itemView).setNativeAd(temp_ad);
                 // Get the video controller for the ad. One will always be provided, even if the ad doesn't
                 // have a video asset.
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 itemView.setLayoutParams(params);
             }
         }

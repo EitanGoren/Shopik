@@ -123,6 +123,7 @@ public class CustomerHomeFragment extends Fragment {
         flingContainer.setAdapter(arrayAdapter);
 
         TextView percentage = view.findViewById(R.id.percentage);
+        percentage.setVisibility(View.GONE);
 
         items_observer = shoppingItems -> {
             swipesModel.clearAllItems();
@@ -146,14 +147,10 @@ public class CustomerHomeFragment extends Fragment {
             }
             arrayAdapter.notifyDataSetChanged();
         };
+
+        percentage.setVisibility(View.VISIBLE);
         total_items_observer = integer -> {
-            percentage.setVisibility(View.VISIBLE);
-            String text = integer + "%";
-            percentage.setText(text);
-            if( integer == 100 ) {
-                percentage.setVisibility(View.INVISIBLE);
-                arrayAdapter.notifyDataSetChanged();
-            }
+            arrayAdapter.notifyDataSetChanged();
         };
 
         return view;

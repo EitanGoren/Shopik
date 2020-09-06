@@ -63,7 +63,6 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if(requestCode == 1 ) {
             if (resultCode == RESULT_OK) {
                 assert data != null;
@@ -151,7 +150,6 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
         // inside your activity (if you did not enable transitions in your theme)
@@ -243,6 +241,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
         collapsingToolbar.setCollapsedTitleTypeface(typeface);
         collapsingToolbar.setExpandedTitleTypeface(typeface);
         collapsingToolbar.setCollapsedTitleTextColor(Color.WHITE);
+        collapsingToolbar.setExpandedTitleColor(Color.WHITE);
         collapsingToolbar.setContentScrimColor(getColor(R.color.CompanyProfileScrim));
 
         Glide.with(getApplicationContext()).asBitmap().load(cover).into(bgImage);

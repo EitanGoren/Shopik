@@ -311,8 +311,7 @@ public class CompanyProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    public void onBackPressed() {       super.onBackPressed();
         this.supportFinishAfterTransition();
     }
 }

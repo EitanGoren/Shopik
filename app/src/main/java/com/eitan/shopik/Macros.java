@@ -472,7 +472,7 @@ public class Macros {
         public static void GlidePicture(Context context, String imageUrl, View view) {
 
             CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
-            circularProgressDrawable.setArrowDimensions(12,12);
+            circularProgressDrawable.setArrowDimensions(10,10);
             circularProgressDrawable.setCenterRadius(50);
             circularProgressDrawable.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN);
             circularProgressDrawable.setStrokeWidth(7);
@@ -481,12 +481,12 @@ public class Macros {
             if (view instanceof CircleImageView) Glide.with(context).
                     load(imageUrl).
                     placeholder(circularProgressDrawable).
-                    transition(withCrossFade(900)).
+                    transition(withCrossFade(650)).
                     into((CircleImageView) view);
             else
                 Glide.with(context).load(imageUrl).
                         placeholder(circularProgressDrawable).
-                        transition(withCrossFade(900)).
+                        transition(withCrossFade(650)).
                         into((ImageView) view);
         }
 

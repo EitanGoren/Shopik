@@ -82,4 +82,16 @@
     <string name="price">Price</string>
     <string name="brand">Brand</string>
     <string name="company">Company</string>
+    <string name="lets_start">Lets Start</string>
+    <string name="copyright">2020 Eitan Goren Israel Inc, All rights reserved</string>
+    <string name="tfs">TFS</string>
+    <string name="asos">ASOS</string>
+    <string name="castro">Castro</string>
+    <string name="hoodies">Hoodies</string>
+    <string name="renuar">Renuar</string>
+    <string name="terminal_x">Terminal X</string>
+    <string name="aldo">Aldo</string>
+    <string name="favorites">Favorites</string>
+    <string name="Sale">Sale</string>
+    <string name="all">All</string>
 </resources>

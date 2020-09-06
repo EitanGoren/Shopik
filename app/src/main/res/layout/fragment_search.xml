@@ -64,89 +64,243 @@
                     android:padding="7dp"
                     app:layout_collapseMode="parallax">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/match_chip"
-                        android:layout_width="wrap_content"
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/match"
-                        android:textColor="#000000"
-                        android:textSize="15sp"
-                        app:chipBackgroundColor="#FFFFFF"
-                        app:chipCornerRadius="15dp"
-                        app:chipEndPadding="10dp"
-                        app:chipIcon="@drawable/percent"
-                        app:chipIconTint="#000000"
-                        app:chipStartPadding="10dp"/>
+                        android:layout_alignParentBottom="true"
+                        android:scrollbars="none">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/price_chip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/price"
-                        android:textColor="#000000"
-                        android:textSize="15sp"
-                        app:chipBackgroundColor="#FFFFFF"
-                        app:chipCornerRadius="15dp"
-                        app:chipEndPadding="10dp"
-                        app:chipIcon="@drawable/ic_attach_money_black_24dp"
-                        app:chipIconTint="#0F9815"
-                        app:chipStartPadding="10dp"/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/sale_chip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sale"
-                        android:textColor="#000000"
-                        android:textSize="15sp"
-                        app:chipBackgroundColor="#FFFFFF"
-                        app:chipCornerRadius="15dp"
-                        app:chipEndPadding="10dp"
-                        app:chipIcon="@drawable/sale1"
-                        app:chipIconTint="#000000"
-                        app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/all_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/all"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/match_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/match"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipIcon="@drawable/percent"
+                                app:chipIconTint="#000000"
+                                app:chipStartPadding="10dp"/>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/price_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/price"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipIcon="@drawable/ic_attach_money_black_24dp"
+                                app:chipIconTint="#0F9815"
+                                app:chipStartPadding="10dp"/>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/sale_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/Sale"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipIcon="@drawable/sale1"
+                                app:chipIconTint="#000000"
+                                app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/favorites_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/favorites"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipIcon="@drawable/ic_favorite_black_24dp"
+                                app:chipIconTint="#FF0000"
+                                app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/company_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/company"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipIcon="@drawable/sale1"
+                                app:chipIconTint="#000000"
+                                app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/brand_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/brand"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipIcon="@drawable/sale1"
+                                app:chipIconTint="#000000"
+                                app:chipStartPadding="10dp" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/favorites_chip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Favorites"
-                        android:textColor="#000000"
-                        android:textSize="15sp"
-                        app:chipBackgroundColor="#FFFFFF"
-                        app:chipCornerRadius="15dp"
-                        app:chipEndPadding="10dp"
-                        app:chipIcon="@drawable/ic_favorite_black_24dp"
-                        app:chipIconTint="#FF0000"
-                        app:chipStartPadding="10dp" />
+                        </LinearLayout>
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/company_chip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/company"
-                        android:textColor="#000000"
-                        android:textSize="15sp"
-                        app:chipBackgroundColor="#FFFFFF"
-                        app:chipCornerRadius="15dp"
-                        app:chipEndPadding="10dp"
-                        app:chipIcon="@drawable/sale1"
-                        app:chipIconTint="#000000"
-                        app:chipStartPadding="10dp" />
+                    </HorizontalScrollView>
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/brand_chip"
-                        android:layout_width="wrap_content"
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/brand"
-                        android:textColor="#000000"
-                        android:textSize="15sp"
-                        app:chipBackgroundColor="#FFFFFF"
-                        app:chipCornerRadius="15dp"
-                        app:chipEndPadding="10dp"
-                        app:chipIcon="@drawable/sale1"
-                        app:chipIconTint="#000000"
-                        app:chipStartPadding="10dp" />
+                        android:layout_alignParentBottom="true"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/asos_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/asos"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#ffffff"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/tfs_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/tfs"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/castro_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/castro"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/hoodies_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/hoodies"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/renuar_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/renuar"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/tx_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/terminal_x"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipStartPadding="10dp" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/aldo_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/aldo"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipStartPadding="10dp" />
+
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
 
                 </com.google.android.material.chip.ChipGroup>
 

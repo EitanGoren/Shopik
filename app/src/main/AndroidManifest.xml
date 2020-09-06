@@ -47,12 +47,6 @@
             android:name=".Company.CompanyMainActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".CompanyLoginActivity"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".CustomerLoginActivity"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".Customer.CustomerMainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleTop"/>

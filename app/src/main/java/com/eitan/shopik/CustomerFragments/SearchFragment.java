@@ -44,11 +44,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
     private AllItemsModel allItemsModel;
     private MainModel mainModel;
-    private Chip price;
-    private Chip sale;
-    private Chip match;
-    private Chip company;
-    private Chip brand;
     private FloatingActionButton scroll;
     private boolean scrollUp;
     private RecyclerGridAdapter recyclerGridAdapter;
@@ -67,8 +62,22 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private Observer<Integer> longObserver;
     private ExtendedFloatingActionButton explore_items;
     private RelativeLayout relativeLayout;
+    Chip price ;
+    Chip all ;
+    Chip sale ;
+    Chip match ;
+    Chip brand ;
+    Chip company ;
+    Chip asos_chip ;
+    Chip castro_chip ;
+    Chip renuar_chip ;
+    Chip tx_chip ;
+    Chip tfs_chip ;
+    Chip aldo_chip ;
+    Chip hoodies_chip ;
+    Chip favorite ;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi( api = Build.VERSION_CODES.N )
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,22 +106,38 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         scroll = view.findViewById(R.id.scroll_up_down);
         header = view.findViewById(R.id.text);
         price = view.findViewById(R.id.price_chip);
+        all = view.findViewById(R.id.all_chip);
         sale = view.findViewById(R.id.sale_chip);
         match = view.findViewById(R.id.match_chip);
         brand = view.findViewById(R.id.brand_chip);
         company = view.findViewById(R.id.company_chip);
+        asos_chip = view.findViewById(R.id.asos_chip);
+        castro_chip = view.findViewById(R.id.castro_chip);
+        renuar_chip = view.findViewById(R.id.renuar_chip);
+        tx_chip = view.findViewById(R.id.tx_chip);
+        tfs_chip = view.findViewById(R.id.tfs_chip);
+        aldo_chip = view.findViewById(R.id.aldo_chip);
+        hoodies_chip = view.findViewById(R.id.hoodies_chip);
+        favorite = view.findViewById(R.id.favorites_chip);
         toolbar = view.findViewById(R.id.toolbar);
         explore_items = view.findViewById(R.id.explore_items);
         explore_items.setVisibility(View.VISIBLE);
         relativeLayout = view.findViewById(R.id.info_layout);
 
-        Chip favorite = view.findViewById(R.id.favorites_chip);
         price.setOnClickListener(this);
         sale.setOnClickListener(this);
         company.setOnClickListener(this);
         brand.setOnClickListener(this);
         match.setOnClickListener(this);
+        asos_chip.setOnClickListener(this);
+        renuar_chip.setOnClickListener(this);
+        tx_chip.setOnClickListener(this);
+        tfs_chip.setOnClickListener(this);
+        hoodies_chip.setOnClickListener(this);
+        aldo_chip.setOnClickListener(this);
+        castro_chip.setOnClickListener(this);
         favorite.setOnClickListener(this);
+        all.setOnClickListener(this);
 
         listObserver = shoppingItems -> {
             allItemsModel.clearItems();
@@ -157,7 +182,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             recyclerGridAdapter.setAllItems(Objects.requireNonNull(allItemsModel.getItems().getValue()));
             recyclerGridAdapter.notifyDataSetChanged();
         };
-
         longObserver = aLong -> page = aLong;
         listener = (appBarLayout, verticalOffset) -> {
             // Collapsed
@@ -172,7 +196,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             }
         };
         integerObserver = integer -> {
-            // if (integer == 100)
             recyclerGridAdapter.notifyDataSetChanged();
         };
 
@@ -203,8 +226,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         scroll.setOnClickListener(v -> {
             //scroll down
             if (!scrollUp)
-                mLayoutManager.smoothScrollToPosition(mRecyclerView, null,
-                        Objects.requireNonNull(allItemsModel.getItems().getValue()).size() - 1);
+                mLayoutManager.smoothScrollToPosition(mRecyclerView, null,recyclerGridAdapter.getItemCount() - 1);
             //scroll down
             else
                 mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
@@ -228,7 +250,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         mainModel.getCurrent_page().observe(requireActivity(),longObserver);
         mRecyclerView.addOnScrollListener(onScrollListener);
         appBarLayout.addOnOffsetChangedListener(listener);
-        mainModel.getTotalItems().observe(requireActivity(),integerObserver );
+        mainModel.getCurrentItem().observe(requireActivity(),integerObserver);
     }
 
     @Override
@@ -241,17 +263,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         appBarLayout.removeOnOffsetChangedListener(listener);
         mLayoutManager = null;
         appBarLayout = null;
-        price = null;
-        sale = null;
-        match = null;
-        brand = null;
-        company = null;
         scroll = null;
         toolbar = null;
         header = null;
         mRecyclerView.removeOnScrollListener(onScrollListener);
         mRecyclerView = null;
-       // recyclerGridAdapter = null;
     }
 
     private void closeKeyboard(){
@@ -265,6 +281,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
+        uncheckAll();
+        if(v instanceof Chip){
+            ((Chip)v).setChecked(true);
+        }
         switch (v.getId()){
             case R.id.match_chip:
                 sortItems("match");
@@ -284,14 +304,54 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             case R.id.brand_chip:
                 sortItems("brand");
                 break;
-            default:
-                sortItems("clear");
+            case R.id.asos_chip:
+                filterItems("ASOS");
                 break;
+            case R.id.castro_chip:
+                filterItems("Castro");
+                break;
+            case R.id.tx_chip:
+                filterItems("Terminal X");
+                break;
+            case R.id.renuar_chip:
+                filterItems("Renuar");
+                break;
+            case R.id.hoodies_chip:
+                filterItems("Hoodies");
+                break;
+            case R.id.aldo_chip:
+                filterItems("Aldo");
+                break;
+            case R.id.tfs_chip:
+                filterItems("TwentyFourSeven");
+                break;
+            case R.id.all_chip:
+                sortItems("clear");
         }
+    }
+
+    private void uncheckAll() {
+        price.setChecked(false);
+        all.setChecked(false);
+        sale.setChecked(false);
+        match.setChecked(false);
+        brand.setChecked(false);
+        company.setChecked(false);
+        asos_chip.setChecked(false);
+        castro_chip.setChecked(false);
+        renuar_chip.setChecked(false);
+        tx_chip.setChecked(false);
+        tfs_chip.setChecked(false);
+        aldo_chip.setChecked(false);
+        hoodies_chip.setChecked(false);
+        favorite.setChecked(false);
     }
 
     private void sortItems(String sort_by){
         recyclerGridAdapter.getSortingFilter().filter(sort_by);
+    }
+    private void filterItems(String filter_by){
+        recyclerGridAdapter.getFilter().filter(filter_by);
     }
 
     @Override
