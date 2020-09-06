@@ -306,7 +306,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 old_price.setPaintFlags(price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
                 price.setText(new_price);
-                price.setTextColor(Color.RED);
+                price.setTextColor(Color.parseColor("#FEA8FF"));
             }
             else {
                 sale.setVisibility(View.INVISIBLE);
@@ -360,11 +360,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 intent.putExtra("description", description.toString());
                 intent.putExtra("type", shoppingItem.getType());
 
-                ArrayList<Pair<View,String>> _pairs = new ArrayList<>();
-                _pairs.add(Pair.create(seller_logo,"company_logo"));
-                _pairs.add(Pair.create(imageView,"image_item"));
-
-                Macros.Functions.fullscreen( getContext(), intent, _pairs);
+                Macros.Functions.fullscreen( getContext(), intent, pairs);
             });
 
             String image = "";

@@ -48,25 +48,23 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
     private boolean isClicked = false;
     private ViewPager2 viewPager;
 
-    public FullscreenAdapter (ArrayList<String> imagesUrl, String description, String id, String category) {
+    public FullscreenAdapter (Context context, ArrayList<String> imagesUrl, String description, String id, String category) {
         this.imagesUrl = imagesUrl;
         this.description = description;
         this.id = id;
         this.category = category;
-    }
 
-    private void init(Context context) {
         mDot1 = ((Activity)context).findViewById(R.id.fullscreen_dot_1);
         mDot2 = ((Activity)context).findViewById(R.id.fullscreen_dot_2);
         mDot3 = ((Activity)context).findViewById(R.id.fullscreen_dot_3);
         mDot4 = ((Activity)context).findViewById(R.id.fullscreen_dot_4);
         mDot5 = ((Activity)context).findViewById(R.id.fullscreen_dot_5);
 
-        mDot1.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_lens_black_24dp));
-        mDot2.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_baseline_panorama_fish_eye));
-        mDot3.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_baseline_panorama_fish_eye));
-        mDot4.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_baseline_panorama_fish_eye));
-        mDot5.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_baseline_panorama_fish_eye));
+        mDot1.setBackground(ContextCompat.getDrawable(mDot1.getContext(),R.drawable.ic_lens_black_24dp));
+        mDot2.setBackground(ContextCompat.getDrawable(mDot2.getContext(),R.drawable.ic_baseline_panorama_fish_eye));
+        mDot3.setBackground(ContextCompat.getDrawable(mDot3.getContext(),R.drawable.ic_baseline_panorama_fish_eye));
+        mDot4.setBackground(ContextCompat.getDrawable(mDot4.getContext(),R.drawable.ic_baseline_panorama_fish_eye));
+        mDot5.setBackground(ContextCompat.getDrawable(mDot5.getContext(),R.drawable.ic_baseline_panorama_fish_eye));
 
         dots = ((Activity)context).findViewById(R.id.fullscreen_dotsLayout);
         button = ((Activity)context).findViewById(R.id.close_card);
@@ -78,8 +76,6 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
     @NonNull
     @Override
     public FullscreenAdapter.PicsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        init(parent.getContext());
         return new FullscreenAdapter.PicsViewHolder(LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.fullscreen_pic,parent,false));
     }
@@ -217,7 +213,7 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
             });
         }
 
-        private class getVideoLink extends AsyncTask<Void,Integer,String> {
+        private class getVideoLink extends AsyncTask<Void, Integer, String> {
 
             String id,video_path;
 

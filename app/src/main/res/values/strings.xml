@@ -76,4 +76,10 @@
     <string name="youtube">youtube</string>
     <string name="instagram">instagram</string>
     <string name="site">site</string>
+    <string name="explore_more">explore more</string>
+    <string name="more">more</string>
+    <string name="match">Match</string>
+    <string name="price">Price</string>
+    <string name="brand">Brand</string>
+    <string name="company">Company</string>
 </resources>

@@ -276,8 +276,7 @@ public class CompanyProfileActivity extends AppCompatActivity {
         collapsingToolbar.setExpandedTitleTypeface(typeface);
         collapsingToolbar.setContentScrimColor(getColor(R.color.CompanyProfileScrim));
 
-        final ImageView imageView = bgimage;
-        Glide.with(getApplicationContext()).asBitmap().load(cover).into(imageView);
+        Glide.with(getApplicationContext()).asBitmap().load(cover).into(bgimage);
     }
 
     private void init() {

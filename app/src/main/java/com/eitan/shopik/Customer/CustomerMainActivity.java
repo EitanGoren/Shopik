@@ -1,5 +1,6 @@
 package com.eitan.shopik.Customer;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -13,7 +14,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -74,8 +74,6 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-
 public class CustomerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DatabaseReference customerDB, pageListener;
@@ -89,6 +87,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private NavigationView navigationView;
     private ImageView nav_bg;
     private ViewPager mainPager;
+    private ValueEventListener pageEventListener;
+    private ValueEventListener fav_single_listener;
+    private String cover;
+    private ValueEventListener valueEventListener;
+    private ValueEventListener favoriteValueEventListener;
     private static MutableLiveData<Boolean> isFinished;
     private static int item_count = 0;
     private static int total_items_found = 0;
@@ -97,11 +100,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private static String item_type;
     private static String item_gender;
     private static String item_sub_category;
-    private ValueEventListener pageEventListener;
-    private ValueEventListener fav_single_listener;
-    private String cover;
-    private ValueEventListener valueEventListener;
-    private ValueEventListener favoriteValueEventListener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static void getCompanyInfo(final ShoppingItem shoppingItem, int size) {
@@ -116,8 +114,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     getValue().get(company_id)).get("logo_url"))).toString());
 
             mainModel.addItem(shoppingItem,size);
-            Pair<Integer,Boolean> pair = Pair.create(++item_count,shoppingItem.isSeen());
-            mainModel.getCurrentItem().postValue(pair);
+            mainModel.getCurrentItem().postValue(++item_count);
 
             if (favorites.containsKey(shoppingItem.getId())){
                 mainModel.addFavorite(shoppingItem);
@@ -224,9 +221,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onPageSelected(int position) {
-
-                YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.logo_image));
-
+                animateLogo();
                 switch(position) {
                     case 0:
                         bottomNavigationView.getMenu().findItem(R.id.bottom_swipe).setChecked(true);
@@ -247,6 +242,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @Override
             public void onPageScrollStateChanged(int state) {}
         });
+    }
+
+    private void animateLogo(){
+        if(findViewById(R.id.logo_image) != null)
+            YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.logo_image));
     }
 
     private void setNavigationBarButtonsColor(int navigationBarColor) {
@@ -273,7 +273,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         GenderModel genderModel = new ViewModelProvider(this).get(GenderModel.class);
 
         progressIndicator = findViewById(R.id.top_progress_bar);
-        progressIndicator.setVisibility(View.VISIBLE);
         bottomNavigationView = findViewById(R.id.bottom_nav);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -452,7 +451,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 selectedIntent = new Intent(CustomerMainActivity.this, CustomerSettingsActivity.class);
                 selectedIntent.putExtra("from_activity", "CustomerMainActivity");
                 selectedIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                break;
+                ActivityOptions options = ActivityOptions.
+                        makeSceneTransitionAnimation(this, Pair.create(findViewById(R.id.nav_profile),"profile_pic"));
+                startActivity(selectedIntent, options.toBundle());
+                return true;
             case R.id.nav_home:
                 Intent intent = new Intent(CustomerMainActivity.this, GenderFilteringActivity.class);
                 Bundle bundle = new Bundle();
@@ -463,10 +465,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 return true;
-            case R.id.nav_orders:
-                Toast.makeText(this, "my orders", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.nav_website:
+             case R.id.nav_website:
                 Macros.Functions.buy(CustomerMainActivity.this,"https://eitangoren.github.io");
         }
         if (selectedIntent != null) {
@@ -485,7 +484,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
         mainModel = new ViewModelProvider(this).get(MainModel.class);
         if(ShopikApplicationActivity.getInterstitialAd() != null){
-            if(ShopikApplicationActivity.getInterstitialAd().isAdLoaded() && ShopikApplicationActivity.getCategoryClicks()%2 == 0) {
+            if(ShopikApplicationActivity.getInterstitialAd().isAdLoaded() &&
+                    ShopikApplicationActivity.getCategoryClicks()%2 == 0) {
                 ShopikApplicationActivity.getInterstitialAd().show();
                 ShopikApplicationActivity.getInterstitialAd().setAdListener(new InterstitialAdListener() {
                     @Override
@@ -520,7 +520,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             }
         }
         ShopikApplicationActivity.increaseCategoryClicks();
-
 
         // inside your activity (if you did not enable transitions in your theme)
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
@@ -619,11 +618,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    long page = (long) (dataSnapshot.getValue());
+                    int page =  Integer.parseInt(String.valueOf(dataSnapshot.getValue()));
                     mainModel.setCurrent_page(page);
                 }
                 else
-                    mainModel.setCurrent_page((long)1);
+                    mainModel.setCurrent_page(1);
             }
 
             @Override
@@ -642,18 +641,18 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             mainModel.clearFavorite();
             mainModel.clearAllItems();
 
-            new getAsos().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
-            new getCastro().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
-            new getTFS().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
-            new getTX().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
-            new getAldo().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
-            new getRenuar().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
-            new getHoodies().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,page);
+            new getAsos().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1,page);
+            new getCastro().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1,page);
+            new getTFS().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1,page);
+            new getTX().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1,page);
+            new getAldo().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1,page);
+            new getRenuar().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1,page);
+            new getHoodies().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1,page);
 
         });
 
-        mainModel.getCurrentItem().observe(this, integerBooleanPair -> {
-            int progress = (int) (((float) integerBooleanPair.first / (float) total_items_found)*100);
+        mainModel.getCurrentItem().observe(this, integer -> {
+            int progress = (int) (((float) integer / (float) total_items_found) * 100);
             progressIndicator.setProgress(progress);
             mainModel.getTotalItems().postValue(progress);
 
@@ -671,9 +670,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         setViewPager();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-
-            YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.logo_image));
-
+            animateLogo();
             switch(item.getItemId()) {
                 case R.id.bottom_swipe:
                     mainPager.setCurrentItem(0);
@@ -708,10 +705,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         nav_bg = hView.findViewById(R.id.nav_bgImage);
 
         if (imageUrl != null)
-            Glide.with(this).
-                    load(imageUrl).
-                    transition(withCrossFade(900)).
-                    into(nav_image);
+            Glide.with(this).load(imageUrl).into(nav_image);
 
         Calendar calendar = new GregorianCalendar();
         Date trialTime = new Date();
@@ -743,8 +737,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         customerDB.removeEventListener(valueEventListener);
         pageListener.removeEventListener(pageEventListener);
 
@@ -800,6 +794,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     @Override
     public void finish() {
         overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+        ShopikApplicationActivity.RefreshAds(5);
         super.finish();
     }
 
@@ -839,12 +834,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 view.setAlpha(0f);
         }
     }
-
-    private static class getTX extends AsyncTask <Long, Integer, Void> {
+    private static class getTX extends AsyncTask <Integer, Integer, Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected Void doInBackground(Long... page_num) {
+        protected Void doInBackground(Integer... page_num) {
 
             String tx_cat = Macros.Functions.translateCategoryToTerminalX(item_gender,item_type);
             String tx_sub_cat = Macros.Functions.translateSubCategoryToTerminalX(item_gender,item_sub_category);
@@ -852,9 +846,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             int iteration = 0;
             int total_tx = 0;
             if(tx_cat != null && tx_sub_cat != null) {
-
                 try {
-                    for (int page = 1; page < page_num[0] + 1; ++page) {
+                    for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
                         Document temp = Jsoup.connect("https://www.terminalx.com/" +
                                 item_gender.toLowerCase() +
                                 "/" + tx_cat +
@@ -883,7 +876,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found ++;
                                 continue;
                             }
 
@@ -996,12 +988,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             Log.d(Macros.TAG,"getTX FINISHED");
         }
     }
-
-    private static class getAsos extends AsyncTask <Long, Integer, Void> {
+    private static class getAsos extends AsyncTask <Integer, Integer, Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected Void doInBackground(Long... page_num) {
+        protected Void doInBackground(Integer... page_num) {
 
             Pair<Integer, Integer> cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
 
@@ -1009,7 +1000,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             if(cat_num != null){
                 int iter = 0;
                 try {
-                    for ( int page = 1; page < page_num[0] + 1; ++page ) {
+                    for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
 
                         Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num.first + "&page=" + page).get();
                         Elements products = document.getElementsByAttributeValue("data-auto-id", "productTile");
@@ -1045,7 +1036,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found++;
                                 continue;
                             }
                             Elements images_ele = document2.getElementsByClass("image-thumbnail");
@@ -1131,12 +1121,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             Log.d(Macros.TAG,"getASOS FINISHED");
         }
     }
-
-    private static class getAldo extends AsyncTask <Long, Integer, Void> {
+    private static class getAldo extends AsyncTask <Integer, Integer, Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected Void doInBackground(Long... page_num) {
+        protected Void doInBackground(Integer... page_num) {
 
             String aldo_cat = Macros.Functions.translateCategoryToAldo(item_gender,item_type);
             String aldo_sub_cat = Macros.Functions.translateSubCategoryToAldo(item_gender,item_sub_category);
@@ -1146,7 +1135,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             if(aldo_cat != null && !aldo_sub_cat.equals("")) {
                 try {
 
-                    for (int page = 1; page < page_num[0] + 1; ++page) {
+                    for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
                         Document temp = Jsoup.connect("https://www.aldoshoes.co.il/" +
                                 item_gender.toLowerCase() +
                                 "/" + aldo_cat +
@@ -1173,7 +1162,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found++;
                                 continue;
                             }
 
@@ -1231,12 +1219,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             Log.d(Macros.TAG,"getAldo FINISHED");
         }
     }
-
-    private static class getTFS extends AsyncTask <Long, Integer, Void> {
+    private static class getTFS extends AsyncTask <Integer, Integer, Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected Void doInBackground(Long... page_num) {
+        protected Void doInBackground(Integer... page_num) {
 
             String cat = Macros.Functions.translateCategoryTo247(item_type,item_gender);
             String sub_cat = Macros.Functions.translateSubCategoryTo247(item_sub_category,item_gender);
@@ -1245,7 +1232,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             int total_tfs = 0;
             if(cat != null && sub_cat != null) {
                 try {
-                    for (int page = 1; page < page_num[0] + 1; ++page) {
+                    for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
                         Document document = Jsoup.connect("https://www.twentyfourseven.co.il/he/" +
                                 item_gender.toLowerCase() + "/" + cat + "/" + sub_cat + ".html?p=" + page).get();
 
@@ -1266,7 +1253,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found++;
                                 continue;
                             }
                             Elements elements1 = document1.
@@ -1380,12 +1366,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             Log.d(Macros.TAG,"getTFS FINISHED");
         }
     }
-
-    private static class getCastro extends AsyncTask <Long, Integer, Void> {
+    private static class getCastro extends AsyncTask <Integer, Integer, Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected Void doInBackground(Long... page_num) {
+        protected Void doInBackground(Integer... page_num) {
 
             String cat = Macros.Functions.translateCategoryToCastro(item_type,item_sub_category,item_gender);
             Integer sub_cat = Macros.Functions.translateSubCategoryToCastro(item_sub_category);
@@ -1394,7 +1379,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             int total_castro = 0;
             if(cat != null){
                 try {
-                    for (int page = 1; page < page_num[0] + 1; ++page) {
+                    for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
                         Document document;
                         if(sub_cat == null){
                             if(item_sub_category.equals("face masks") && item_gender.equals(Macros.CustomerMacros.MEN)){
@@ -1416,12 +1401,14 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                         publishProgress(filtered_elements.size());
                         total_castro = filtered_elements.size();
-                        for (Node node : filtered_elements) {
+                        for (Element element : filtered_elements) {
                             iter++;
+
                             ShoppingItem shoppingItem = new ShoppingItem();
 
-                            String id = node.childNode(0).childNode(4).childNode(0).childNode(0).childNode(0).childNode(0).attr("data-product-sku");
-                            String link = node.childNode(0).childNode(4).childNode(0).childNode(0).childNode(0).childNode(0).attr("href");
+                            String id = element.getElementsByClass("start-product-item").
+                                    get(0).attr("data-product-sku");
+                            String link = "https://www.castro.com/" + id;
 
                             Document item_doc;
                             try {
@@ -1429,7 +1416,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found++;
                                 continue;
                             }
 
@@ -1515,12 +1501,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             Log.d(Macros.TAG,"getCASTRO FINISHED");
         }
     }
-
-    private static class getRenuar extends AsyncTask <Long, Integer, Void> {
+    private static class getRenuar extends AsyncTask <Integer, Integer, Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected Void doInBackground(Long... page_num) {
+        protected Void doInBackground(Integer... page_num) {
 
             String cat = Macros.Functions.translateCategoryToRenuar(item_gender,item_type);
             String sub_cat = Macros.Functions.translateSubCategoryToRenuar(item_gender,item_sub_category);
@@ -1529,7 +1514,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             int total_renuar=0;
             if(cat != null && !sub_cat.equals("")){
                 try {
-                    for (int page = 1; page < page_num[0] + 1; ++page) {
+                    for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
 
                         Document document = Jsoup.connect("https://www.renuar.co.il/he/" +
                                 item_gender.toLowerCase()
@@ -1557,7 +1542,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found++;
                                 continue;
                             }
 
@@ -1638,12 +1622,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             Log.d(Macros.TAG,"getRenuar FINISHED");
         }
     }
-
-    private static class getHoodies extends AsyncTask <Long, Integer, Void> {
+    private static class getHoodies extends AsyncTask <Integer, Integer, Void> {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected Void doInBackground(Long... page_num) {
+        protected Void doInBackground(Integer... page_num) {
 
             String cat = Macros.Functions.translateCategoryToHoodies(item_gender,item_type,item_sub_category);
             String sub_cat = Macros.Functions.translateSubCategoryToHoodies(item_gender,item_sub_category);
@@ -1652,7 +1635,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             int total_hoodies = 0;
             if(cat != null) {
                 try {
-                    for (int page = 1; page < page_num[0] + 1; ++page) {
+                    for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
 
                         Document document = Jsoup.connect("https://www.hoodies.co.il/" +
                                 item_gender.toLowerCase() + "/" + cat + "/"+ sub_cat + "?p=" + page).get();
@@ -1675,7 +1658,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             }
                             catch (org.jsoup.HttpStatusException ex){
                                 Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
-                                total_items_found++;
                                 continue;
                             }
 

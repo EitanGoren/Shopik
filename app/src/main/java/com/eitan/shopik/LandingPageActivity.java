@@ -49,7 +49,7 @@ public class LandingPageActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        ShopikApplicationActivity.LoadAds();
+        ShopikApplicationActivity.LoadAds(5);
     }
 
     @Override

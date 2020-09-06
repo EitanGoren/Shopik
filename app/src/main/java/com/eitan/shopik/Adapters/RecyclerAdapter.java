@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,9 +104,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 case "Item":
                 case "New-Item":
                     brand.setText(item.getText());
-                    Glide.with(getContext()).load(item.getImages().get(0)).transition(withCrossFade(900)).into(imageView);
-                    full_screen.setOnClickListener(v -> {
 
+                    Glide.with(getContext()).load(item.getImages().get(0)).
+                            transition(withCrossFade(900)).
+                            into(imageView);
+
+                    full_screen.setOnClickListener(v -> {
                         Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
                         intent.putExtra("isFav",false);
                         intent.putExtra("brand", item.getSeller());
@@ -118,11 +122,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                         intent.putExtra("description", item.toString());
                         intent.putExtra("type", item.getType());
 
-                       // ArrayList<Pair<View,String>> pairs = new ArrayList<>();
-                       // pairs.add(Pair.create(brand,"company_name"));
-                      //  pairs.add(Pair.create(imageView,"image_item"));
+                        ArrayList<Pair<View,String>> _pairs = new ArrayList<>();
+                        _pairs.add(Pair.create(imageView,"image_item"));
+                        _pairs.add(Pair.create(brand,"company_name"));
 
-                        Macros.Functions.fullscreen(getContext(),intent,null);
+                        Macros.Functions.fullscreen(getContext(),intent,_pairs);
                     });
                     break;
                 case "Brand":

@@ -120,14 +120,13 @@ public class CustomerHomeFragment extends Fragment {
         };
         flingContainer.setFlingListener(onFlingListener);
         arrayAdapter.setFlingContainer(flingContainer);
+        flingContainer.setAdapter(arrayAdapter);
+
+        TextView percentage = view.findViewById(R.id.percentage);
 
         items_observer = shoppingItems -> {
-
             swipesModel.clearAllItems();
-            arrayAdapter.notifyDataSetChanged();
-
             long size = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue();
-
             for( ShoppingItem shoppingItem : shoppingItems ) {
                 if(shoppingItem.getPage_num() == size && !shoppingItem.isSeen()) {
                     swipesModel.addToItems(shoppingItem);
@@ -145,12 +144,9 @@ public class CustomerHomeFragment extends Fragment {
                     }
                 }
             }
-
             arrayAdapter.notifyDataSetChanged();
-            flingContainer.setAdapter(arrayAdapter);
         };
         total_items_observer = integer -> {
-            TextView percentage = view.findViewById(R.id.percentage);
             percentage.setVisibility(View.VISIBLE);
             String text = integer + "%";
             percentage.setText(text);

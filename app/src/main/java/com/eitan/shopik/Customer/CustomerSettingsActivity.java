@@ -4,29 +4,24 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.navigation.ActivityNavigator;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -118,11 +113,14 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                 bgImage.setImageURI(resultUri);
                 if (resultUri != null) {
 
-                    final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("coverImages").child(UserId);
+                    final StorageReference filePath = FirebaseStorage.getInstance().getReference().
+                            child("coverImages").child(UserId);
                     Bitmap bitmap = null;
                     try {
-                        bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), resultUri);
-                    } catch (IOException e) {
+                        bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().
+                                getContentResolver(), resultUri);
+                    }
+                    catch (IOException e) {
                         e.printStackTrace();
                         Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
                     }
@@ -137,22 +135,14 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                     byte[] data2 = baos.toByteArray();
 
                     UploadTask uploadTask = filePath.putBytes(data2);
-                    uploadTask.addOnFailureListener(e -> {
-                        return;
-                    });
-
-                    uploadTask.addOnSuccessListener(taskSnapshot -> filePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                    uploadTask.addOnSuccessListener(taskSnapshot ->
+                            filePath.getDownloadUrl().addOnSuccessListener(uri -> {
                         Map<String, Object> userInfo = new HashMap<>();
                         userInfo.put("cover_photo", uri.toString());
                         cover = uri.toString();
                         customerFS.update(userInfo);
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Log.d(Macros.TAG, "failed to load customer picture:" + exception.getMessage());
-
-                        }
-                    }));
+                    }).addOnFailureListener(exception ->
+                            Log.d(Macros.TAG, "failed to load customer picture:" + exception.getMessage())));
                 }
             }
         }
@@ -161,6 +151,11 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+
+        // inside your activity (if you did not enable transitions in your theme)
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.fragment_settings);
 
         init();
@@ -181,12 +176,11 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             mLastNameField.setText(last_name);
             Glide.with(getApplicationContext()).load(profileImageUrl).into(mProfileImage);
             Glide.with(getApplicationContext()).load(profileImageUrl).into(toolbar_pic);
-            Glide.with(getApplicationContext()).load(cover).into(bgImage);
+            Macros.Functions.GlidePicture(this,cover,bgImage);
             mAge.setText(age);
             mCity.setText(city);
             mAddress.setText(address);
             mPhone.setText(phone);
-           // mEmail.setText(email);
             setTitle();
             setCollapsingBar();
 
@@ -217,7 +211,9 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             return true;
         });
 
-        submit.setOnClickListener(v -> saveUserInformation());
+        submit.setOnClickListener(v -> {
+            saveUserInformation();
+        });
     }
 
     private void setNavigationBarButtonsColor(int navigationBarColor) {
@@ -247,23 +243,9 @@ public class CustomerSettingsActivity extends AppCompatActivity {
         collapsingToolbar.setCollapsedTitleTypeface(typeface);
         collapsingToolbar.setExpandedTitleTypeface(typeface);
         collapsingToolbar.setCollapsedTitleTextColor(Color.WHITE);
-        collapsingToolbar.setContentScrimColor(getColor(R.color.SplashScreenBackground));
+        collapsingToolbar.setContentScrimColor(getColor(R.color.CompanyProfileScrim));
 
-        final ImageView imageView = bgImage;
-        Glide.with(getApplicationContext()).asBitmap().load(cover).into(new CustomTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-
-                imageView.setImageBitmap(resource);
-                Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-
-                int height = bitmap.getHeight();
-
-                checkBottomLayoutColor(bitmap, height);
-            }
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {}
-        });
+        Glide.with(getApplicationContext()).asBitmap().load(cover).into(bgImage);
     }
 
     private void setTitle() {
@@ -318,29 +300,9 @@ public class CustomerSettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void checkBottomLayoutColor(Bitmap bitmap, int height){
-
-        int pixel_bottom_left = bitmap.getPixel(50,height - 50 );
-        int red_bottom = Color.red(pixel_bottom_left);
-        int blue_bottom  = Color.blue(pixel_bottom_left);
-        int green_bottom  = Color.green(pixel_bottom_left);
-
-        if( (red_bottom < 115 && blue_bottom < 115) ||
-                (green_bottom < 115 && red_bottom < 115) ||
-                (green_bottom < 115 && blue_bottom < 115) ) {
-
-            collapsingToolbar.setExpandedTitleColor(Color.WHITE);
-            mProfileImage.setBorderColor(Color.WHITE);
-        }
-        else {
-            collapsingToolbar.setExpandedTitleColor(Color.BLACK);
-            mProfileImage.setBorderColor(Color.BLACK);
-        }
-    }
-
     @Override
-    public void finish() {
-        super.finish();
-        ActivityNavigator.applyPopAnimationsToPendingTransition(this);
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.supportFinishAfterTransition();
     }
 }

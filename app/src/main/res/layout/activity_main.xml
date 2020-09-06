@@ -55,7 +55,8 @@
             android:indeterminate="false"
             app:indicatorColor="#0D6DC1"
             app:indicatorWidth="5dp"
-            tools:visibility="visible" />
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/customer_toolbar"

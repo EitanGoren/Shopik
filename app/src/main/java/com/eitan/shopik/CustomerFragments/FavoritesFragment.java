@@ -71,6 +71,42 @@ public class FavoritesFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.list_recycler_view);
         scroll = view.findViewById(R.id.scroll_up_down);
 
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                // ON BOTTOM
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    scroll.show();
+                    scroll.setRotation(180);
+                }
+                // ON TOP
+                else if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE){
+                    scroll.show();
+                    scroll.setRotation(0);
+                }
+            }
+        });
+
+        VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(0);
+        mRecyclerView.addItemDecoration(verticalSpaceItemDecoration);
+
+        fav_list = new CopyOnWriteArrayList<>();
+        recyclerGridAdapter = new RecyclerGridAdapter(fav_list,"favorites");
+
+        scroll.setOnClickListener(v -> {
+            int size = Objects.requireNonNull(mainModel.getFavorite().getValue()).size();
+            //scroll down
+            if(!scrollUp && size > 0) {
+                scroll.hide();
+                mLayoutManager.smoothScrollToPosition(mRecyclerView,null, (size - 1));
+            } //scroll down
+            else {
+                scroll.hide();
+                mLayoutManager.smoothScrollToPosition(mRecyclerView,null,0);
+            }
+            scrollUp = !scrollUp;
+        });
         return view;
     }
 
@@ -100,20 +136,18 @@ public class FavoritesFragment extends Fragment {
         mainModel.getFavorite().observe(requireActivity(), shoppingItems -> {
 
             fav_list.clear();
-            recyclerGridAdapter.notifyDataSetChanged();
-
             int count_ads = 0;
             for (ShoppingItem shoppingItem : shoppingItems) {
 
                 fav_list.add(shoppingItem);
-                recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount()-1);
+                recyclerGridAdapter.notifyItemInserted(0);
 
                 if(( fav_list.size() % Macros.FAV_TO_AD == 0 ) && fav_list.size() > 0 ) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
                     if(shoppingItemAd != null) {
                         count_ads++;
                         fav_list.add(shoppingItemAd);
-                        recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount()-1);
+                        recyclerGridAdapter.notifyItemInserted(0);
                     }
                 }
             }
@@ -129,41 +163,8 @@ public class FavoritesFragment extends Fragment {
 
             header.setText(text);
             recyclerGridAdapter.setAllItems(fav_list);
+            recyclerGridAdapter.notifyDataSetChanged();
         });
-
-        scroll.setOnClickListener(v -> {
-            int size = Objects.requireNonNull(mainModel.getFavorite().getValue()).size();
-            //scroll down
-            if(!scrollUp && size > 0) {
-                scroll.hide();
-                mLayoutManager.smoothScrollToPosition(mRecyclerView,null, (size - 1));
-            } //scroll down
-            else {
-                scroll.hide();
-                mLayoutManager.smoothScrollToPosition(mRecyclerView,null,0);
-            }
-            scrollUp = !scrollUp;
-        });
-
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                // ON BOTTOM
-                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    scroll.show();
-                    scroll.setRotation(180);
-                }
-                // ON TOP
-                else if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE){
-                    scroll.show();
-                    scroll.setRotation(0);
-                }
-            }
-        });
-
-        VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(0);
-        mRecyclerView.addItemDecoration(verticalSpaceItemDecoration);
     }
 
     @Override
@@ -178,8 +179,6 @@ public class FavoritesFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void init(){
-        fav_list = new CopyOnWriteArrayList<>();
-        recyclerGridAdapter = new RecyclerGridAdapter(fav_list,"favorites");
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(requireActivity(),
                 DividerItemDecoration.VERTICAL);

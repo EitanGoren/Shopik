@@ -34,6 +34,7 @@ import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
@@ -60,10 +61,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private SearchView searchView;
     private Toolbar toolbar;
     String item_type,item_gender,item_sub_category;
-    private long page = 0;
+    private int page = 0;
     private Observer<CopyOnWriteArrayList<ShoppingItem>> listObserver;
     private Observer<Integer> integerObserver;
-    private Observer<Long> longObserver;
+    private Observer<Integer> longObserver;
+    private ExtendedFloatingActionButton explore_items;
+    private RelativeLayout relativeLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -87,7 +90,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         View view = inflater.inflate(R.layout.fragment_search, container,false);
 
         appBarLayout = view.findViewById(R.id.appbar);
-
         mRecyclerView = view.findViewById(R.id.grid_recycler_view);
         mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerGridAdapter = new RecyclerGridAdapter(allItemsModel.getItems().getValue(),null);
@@ -100,6 +102,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         brand = view.findViewById(R.id.brand_chip);
         company = view.findViewById(R.id.company_chip);
         toolbar = view.findViewById(R.id.toolbar);
+        explore_items = view.findViewById(R.id.explore_items);
+        explore_items.setVisibility(View.VISIBLE);
+        relativeLayout = view.findViewById(R.id.info_layout);
 
         Chip favorite = view.findViewById(R.id.favorites_chip);
         price.setOnClickListener(this);
@@ -110,10 +115,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         favorite.setOnClickListener(this);
 
         listObserver = shoppingItems -> {
-
             allItemsModel.clearItems();
-            recyclerGridAdapter.notifyDataSetChanged();
-
             int count_ads = 0;
             for (ShoppingItem shoppingItem : shoppingItems) {
                 if (!Objects.requireNonNull(allItemsModel.getItems().getValue()).contains(shoppingItem)) {
@@ -125,7 +127,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                     shoppingItem.setPercentage(match_per);
 
                     allItemsModel.addItem(shoppingItem);
-                    recyclerGridAdapter.notifyDataSetChanged();
+                    recyclerGridAdapter.notifyItemInserted(allItemsModel.getItems().getValue().size());
                 }
                 if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
@@ -135,7 +137,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                         adItem.setNativeAd(shoppingItemAd.getNativeAd());
                         adItem.setAd(true);
                         allItemsModel.addItem(adItem);
-                        recyclerGridAdapter.notifyDataSetChanged();
+                        recyclerGridAdapter.notifyItemInserted(allItemsModel.getItems().getValue().size());
                     }
                 }
             }
@@ -145,7 +147,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 String cat = shoppingItems.get(0).getType();
                 String sub_cat = shoppingItems.get(0).getSub_category();
                 text = cat.toUpperCase() + " | " + sub_cat.toUpperCase() + " | " +
-                        (allItemsModel.getItems().getValue().size() - count_ads) + " ITEMS";
+                        (recyclerGridAdapter.getItemCount() - count_ads) + " ITEMS";
             }
             else
                 text = "NO ITEMS FOUND";
@@ -154,12 +156,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
             recyclerGridAdapter.setAllItems(Objects.requireNonNull(allItemsModel.getItems().getValue()));
             recyclerGridAdapter.notifyDataSetChanged();
-
         };
+
         longObserver = aLong -> page = aLong;
         listener = (appBarLayout, verticalOffset) -> {
-
-            RelativeLayout relativeLayout = requireView().findViewById(R.id.info_layout);
             // Collapsed
             if (verticalOffset <= -140) {
                 relativeLayout.setVisibility(View.INVISIBLE);
@@ -172,9 +172,15 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             }
         };
         integerObserver = integer -> {
-            if (integer == 100)
-                recyclerGridAdapter.notifyDataSetChanged();
+            // if (integer == 100)
+            recyclerGridAdapter.notifyDataSetChanged();
         };
+
+        explore_items.setOnClickListener(v -> {
+            int page = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue() + 1;
+            mainModel.setCurrent_page(page);
+            explore_items.shrink();
+        });
 
         onScrollListener = new RecyclerView.OnScrollListener() {
             @Override
@@ -189,21 +195,21 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                     scroll.setRotation(0);
                     // ask if want more items
                 }
+                if(!recyclerView.canScrollVertically(1)) {
+                    explore_items.extend();
+                }
             }
         };
         scroll.setOnClickListener(v -> {
-
             //scroll down
             if (!scrollUp)
                 mLayoutManager.smoothScrollToPosition(mRecyclerView, null,
                         Objects.requireNonNull(allItemsModel.getItems().getValue()).size() - 1);
-
-                //scroll down
+            //scroll down
             else
                 mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
 
             scrollUp = !scrollUp;
-
         });
 
         return view;
@@ -245,7 +251,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         header = null;
         mRecyclerView.removeOnScrollListener(onScrollListener);
         mRecyclerView = null;
-        recyclerGridAdapter = null;
+       // recyclerGridAdapter = null;
     }
 
     private void closeKeyboard(){

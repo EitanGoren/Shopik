@@ -87,30 +87,39 @@
 
             </LinearLayout>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/comp_logo"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="8dp"
-            android:contentDescription="@string/image_item"
-            android:layout_toEndOf="@id/fullscreen_dotsLayout"
-            android:scaleType="centerCrop"
-            android:transitionName="company_logo"/>
-
-        <TextView
-            android:id="@+id/comp_name"
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/comp_logo"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:textAlignment="center"
-            android:textColor="#ffffff"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:transitionName="company_name" />
+            android:layout_marginStart="7dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toEndOf="@id/fullscreen_dotsLayout">
+
+            <TextView
+                android:id="@+id/comp_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/comp_logo"
+                android:paddingStart="7dp"
+                android:paddingEnd="5dp"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:transitionName="company_name" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/comp_logo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:contentDescription="@string/image_item"
+                android:scaleType="centerCrop"
+                android:transitionName="company_logo"/>
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

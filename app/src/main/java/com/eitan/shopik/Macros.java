@@ -87,7 +87,6 @@ public class Macros {
     };
 
     public static class CustomerMacros {
-
         public static final String MEN = "Men";
         public static final String WOMEN = "Women";
         public static final String LIKED = "Liked";
@@ -130,7 +129,8 @@ public class Macros {
                 "ASOS MADE IN KENYA", "ASOS WHITE", "Avail London", "Aveda", "Babyliss", "Barber Pro",
                 "Barneys Originals", "Base London", "Beauty Kitchen", "Bellfield", "Ben Sherman",
                 "Bershka", "Billabong", "Birkenstock", "Bjorn Borg", "Bleach London", "Blood Brother",
-                "BOSS", "Bowlcut", "Bronx", "Brooklyn Supply Co.", "Buffalo", "Bulldog", "Bumble and bumble",
+                "BOSS", "Bowlcut", "Bronx", "Brooklyn Supply Co.", "Buffalo", "Bulldog",
+                "Bumble and bumble",
                 "Burton Menswear London", "Call it Spring", "Calvin Klein", "Camper", "Cantu",
                 "Carhartt WIP", "Carrots", "Casio", "Caudalie", "Celio", "CeraVe", "Chained & Able",
                 "Champion", "Clinique", "Criminal Damage", "Bolongaro Trevor", "Edwin", "Element",
@@ -360,8 +360,8 @@ public class Macros {
         public static final String WOMEN_BOOTS_RES = "https://c4.wallpaperflare.com/wallpaper/53/168/878/kendall-jenner-women-model-brunette-boots-hd-wallpaper-preview.jpg";
         public static final String WOMEN_HEELS_RES = "https://cdn.shopify.com/s/files/1/0727/7899/products/Fashion-Summer-High-Heels-Shoes-Women-s-Sandals-Strap-Ladies-Ankle-High-Heels-Size-35-43.jpg_640x640_35a7641d-8003-4da0-a38d-a1bad21dd539_1024x1024.jpg?v=1571438898";
         public static final String WOMEN_SLIDERS_RES = "https://www.twinset.com/on/demandware.static/-/Sites-master-catalog/default/dwaab16f5b/images/TwinSet/Images/Catalog/201TCT022-00519-0S.JPG";
-        public static final String WOMEN_SLIPPERS_RES = "https://c4.wallpaperflare.com/wallpaper/53/168/878/kendall-jenner-women-model-brunette-boots-hd-wallpaper-preview.jpg";
-        public static final String WOMEN_TRAINERS_RES = "https://cdn.shopify.com/s/files/1/0727/7899/products/Fashion-Summer-High-Heels-Shoes-Women-s-Sandals-Strap-Ladies-Ankle-High-Heels-Size-35-43.jpg_640x640_35a7641d-8003-4da0-a38d-a1bad21dd539_1024x1024.jpg?v=1571438898";
+        public static final String WOMEN_SLIPPERS_RES = "https://ae01.alicdn.com/kf/H5a82937964f2483e8344658dee390223O/Woman-Slippers-Lady-Platform-Flower-Casual-Beach-Flip-Flops-Sandals-Women-Sandals-Summer-Sexy-High-Heel.jpg";
+        public static final String WOMEN_TRAINERS_RES = "https://contestimg.wish.com/api/webimage/5d8c3111cb2046355e5cc88f-large.jpg?cache_buster=29bf7df2cdb7e6335ee8661a73efc9a4";
         public static final String WOMEN_SANDALS_RES = "https://sc02.alicdn.com/kf/HTB1EUgNPpXXXXc7XVXXq6xXFXXXS.jpg";
 
         public static final String MINI_DRESSES_RES = "https://i.pinimg.com/originals/c6/4a/2b/c64a2b4c4daa4a48b3a9f787353b1953.jpg";

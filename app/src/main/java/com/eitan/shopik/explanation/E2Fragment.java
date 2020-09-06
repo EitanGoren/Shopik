@@ -273,9 +273,9 @@ public class E2Fragment extends Fragment {
             addShirtsSubCategory("tanks", Macros.Items.WOMEN_TANKS_RES,Macros.CustomerMacros.WOMEN);
             addShirtsSubCategory("leotards", Macros.Items.WOMEN_LEOTARDS_RES,Macros.CustomerMacros.WOMEN);
 
+            addWatchesSubCategory("stylish",Macros.Items.WOMEN_WATCHES_RES,Macros.CustomerMacros.WOMEN);
             addWatchesSubCategory("smart",Macros.Items.WOMEN_SMART_RES,Macros.CustomerMacros.WOMEN);
             addWatchesSubCategory("digital",Macros.Items.WOMEN_DIGITAL_RES,Macros.CustomerMacros.WOMEN);
-            addWatchesSubCategory("stylish",Macros.Items.WOMEN_WATCHES_RES,Macros.CustomerMacros.WOMEN);
 
             addSwimwearSubCategory("bikini", Macros.Items.WOMEN_BIKINI_RES,Macros.CustomerMacros.WOMEN);
             addSwimwearSubCategory("swimsuit", Macros.Items.WOMEN_SWIMSUIT_RES,Macros.CustomerMacros.WOMEN);

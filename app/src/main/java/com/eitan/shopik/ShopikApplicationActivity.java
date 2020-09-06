@@ -34,7 +34,6 @@ import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_L
 
 public class ShopikApplicationActivity extends Application {
 
-    private static final int NUM_OF_ADS = 12;
     private static ShopikApplicationActivity instance;
     private static com.facebook.ads.InterstitialAd interstitialAd;
     private static ArrayList<ShoppingItem> shoppingAdsArray;
@@ -110,8 +109,15 @@ public class ShopikApplicationActivity extends Application {
         interstitialAd.loadAd(EnumSet.of(CacheFlag.VIDEO));
     }
 
-    public static void LoadAds(){
-        new getAds().execute();
+    public static void LoadAds(int num){
+        new getAds().execute(num);
+    }
+
+    public static void RefreshAds(int num_of_ads){
+        if(categoryClicks%2 == 0) {
+            clearAds();
+            LoadAds(num_of_ads);
+        }
     }
 
     @Override
@@ -120,7 +126,7 @@ public class ShopikApplicationActivity extends Application {
         clearAds();
     }
 
-    private static class getAds extends AsyncTask<Void, Void, Void> {
+    private static class getAds extends AsyncTask<Integer, Void, Void> {
 
         private UnifiedNativeAd tempAd;
 
@@ -132,8 +138,8 @@ public class ShopikApplicationActivity extends Application {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected Void doInBackground(Void... voids) {
-            for (int i = 0; i < NUM_OF_ADS; ++i ) {
+        protected Void doInBackground(Integer... integers) {
+            for (int i = 0; i < integers[0]; ++i ) {
                 VideoOptions videoOptions = new VideoOptions.Builder().
                         setStartMuted(false).
                         setClickToExpandRequested(true).

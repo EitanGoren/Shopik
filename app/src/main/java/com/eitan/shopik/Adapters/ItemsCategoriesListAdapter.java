@@ -110,15 +110,16 @@ public class ItemsCategoriesListAdapter extends BaseExpandableListAdapter {
             if( i < 2 ) {
                 String sub_name = category.getRecyclerItem(i).getItem_sub_category();
                 String first_letter = String.valueOf(sub_name.charAt(0)).toUpperCase();
-                sub_header_text.append(first_letter).append(sub_name.substring(1));
+                sub_header_text.append(first_letter).append(sub_name.substring(1)).append(" | ");
             }
-            else if( i==2 )
-                sub_header_text.append(" | ");
+            else if( i==2 ) {
+                String sub_name = category.getRecyclerItem(i).getItem_sub_category();
+                String first_letter = String.valueOf(sub_name.charAt(0)).toUpperCase();
+                sub_header_text.append(first_letter).append(sub_name.substring(1)).append("...");
+            }
             else
                 break;
         }
-        sub_header_text.append("...");
-
         sub_header.setText(sub_header_text.toString());
 
         String icon = setmButtonIcon(category.getGender(),category.getName());

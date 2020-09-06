@@ -13,8 +13,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bumptech.glide.Glide;
 import com.eitan.shopik.Adapters.FullscreenAdapter;
-import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 
 import java.util.ArrayList;
@@ -49,7 +49,10 @@ public class FullscreenImageActivity extends AppCompatActivity {
         String brand = getIntent().getStringExtra("brand");
         name.setText(brand);
         String seller_logo = getIntent().getStringExtra("seller_logo");
-        Macros.Functions.GlidePicture(this, seller_logo, company);
+
+        if(seller_logo != null )
+            Glide.with(this).load(seller_logo).into(company);
+
         String category = getIntent().getStringExtra("type");
         boolean isFavorite = getIntent().getBooleanExtra("isFav", false);
         String description = getIntent().getStringExtra("description");
@@ -70,14 +73,13 @@ public class FullscreenImageActivity extends AppCompatActivity {
             mFavorite.setVisibility(View.INVISIBLE);
 
         ViewPager2 viewPager = findViewById(R.id.fullscreen_image_viewPager);
-        viewPager.setAdapter(new FullscreenAdapter(imagesUrl,description,id,category));
+        viewPager.setAdapter(new FullscreenAdapter(this,imagesUrl,description,id,category));
         startPostponedEnterTransition();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
         this.supportFinishAfterTransition();
     }
 }

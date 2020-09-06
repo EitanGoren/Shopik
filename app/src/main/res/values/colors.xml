@@ -19,7 +19,7 @@
     <color name="borderLine">#000000</color>
     <color name="bottomLineText">#2196F3</color>
     <color name="fragmentBackground">#FFFFFF</color> <!-- FFFDED -->
-    <color name="womenColor">#E91E63</color>
+    <color name="womenColor">#C82A60</color>
     <color name="menColor">#17578A</color>
     <color name="womenColorLight">#FFFFFF</color>
     <color name="menColorLight">#FFFFFF</color>
