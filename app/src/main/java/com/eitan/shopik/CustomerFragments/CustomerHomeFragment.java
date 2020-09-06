@@ -54,6 +54,7 @@ public class CustomerHomeFragment extends Fragment {
     private SwipeFlingAdapterView flingContainer;
     private MainModel mainModel;
     private boolean isSwiped;
+    private TextView percentage;
     private Observer<CopyOnWriteArrayList<ShoppingItem>> items_observer;
     private Observer<Integer> total_items_observer;
     private String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
@@ -122,7 +123,7 @@ public class CustomerHomeFragment extends Fragment {
         arrayAdapter.setFlingContainer(flingContainer);
         flingContainer.setAdapter(arrayAdapter);
 
-        TextView percentage = view.findViewById(R.id.percentage);
+        percentage = view.findViewById(R.id.percentage);
         percentage.setVisibility(View.GONE);
 
         items_observer = shoppingItems -> {
@@ -148,9 +149,9 @@ public class CustomerHomeFragment extends Fragment {
             arrayAdapter.notifyDataSetChanged();
         };
 
-        percentage.setVisibility(View.VISIBLE);
         total_items_observer = integer -> {
-            arrayAdapter.notifyDataSetChanged();
+            percentage.setVisibility(View.VISIBLE);
+            percentage.setText(String.valueOf(integer));
         };
 
         return view;
