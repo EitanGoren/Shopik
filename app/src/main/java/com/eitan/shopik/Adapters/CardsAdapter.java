@@ -350,15 +350,19 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
                 intent.putExtra("isFav", shoppingItem.isFavorite());
-                intent.putExtra("brand", shoppingItem.getSeller());
+                intent.putExtra("brand", shoppingItem.getBrand());
                 intent.putExtra("id", shoppingItem.getId());
-                intent.putExtra("img1", shoppingItem.getImages().get(0));
-                intent.putExtra("img2", shoppingItem.getImages().get(1));
-                intent.putExtra("img3", shoppingItem.getImages().get(2));
-                intent.putExtra("img4", shoppingItem.getImages().get(3));
+                for(int i=0;i<shoppingItem.getImages().size(); i++) {
+                    intent.putExtra("img"+(i+1), shoppingItem.getImages().get(i));
+                }
+                if(shoppingItem.getImages().size() < 4){
+                    for(int i=shoppingItem.getImages().size(); i<4; i++) {
+                        intent.putExtra("img"+(i), shoppingItem.getImages().get(0));
+                    }
+                }
                 intent.putExtra("seller_logo", shoppingItem.getSellerLogoUrl());
                 intent.putExtra("description", description.toString());
-                intent.putExtra("type", shoppingItem.getType());
+                intent.putExtra("seller", shoppingItem.getSeller());
 
                 Macros.Functions.fullscreen( getContext(), intent, pairs);
             });
@@ -431,6 +435,5 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
-
 }
 

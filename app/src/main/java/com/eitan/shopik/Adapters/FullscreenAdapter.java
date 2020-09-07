@@ -2,14 +2,10 @@ package com.eitan.shopik.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.media.MediaPlayer;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,38 +17,31 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.PicsViewHolder> {
 
     private ArrayList<String> imagesUrl;
     private ImageView mDot1,mDot2,mDot3,mDot4,mDot5;
-    private LinearLayout dots;
     private CardView button;
-    private RelativeLayout buttons_layout;
+    private CardView buttons_layout,comp_info;
     private String description;
     private String path;
-    private String category;
+    private String seller;
     private String id;
-    private boolean isClicked = false;
+    private boolean isClicked = true;
     private ViewPager2 viewPager;
 
-    public FullscreenAdapter (Context context, ArrayList<String> imagesUrl, String description, String id, String category) {
+    public FullscreenAdapter (Context context, ArrayList<String> imagesUrl, String description, String id, String seller) {
         this.imagesUrl = imagesUrl;
         this.description = description;
         this.id = id;
-        this.category = category;
+        this.seller = seller;
 
         mDot1 = ((Activity)context).findViewById(R.id.fullscreen_dot_1);
         mDot2 = ((Activity)context).findViewById(R.id.fullscreen_dot_2);
@@ -64,11 +53,15 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
         mDot2.setBackground(ContextCompat.getDrawable(mDot2.getContext(),R.drawable.ic_baseline_panorama_fish_eye));
         mDot3.setBackground(ContextCompat.getDrawable(mDot3.getContext(),R.drawable.ic_baseline_panorama_fish_eye));
         mDot4.setBackground(ContextCompat.getDrawable(mDot4.getContext(),R.drawable.ic_baseline_panorama_fish_eye));
-        mDot5.setBackground(ContextCompat.getDrawable(mDot5.getContext(),R.drawable.ic_baseline_panorama_fish_eye));
+        mDot5.setVisibility(View.GONE);
 
-        dots = ((Activity)context).findViewById(R.id.fullscreen_dotsLayout);
         button = ((Activity)context).findViewById(R.id.close_card);
         buttons_layout = ((Activity)context).findViewById(R.id.buttons_layout);
+        comp_info = ((Activity)context).findViewById(R.id.comp_info);
+
+        YoYo.with(Techniques.FadeInRight).playOn(button);
+        YoYo.with(Techniques.FadeInDown).playOn(buttons_layout);
+        YoYo.with(Techniques.FadeInLeft).playOn(comp_info);
 
         viewPager = ((Activity)context).findViewById(R.id.fullscreen_image_viewPager);
     }
@@ -87,7 +80,7 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
 
     @Override
     public int getItemCount() {
-        return imagesUrl.size() + 1;
+        return imagesUrl.size();
     }
 
     private void changeTabs(int position) {
@@ -162,10 +155,11 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
                 @Override
                 public void onPageSelected(int pos) {
                     changeTabs(pos);
-                    if(category.equals("ASOS") && (pos == imagesUrl.size())) {
-                        dots.setVisibility(View.INVISIBLE);
-                        button.setVisibility(View.INVISIBLE);
-                        buttons_layout.setVisibility(View.INVISIBLE);
+                   /* if(category.equals("ASOS") && (pos == imagesUrl.size())) {
+
+                        YoYo.with(Techniques.FadeOutRight).playOn(button);
+                        YoYo.with(Techniques.FadeOutUp).playOn(buttons_layout);
+                        YoYo.with(Techniques.FadeOutLeft).playOn(comp_info);
 
                         if(path != null) {
                             videoLayout.setVisibility(View.VISIBLE);
@@ -188,32 +182,36 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
 
                         mVideoView.setOnCompletionListener(MediaPlayer::start);
                     }
-                    else
+                    else {*/
+                        if(seller.equals("ASOS")){
+                            mDot5.setVisibility(View.VISIBLE);
+                            mDot5.setBackground(ContextCompat.getDrawable(mDot5.getContext(), R.drawable.ic_baseline_panorama_fish_eye));
+                        }
                         videoLayout.setVisibility(View.GONE);
                         mVideoView.setVisibility(View.GONE);
                         anchor.setVisibility(View.GONE);
                         photoView.setOnLongClickListener(v -> {
-                            if(isClicked){
-                                dots.setVisibility(View.VISIBLE);
-                                button.setVisibility(View.VISIBLE);
-                                buttons_layout.setVisibility(View.VISIBLE);
+                            if (isClicked) {
+                                YoYo.with(Techniques.FadeOutRight).playOn(button);
+                                YoYo.with(Techniques.FadeOutUp).playOn(buttons_layout);
+                                YoYo.with(Techniques.FadeOutLeft).playOn(comp_info);
                             }
                             else {
-                                dots.setVisibility(View.INVISIBLE);
-                                button.setVisibility(View.INVISIBLE);
-                                buttons_layout.setVisibility(View.INVISIBLE);
+                                YoYo.with(Techniques.FadeInRight).playOn(button);
+                                YoYo.with(Techniques.FadeInDown).playOn(buttons_layout);
+                                YoYo.with(Techniques.FadeInLeft).playOn(comp_info);
                             }
                             isClicked = !isClicked;
                             return true;
                         });
-                }
+                    }
+              //  }
 
                 @Override
                 public void onPageScrollStateChanged(int state) {}
             });
         }
-
-        private class getVideoLink extends AsyncTask<Void, Integer, String> {
+       /* private class getVideoLink extends AsyncTask<Void, Integer, String> {
 
             String id,video_path;
 
@@ -289,6 +287,6 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
                     no_video.setVisibility(View.VISIBLE);
                 }
             }
-        }
+        }*/
     }
 }

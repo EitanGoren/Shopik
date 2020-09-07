@@ -56,7 +56,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
         if(seller_logo != null )
             Glide.with(this).load(seller_logo).into(company);
 
-        String category = getIntent().getStringExtra("type");
+        String seller_name = getIntent().getStringExtra("seller");
         boolean isFavorite = getIntent().getBooleanExtra("isFav", false);
         String description = getIntent().getStringExtra("description");
         String id = getIntent().getStringExtra("id");
@@ -76,7 +76,7 @@ public class FullscreenImageActivity extends AppCompatActivity {
             mFavorite.setVisibility(View.INVISIBLE);
 
         ViewPager2 viewPager = findViewById(R.id.fullscreen_image_viewPager);
-        viewPager.setAdapter(new FullscreenAdapter(this,imagesUrl,description,id,category));
+        viewPager.setAdapter(new FullscreenAdapter(this, imagesUrl, description ,id, seller_name));
         startPostponedEnterTransition();
     }
 

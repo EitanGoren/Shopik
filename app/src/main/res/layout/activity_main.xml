@@ -42,9 +42,6 @@
             android:layout_above="@id/bottom_nav"
             android:layout_below="@id/customer_toolbar"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="-4dp"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
         <com.google.android.material.progressindicator.ProgressIndicator
@@ -55,7 +52,6 @@
             android:indeterminate="false"
             app:indicatorColor="#0D6DC1"
             app:indicatorWidth="5dp"
-            android:visibility="gone"
             tools:visibility="visible"/>
 
         <androidx.appcompat.widget.Toolbar

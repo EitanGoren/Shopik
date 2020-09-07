@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,6 @@ import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CustomerHomeFragment extends Fragment {
@@ -56,7 +56,7 @@ public class CustomerHomeFragment extends Fragment {
     private boolean isSwiped;
     private TextView percentage;
     private Observer<CopyOnWriteArrayList<ShoppingItem>> items_observer;
-    private Observer<Integer> total_items_observer;
+    private Observer<Pair<Integer,Integer>> current_items_observer;
     private String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
     private SwipeFlingAdapterView.onFlingListener onFlingListener;
 
@@ -149,9 +149,15 @@ public class CustomerHomeFragment extends Fragment {
             arrayAdapter.notifyDataSetChanged();
         };
 
-        total_items_observer = integer -> {
+        current_items_observer = pair -> {
+          //  arrayAdapter.notifyDataSetChanged();
             percentage.setVisibility(View.VISIBLE);
-            percentage.setText(String.valueOf(integer));
+            String text = pair.first + "/" + pair.second;
+            percentage.setText(text);
+
+            if(pair.first.equals(pair.second)){
+                percentage.setVisibility(View.GONE);
+            }
         };
 
         return view;
@@ -163,21 +169,18 @@ public class CustomerHomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         isSwiped = false;
-
         mainModel.getAll_items().observe(requireActivity(), items_observer);
-        mainModel.getTotalItems().observe(requireActivity(), total_items_observer);
+        mainModel.getCurrentItem().observe(requireActivity(), current_items_observer);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        flingContainer = null;
         mainModel.getAll_items().removeObserver(items_observer);
-        mainModel.getTotalItems().removeObserver(total_items_observer);
+        mainModel.getCurrentItem().removeObserver(current_items_observer);
+        flingContainer = null;
         onFlingListener = null;
         items_observer = null;
-        total_items_observer = null;
-        arrayAdapter = null;
     }
 
     private void updateBadge() {
@@ -214,8 +217,6 @@ public class CustomerHomeFragment extends Fragment {
                 String action;
 
                 if (isFavorite) {
-                    dialog = new Dialog(requireContext());
-                    showFavoritesDialog(imageUrl);
                     action = Macros.CustomerMacros.FAVOURITE;
                 }
                 else
@@ -251,6 +252,14 @@ public class CustomerHomeFragment extends Fragment {
 
                 for (String attr : shoppingItem.getName()) {
                     connection.increasePreferredFieldByOneRTDB(attr, item_type, item_gender, item_sub_category);
+                }
+                if (mainModel.getPreferred().getValue() != null) {
+                    int match_per = Objects.requireNonNull(mainModel.getPreferred().getValue()).
+                            calculateMatchingPercentage(shoppingItem);
+                    if(match_per >= 90){
+                        dialog = new Dialog(requireContext());
+                        showMatchDialog(imageUrl,match_per);
+                    }
                 }
             }
         }
@@ -295,7 +304,8 @@ public class CustomerHomeFragment extends Fragment {
         Bundle bundle = requireActivity().getIntent().getBundleExtra("bundle");
         assert bundle != null;
         String imageUrl = bundle.getString("imageUrl");
-        String[] name = Objects.requireNonNull(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName()).split(" ");
+        String[] name = Objects.requireNonNull(Objects.requireNonNull(
+                FirebaseAuth.getInstance().getCurrentUser()).getDisplayName()).split(" ");
 
         String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         LikedUser likedUser = new LikedUser (imageUrl, name[0], name[1] );
@@ -308,14 +318,12 @@ public class CustomerHomeFragment extends Fragment {
         mainModel.addFavorite(shoppingItem);
     }
 
-    private void showFavoritesDialog(String imageUrl) {
+    private void showMatchDialog(String imageUrl, int match) {
 
         dialog.setContentView(R.layout.favorite_dialog_layout);
 
         TextView header = dialog.findViewById(R.id.header);
         TextView footer = dialog.findViewById(R.id.footer);
-        Random random = new Random();
-        String rand_line = Macros.Arrays.FAV_LINES[(random.nextInt(Macros.Arrays.FAV_LINES.length))];
         ImageView fav_item = dialog.findViewById(R.id.fav_item);
 
         ImageView fav_ic = dialog.findViewById(R.id.fav_ic);
@@ -323,9 +331,11 @@ public class CustomerHomeFragment extends Fragment {
                 getDrawable(dialog.getContext(),R.drawable.ic_baseline_favorite));
 
         fav_ic.setColorFilter(Color.WHITE);
-        String text = "Added Successfully";
+        String text = "Added to Favorites";
         footer.setText(text);
-        header.setText(rand_line);
+        footer.setTextSize(12);
+        String header_text = "WOW ! " + System.lineSeparator() + match + " % MATCH";
+        header.setText(header_text);
         Macros.Functions.GlidePicture(dialog.getContext(),imageUrl,fav_item);
 
         Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

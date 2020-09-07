@@ -165,7 +165,7 @@
                                 app:chipBackgroundColor="#FFFFFF"
                                 app:chipCornerRadius="15dp"
                                 app:chipEndPadding="10dp"
-                                app:chipIcon="@drawable/sale1"
+                                app:chipIcon="@drawable/ic_local_mall_black_24dp"
                                 app:chipIconTint="#000000"
                                 app:chipStartPadding="10dp" />
                             <com.google.android.material.chip.Chip
@@ -181,7 +181,7 @@
                                 app:chipBackgroundColor="#FFFFFF"
                                 app:chipCornerRadius="15dp"
                                 app:chipEndPadding="10dp"
-                                app:chipIcon="@drawable/sale1"
+                                app:chipIcon="@drawable/ic_loyalty_red"
                                 app:chipIconTint="#000000"
                                 app:chipStartPadding="10dp" />
 

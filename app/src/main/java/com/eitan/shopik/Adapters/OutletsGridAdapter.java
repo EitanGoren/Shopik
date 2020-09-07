@@ -2,9 +2,11 @@ package com.eitan.shopik.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.ArraySet;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -95,7 +98,29 @@ public class OutletsGridAdapter extends ArrayAdapter<RecyclerItem> implements Se
                 price.setTextSize(16);
             }
 
-            //fullscreen.setOnClickListener(v -> Macros.Functions.fullscreen(getContext(), item,null));
+            ArrayList<Pair<View,String>> pairs = new ArrayList<>();
+            pairs.add(Pair.create(imageView,"image_item"));
+
+            fullscreen.setOnClickListener(v -> {
+
+                Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
+                intent.putExtra("isFav", false);
+                intent.putExtra("brand", item.getSeller());
+                intent.putExtra("id", item.getId());
+                for(int i=0;i<item.getImages().size(); i++) {
+                    intent.putExtra("img"+(i+1), item.getImages().get(i));
+                }
+                if(item.getImages().size() < 4){
+                    for(int i=item.getImages().size(); i<4; i++) {
+                        intent.putExtra("img"+(i), item.getImages().get(0));
+                    }
+                }
+                intent.putExtra("seller_logo", item.getSellerLogoUrl());
+                intent.putExtra("description", item.toString());
+                intent.putExtra("seller", item.getSeller());
+
+                Macros.Functions.fullscreen( getContext(), intent, pairs);
+            });
 
             return convertView;
         }

@@ -3,6 +3,7 @@ package com.eitan.shopik.CustomerFragments;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.eitan.shopik.Adapters.RecyclerGridAdapter;
+import com.eitan.shopik.CustomItemAnimator;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -62,6 +64,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private Observer<Integer> longObserver;
     private ExtendedFloatingActionButton explore_items;
     private RelativeLayout relativeLayout;
+    private Observer<Pair<Integer,Integer>> total_items_observer;
     Chip price ;
     Chip all ;
     Chip sale ;
@@ -102,6 +105,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         mRecyclerView = view.findViewById(R.id.grid_recycler_view);
         mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerGridAdapter = new RecyclerGridAdapter(allItemsModel.getItems().getValue(),null);
+        mRecyclerView.setItemAnimator(new CustomItemAnimator());
 
         scroll = view.findViewById(R.id.scroll_up_down);
         header = view.findViewById(R.id.text);
@@ -141,7 +145,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         listObserver = shoppingItems -> {
             allItemsModel.clearItems();
-            int count_ads = 0;
             for (ShoppingItem shoppingItem : shoppingItems) {
                 if (!Objects.requireNonNull(allItemsModel.getItems().getValue()).contains(shoppingItem)) {
                     int match_per = 0;
@@ -150,35 +153,20 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                                 calculateMatchingPercentage(shoppingItem);
                     }
                     shoppingItem.setPercentage(match_per);
-
                     allItemsModel.addItem(shoppingItem);
-                    recyclerGridAdapter.notifyItemInserted(allItemsModel.getItems().getValue().size());
+                    recyclerGridAdapter.notifyItemInserted(0 );
                 }
                 if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
                     if (shoppingItemAd != null) {
-                        count_ads++;
                         ShoppingItem adItem = new ShoppingItem();
                         adItem.setNativeAd(shoppingItemAd.getNativeAd());
                         adItem.setAd(true);
                         allItemsModel.addItem(adItem);
-                        recyclerGridAdapter.notifyItemInserted(allItemsModel.getItems().getValue().size());
+                        recyclerGridAdapter.notifyItemInserted(0);
                     }
                 }
             }
-
-            String text;
-            if (shoppingItems.size() > 0) {
-                String cat = shoppingItems.get(0).getType();
-                String sub_cat = shoppingItems.get(0).getSub_category();
-                text = cat.toUpperCase() + " | " + sub_cat.toUpperCase() + " | " +
-                        (recyclerGridAdapter.getItemCount() - count_ads) + " ITEMS";
-            }
-            else
-                text = "NO ITEMS FOUND";
-
-            header.setText(text);
-
             recyclerGridAdapter.setAllItems(Objects.requireNonNull(allItemsModel.getItems().getValue()));
             recyclerGridAdapter.notifyDataSetChanged();
         };
@@ -195,8 +183,17 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 relativeLayout.setVisibility(View.VISIBLE);
             }
         };
-        integerObserver = integer -> {
-            recyclerGridAdapter.notifyDataSetChanged();
+
+        total_items_observer = pair -> {
+            String text;
+            if (pair.first > 0) {
+                text = item_type.toUpperCase() + " | " + item_sub_category.toUpperCase() + " | " +
+                        pair.first + " ITEMS";
+            }
+            else
+                text = "NO ITEMS FOUND";
+
+            header.setText(text);
         };
 
         explore_items.setOnClickListener(v -> {
@@ -248,9 +245,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         mRecyclerView.setAdapter(recyclerGridAdapter);
         mainModel.getAll_items().observe(requireActivity(),listObserver );
         mainModel.getCurrent_page().observe(requireActivity(),longObserver);
+        mainModel.getCurrentItem().observe(requireActivity(), total_items_observer);
         mRecyclerView.addOnScrollListener(onScrollListener);
         appBarLayout.addOnOffsetChangedListener(listener);
-        mainModel.getCurrentItem().observe(requireActivity(),integerObserver);
     }
 
     @Override
@@ -258,8 +255,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         super.onDestroyView();
 
         mainModel.getCurrent_page().removeObserver(longObserver);
-        allItemsModel.getItems().removeObserver(listObserver);
-        mainModel.getTotalItems().removeObserver(integerObserver);
+        mainModel.getAll_items().removeObserver(listObserver);
+        mainModel.getCurrentItem().removeObserver(total_items_observer);
         appBarLayout.removeOnOffsetChangedListener(listener);
         mLayoutManager = null;
         appBarLayout = null;
@@ -346,12 +343,23 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         hoodies_chip.setChecked(false);
         favorite.setChecked(false);
     }
-
     private void sortItems(String sort_by){
-        recyclerGridAdapter.getSortingFilter().filter(sort_by);
+        recyclerGridAdapter.getSortingFilter().filter(sort_by, count -> updateHeader(count,false));
     }
     private void filterItems(String filter_by){
-        recyclerGridAdapter.getFilter().filter(filter_by);
+        recyclerGridAdapter.getFilter().filter(filter_by, count -> updateHeader(count,true));
+    }
+
+    private void updateHeader(int count, boolean isFilter) {
+        String text;
+        if(isFilter) {
+            text = count + " ITEMS ";
+        }
+        else{
+            text = item_type.toUpperCase() + " | " + item_sub_category.toUpperCase() + " | " +
+                       count + " ITEMS";
+        }
+        header.setText(text);
     }
 
     @Override

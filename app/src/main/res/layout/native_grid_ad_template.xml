@@ -54,14 +54,14 @@
                     style="?attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/ad_store"
+                    android:layout_below="@id/ad_card_seller_name"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
                     android:numStars="5"
                     android:stepSize="0.5" />
 
                 <TextView
-                    android:id="@+id/ad_store"
+                    android:id="@+id/ad_card_seller_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
@@ -104,7 +104,7 @@
                     android:textSize="15sp" />
 
                 <TextView
-                    android:id="@+id/ad_card_seller_name"
+                    android:id="@+id/ad_store"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"

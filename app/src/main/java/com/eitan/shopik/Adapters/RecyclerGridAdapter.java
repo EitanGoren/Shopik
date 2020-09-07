@@ -300,11 +300,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private static class ADViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView seller_name;
-
         private ADViewHolder(@NonNull UnifiedNativeAdView itemView) {
             super(itemView);
-
             // Set the media view.
             itemView.setMediaView(itemView.findViewById(R.id.ad_media));
             itemView.getMediaView().setImageScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -530,8 +527,9 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             String brand = item.getBrand();
             String seller = item.getSeller();
 
-            if (brand != null)
+            if (brand != null && brand.length() <= 45) {
                 brand_name.setText(brand);
+            }
             else
                 brand_name.setText(seller);
 
@@ -540,7 +538,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
              fullscreen.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
                 intent.putExtra("isFav", item.isFavorite());
-                intent.putExtra("brand", seller);
+                intent.putExtra("brand", brand);
                 intent.putExtra("id", item.getId());
                 for(int i=0;i<item.getImages().size(); i++) {
                     intent.putExtra("img"+(i+1), item.getImages().get(i));
@@ -552,7 +550,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
                 intent.putExtra("seller_logo", item.getSellerLogoUrl());
                 intent.putExtra("description", item_description.toString());
-                intent.putExtra("type", item.getType());
+                intent.putExtra("seller", item.getSeller());
 
                 ArrayList<Pair<View,String>> pairs = new ArrayList<>();
                 pairs.add(Pair.create(logo,"company_logo"));
@@ -771,17 +769,21 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 intent.putExtra("isFav", item.isFavorite());
                 intent.putExtra("brand", item.getBrand());
                 intent.putExtra("id", item.getId());
-                intent.putExtra("img1", item.getImages().get(0));
-                intent.putExtra("img2", item.getImages().get(1));
-                intent.putExtra("img3", item.getImages().get(2));
-                intent.putExtra("img4", item.getImages().get(3));
+                for(int i=0;i<item.getImages().size(); i++) {
+                    intent.putExtra("img"+(i+1), item.getImages().get(i));
+                }
+                if(item.getImages().size() < 4){
+                    for(int i=item.getImages().size(); i<4; i++) {
+                        intent.putExtra("img"+(i), item.getImages().get(0));
+                    }
+                }
                 intent.putExtra("seller_logo", item.getSellerLogoUrl());
                 intent.putExtra("description", desc.toString());
-                intent.putExtra("type", item.getType());
+                intent.putExtra("seller", item.getSeller());
 
                 ArrayList<Pair<View,String>> pairs = new ArrayList<>();
                 pairs.add(Pair.create(logo,"company_logo"));
-                pairs.add(Pair.create(brand_name,"cmpany_name"));
+                pairs.add(Pair.create(brand_name,"company_name"));
 
                 Macros.Functions.fullscreen(getContext(), intent, pairs);
             });
@@ -849,7 +851,11 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             logo.setOnClickListener(v -> Macros.Functions.
                     sellerProfile(getContext(), item.getSellerId(), pairs));
 
-            brand_name.setText(item.getBrand());
+            if (item.getBrand() != null && item.getBrand().length() <= 45)
+                brand_name.setText(item.getBrand());
+            else
+                brand_name.setText(item.getSeller());
+
             description.setText(desc);
         }
 

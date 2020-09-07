@@ -114,13 +114,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                         intent.putExtra("isFav",false);
                         intent.putExtra("brand", item.getSeller());
                         intent.putExtra("id", item.getId());
-                        intent.putExtra("img1", item.getImages().get(0));
-                        intent.putExtra("img2", item.getImages().get(1));
-                        intent.putExtra("img3", item.getImages().get(2));
-                        intent.putExtra("img4", item.getImages().get(3));
+                        for(int i=0;i<item.getImages().size(); i++) {
+                            intent.putExtra("img"+(i+1), item.getImages().get(i));
+                        }
+                        if(item.getImages().size() < 4){
+                            for(int i=item.getImages().size(); i<4; i++) {
+                                intent.putExtra("img"+(i), item.getImages().get(0));
+                            }
+                        }
                         intent.putExtra("seller_logo", item.getSellerLogoUrl());
                         intent.putExtra("description", item.toString());
-                        intent.putExtra("type", item.getType());
+                        intent.putExtra("seller", item.getSeller());
 
                         ArrayList<Pair<View,String>> _pairs = new ArrayList<>();
                         _pairs.add(Pair.create(imageView,"image_item"));
