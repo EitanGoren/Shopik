@@ -1006,7 +1006,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                             Elements pook = prod.getElementsByAttributeValue("data-auto-id", "productTilePrice");
                             if(pook.size() == 1) {
-                                String price = pook.get(0).childNode(0).childNode(0).toString().replace("£", "");
+                                int las_ele_idx = pook.get(0).childNodes().size() - 1;
+                                String price = pook.get(0).childNode(las_ele_idx).childNode(0).toString().replace("£","");
                                 shoppingItem.setPrice(price);
                             }
 

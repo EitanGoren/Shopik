@@ -255,7 +255,7 @@ public class CustomerHomeFragment extends Fragment {
                 if (mainModel.getPreferred().getValue() != null) {
                     int match_per = Objects.requireNonNull(mainModel.getPreferred().getValue()).
                             calculateMatchingPercentage(shoppingItem);
-                    if(match_per >= 85){
+                    if(match_per >= 95){
                         dialog = new Dialog(requireContext());
                         showMatchDialog(imageUrl,match_per);
                     }
@@ -333,7 +333,7 @@ public class CustomerHomeFragment extends Fragment {
         String text = "Added to Favorites";
         footer.setText(text);
         footer.setTextSize(18);
-        String word = (match >=85 && match<=95) ? "WOW ! " : "Great Match!";
+        String word = (match >=95 && match<=99) ? "Great Match!" : "WOW! ";
         String header_text = word + System.lineSeparator() + match + " % MATCH";
         header.setText(header_text);
         Macros.Functions.GlidePicture(dialog.getContext(),imageUrl,fav_item);
