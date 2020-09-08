@@ -114,7 +114,7 @@ public class ShopikApplicationActivity extends Application {
     }
 
     public static void RefreshAds(int num_of_ads){
-        if(categoryClicks%2 == 0) {
+        if(categoryClicks % 2 == 0) {
             clearAds();
             LoadAds(num_of_ads);
         }

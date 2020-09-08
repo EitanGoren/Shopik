@@ -135,9 +135,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
                     for (DocumentSnapshot doc : documentSnapshots) {
                         LikedUser likedUser = new LikedUser (
-                                Objects.requireNonNull(doc.get("imageUrl")).toString(),
-                                Objects.requireNonNull(doc.get("first_name")).toString(),
-                                Objects.requireNonNull(doc.get("last_name")).toString()
+                                doc.get("imageUrl") != null ? Objects.requireNonNull(doc.get("imageUrl")).toString() : null,
+                                doc.get("first_name") != null ? Objects.requireNonNull(doc.get("first_name")).toString() : null,
+                                doc.get("last_name") != null ? Objects.requireNonNull(doc.get("last_name")).toString() : null
                         );
 
                         //if current user liked this item
@@ -413,9 +413,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
                     for (DocumentSnapshot doc : documentSnapshots) {
                         LikedUser likedUser = new LikedUser(
-                                Objects.requireNonNull(doc.get("imageUrl")).toString(),
-                                Objects.requireNonNull(doc.get("first_name")).toString(),
-                                Objects.requireNonNull(doc.get("last_name")).toString()
+                                doc.get("imageUrl") != null ? Objects.requireNonNull(doc.get("imageUrl")).toString() : null,
+                                doc.get("first_name") != null ? Objects.requireNonNull(doc.get("first_name")).toString() : null,
+                                doc.get("last_name") != null ? Objects.requireNonNull(doc.get("last_name")).toString() : null
                         );
 
                         if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
@@ -672,14 +672,13 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
         mainModel.getCurrentItem().observe(this, pair -> {
             progressIndicator.setVisibility(View.VISIBLE);
-            int prog = (int) (((float) pair.first / (float) pair.second) * 100);
-            progressIndicator.setProgress(prog);
+            int progress = (int) (((float) pair.first / (float) pair.second) * 100);
+            progressIndicator.setProgress(progress);
 
-            if(prog == 100){
+            if(progress == 100){
                 progressIndicator.setProgress(0);
                 progressIndicator.setVisibility(View.GONE);
             }
-
         });
     }
 
@@ -1663,18 +1662,26 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 continue;
                             }
 
+                            ArrayList<String> images = new ArrayList<>();
+                            Elements pook6 = prod_elements.getElementsByAttributeValue("data-gallery-role", "gallery-placeholder");
+                            Elements pook7 = pook6.get(0).getElementsByClass("idus-slider-slide-img");
+
+                            for (int i=0; i < pook7.size()/2; ++i){
+                                images.add(pook7.get(i).attr("src"));
+                            }
+                            if(images.size() < 4){
+                                for(int j = images.size(); j<4; j++){
+                                    images.add(images.get(0));
+                                }
+                            }
+
                             Elements elements1 = prod_elements.getElementsByAttributeValue("type", "application/ld+json");
                             Node json_node = elements1.get(0).childNode(0);
                             String pook = json_node.toString();
                             JSONObject jpook = new JSONObject(pook);
                             String description = jpook.get("description").toString();
                             ArrayList<String> description_array = new ArrayList<>(Arrays.asList(description.split(" ")));
-                            String imageUrl = jpook.get("image").toString();
-                            ArrayList<String> images = new ArrayList<>();
 
-                            for(int i=0; i<4; ++i){
-                                images.add(imageUrl);
-                            }
                             String id = jpook.get("sku").toString();
                             JSONObject offers = new JSONObject(jpook.get("offers").toString());
                             String price = offers.getString("price");

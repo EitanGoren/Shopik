@@ -31,17 +31,14 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
     private CardView button;
     private CardView buttons_layout,comp_info;
     private String description;
-    private String path;
-    private String seller;
-    private String id;
+   // private String seller;
     private boolean isClicked = true;
     private ViewPager2 viewPager;
 
     public FullscreenAdapter (Context context, ArrayList<String> imagesUrl, String description, String id, String seller) {
         this.imagesUrl = imagesUrl;
         this.description = description;
-        this.id = id;
-        this.seller = seller;
+      //  this.seller = seller;
 
         mDot1 = ((Activity)context).findViewById(R.id.fullscreen_dot_1);
         mDot2 = ((Activity)context).findViewById(R.id.fullscreen_dot_2);
@@ -183,32 +180,28 @@ public class FullscreenAdapter extends RecyclerView.Adapter<FullscreenAdapter.Pi
                         mVideoView.setOnCompletionListener(MediaPlayer::start);
                     }
                     else {*/
-                        if(seller.equals("ASOS")){
-                            mDot5.setVisibility(View.VISIBLE);
-                            mDot5.setBackground(ContextCompat.getDrawable(mDot5.getContext(), R.drawable.ic_baseline_panorama_fish_eye));
-                        }
-                        videoLayout.setVisibility(View.GONE);
-                        mVideoView.setVisibility(View.GONE);
-                        anchor.setVisibility(View.GONE);
-                        photoView.setOnLongClickListener(v -> {
-                            if (isClicked) {
-                                YoYo.with(Techniques.FadeOutRight).playOn(button);
-                                YoYo.with(Techniques.FadeOutUp).playOn(buttons_layout);
-                                YoYo.with(Techniques.FadeOutLeft).playOn(comp_info);
-                            }
-                            else {
-                                YoYo.with(Techniques.FadeInRight).playOn(button);
-                                YoYo.with(Techniques.FadeInDown).playOn(buttons_layout);
-                                YoYo.with(Techniques.FadeInLeft).playOn(comp_info);
-                            }
-                            isClicked = !isClicked;
-                            return true;
-                        });
-                    }
-              //  }
+                   videoLayout.setVisibility(View.GONE);
+                   mVideoView.setVisibility(View.GONE);
+                   anchor.setVisibility(View.GONE);
+                   photoView.setOnLongClickListener(v -> {
+                       if (isClicked) {
+                           YoYo.with(Techniques.FadeOutRight).playOn(button);
+                           YoYo.with(Techniques.FadeOutUp).playOn(buttons_layout);
+                           YoYo.with(Techniques.FadeOutLeft).playOn(comp_info);
+                       }
+                       else {
+                           YoYo.with(Techniques.FadeInRight).playOn(button);
+                           YoYo.with(Techniques.FadeInDown).playOn(buttons_layout);
+                           YoYo.with(Techniques.FadeInLeft).playOn(comp_info);
+                       }
+                       isClicked = !isClicked;
+                       return true;
+                   });
+                }
 
                 @Override
                 public void onPageScrollStateChanged(int state) {}
+
             });
         }
        /* private class getVideoLink extends AsyncTask<Void, Integer, String> {

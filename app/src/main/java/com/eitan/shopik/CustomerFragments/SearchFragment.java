@@ -25,6 +25,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.Adapters.RecyclerGridAdapter;
 import com.eitan.shopik.CustomItemAnimator;
 import com.eitan.shopik.Items.ShoppingItem;
@@ -46,8 +48,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
     private AllItemsModel allItemsModel;
     private MainModel mainModel;
-    private FloatingActionButton scroll;
-    private boolean scrollUp;
+    private FloatingActionButton scrollUpFAB,scrollDownFAB;
     private RecyclerGridAdapter recyclerGridAdapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -59,8 +60,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private Toolbar toolbar;
     String item_type,item_gender,item_sub_category;
     private int page = 0;
+    private int items_num = 0;
     private Observer<CopyOnWriteArrayList<ShoppingItem>> listObserver;
-    private Observer<Integer> integerObserver;
     private Observer<Integer> longObserver;
     private ExtendedFloatingActionButton explore_items;
     private RelativeLayout relativeLayout;
@@ -107,7 +108,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         recyclerGridAdapter = new RecyclerGridAdapter(allItemsModel.getItems().getValue(),null);
         mRecyclerView.setItemAnimator(new CustomItemAnimator());
 
-        scroll = view.findViewById(R.id.scroll_up_down);
+        scrollUpFAB = view.findViewById(R.id.scroll_up);
+        scrollDownFAB = view.findViewById(R.id.scroll_down);
         header = view.findViewById(R.id.text);
         price = view.findViewById(R.id.price_chip);
         all = view.findViewById(R.id.all_chip);
@@ -125,7 +127,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         favorite = view.findViewById(R.id.favorites_chip);
         toolbar = view.findViewById(R.id.toolbar);
         explore_items = view.findViewById(R.id.explore_items);
-        explore_items.setVisibility(View.VISIBLE);
         relativeLayout = view.findViewById(R.id.info_layout);
 
         price.setOnClickListener(this);
@@ -183,10 +184,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 relativeLayout.setVisibility(View.VISIBLE);
             }
         };
-
         total_items_observer = pair -> {
             String text;
             if (pair.first > 0) {
+                items_num = pair.first;
                 text = item_type.toUpperCase() + " | " + item_sub_category.toUpperCase() + " | " +
                         pair.first + " ITEMS";
             }
@@ -195,42 +196,44 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
             header.setText(text);
         };
-
         explore_items.setOnClickListener(v -> {
             int page = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue() + 1;
             mainModel.setCurrent_page(page);
             explore_items.shrink();
         });
-
         onScrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                // ON BOTTOM
-                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    scroll.setRotation(180);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    YoYo.with(Techniques.FadeOut).playOn(explore_items);
+                    YoYo.with(Techniques.FadeIn).playOn(scrollDownFAB);
+                    YoYo.with(Techniques.FadeIn).playOn(scrollUpFAB);
+                    if(!recyclerView.canScrollVertically(1)){
+                        YoYo.with(Techniques.FadeIn).playOn(explore_items);
+                    }
                 }
-                // ON TOP
-                else if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    scroll.setRotation(0);
-                    // ask if want more items
-                }
-                if(!recyclerView.canScrollVertically(1)) {
-                    explore_items.extend();
+                else {
+                    YoYo.with(Techniques.FadeOut).playOn(explore_items);
+                    YoYo.with(Techniques.FadeOut).playOn(scrollDownFAB);
+                    YoYo.with(Techniques.FadeOut).playOn(scrollUpFAB);
                 }
             }
         };
-        scroll.setOnClickListener(v -> {
+        scrollUpFAB.setOnClickListener(v -> {
             //scroll down
-            if (!scrollUp)
-                mLayoutManager.smoothScrollToPosition(mRecyclerView, null,recyclerGridAdapter.getItemCount() - 1);
-            //scroll down
+            if(items_num > 100)
+                mLayoutManager.scrollToPosition(recyclerGridAdapter.getItemCount() - 1);
             else
-                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
-
-            scrollUp = !scrollUp;
+                mLayoutManager.smoothScrollToPosition(mRecyclerView,null,recyclerGridAdapter.getItemCount() - 1);
         });
-
+        scrollDownFAB.setOnClickListener(v -> {
+            //scroll up
+            if(items_num > 100)
+                mLayoutManager.scrollToPosition(0);
+            else
+                mLayoutManager.smoothScrollToPosition(mRecyclerView,null,0);
+        });
         return view;
     }
 
@@ -238,8 +241,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        scrollUp = false;
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerGridAdapter);
@@ -260,7 +261,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         appBarLayout.removeOnOffsetChangedListener(listener);
         mLayoutManager = null;
         appBarLayout = null;
-        scroll = null;
+        scrollDownFAB = null;
+        scrollUpFAB = null;
         toolbar = null;
         header = null;
         mRecyclerView.removeOnScrollListener(onScrollListener);

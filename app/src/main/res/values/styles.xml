@@ -18,7 +18,7 @@
         <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
     </style>
 
-    <style name="farts" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="MainStyle" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:statusBarColor">#ffffff</item>
         <item name="android:windowLightStatusBar">false</item>
 

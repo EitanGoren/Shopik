@@ -47,12 +47,6 @@ public class LandingPageActivity extends AppCompatActivity {
     private static final int DELAY_MILLIS = 4500;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        ShopikApplicationActivity.LoadAds(5);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -80,13 +74,11 @@ public class LandingPageActivity extends AppCompatActivity {
         }
 
         if(user == null){
-
             // Choose authentication providers
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.GoogleBuilder().build(),
                     new AuthUI.IdpConfig.FacebookBuilder().build(),
                     new AuthUI.IdpConfig.EmailBuilder().build());
-
             // You must provide a custom layout XML resource and configure at least one
             // provider button ID. It's important that that you set the button ID for every provider
             // that you have enabled.
@@ -96,7 +88,6 @@ public class LandingPageActivity extends AppCompatActivity {
                     .setFacebookButtonId(R.id.facebook_sign_in)
                     .setEmailButtonId(R.id.email_sign_in)
                     .build();
-
             // Create and launch sign-in intent
             startActivityForResult(AuthUI.getInstance()
                     .createSignInIntentBuilder()
@@ -107,7 +98,6 @@ public class LandingPageActivity extends AppCompatActivity {
                     .build(),1);
         }
         else {
-
             DocumentReference user_document = db.collection(Macros.CUSTOMERS).document(user.getUid());
             DocumentReference company_document = db.collection(Macros.COMPANIES).document(user.getUid());
 
@@ -229,7 +219,7 @@ public class LandingPageActivity extends AppCompatActivity {
         intent.putExtra("bundle",bundle);
 
         ImageView tooki = findViewById(R.id.imageView);
-        YoYo.with(Techniques.Hinge).duration(4000).onEnd(animator -> {
+        YoYo.with(Techniques.Hinge).duration(3000).onEnd(animator -> {
             startActivity(intent);
             supportFinishAfterTransition();
         }).playOn(tooki);

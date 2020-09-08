@@ -2,51 +2,26 @@ package com.eitan.shopik.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
-import com.eitan.shopik.Company.CompanyProfileActivity;
-import com.eitan.shopik.Customer.FullscreenImageActivity;
-import com.eitan.shopik.Database;
-import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
-import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.google.android.gms.ads.formats.MediaView;
-import com.google.android.gms.ads.formats.UnifiedNativeAd;
-import com.google.android.gms.ads.formats.UnifiedNativeAdView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserInfo;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -74,7 +49,12 @@ public class LikesListAdapter extends ArrayAdapter<LikedUser> implements Seriali
 
         assert user != null;
         seller_name.setText(user.getFirst_name() + " " + user.getLast_name());
-        Glide.with(getContext()).load(user.getProfile_image()).into(user_icon);
+        if(user.getProfile_image() != null){
+            Glide.with(getContext()).load(user.getProfile_image()).into(user_icon);
+        }
+        else {
+            Glide.with(getContext()).asDrawable().load(R.drawable.ic_person_black).into(user_icon);
+        }
         visit.setOnClickListener(v -> Toast.makeText(getContext(), "under construction...", Toast.LENGTH_SHORT).show());
         fav_icon.setImageDrawable(getContext().getDrawable(R.drawable.ic_favorite_black_24dp));
 

@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -28,6 +29,7 @@ import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.LandingPageActivity;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
+import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.ViewModels.EntranceViewModel;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.OutletsModel;
@@ -254,6 +256,9 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
 
         setColors();
+
+        Handler handler = new Handler();
+        handler.postDelayed(() -> ShopikApplicationActivity.LoadAds(5),4000);
     }
 
     private void setNavigationBarButtonsColor(int navigationBarColor) {

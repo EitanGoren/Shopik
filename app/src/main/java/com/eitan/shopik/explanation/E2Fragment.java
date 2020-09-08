@@ -189,11 +189,7 @@ public class E2Fragment extends Fragment {
             addShirtsSubCategory("tank", Macros.Items.MEN_TANK_RES, Macros.CustomerMacros.MEN);
 
             addWatchesSubCategory("smart",Macros.Items.MEN_SMART_WATCH_RES,Macros.CustomerMacros.MEN);
-            addWatchesSubCategory("leather",Macros.Items.MEN_LEATHER_WATCH_RES,Macros.CustomerMacros.MEN);
-            addWatchesSubCategory("chronograph",Macros.Items.MEN_CHRONOGRAPH_WATCH_RES,Macros.CustomerMacros.MEN);
             addWatchesSubCategory("digital",Macros.Items.MEN_DIGITAL_RES,Macros.CustomerMacros.MEN);
-            addWatchesSubCategory("mesh",Macros.Items.MEN_MESH_WATCH_RES,Macros.CustomerMacros.MEN);
-            addWatchesSubCategory("bracelet",Macros.Items.MEN_BRACELET_WATCH_RES,Macros.CustomerMacros.MEN);
             addWatchesSubCategory("stylish",Macros.Items.MEN_WATCHES_RES,Macros.CustomerMacros.MEN);
 
             addSwimwearSubCategory("shorts", Macros.Items.MEN_SHORTS_SWIM_RES,Macros.CustomerMacros.MEN);

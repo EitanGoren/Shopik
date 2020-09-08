@@ -58,14 +58,12 @@ android {
         repositories {
             mavenCentral()
         }
-
     }
-
 }
 
 dependencies {
     // Core library
-   // androidTestImplementation 'androidx.test:core:1.3.0'
+    androidTestImplementation 'androidx.test:core:1.3.0'
 
     // AndroidJUnitRunner and JUnit Rules
     androidTestImplementation 'androidx.test:runner:1.3.0'

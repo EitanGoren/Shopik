@@ -1,5 +1,6 @@
 package com.eitan.shopik.Adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -464,7 +465,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             }
             catch (NumberFormatException ex){
-                System.out.println(item.getSeller() +" " +item.getName());
+                cur_price = "--";
+                System.out.println(item.getSeller() + " " + item.getName());
             }
 
             if (item.isOutlet() || item.isOn_sale()) {
@@ -535,7 +537,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             viewPager.setAdapter(arrayAdapter);
 
-             fullscreen.setOnClickListener(v -> {
+            fullscreen.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
                 intent.putExtra("isFav", item.isFavorite());
                 intent.putExtra("brand", brand);
@@ -558,6 +560,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 Macros.Functions.fullscreen(getContext(),intent,pairs);
             });
+
         }
 
         public Context getContext() { return itemView.getContext(); }
@@ -580,6 +583,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 return view == object;
             }
 
+            @SuppressLint("ClickableViewAccessibility")
             @NonNull
             @Override
             public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
@@ -592,9 +596,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 View view = layoutInflater.inflate(R.layout.grid_images_item, container,false);
                 ImageView imageView = view.findViewById(R.id.image_item);
 
-                Glide.with(getContext()).
-                        load(imagesUrl.get(index[0])).
-                        transition(withCrossFade(900)).
+                Glide.with(getContext()).load(imagesUrl.get(index[0])).
+                        transition(withCrossFade(650)).
                         into(imageView);
 
                 container.addView(view);

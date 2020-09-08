@@ -267,15 +267,19 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                     sellerProfile(getContext(), shoppingItem.getSellerId(), pairs));
 
             String cur_price;
-            if(shoppingItem.getSeller().equals("ASOS")) {
-                cur_price = new DecimalFormat("##.##").
-                        format(Double.parseDouble(shoppingItem.getPrice())*Macros.POUND_TO_ILS) +
-                        Currency.getInstance("ILS").getSymbol();
+            try {
+                if (shoppingItem.getSeller().equals("ASOS")) {
+                    cur_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(shoppingItem.getPrice()) * Macros.POUND_TO_ILS) +
+                            Currency.getInstance("ILS").getSymbol();
+                } else {
+                    cur_price = new DecimalFormat("##.##").
+                            format(Double.parseDouble(shoppingItem.getPrice())) +
+                            Currency.getInstance("ILS").getSymbol();
+                }
             }
-            else {
-                cur_price = new DecimalFormat("##.##").
-                        format(Double.parseDouble(shoppingItem.getPrice())) +
-                        Currency.getInstance("ILS").getSymbol();
+            catch (NumberFormatException ex){
+                cur_price = "--";
             }
 
             if(shoppingItem.isOutlet() || shoppingItem.isOn_sale()) {
