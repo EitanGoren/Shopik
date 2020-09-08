@@ -1,8 +1,10 @@
 package com.eitan.shopik.CustomerFragments;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -80,6 +82,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     Chip aldo_chip ;
     Chip hoodies_chip ;
     Chip favorite ;
+    private boolean isFinishedFetching = false;
 
     @RequiresApi( api = Build.VERSION_CODES.N )
     @Override
@@ -127,6 +130,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         favorite = view.findViewById(R.id.favorites_chip);
         toolbar = view.findViewById(R.id.toolbar);
         explore_items = view.findViewById(R.id.explore_items);
+        explore_items.setVisibility(View.GONE);
         relativeLayout = view.findViewById(R.id.info_layout);
 
         price.setOnClickListener(this);
@@ -195,6 +199,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 text = "NO ITEMS FOUND";
 
             header.setText(text);
+
+            isFinishedFetching = (pair.first.equals(pair.second));
         };
         explore_items.setOnClickListener(v -> {
             int page = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue() + 1;
@@ -205,18 +211,37 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                //NOT MOVING
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    YoYo.with(Techniques.FadeOut).playOn(explore_items);
+                    scrollDownFAB.setVisibility(View.VISIBLE);
+                    scrollUpFAB.setVisibility(View.VISIBLE);
                     YoYo.with(Techniques.FadeIn).playOn(scrollDownFAB);
                     YoYo.with(Techniques.FadeIn).playOn(scrollUpFAB);
-                    if(!recyclerView.canScrollVertically(1)){
+                    if(!recyclerView.canScrollVertically(1) && isFinishedFetching) {
+                        explore_items.setVisibility(View.VISIBLE);
                         YoYo.with(Techniques.FadeIn).playOn(explore_items);
                     }
                 }
+                //MOVING
                 else {
-                    YoYo.with(Techniques.FadeOut).playOn(explore_items);
                     YoYo.with(Techniques.FadeOut).playOn(scrollDownFAB);
                     YoYo.with(Techniques.FadeOut).playOn(scrollUpFAB);
+                    scrollDownFAB.setVisibility(View.GONE);
+                    scrollUpFAB.setVisibility(View.GONE);
+                }
+                if(explore_items.getVisibility() == View.VISIBLE){
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            YoYo.with(Techniques.FadeOut).onEnd(new YoYo.AnimatorCallback() {
+                                @Override
+                                public void call(Animator animator) {
+                                    explore_items.setVisibility(View.GONE);
+                                }
+                            }).playOn(explore_items);
+                        }
+                    },1000 * 5);
                 }
             }
         };

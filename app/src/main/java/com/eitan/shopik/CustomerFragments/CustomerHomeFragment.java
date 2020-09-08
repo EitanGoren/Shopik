@@ -326,8 +326,7 @@ public class CustomerHomeFragment extends Fragment {
         ImageView fav_item = dialog.findViewById(R.id.fav_item);
 
         ImageView fav_ic = dialog.findViewById(R.id.fav_ic);
-        fav_ic.setImageDrawable(ContextCompat.
-                getDrawable(dialog.getContext(),R.drawable.ic_baseline_favorite));
+        fav_ic.setImageDrawable(ContextCompat.getDrawable(dialog.getContext(),R.drawable.ic_baseline_favorite));
 
         fav_ic.setColorFilter(Color.WHITE);
         String text = "Added to Favorites";
