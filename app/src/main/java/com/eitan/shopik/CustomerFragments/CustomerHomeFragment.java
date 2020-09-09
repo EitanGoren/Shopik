@@ -81,7 +81,6 @@ public class CustomerHomeFragment extends Fragment {
 
         arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item,
                 swipesModel.getItems().getValue());
-
         onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
@@ -146,6 +145,7 @@ public class CustomerHomeFragment extends Fragment {
                     }
                 }
             }
+            flingContainer.setAdapter(arrayAdapter);
             arrayAdapter.notifyDataSetChanged();
         };
         current_items_observer = pair -> {

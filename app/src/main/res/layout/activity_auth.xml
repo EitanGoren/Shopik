@@ -1,75 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    android:layout_centerInParent="true">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg7">
 
     <TextView
-        android:id="@+id/shopik"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:fontFamily="cursive"
-        android:text="@string/welcome_to_shopik"
-        android:textColor="#000000"
-        android:textSize="50sp"
-        android:textStyle="bold" />
-
-    <ImageView
-        android:layout_width="105dp"
-        android:layout_height="105dp"
-        android:layout_above="@id/shopik"
-        android:layout_centerHorizontal="true"
-        android:layout_marginEnd="15dp"
-        android:src="@drawable/tooki"
-        android:contentDescription="@string/logo"
-        android:transitionName="tooki" />
-
-
-    <Button
-        android:id="@+id/google_sign_in"
-        style="@style/EntranceButtons"
+        android:id="@+id/welcome"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_below="@id/shopik"
-        android:layout_marginTop="60dp"
-        android:fontFamily="@font/comfortaa"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="65dp"
+        android:fontFamily="@font/roboto_thin"
         android:gravity="center"
-        android:text="@string/signin_with_google"
+        android:letterSpacing="0.1"
+        android:text="@string/welcome"
         android:textAlignment="center"
         android:textColor="#ffffff"
+        android:textSize="55sp" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_below="@id/welcome"
+        android:layout_marginTop="35dp"
+        android:contentDescription="@string/tooki"
+        android:scaleType="centerCrop"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/tooki" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/google_card"
+        style="@style/FirebaseUI.Button.AccountChooser.GoogleButton"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="0dp"
+        android:gravity="center"
+        app:cardCornerRadius="20dp"
+        app:cardUseCompatPadding="true">
+
+    <TextView
+        android:id="@+id/google_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/comfortaa"
+        android:text="@string/signin_with_google"
+        android:textAlignment="center"
+        android:textColor="#000000"
         android:textSize="16sp"
         android:theme="@style/FirebaseUI.Button.AccountChooser.GoogleButton" />
 
-    <Button
-        android:id="@+id/facebook_sign_in"
-        style="@style/FirebaseUI.Button.AccountChooser.FacebookButton"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_below="@id/google_sign_in"
-        android:layout_marginTop="0dp"
-        android:fontFamily="@font/comfortaa"
-        android:gravity="center"
-        android:text="@string/signin_with_facebook"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:theme="@style/FirebaseUI.Button.AccountChooser.FacebookButton" />
+    </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/email_sign_in"
-        style="@style/FirebaseUI.Button.AccountChooser.EmailButton"
-        android:layout_width="match_parent"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/facebook_card"
+        style="@style/FirebaseUI.Button.AccountChooser.FacebookButton"
+        android:layout_width="300dp"
         android:layout_height="60dp"
-        android:layout_below="@id/facebook_sign_in"
+        android:layout_below="@id/google_card"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="0dp"
-        android:fontFamily="@font/comfortaa"
         android:gravity="center"
-        android:text="@string/signin_with_email"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:theme="@style/FirebaseUI.Button.AccountChooser.EmailButton" />
+        app:cardCornerRadius="20dp"
+        app:cardUseCompatPadding="true">
+
+        <TextView
+            android:id="@+id/facebook_sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/comfortaa"
+            android:text="@string/signin_with_facebook"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:theme="@style/FirebaseUI.Button.AccountChooser.FacebookButton" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        style="@style/FirebaseUI.Button.AccountChooser.EmailButton"
+        android:layout_height="60dp"
+        android:layout_width="300dp"
+        android:layout_below="@id/facebook_card"
+        android:layout_marginTop="0dp"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        app:cardCornerRadius="20dp"
+        app:cardUseCompatPadding="true">
+
+        <TextView
+            android:id="@+id/email_sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/comfortaa"
+            android:text="@string/signin_with_email"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:theme="@style/FirebaseUI.Button.AccountChooser.EmailButton" />
+
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

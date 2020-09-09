@@ -39,7 +39,6 @@
             android:name=".Customer.GenderFilteringActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleTop" />
-        <activity android:name=".MainRegistrationActivity" />
         <activity
             android:name=".Customer.FullscreenImageActivity"
             android:theme="@style/AppTheme.Fullscreen" />

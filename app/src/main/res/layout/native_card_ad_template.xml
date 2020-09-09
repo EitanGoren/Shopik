@@ -42,7 +42,7 @@
             <com.google.android.gms.ads.formats.MediaView
                 android:id="@+id/ad_media"
                 android:layout_width="match_parent"
-                android:layout_height="230dp"
+                android:layout_height="255dp"
                 android:layout_above="@id/ad_action_button"
                 android:background="#ffffff"
                 android:scaleType="centerCrop" />
@@ -83,15 +83,16 @@
 
             <Button
                 android:id="@+id/ad_action_button"
-                android:layout_width="wrap_content"
+                style="@style/GridBuyButtons"
+                android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_alignParentEnd="true"
                 android:layout_above="@id/ad_bottom_info_layout"
-                android:layout_marginBottom="3dp"
-                android:layout_marginEnd="5dp"
                 android:elegantTextHeight="true"
+                android:elevation="5dp"
+                android:text="@string/check_it_now"
                 android:fontFamily="@font/martel_sans"
-                android:text="Check it Now"
+                android:translationZ="5dp"
                 android:textColor="#ffffff" />
 
             <TextView
@@ -99,7 +100,8 @@
                 style="@style/AppTheme.AdAttributionLarge"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
-                android:layout_margin="5dp"/>
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20sp"/>
 
             <TextView
                 android:id="@+id/ad_price"
@@ -141,8 +143,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ad_card_seller_logo"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
                 android:layout_gravity="top|start"
                 android:layout_margin="5dp"
                 app:civ_border_color="@color/borderLine"

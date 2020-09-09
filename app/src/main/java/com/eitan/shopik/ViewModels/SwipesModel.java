@@ -44,6 +44,4 @@ public class SwipesModel extends AndroidViewModel {
     public void removeFromItems(){
         Objects.requireNonNull(this.items.getValue()).remove(0);
     }
-
-
 }

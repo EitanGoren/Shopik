@@ -1044,10 +1044,12 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                             String brand;
                             Elements brand_ele;
-                            try{
+                            try {
                                 brand_ele = document2.getElementsByClass("brand-description");
                                 Elements pop = brand_ele.get(0).getAllElements();
-                                brand = pop.get(4).childNode(0).toString().replace("&amp;","&");
+                                brand = pop.get(4).childNode(0).toString().
+                                        replace("&amp;","&").
+                                        replace("&nbsp;","");
                                 shoppingItem.setBrand(brand);
                             }
                             catch(IndexOutOfBoundsException ex){

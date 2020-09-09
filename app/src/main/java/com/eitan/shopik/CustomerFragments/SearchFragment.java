@@ -205,7 +205,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         explore_items.setOnClickListener(v -> {
             int page = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue() + 1;
             mainModel.setCurrent_page(page);
-            explore_items.shrink();
         });
         onScrollListener = new RecyclerView.OnScrollListener() {
             @Override

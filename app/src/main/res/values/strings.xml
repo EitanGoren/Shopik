@@ -94,4 +94,7 @@
     <string name="favorites">Favorites</string>
     <string name="Sale">Sale</string>
     <string name="all">All</string>
+    <string name="welcome">Welcome</string>
+    <string name="tooki">tooki</string>
+    <string name="check_it_now">Check it Now</string>
 </resources>

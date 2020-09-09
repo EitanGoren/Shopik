@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -17,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.eitan.shopik.Company.CompanyMainActivity;
+import com.eitan.shopik.Customer.Customer;
 import com.eitan.shopik.Customer.GenderFilteringActivity;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -41,10 +40,9 @@ import java.util.Objects;
 
 public class LandingPageActivity extends AppCompatActivity {
 
-    private static String type,provider,token,email,imageUrl,id_in_provider;
+    private static String provider,token,email,imageUrl,id_in_provider;
     private static FirebaseUser user;
     private FirebaseFirestore db;
-    private static final int DELAY_MILLIS = 4500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +53,7 @@ public class LandingPageActivity extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE;
+
         decorView.setSystemUiVisibility(uiOptions);
         // inside your activity (if you did not enable transitions in your theme)
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
@@ -95,11 +94,11 @@ public class LandingPageActivity extends AppCompatActivity {
                     .setIsSmartLockEnabled(false)
                     .setAuthMethodPickerLayout(customLayout)
                     .setTheme(R.style.SignInStyle)
+                    .setLogo(R.mipmap.ic_launcher_shopik)
                     .build(),1);
         }
         else {
             DocumentReference user_document = db.collection(Macros.CUSTOMERS).document(user.getUid());
-            DocumentReference company_document = db.collection(Macros.COMPANIES).document(user.getUid());
 
             user_document.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -109,25 +108,10 @@ public class LandingPageActivity extends AppCompatActivity {
                         if(document.get("imageUrl") != null) {
                             imageUrl = Objects.requireNonNull(document.get("imageUrl")).toString();
                         }
-                        type = Macros.CUSTOMER;
                         goToApp();
                     }
-                }
-                else {
-                    Log.d(Macros.TAG,"Failed with " + task.getException());
-                }
-            });
-            company_document.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    assert document != null;
-                    if (document.exists()) {
-
-                        if(document.get("logo_url") != null) {
-                            imageUrl = Objects.requireNonNull(document.get("logo_url")).toString();
-                        }
-                        type = Macros.COMPANY;
-                        goToApp();
+                    else {
+                        registerNewUser();
                     }
                 }
                 else {
@@ -142,32 +126,27 @@ public class LandingPageActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
     }
 
-    private void registerNewUser(){
-        if(type == null){
-            Intent intent = new Intent(LandingPageActivity.this, MainRegistrationActivity.class);
-            intent.putExtra("id_in_provider",id_in_provider);
-            intent.putExtra("imageUrl",imageUrl);
-            intent.putExtra("token",token);
-            intent.putExtra("email",email);
-            intent.putExtra("provider",provider);
-            startActivity(intent);
-            finish();
-        }
-    }
+    private void registerNewUser() {
 
-    private void checkCompany(String user_id) {
-        db.collection(Macros.COMPANIES).document(user_id).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                assert document != null;
-                if (document.exists()) {
-                    type = Macros.COMPANY;
-                    goToApp();
-                }
-                else
-                    registerNewUser();
-            }
-        });
+        Database connection = new Database();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
+        String first_name = Objects.requireNonNull(user.getDisplayName()).split(" ")[0];
+        String last_name = Objects.requireNonNull(user.getDisplayName()).split(" ")[1];
+        Customer new_customer = new Customer(
+                user.getUid(),
+                first_name,
+                last_name,
+                null,
+                user.getPhoneNumber(),
+                0,
+                0,
+                "Unknown",
+                null,
+                null, imageUrl, provider, id_in_provider, email, token);
+
+        connection.pushNewCustomer(new_customer);
+        goToCustomer();
     }
 
     private void checkCustomer(final String user_id) {
@@ -176,65 +155,33 @@ public class LandingPageActivity extends AppCompatActivity {
                 DocumentSnapshot document = task.getResult();
                 assert document != null;
                 if (document.exists()) {
-                    type = Macros.CUSTOMER;
                     goToApp();
                 }
                 else
-                    checkCompany(user_id);
+                    registerNewUser();
             }
         });
     }
 
     private void goToApp(){
-
-        if(user == null) {
-            Intent intent = new Intent(LandingPageActivity.this, MainRegistrationActivity.class);
-            intent.putExtra("id_in_provider", id_in_provider);
-            intent.putExtra("imageUrl", imageUrl);
-            intent.putExtra("token", token);
-            intent.putExtra("email", email);
-            intent.putExtra("provider", provider);
-            startActivity(intent);
-            finish();
-            overridePendingTransition(R.anim.fadein,R.anim.fadeout);
-        }
-        else {
-            switch (type){
-                case Macros.CUSTOMER:
-                    goToCustomer();
-                    break;
-                case Macros.COMPANY:
-                    goToCompany();
-                    break;
-            }
-        }
+        if(user == null)
+           registerNewUser();
+        else
+            goToCustomer();
     }
 
     private void goToCustomer() {
-
         Intent intent = new Intent(LandingPageActivity.this, GenderFilteringActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("imageUrl",imageUrl);
-        bundle.putString("name",user.getDisplayName());
-        intent.putExtra("bundle",bundle);
+        bundle.putString("imageUrl", imageUrl);
+        bundle.putString("name", user.getDisplayName());
+        intent.putExtra("bundle", bundle);
 
         ImageView tooki = findViewById(R.id.imageView);
         YoYo.with(Techniques.Hinge).duration(3000).onEnd(animator -> {
             startActivity(intent);
             supportFinishAfterTransition();
         }).playOn(tooki);
-    }
-
-    private void goToCompany() {
-
-        Intent intent = new Intent(LandingPageActivity.this, CompanyMainActivity.class);
-
-        final Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            startActivity(intent);
-            this.supportFinishAfterTransition();
-            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        }, DELAY_MILLIS);
     }
 
     @SuppressLint("RestrictedApi")
@@ -262,7 +209,8 @@ public class LandingPageActivity extends AppCompatActivity {
                                 id_in_provider = object.getString("id");
                                 imageUrl = "http://graph.facebook.com/" + id_in_provider + "/picture?type=large&width=720&height=720";
                                 checkCustomer(user.getUid());
-                            } catch (JSONException e) {
+                            }
+                            catch (JSONException e) {
                                 Log.d(Macros.TAG, "facebook failed: " + e.getMessage());
                             }
                         });
