@@ -89,11 +89,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        allItemsModel = new ViewModelProvider(requireActivity()).get(AllItemsModel.class);
-        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
         GenderModel genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         setHasOptionsMenu(true);
-
         item_gender = genderModel.getGender().getValue();
         item_type = genderModel.getType().getValue();
         item_sub_category = genderModel.getSub_category().getValue();
@@ -105,10 +102,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         View view = inflater.inflate(R.layout.fragment_search, container,false);
 
-        appBarLayout = view.findViewById(R.id.appbar);
-        mRecyclerView = view.findViewById(R.id.grid_recycler_view);
+        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
+        allItemsModel = new ViewModelProvider(requireActivity()).get(AllItemsModel.class);
         mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerGridAdapter = new RecyclerGridAdapter(allItemsModel.getItems().getValue(),null);
+        appBarLayout = view.findViewById(R.id.appbar);
+        mRecyclerView = view.findViewById(R.id.grid_recycler_view);
         mRecyclerView.setItemAnimator(new CustomItemAnimator());
 
         scrollUpFAB = view.findViewById(R.id.scroll_up);
@@ -159,7 +158,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                     }
                     shoppingItem.setPercentage(match_per);
                     allItemsModel.addItem(shoppingItem);
-                    recyclerGridAdapter.notifyItemInserted(0 );
+                    recyclerGridAdapter.notifyItemInserted(0);
                 }
                 if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();

@@ -86,18 +86,16 @@ public class MainModel extends ViewModel {
         return all_items;
     }
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void addItem(ShoppingItem shoppingItem, int size) {
+    public void addItem(ShoppingItem shoppingItem) {
         Objects.requireNonNull(this.all_items.getValue()).add(shoppingItem);
-        if(this.all_items.getValue().size() == size){
+        //update observers every 3 items block
+        if(this.all_items.getValue().size()%3 == 0){
             postAllItems();
         }
     }
     public void postAllItems() {
         CopyOnWriteArrayList<ShoppingItem> koko = this.all_items.getValue();
         all_items.postValue(koko);
-    }
-    public void clearAllItems(){
-        Objects.requireNonNull(all_items.getValue()).clear();
     }
 
     //PAGE NUM

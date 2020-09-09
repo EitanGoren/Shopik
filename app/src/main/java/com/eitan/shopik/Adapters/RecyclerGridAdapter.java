@@ -174,10 +174,10 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     if (item.getName() != null) {
                         StringBuilder description = new StringBuilder();
                         for (String word : item.getName()) {
-                            description.append(word).append(" ");
+                            description.append(word.toLowerCase()).append(" ");
                         }
-                        description.append(item.getBrand()).append(item.getSeller());
-                        if( description.toString().contains(constraint)) {
+                        description.append(item.getBrand().toLowerCase()).append(" ").append(item.getSeller().toLowerCase());
+                        if( description.toString().toLowerCase().contains(constraint.toString().toLowerCase())) {
                             filteredList.add(item);
                         }
                     }
@@ -811,7 +811,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         Currency.getInstance("ILS").getSymbol();
 
             if (item.isOn_sale()) {
-                int discount = (int) (100 - Math.ceil(100 * (Double.parseDouble(item.getReduced_price()) / Double.parseDouble(item.getPrice()))));
+                int discount = (int) (100 - Math.ceil(100 *
+                        (Double.parseDouble(item.getReduced_price()) / Double.parseDouble(item.getPrice()))));
 
                 String text = "SALE" + " -" + discount + "%";
                 sale.setText(text);
@@ -914,7 +915,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     updateChildren(unliked);
         }
 
-        private void updateCustomerDB(String item_id,String item_type, String item_gender, String item_sub_category,String seller) {
+        private void updateCustomerDB(String item_id,String item_type, String item_gender,
+                                      String item_sub_category,String seller) {
 
           //  Map<String,Object> map = new HashMap<>();
           //  map.put(item_id, null);

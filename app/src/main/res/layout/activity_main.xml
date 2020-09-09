@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/customer_toolbar"
             android:indeterminate="false"
-            app:indicatorColor="#0D6DC1"
+            app:indicatorColor="#FF0056"
             app:indicatorWidth="5dp"
             tools:visibility="visible"/>
 

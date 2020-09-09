@@ -100,7 +100,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private static String item_sub_category;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private static void getCompanyInfo(final ShoppingItem shoppingItem, int size) {
+    private static void getCompanyInfo(final ShoppingItem shoppingItem) {
 
         final String company_id = shoppingItem.getSellerId();
         if (Objects.requireNonNull(mainModel.getCompanies_info().getValue()).containsKey(company_id)) {
@@ -111,7 +111,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             shoppingItem.setSellerLogoUrl((Objects.requireNonNull(Objects.requireNonNull(mainModel.getCompanies_info().
                     getValue().get(company_id)).get("logo_url"))).toString());
 
-            mainModel.addItem(shoppingItem,size);
+            mainModel.addItem(shoppingItem);
             ++item_count;
             mainModel.getCurrentItem().postValue(Pair.create(item_count, total_items));
 
@@ -123,7 +123,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String, String> liked_users,
-                                               Map<String, String> unliked_users, int size) {
+                                               Map<String, String> unliked_users) {
 
         ArrayList<String> list = new ArrayList<>(liked_users.keySet());
         for (String customer_id : list) {
@@ -157,9 +157,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             });
         }
         if (unliked_users == null || unliked_users.isEmpty())
-            getCompanyInfo(shoppingItem,size);
+            getCompanyInfo(shoppingItem);
         else
-            getUnlikedUserInfo(shoppingItem, unliked_users,size);
+            getUnlikedUserInfo(shoppingItem, unliked_users);
     }
 
     private void getCoverPic() {
@@ -338,7 +338,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         toggle.syncState();
     }
 
-    private static void getLikes(final ShoppingItem shoppingItem, int size) {
+    private static void getLikes(final ShoppingItem shoppingItem) {
 
         FirebaseDatabase.getInstance().getReference().
                 child(Macros.ITEMS).
@@ -375,19 +375,19 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                             if (liked_users == null || liked_users.isEmpty()) {
                                 if (unliked_users == null || unliked_users.isEmpty())
-                                    getCompanyInfo(shoppingItem,size);
+                                    getCompanyInfo(shoppingItem);
                                 else
-                                    getUnlikedUserInfo(shoppingItem, unliked_users,size);
+                                    getUnlikedUserInfo(shoppingItem, unliked_users);
                             }
                             else
-                                getInteractedUsersInfo(shoppingItem, liked_users, unliked_users,size);
+                                getInteractedUsersInfo(shoppingItem, liked_users, unliked_users);
                         }
                         else {
                             shoppingItem.setLikes(0);
                             shoppingItem.setUnlikes(0);
                             shoppingItem.setLikedUsers(null);
                             shoppingItem.setUnlikedUsers(null);
-                            getCompanyInfo(shoppingItem,size);
+                            getCompanyInfo(shoppingItem);
                         }
                     }
 
@@ -399,7 +399,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private static void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list, int size) {
+    private static void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list) {
 
         assert unlikes_list != null;
         ArrayList<String> list = new ArrayList<>(unlikes_list.keySet());
@@ -431,7 +431,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 }
             });
         }
-        getCompanyInfo(shoppingItem,size);
+        getCompanyInfo(shoppingItem);
     }
 
     @Override
@@ -953,7 +953,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             publishProgress(tx_total, i+1);
-                            getLikes(shoppingItem, tx_total);
+                            getLikes(shoppingItem);
                         }
                     }
                 }
@@ -1090,7 +1090,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             publishProgress(asos_total,iter);
-                            getLikes(shoppingItem,asos_total);
+                            getLikes(shoppingItem);
                         }
                     }
                 }
@@ -1189,7 +1189,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             publishProgress(aldo_total,iteration);
-                            getLikes(shoppingItem, aldo_total);
+                            getLikes(shoppingItem);
                         }
                     }
                 }
@@ -1337,7 +1337,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             publishProgress(tfs_total,iter);
-                            getLikes(shoppingItem, tfs_total);
+                            getLikes(shoppingItem);
                         }
                     }
                 }
@@ -1476,7 +1476,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                         Macros.CustomerMacros.FAVOURITE));
                             }
                             publishProgress(castro_total,iter);
-                            getLikes(shoppingItem, castro_total);
+                            getLikes(shoppingItem);
                         }
                     }
                 }
@@ -1600,7 +1600,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             publishProgress(renuar_total,iter);
-                            getLikes(shoppingItem, renuar_total);
+                            getLikes(shoppingItem);
                         }
                     }
                 }
@@ -1718,7 +1718,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
                             publishProgress(hoodies_total,iter);
-                            getLikes(shoppingItem, hoodies_total);
+                            getLikes(shoppingItem);
                         }
                     }
                 }
