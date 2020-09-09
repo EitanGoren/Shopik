@@ -109,6 +109,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     if(FirebaseAuth.getInstance().getCurrentUser() == null ) {
                         selectedIntent = new Intent(GenderFilteringActivity.this, LandingPageActivity.class);
                         startActivity(selectedIntent);
+                        finish();
                     }
                     break;
                 case "My Profile":
@@ -247,7 +248,8 @@ public class GenderFilteringActivity extends AppCompatActivity {
         marquee = findViewById(R.id.marquee);
 
         if (bundle.getString("gender") != null) {
-            gender_spinner.setSelection(Objects.equals(bundle.getString("gender"), Macros.CustomerMacros.WOMEN) ? 0 : 1);
+            gender_spinner.setSelection(Objects.equals(bundle.getString("gender"),
+                    Macros.CustomerMacros.WOMEN) ? 0 : 1);
             gender = bundle.getString("gender");
         }
         else {

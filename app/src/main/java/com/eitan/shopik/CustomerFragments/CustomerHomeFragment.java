@@ -54,16 +54,20 @@ public class CustomerHomeFragment extends Fragment {
     private SwipeFlingAdapterView flingContainer;
     private MainModel mainModel;
     private boolean isSwiped;
-    private TextView percentage;
+    private TextView percentage,total;
     private Observer<CopyOnWriteArrayList<ShoppingItem>> items_observer;
     private Observer<Pair<Integer,Integer>> current_items_observer;
     private String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
     private SwipeFlingAdapterView.onFlingListener onFlingListener;
+    private Observer<Integer> total_items_observer;
+    private int total_items_num = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
         GenderModel genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         item_gender = genderModel.getGender().getValue();
         item_type = genderModel.getType().getValue();
@@ -75,58 +79,59 @@ public class CustomerHomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_customer_home, container,false);
 
-        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
+        flingContainer = view.findViewById(R.id.frame);
+
+        swipesModel = new ViewModelProvider(requireActivity()).get(SwipesModel.class);
+        arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item,
+                swipesModel.getItems().getValue());
+        onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
+            @Override
+            public void removeFirstObjectInAdapter() {
+                isSwiped = true;
+                arrayAdapter.remove(arrayAdapter.getItem(0));
+                arrayAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onLeftCardExit(Object dataObject) {
+                onItemUnliked(dataObject);
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.Q)
+            @Override
+            public void onRightCardExit(final Object dataObject) {
+                onItemLiked(dataObject);
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onAdapterAboutToEmpty(int itemsInAdapter) {
+                if (itemsInAdapter == 0 && isSwiped) {
+                    isSwiped = false;
+                    updateCurrentPage();
+                }
+            }
+
+            @Override
+            public void onScroll(float scrollProgressPercent) {
+                View view = flingContainer.getSelectedView();
+                if (view != null) {
+                    view.findViewById(R.id.item_swipe_right_indicator).setAlpha(scrollProgressPercent < 0 ? -scrollProgressPercent : 0);
+                    view.findViewById(R.id.item_swipe_left_indicator).setAlpha(scrollProgressPercent > 0 ? scrollProgressPercent : 0);
+                }
+            }
+        };
+        flingContainer.setFlingListener(onFlingListener);
+        arrayAdapter.setFlingContainer(flingContainer);
+        flingContainer.setAdapter(arrayAdapter);
+        flingContainer.setFlingListener(onFlingListener);
+        arrayAdapter.setFlingContainer(flingContainer);
+
         percentage = view.findViewById(R.id.percentage);
+        total = view.findViewById(R.id.total);
         percentage.setVisibility(View.GONE);
 
         items_observer = shoppingItems -> {
-            flingContainer = view.findViewById(R.id.frame);
-
-            swipesModel = new ViewModelProvider(requireActivity()).get(SwipesModel.class);
-            arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item,
-                    swipesModel.getItems().getValue());
-            onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
-                @Override
-                public void removeFirstObjectInAdapter() {
-                    isSwiped = true;
-                    arrayAdapter.remove(arrayAdapter.getItem(0));
-                    arrayAdapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onLeftCardExit(Object dataObject) {
-                    onItemUnliked(dataObject);
-                }
-
-                @RequiresApi(api = Build.VERSION_CODES.Q)
-                @Override
-                public void onRightCardExit(final Object dataObject) {
-                    onItemLiked(dataObject);
-                }
-
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                @Override
-                public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                    if (itemsInAdapter == 0 && isSwiped) {
-                        isSwiped = false;
-                        updateCurrentPage();
-                    }
-                }
-
-                @Override
-                public void onScroll(float scrollProgressPercent) {
-                    View view = flingContainer.getSelectedView();
-                    if (view != null) {
-                        view.findViewById(R.id.item_swipe_right_indicator).setAlpha(scrollProgressPercent < 0 ? -scrollProgressPercent : 0);
-                        view.findViewById(R.id.item_swipe_left_indicator).setAlpha(scrollProgressPercent > 0 ? scrollProgressPercent : 0);
-                    }
-                }
-            };
-            flingContainer.setFlingListener(onFlingListener);
-            arrayAdapter.setFlingContainer(flingContainer);
-            flingContainer.setAdapter(arrayAdapter);
-            flingContainer.setFlingListener(onFlingListener);
-            arrayAdapter.setFlingContainer(flingContainer);
 
             swipesModel.clearAllItems();
             long size = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue();
@@ -150,15 +155,23 @@ public class CustomerHomeFragment extends Fragment {
             flingContainer.setAdapter(arrayAdapter);
             arrayAdapter.notifyDataSetChanged();
         };
+
         current_items_observer = pair -> {
             percentage.setVisibility(View.VISIBLE);
-            String text = pair.first + "/" + pair.second;
+            String text = pair.first + "/";
             percentage.setText(text);
 
-            if(pair.first.equals(pair.second)){
+            if( pair.first > 1 && pair.first.equals(total_items_num)){
                 percentage.setVisibility(View.GONE);
+                total.setVisibility(View.GONE);
             }
         };
+
+       total_items_observer = integer -> {
+           total.setVisibility(View.VISIBLE);
+           total.setText(String.valueOf(integer));
+           total_items_num = integer;
+       };
 
         return view;
     }
@@ -169,6 +182,7 @@ public class CustomerHomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         isSwiped = false;
+        mainModel.getTotalItems().observe(requireActivity(),total_items_observer);
         mainModel.getAll_items().observe(requireActivity(), items_observer);
         mainModel.getCurrentItem().observe(requireActivity(), current_items_observer);
     }
@@ -178,9 +192,12 @@ public class CustomerHomeFragment extends Fragment {
         super.onDestroyView();
         mainModel.getAll_items().removeObserver(items_observer);
         mainModel.getCurrentItem().removeObserver(current_items_observer);
+        mainModel.getTotalItems().removeObserver(total_items_observer);
         flingContainer = null;
         onFlingListener = null;
         items_observer = null;
+        total_items_observer = null;
+        total_items_num = 0;
     }
 
     private void updateBadge() {

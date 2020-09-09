@@ -150,67 +150,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return ItemsList.size();
     }
 
-    Filter filter = new Filter() {
-        //runs in background thread
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            ArrayList<ShoppingItem> filteredList = new ArrayList<>();
-
-            if(constraint.toString().isEmpty()){
-                filteredList.addAll(AllItemsList);
-            }
-            else if(Arrays.asList(Macros.CompanyNames).contains(constraint.toString())){
-                for (ShoppingItem item : AllItemsList) {
-                    if (item.getSeller() != null) {
-                        if( item.getSeller().toLowerCase().contentEquals(constraint.toString().toLowerCase())) {
-                            filteredList.add(item);
-                        }
-                    }
-                }
-            }
-            else {
-                for (ShoppingItem item : AllItemsList) {
-                    if (item.getName() != null) {
-                        StringBuilder description = new StringBuilder();
-                        for (String word : item.getName()) {
-                            description.append(word.toLowerCase()).append(" ");
-                        }
-                        description.append(item.getBrand().toLowerCase()).append(" ").append(item.getSeller().toLowerCase());
-                        if( description.toString().toLowerCase().contains(constraint.toString().toLowerCase())) {
-                            filteredList.add(item);
-                        }
-                    }
-                }
-            }
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            filterResults.count = filteredList.size();
-
-            return filterResults;
-        }
-
-        //runs in UI thread
-        @Override
-        @SuppressWarnings("unchecked")
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            if(results.values == null ) return;
-
-            ItemsList.clear();
-            int count = 0;
-            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
-                ItemsList.add(item);
-                count++;
-                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
-                    ItemsList.add((ShoppingItem) ShopikApplicationActivity.getNextAd());
-                }
-                notifyDataSetChanged();
-            }
-            notifyDataSetChanged();
-        }
-    };
-
     @Override
     public Filter getFilter() {
         return filter;
@@ -287,6 +226,66 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
                 notifyDataSetChanged();
             }
+        }
+    };
+    Filter filter = new Filter() {
+        //runs in background thread
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            ArrayList<ShoppingItem> filteredList = new ArrayList<>();
+
+            if(constraint.toString().isEmpty()){
+                filteredList.addAll(AllItemsList);
+            }
+            else if(Arrays.asList(Macros.CompanyNames).contains(constraint.toString())){
+                for (ShoppingItem item : AllItemsList) {
+                    if (item.getSeller() != null) {
+                        if( item.getSeller().toLowerCase().contentEquals(constraint.toString().toLowerCase())) {
+                            filteredList.add(item);
+                        }
+                    }
+                }
+            }
+            else {
+                for (ShoppingItem item : AllItemsList) {
+                    if (item.getName() != null) {
+                        StringBuilder description = new StringBuilder();
+                        for (String word : item.getName()) {
+                            description.append(word.toLowerCase()).append(" ");
+                        }
+                        description.append(item.getBrand().toLowerCase()).append(" ").append(item.getSeller().toLowerCase());
+                        if( description.toString().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                            filteredList.add(item);
+                        }
+                    }
+                }
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            filterResults.count = filteredList.size();
+
+            return filterResults;
+        }
+
+        //runs in UI thread
+        @Override
+        @SuppressWarnings("unchecked")
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if(results.values == null ) return;
+
+            ItemsList.clear();
+            int count = 0;
+            for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
+                ItemsList.add(item);
+                count++;
+                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
+                    ItemsList.add((ShoppingItem) ShopikApplicationActivity.getNextAd());
+                }
+                notifyDataSetChanged();
+            }
+            notifyDataSetChanged();
         }
     };
 

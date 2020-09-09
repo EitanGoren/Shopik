@@ -16,20 +16,6 @@
         android:background="#F4F4F4"
         app:liftOnScroll="true">
 
-        <TextView
-            android:id="@+id/percentage"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_height="40dp"
-            android:padding="3dp"
-            android:fontFamily="@font/roboto_thin"
-            android:paddingTop="5dp"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:gravity="center"/>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <RelativeLayout
@@ -55,33 +41,40 @@
             app:rotation_degrees="15.5"
             tools:context=".Customer.CustomerMainActivity" />
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/percentage"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto_thin"
+            android:gravity="center"
+            android:padding="3dp"
+            android:paddingTop="5dp"
+            android:textAlignment="center"
+            android:textColor="#FF0056"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
-            <TextView
-                android:id="@+id/no_cards_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/list_sad_face"
-                android:elevation="20dp"
-                android:padding="40dp"
-                android:text="@string/items_run_out"
-                android:textColor="@color/SplashScreenBackground"
-                android:textSize="50sp"
-                android:textStyle="italic"
-                android:translationZ="20dp"
-                android:visibility="gone"/>
-
-            <ImageView
-                android:id="@+id/list_sad_face"
-                android:layout_width="220dp"
-                android:layout_height="220dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="50dp"
-                android:visibility="gone"/>
-
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/total"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/percentage"
+            android:fontFamily="@font/roboto_thin"
+            android:gravity="center"
+            android:padding="3dp"
+            android:paddingTop="5dp"
+            android:textAlignment="center"
+            android:textColor="#FF0056"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
     </RelativeLayout>
 

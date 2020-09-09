@@ -30,11 +30,9 @@ public class Macros {
     public static final String TAG = "com.eitan.shopik";
     public static final String COMPANIES = "Companies";
     public static final String DEFAULT_DESCRIPTION = "Write something here...";
-    public static final String DEFAULT_COVER_PHOTO = "https://i.pinimg.com/originals/10/50/61/1050612a07b764970e4df8227caf8e1c.jpg";
+    public static final String DEFAULT_COVER_PHOTO = "https://st2.depositphotos.com/1747568/8686/v/950/depositphotos_86864998-stock-illustration-abstract-background-consisting-of-small.jpg";
     public static final String DEFAULT_PROFILE_IMAGE = "https://clipartart.com/images/account-profile-clipart-4.png";
     public static final String CUSTOMERS = "Customers";
-    public static final String COMPANY = "Company";
-    public static final String CUSTOMER = "Customer";
     public static final String ITEMS = "Items";
     public static final String API_KEY = "AIzaSyA-NCcR_U7gBNm1BN3lXKTS8wC1W-VC9fE";
     public static final String AD_MOB_INTERSTITIAL_AD_DEBUG_CODE = "ca-app-pub-3940256099942544/8691691433";
@@ -71,7 +69,7 @@ public class Macros {
     public static final String WEB_IC = "https://www.freepnglogos.com/uploads/logo-website-png/logo-website-world-wide-web-svg-png-icon-download-10.png";
     public static final String INSTAGRAM_IC = "https://www.kartisyarok.co.il/wp-content/uploads/2018/09/instagram-logo-png-7.png";
 
-    public static final double POUND_TO_ILS = 5.2483;
+    public static final double POUND_TO_ILS = 5.2485;
     public static final int SWIPES_TO_AD = 16;
     public static final int FAV_TO_AD = 16;
     public static final int SEARCH_TO_AD = 16;

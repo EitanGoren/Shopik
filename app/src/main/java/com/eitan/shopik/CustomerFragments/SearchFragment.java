@@ -158,7 +158,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                     }
                     shoppingItem.setPercentage(match_per);
                     allItemsModel.addItem(shoppingItem);
-                    recyclerGridAdapter.notifyItemInserted(0);
+                    recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount() - 1);
                 }
                 if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
@@ -167,7 +167,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                         adItem.setNativeAd(shoppingItemAd.getNativeAd());
                         adItem.setAd(true);
                         allItemsModel.addItem(adItem);
-                        recyclerGridAdapter.notifyItemInserted(0);
+                        recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount() -1);
                     }
                 }
             }

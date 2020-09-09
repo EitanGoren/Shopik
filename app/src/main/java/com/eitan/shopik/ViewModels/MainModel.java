@@ -131,9 +131,6 @@ public class MainModel extends ViewModel {
         CopyOnWriteArrayList<ShoppingItem> koko = this.favorites.getValue();
         favorites.postValue(koko);
     }
-    public void clearFavorite(){
-        Objects.requireNonNull(this.favorites.getValue()).clear();
-    }
 
     //CURRENT ITEM FETCH
     public MutableLiveData<Pair<Integer,Integer>> getCurrentItem() {

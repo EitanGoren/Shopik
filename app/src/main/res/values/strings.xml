@@ -97,4 +97,8 @@
     <string name="welcome">Welcome</string>
     <string name="tooki">tooki</string>
     <string name="check_it_now">Check it Now</string>
+    <string name="filter_by">Filter by:</string>
+    <string name="sort_by">Sort by:</string>
+    <string name="channel_name">channel_test</string>
+    <string name="channel_description">testing</string>
 </resources>
