@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.pushbots.push.Pushbots;
 
 import org.json.JSONException;
 
@@ -170,7 +171,38 @@ public class LandingPageActivity extends AppCompatActivity {
             goToCustomer();
     }
 
+    private void setNotifications(){
+
+        // Initialize Pushbots Library
+        new Pushbots.Builder(this)
+                .setFcmAppId("1:260470087065:android:c689b76695ad0a240f4708")
+                .setLogLevel(Pushbots.LOG_LEVEL.DEBUG)
+                .setWebApiKey("AIzaSyA-NCcR_U7gBNm1BN3lXKTS8wC1W-VC9fE")
+                .setPushbotsAppId("5f594a1cc47d3748d20b5214")
+                .setProjectId("shopik-2448f")
+                .setSenderId("260470087065")
+                .build();
+
+        //Register custom fields after user registered on PushBots
+        Pushbots.sharedInstance().idsCallback((userId, registrationId) -> {
+            if (registrationId != null && userId != null) {
+                Log.d("PB3","Registration ID:" + registrationId + " | userId:" + userId);
+                // Customer profile
+                Pushbots.sharedInstance();
+                Pushbots.setFirstName(Objects.requireNonNull(user.getDisplayName()).
+                        split(" ")[0]);
+                Pushbots.setLastName(user.getDisplayName().
+                        split(" ")[1]);
+                Pushbots.setName(user.getDisplayName());
+                Pushbots.setEmail(user.getEmail());
+            }
+        });
+    }
+
     private void goToCustomer() {
+
+        setNotifications();
+
         Intent intent = new Intent(LandingPageActivity.this, GenderFilteringActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("imageUrl", imageUrl);

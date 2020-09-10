@@ -26,6 +26,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         useLibrary 'android.test.base'
         useLibrary 'android.test.mock'
+
+        manifestPlaceholders = [
+                pushbots_app_id               : "5f594a1cc47d3748d20b5214",
+                pushbots_loglevel             : "DEBUG",
+                google_sender_id              : "260470087065"
+        ]
     }
     signingConfigs {
         release {
@@ -204,4 +210,11 @@ dependencies {
 
     implementation 'com.daimajia.easing:library:2.0@aar'
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
+
+    //noinspection GradleCompatible
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.google.firebase:firebase-messaging:20.2.4'
+    implementation 'com.pushbots:pushbots-lib:3.3.3@aar'
 }

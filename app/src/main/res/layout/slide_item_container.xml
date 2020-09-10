@@ -1,74 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="150dp"
-    android:layout_height="200dp"
-    android:padding="30dp"
-    android:layout_margin="20dp"
-    android:elevation="10dp"
-    android:translationZ="5dp"
-    android:layout_centerInParent="true"
-    app:cardCornerRadius="15dp"
-    android:background="#00FFFFFF">
+    android:layout_width="180dp"
+    android:layout_height="wrap_content"
+    android:paddingBottom="15dp">
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/category"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ffffff">
+        android:layout_height="wrap_content"
+        android:background="@color/colorTransparentWhite"
+        android:elevation="5dp"
+        android:fontFamily="@font/roboto_thin"
+        android:gravity="center"
+        android:letterSpacing="0.1"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:translationZ="5dp" />
 
-        <ImageView
-            android:id="@+id/image_slider"
-            android:layout_width="205dp"
-            android:layout_height="225dp"
-            android:layout_gravity="top"
-            android:contentDescription="@string/image_item"
-            android:scaleType="centerCrop" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="150dp"
+        android:layout_height="215dp"
+        android:layout_below="@id/category"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:background="#00FFFFFF"
+        android:elevation="5dp"
+        android:translationZ="5dp"
+        app:cardCornerRadius="15dp">
 
-        <Button
-            android:id="@+id/fullscreen_button"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_above="@id/likes_info"
-            android:layout_alignEnd="@id/image_slider"
-            android:layout_marginEnd="2dp"
-            android:layout_marginBottom="2dp"
-            android:background="@drawable/ic_fullscreen_black"/>
-
-        <LinearLayout
-            android:id="@+id/likes_info"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
-            android:background="#404040"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:background="#ffffff"
+            android:paddingBottom="10dp">
 
             <ImageView
-                android:id="@+id/like_pic"
-                android:layout_width="21dp"
-                android:layout_height="21dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="2dp"
-                android:contentDescription="@string/like"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_thumb_up_blue" />
-
-            <TextView
-                android:id="@+id/slider_brand"
+                android:id="@+id/image_slider"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fontFamily="@font/nunito_semibold"
-                android:gravity="center"
-                android:paddingStart="8dp"
-                android:paddingEnd="0dp"
-                android:textAlignment="center"
-                android:textColor="#ffffff"
-                android:textSize="20sp" />
+                android:contentDescription="@string/image_item"
+                android:scaleType="centerCrop" />
 
-        </LinearLayout>
+            <Button
+                android:id="@+id/fullscreen_button"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_above="@id/likes_info"
+                android:layout_alignEnd="@id/image_slider"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/ic_fullscreen_black"/>
 
-    </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/likes_info"
+                android:layout_width="match_parent"
+                android:layout_height="33dp"
+                android:layout_alignParentBottom="true"
+                android:background="#404040"
+                android:orientation="horizontal">
 
-</androidx.cardview.widget.CardView>
+                <ImageView
+                    android:id="@+id/like_pic"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="2dp"
+                    android:contentDescription="@string/like"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_thumb_up_blue" />
+
+                <TextView
+                    android:id="@+id/slider_brand"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/nunito_semibold"
+                    android:gravity="center"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    android:textAlignment="center"
+                    android:textColor="#ffffff"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
 

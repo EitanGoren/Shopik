@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="410dp"
     android:layout_height="605dp"
     android:layout_gravity="center|bottom"
@@ -60,16 +58,14 @@
             android:background="#00FFFFFF"
             android:layout_marginBottom="20dp"/>
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="200dp"
-            android:layout_height="15dp"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        <com.google.android.material.progressindicator.ProgressIndicator
+            android:id="@+id/new_items_progress_bar"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
             android:indeterminate="true"
-            android:layout_centerInParent="true">
-        </ProgressBar>
+            android:layout_centerInParent="true"
+            app:indicatorColor="#FF0056"
+            app:indicatorWidth="6dp"/>
 
     </RelativeLayout>
 

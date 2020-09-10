@@ -14,7 +14,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,6 +35,7 @@ import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.EntranceViewModel;
 import com.eitan.shopik.ViewModels.GenderModel;
+import com.google.android.material.progressindicator.ProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -48,7 +48,6 @@ public class E1Fragment extends Fragment {
     private EntranceViewModel entranceViewModel;
     private GenderModel model;
     private Dialog dialog;
-    private ProgressBar dialogProgressBar;
     private ArrayList<RecyclerItem> new_items;
     private RelativeLayout layout1,layout2,layout3;
     private TextView liked_counter;
@@ -57,11 +56,17 @@ public class E1Fragment extends Fragment {
     private RecyclerView recyclerView;
     private Observer<String> observer;
     private Observer<ArrayList<RecyclerItem>> recentObserver;
+    private ProgressIndicator progressIndicator;
+    private DialogGridAdapter gridAdapter;
+    private GridView gridContainer;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        entranceViewModel = new ViewModelProvider(requireActivity()).get(EntranceViewModel.class);
+        recyclerAdapter = new RecyclerAdapter(entranceViewModel.getRecentLikedItems().getValue(),"Item");
+        model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
     }
 
     @Override
@@ -75,16 +80,10 @@ public class E1Fragment extends Fragment {
         layout = view.findViewById(R.id.layout1);
         header = view.findViewById(R.id.header);
         recyclerView = view.findViewById(R.id.recycler);
-
-        return view;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        init();
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity(),
+                LinearLayoutManager.HORIZONTAL,false));
+        recyclerView.setScrollbarFadingEnabled(true);
+        recyclerView.setItemAnimator(new CustomItemAnimator());
 
         observer = s -> {
             if(!gender.equals(s)) {
@@ -98,20 +97,11 @@ public class E1Fragment extends Fragment {
                     setMenEntrance();
             }
         };
-        model.getGender().observe(getViewLifecycleOwner(),observer);
 
         layout1.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_CLOTHING));
         layout2.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_SHOES));
         layout3.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_TRENDING));
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity(),
-                LinearLayoutManager.HORIZONTAL,false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setScrollbarFadingEnabled(true);
-        recyclerView.setItemAnimator(new CustomItemAnimator());
-
-        entranceViewModel = new ViewModelProvider(requireActivity()).get(EntranceViewModel.class);
-        recyclerAdapter = new RecyclerAdapter(entranceViewModel.getRecentLikedItems().getValue(),"Item");
         recentObserver = recyclerItems -> {
             if(recyclerItems.isEmpty())
                 layout.setVisibility(View.GONE);
@@ -123,6 +113,18 @@ public class E1Fragment extends Fragment {
                 recyclerView.setAdapter(recyclerAdapter);
             }
         };
+
+        return view;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        init();
+
+        model.getGender().observe(getViewLifecycleOwner(),observer);
         entranceViewModel.getRecentLikedItems().observe(requireActivity(), recentObserver );
     }
 
@@ -130,11 +132,14 @@ public class E1Fragment extends Fragment {
     private void init() {
 
         new_items = new ArrayList<>();
-        model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         gender = model.getGender().getValue();
         dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.new_items_grid_dialog);
-        dialogProgressBar = dialog.findViewById(R.id.progressBar);
+        gridAdapter = new DialogGridAdapter(requireActivity(), R.layout.e3_grid_item, new_items);
+        gridContainer = dialog.findViewById(R.id.new_items_grid);
+        gridContainer.setAdapter(gridAdapter);
+        progressIndicator = dialog.findViewById(R.id.new_items_progress_bar);
+        progressIndicator.setVisibility(View.VISIBLE);
 
         ((ViewGroup) requireView().findViewById(R.id.root)).
                 getLayoutTransition().enableTransitionType(LayoutTransition.APPEARING);
@@ -152,26 +157,20 @@ public class E1Fragment extends Fragment {
 
     private void showNewItemsDialog(String type) {
 
-        DialogGridAdapter gridAdapter = new DialogGridAdapter(requireActivity(), R.layout.e3_grid_item, new_items);
-        GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
-        gridAdapter.notifyDataSetChanged();
-        gridContainer.setAdapter(gridAdapter);
-
         TextView txt = dialog.findViewById(R.id.items_count);
 
         new_items.clear();
-        dialogProgressBar.setVisibility(View.VISIBLE);
         int i=0;
         for( RecyclerItem recyclerItem : Objects.requireNonNull(entranceViewModel.getItems().getValue())) {
-            dialogProgressBar.setProgress(i);
             if(recyclerItem.getType().equals(type)) {
                 new_items.add(recyclerItem);
+                gridAdapter.notifyDataSetChanged();
+                progressIndicator.setVisibility(View.GONE);
                 ++i;
                 String text = "(" + i + " items)";
                 txt.setText(text);
             }
         }
-        dialogProgressBar.setVisibility(View.INVISIBLE);
 
         String text_header;
         if(type.equals(Macros.NEW_TRENDING)){

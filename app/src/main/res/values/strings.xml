@@ -101,4 +101,6 @@
     <string name="sort_by">Sort by:</string>
     <string name="channel_name">channel_test</string>
     <string name="channel_description">testing</string>
+    <string name="star">star</string>
+    <string name="powered_by_eitan_goren">Powered by Eitan Goren</string>
 </resources>

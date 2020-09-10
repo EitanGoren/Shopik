@@ -62,7 +62,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
     private static final int WOMEN_OUTLET_NUM = 27391;
     private static final int MEN_OUTLET_NUM = 27396;
     private int color;
-
     private Spinner gender_spinner;
     private TabLayout tabLayout;
     private static String name,imageUrl;

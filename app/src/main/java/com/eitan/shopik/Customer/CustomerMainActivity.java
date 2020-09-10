@@ -3,7 +3,6 @@ package com.eitan.shopik.Customer;
 import android.app.ActivityOptions;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -23,8 +22,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -685,12 +682,12 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             int progress = (int) (((float) pair.first / (float) pair.second) * 100);
             progressIndicator.setProgress(progress);
 
-            if(progress == 100){
+            if(progress == 100 || pair.first >= total_items){
                 progressIndicator.setProgress(0);
                 progressIndicator.setVisibility(View.GONE);
             }
         });
-
+        /*/
         // Create an explicit intent for an Activity in your app
         Intent intent = new Intent(this, LandingPageActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -711,7 +708,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
 // notificationId is a unique int for each notification that you must define
         notificationManager.notify(123, builder.build());
-
+*/
     }
 
     private void createNotificationChannel() {
@@ -1091,12 +1088,16 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 continue;
                             }
                             Elements images_ele = document2.getElementsByClass("image-thumbnail");
-
                             ArrayList<String> images = new ArrayList<>();
                             for(Element img : images_ele){
                                 String _img = img.childNode(1).childNode(1).attr("src").
                                         split("\\?")[0] + "?$XXL$&wid=513&fit=constrain";
                                 images.add(_img);
+                            }
+                            if(images.size() < 4){
+                                for(int j = images.size(); j<4; j++){
+                                    images.add(images.get(0));
+                                }
                             }
 
                             String brand;
@@ -1228,6 +1229,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             ArrayList<String> images = new ArrayList<>();
                             for(Node img : images_elements){
                                 images.add(img.attr("data-source"));
+                            }
+                            if(images.size() < 4){
+                                for(int j = images.size(); j<4; j++){
+                                    images.add(images.get(0));
+                                }
                             }
 
                             shoppingItem.setPrice(price);
@@ -1372,7 +1378,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 String image = imageUrl.split("-")[0] + "-" + i + ".jpg";
                                 images.add(image);
                             }
-
                             if (images.size() < 4) {
                                 for (int i = images.size(); i < 4; ++i) {
                                     images.add(imageUrl);
@@ -1520,9 +1525,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 name = img.childNode(1).attr("alt");
                                 images.add(image);
                             }
-
                             if(images.size() < 4){
-                                for( int i=images.size(); i<5; ++i){
+                                for( int i=images.size(); i<4; ++i){
                                     images.add(images.get(0));
                                 }
                             }
@@ -1630,6 +1634,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             for (Element img : images_elements) {
                                 Elements pook = img.getElementsByClass("zoom");
                                 images.add(pook.get(0).attr("src"));
+                            }
+                            if(images.size() < 4){
+                                for(int j = images.size(); j<4; j++){
+                                    images.add(images.get(0));
+                                }
                             }
 
                             ArrayList<String> description = new ArrayList<>(Arrays.asList(name.split(" ")));

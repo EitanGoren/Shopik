@@ -697,25 +697,23 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             likes.setText(String.valueOf(item.getLikes()));
             unlikes.setText(String.valueOf(item.getUnlikes()));
 
-            likes.setOnLongClickListener(v -> {
+            likes.setOnClickListener(v -> {
                 if (item.getLikedUsers() != null) {
                     showLikesListDialog(item.getLikedUsers());
                 }
                 else {
                     Toast.makeText(getContext(), "No Likes yet :)", Toast.LENGTH_SHORT).show();
                 }
-                return true;
             });
-            unlikes.setOnLongClickListener(v -> {
+            unlikes.setOnClickListener(v -> {
                 if (item.getUnlikedUsers() != null) {
                     showUnlikesListDialog(item.getUnlikedUsers());
                 }
                 else {
                     Toast.makeText(getContext(), "No Unlikes yet :)", Toast.LENGTH_SHORT).show();
                 }
-                return true;
             });
-            unlikes.setOnClickListener(v -> {
+            unlikes.setOnLongClickListener(v -> {
                 String item_id = item.getId();
                 String item_type = item.getType();
                 String item_gender = item.getGender();
@@ -725,6 +723,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 removeItem(item.getId());
                 Macros.Functions.showSnackbar(recyclerView,"Removed Successfully",
                         Objects.requireNonNull(getContext()),R.drawable.ic_thumb_down_pink);
+                return true;
             });
 
             String image = "";
@@ -971,7 +970,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private void showUnlikesListDialog(List<LikedUser> unliked_items){
 
             Dialog dialog = new Dialog(getContext());
-            LikesListAdapter unlikedListAdapter = new LikesListAdapter(dialog.getContext(), R.layout.likes_list_item, unliked_items);
+            LikesListAdapter unlikedListAdapter = new LikesListAdapter(dialog.getContext(),
+                    R.layout.likes_list_item, unliked_items);
             unlikedListAdapter.notifyDataSetChanged();
 
             dialog.setContentView(R.layout.likes_list_dialog);
@@ -992,25 +992,34 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         private void removeItem(String item_id){
-            for(int i=0; i < AllItemsList.size(); ++i) {
-                if(AllItemsList.get(i).getId().equals(item_id)) {
-                    AllItemsList.remove(i);
-                    break;
+            try {
+                for (int i = 0; i < AllItemsList.size(); ++i) {
+                    if (AllItemsList.get(i).getId().equals(item_id)) {
+                        AllItemsList.remove(i);
+                        break;
+                    }
+                }
+                for (int i = 0; i < items.size(); ++i) {
+                    if (items.get(i).getId().equals(item_id)) {
+                        items.remove(i);
+                        break;
+                    }
+                }
+                for (int i = 0; i < ItemsList.size(); ++i) {
+                    if (ItemsList.get(i).getId().equals(item_id)) {
+                        ItemsList.remove(i);
+                        notifyItemRemoved(i);
+                        return;
+                    }
                 }
             }
-            for(int i=0; i < items.size(); ++i) {
-                if(items.get(i).getId().equals(item_id)) {
-                    items.remove(i);
-                    break;
-                }
-            }
-            for(int i=0; i < ItemsList.size(); ++i) {
-                if(ItemsList.get(i).getId().equals(item_id)) {
-                    ItemsList.remove(i);
-                    notifyItemRemoved(i);
-                    return;
-                }
+            catch (NullPointerException ex){
+                Toast.makeText(getContext(),"Something went wrong,"
+                        + System.lineSeparator() +
+                        " try again later",
+                        Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 }

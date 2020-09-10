@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
+    android:layout_marginTop="5dp"
     tools:context=".explanation.E3Fragment">
 
     <TextView
@@ -11,9 +12,11 @@
         android:layout_width="wrap_content"
         android:layout_height="45dp"
         android:layout_alignParentTop="true"
+        android:letterSpacing="0.1"
         android:fontFamily="@font/nunito_bold"
         android:drawableEnd="@drawable/ic_whatshot_red"
         android:drawablePadding="10dp"
+        android:paddingTop="5dp"
         android:textSize="26sp"
         android:textStyle="bold"
         android:textColor="#000000"
@@ -27,6 +30,7 @@
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@id/best_sellers2"
         android:fontFamily="@font/nunito_bold"
+        android:paddingTop="5dp"
         android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="#000000"

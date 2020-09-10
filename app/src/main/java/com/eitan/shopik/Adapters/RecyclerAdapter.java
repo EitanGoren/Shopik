@@ -1,6 +1,7 @@
 package com.eitan.shopik.Adapters;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -78,7 +79,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     class RecyclerViewHolder extends RecyclerView.ViewHolder{
 
         private ImageView imageView;
-        private TextView sub_cat, brand;
+        private TextView sub_cat, brand,category;
         private Button full_screen;
 
         public RecyclerViewHolder(@NonNull View itemView) {
@@ -91,6 +92,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 imageView = itemView.findViewById(R.id.image_slider);
                 brand = itemView.findViewById(R.id.slider_brand);
                 full_screen = itemView.findViewById(R.id.fullscreen_button);
+                category = itemView.findViewById(R.id.category);
             }
             else {
                 brand = itemView.findViewById(R.id.slider_brand);
@@ -126,12 +128,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                         intent.putExtra("description", item.toString());
                         intent.putExtra("seller", item.getSeller());
 
-                        ArrayList<Pair<View,String>> _pairs = new ArrayList<>();
-                        _pairs.add(Pair.create(imageView,"image_item"));
-                        _pairs.add(Pair.create(brand,"company_name"));
-
-                        Macros.Functions.fullscreen(getContext(),intent,_pairs);
+                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) getContext(),
+                                        Pair.create(brand,"company_name"));
+                        getContext().startActivity(intent, options.toBundle());
                     });
+
+                    category.setText(item.getType());
+
                     break;
                 case "Brand":
                     brand.setText(item.getText());
