@@ -244,7 +244,7 @@ public class LandingPageActivity extends AppCompatActivity {
                 );
 
         YoYo.with(Techniques.Tada).duration(2500).repeat(1).playOn(shopik);
-        YoYo.with(Techniques.SlideInLeft).duration(2500).onEnd(animator -> YoYo.with(Techniques.SlideOutRight).duration(2500).playOn(tooki)).playOn(tooki);
+        YoYo.with(Techniques.RollIn).duration(3500).playOn(tooki);
 
         YoYo.with(Techniques.FadeOut).duration(5000).onEnd(animator -> {
             startActivity(intent, options.toBundle());

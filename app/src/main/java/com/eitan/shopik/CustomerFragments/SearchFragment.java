@@ -79,6 +79,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     Chip tfs_chip ;
     Chip aldo_chip ;
     Chip hoodies_chip ;
+    Chip shein_chip ;
     Chip favorite ;
     private boolean isFinishedFetching = false;
 
@@ -124,6 +125,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         tfs_chip = view.findViewById(R.id.tfs_chip);
         aldo_chip = view.findViewById(R.id.aldo_chip);
         hoodies_chip = view.findViewById(R.id.hoodies_chip);
+        shein_chip = view.findViewById(R.id.shein_chip);
         favorite = view.findViewById(R.id.favorites_chip);
         toolbar = view.findViewById(R.id.toolbar);
         explore_items = view.findViewById(R.id.explore_items);
@@ -140,6 +142,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         tx_chip.setOnClickListener(this);
         tfs_chip.setOnClickListener(this);
         hoodies_chip.setOnClickListener(this);
+        shein_chip.setOnClickListener(this);
         aldo_chip.setOnClickListener(this);
         castro_chip.setOnClickListener(this);
         favorite.setOnClickListener(this);
@@ -327,6 +330,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             case R.id.tx_chip:
                 filterItems("Terminal X");
                 break;
+            case R.id.shein_chip:
+                filterItems("Shein");
+                break;
             case R.id.renuar_chip:
                 filterItems("Renuar");
                 break;
@@ -359,10 +365,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         aldo_chip.setChecked(false);
         hoodies_chip.setChecked(false);
         favorite.setChecked(false);
+        shein_chip.setChecked(false);
     }
+
     private void sortItems(String sort_by){
         recyclerGridAdapter.getSortingFilter().filter(sort_by, count -> updateHeader(count,false));
     }
+
     private void filterItems(String filter_by){
         recyclerGridAdapter.getFilter().filter(filter_by, count -> updateHeader(count,true));
     }

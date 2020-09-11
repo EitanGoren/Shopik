@@ -79,7 +79,7 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:layout_width="70dp"
+                                android:layout_width="50dp"
                                 android:layout_height="wrap_content"
                                 android:text="@string/sort_by"
                                 android:textColor="#ffffff"
@@ -212,12 +212,26 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:layout_width="70dp"
+                                android:layout_width="50dp"
                                 android:layout_height="wrap_content"
                                 android:text="@string/filter_by"
                                 android:textColor="#ffffff"
                                 android:textSize="16sp"/>
 
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/shein_chip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:checkable="true"
+                                android:text="@string/shein"
+                                android:textColor="#000000"
+                                android:textSize="15sp"
+                                app:chipBackgroundColor="#FFFFFF"
+                                app:chipCornerRadius="15dp"
+                                app:chipEndPadding="10dp"
+                                app:chipStartPadding="10dp" />
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/asos_chip"
                                 android:layout_width="wrap_content"

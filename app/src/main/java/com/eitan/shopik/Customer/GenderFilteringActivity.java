@@ -656,7 +656,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
                         String price = details.
                                 getJSONObject("retailPrice").
-                                getString("amount");
+                                getString("amountWithSymbol");
 
                         String salePrice = details.
                                 getJSONObject("salePrice").
@@ -781,6 +781,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     }
                     entranceModel.setList(gender);
                 }
+                entranceModel.setList(gender);
             }
             catch (Exception e) {
                 Log.d(Macros.TAG, "getNewInShein() Failed " + e.getMessage());

@@ -472,12 +472,12 @@ public class Macros {
             if (view instanceof CircleImageView) Glide.with(context).
                     load(imageUrl).
                     placeholder(circularProgressDrawable).
-                    transition(withCrossFade(650)).
+                    transition(withCrossFade(350)).
                     into((CircleImageView) view);
             else
                 Glide.with(context).load(imageUrl).
                         placeholder(circularProgressDrawable).
-                        transition(withCrossFade(650)).
+                        transition(withCrossFade(350)).
                         into((ImageView) view);
         }
 
