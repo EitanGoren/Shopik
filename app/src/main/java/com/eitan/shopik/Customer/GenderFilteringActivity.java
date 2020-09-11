@@ -27,7 +27,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.LandingPageActivity;
 import com.eitan.shopik.Macros;
@@ -48,7 +47,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
-import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -158,9 +156,9 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 new fetchOutlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num,1);
 
                 if (gender.equals(Macros.CustomerMacros.WOMEN))
-                    new fetchNewInWomen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1);
+                    new getNewInWomenShein().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1);
                 else
-                    new fetchNewInMen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1);
+                    new getNewInMenShein().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1);
             }
 
             @Override
@@ -176,9 +174,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
         mMainPager.setPageTransformer(false, new ZoomOutPageTransformer());
         mMainPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
 
             @Override
             public void onPageSelected(int position) {
@@ -589,209 +585,205 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
     }
 
-    private static class fetchNewInMen extends AsyncTask<Integer,Integer,Void> {
-
+    private static class getNewInWomenShein extends AsyncTask <Integer, Integer, Void> {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected Void doInBackground(Integer... page_num) {
-
             try {
-                for (int cat_num : Macros.Arrays.MEN_CLOTHES_TYPES) {
+                for (String cat_name : Macros.Arrays.WOMEN_CLOTHES_TYPES) {
                     String cat = "";
-                    switch (cat_num) {
-                        case 17184:
+                    switch (cat_name) {
+                        case "Shoes-sc-00200195":
                             cat = Macros.NEW_SHOES;
                             break;
-                        case 27441:
+                        case "Clothing-sc-00200200":
                             cat = Macros.NEW_CLOTHING;
                             break;
-                        case 13500:
+                        case "Home-sc-00214997":
                             cat = Macros.NEW_TRENDING;
                     }
 
-                    String new_items_data;
-                    entranceModel.addMen_new_num(cat, 0);
+                    Document document = Jsoup.connect("https://il.shein.com/" +
+                            gender.toLowerCase() + "-" + cat_name + ".html").get();
 
-                    Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + page_num[0]).get();
-                    DataNode node = (DataNode) document.childNode(3).childNode(3).childNode(28).childNode(0);
+                    assert document != null;
+                    Elements elements = document.getElementsByClass("j-goodsli");
 
-                    new_items_data = node.getWholeData();
-                    String[] data_split = new_items_data.split("\"products\":", 2);
-                    String koko = data_split[1];
-                    koko = koko.replaceAll("u002F", "").
-                            replaceAll("urban", ".urban").
-                            replaceAll("gg-", "").
-                            replaceAll("under", ".under").
-                            replaceAll("ufluff", ".ufluff").
-                            replaceAll("upper", ".upper").
-                            replaceAll("uncommon", ".uncommon").
-                            replaceAll("uoh", ".uoh");
+                    for (int j = 0; j < 20; ++j) {
 
-                    new_items_data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
+                        String link2 = elements.get(j).getElementsByClass("c-goodsitem__goods-name").
+                                get(1).attr("href");
+                        String link = "https://il.shein.com" + link2;
 
-                    JSONArray JA = new JSONArray(new_items_data);
-                    int total_items = JA.length();
-                    for (int i = 0; i < total_items; ++i) {
-                        JSONObject JO = (JSONObject) JA.get(i);
-                        String imageUrl = "https://" + JO.get("image").toString().
-                                replace(".com", ".com/").
-                                replace("products", "products/");
-                        int opop = imageUrl.lastIndexOf("-");
+                        RecyclerItem recyclerItem = new RecyclerItem(cat, link);
 
-                        String color = imageUrl.substring(opop + 1);
-                        String id = JO.get("id").toString();
-                        String link = "https://www.asos.com/" + JO.get("url").toString().
-                                replace("prd", "/prd/").
-                                replace("asos-designasos", "asos-design/asos");
-
-                        String price = JO.get("price").toString();
-                        String branda = "ASOS";
-
-                        Currency shekel = Currency.getInstance("ILS");
-                        String currency_symbol = shekel.getSymbol();
-                        Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
-                        price = new DecimalFormat("##.##").format(current) + currency_symbol;
-
-                        RecyclerItem recyclerItem = new RecyclerItem(branda, link);
-                        recyclerItem.setPrice(price);
-                        recyclerItem.setLink(link);
-                        recyclerItem.setType(cat);
-
-                        if ((boolean) JO.get("isOutlet")) {
-                            recyclerItem.setOutlet(true);
-                            recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                        } else
-                            recyclerItem.setOutlet(false);
-
-                        if ((boolean) JO.get("isSale")) {
-                            recyclerItem.setSale(true);
-                            recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                        } else
-                            recyclerItem.setSale(false);
-
-                        Database connection = new Database();
-
-                        if (JO.get("url").toString().contains("prd")) {
-                            recyclerItem.setImages(connection.getASOSRecyclerImage("product", color, id));
-                        } else {
-                            recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
+                        Document prod_elements;
+                        try {
+                            prod_elements = Jsoup.connect(link).get();
+                        } catch (org.jsoup.HttpStatusException ex) {
+                            Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() + ", " + ex.getMessage());
+                            continue;
                         }
 
-                        entranceModel.addMenItem(recyclerItem);
+                        String json_prepare = prod_elements.
+                                childNode(2).childNode(3).
+                                childNode(15).childNode(17).
+                                childNode(0).toString();
+
+                        String productIntroData = json_prepare.
+                                split("productIntroData:")[1].
+                                split("abt: ")[0];
+
+                        String json = "[" + productIntroData + "]";
+
+                        JSONArray jsonArray = new JSONArray(json);
+                        JSONArray imagesArray = jsonArray.getJSONObject(0).
+                                getJSONObject("goods_imgs").
+                                getJSONArray("detail_image");
+
+                        ArrayList<String> images = new ArrayList<>();
+                        for (int i = 0; i < imagesArray.length(); ++i) {
+                            String img = imagesArray.getJSONObject(i).getString("origin_image");
+                            images.add("http:" + img);
+                        }
+                        if (images.size() < 4) {
+                            for (int k = images.size(); k < 4; k++) {
+                                images.add(images.get(0));
+                            }
+                        }
+                        JSONObject details = jsonArray.getJSONObject(0).
+                                getJSONObject("detail");
+
+                        String price = details.
+                                getJSONObject("retailPrice").
+                                getString("amount");
+
+                        String salePrice = details.
+                                getJSONObject("salePrice").
+                                getString("amount");
+
+                        if (!salePrice.equals(price)) {
+                            recyclerItem.setReduced_price(salePrice);
+                            recyclerItem.setSale(true);
+                        }
+
+                        String brand = details.getString("brand").
+                                equals("") ? "SHEIN" : details.getString("brand");
+
+                        recyclerItem.setPrice(price);
+                        recyclerItem.setImages(images);
+                        recyclerItem.setLink(link);
+                        recyclerItem.setType(cat);
+                        recyclerItem.setBrand(brand);
+                        entranceModel.addWomenItem(recyclerItem);
                     }
+                    entranceModel.setList(gender);
                 }
-                entranceModel.setList(gender);
             }
-            catch (Exception e ) {
-                Log.d(Macros.TAG,"GenderFiltering::fetchNewInMen() " +  Objects.requireNonNull(e.getMessage()));
+            catch (Exception e) {
+                    Log.d(Macros.TAG, "getNewInWomenShein() Failed " + e.getMessage());
             }
             return null;
         }
     }
 
-    private static class fetchNewInWomen extends AsyncTask<Integer,Integer,Void> {
-
+    private static class getNewInMenShein extends AsyncTask <Integer, Integer, Void> {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected Void doInBackground(Integer... integers) {
+        protected Void doInBackground(Integer... page_num) {
             try {
-                for (int cat_num : Macros.Arrays.WOMEN_CLOTHES_TYPES) {
-                    String new_items_data;
+                for (String cat_name : Macros.Arrays.MEN_CLOTHES_TYPES) {
                     String cat = "";
-                    switch (cat_num) {
-                        case 6992:
+                    switch (cat_name) {
+                        case "Shoes-Accessories-sc-00201624":
                             cat = Macros.NEW_SHOES;
                             break;
-                        case 2623:
+                        case "new-in-sc-00200410":
                             cat = Macros.NEW_CLOTHING;
                             break;
-                        case 13497:
+                        case "Activewear-sc-00227302":
                             cat = Macros.NEW_TRENDING;
                     }
 
-                    entranceModel.addWomen_new_num(cat, 0);
+                    Document document = Jsoup.connect("https://il.shein.com/" +
+                            gender.toLowerCase() + "-" + cat_name + ".html").get();
 
-                    Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num + "&page=" + integers[0]).get();
-                    DataNode node = (DataNode) document.childNode(3).childNode(3).childNode(28).childNode(0);
+                    assert document != null;
+                    Elements elements = document.getElementsByClass("j-goodsli");
 
-                    new_items_data = node.getWholeData();
+                    for (int j = 0; j < elements.size(); ++j) {
 
-                    String[] data_split = new_items_data.split("\"products\":", 2);
-                    String koko = data_split[1];
-                    koko = koko.replaceAll("u002F", "").
-                            replaceAll("urban", ".urban").
-                            replaceAll("gg-", "").
-                            replaceAll("under", ".under").
-                            replaceAll("ufluff", ".ufluff").
-                            replaceAll("upper", ".upper").
-                            replaceAll("uncommon", ".uncommon").
-                            replaceAll("uoh", ".uoh");
+                        String link2 = elements.get(j).getElementsByClass("c-goodsitem__goods-name").
+                                get(1).attr("href");
+                        String link = "https://il.shein.com" + link2;
 
-                    new_items_data = koko.substring(koko.indexOf("["), koko.indexOf("]")) + "]";
+                        RecyclerItem recyclerItem = new RecyclerItem(cat, link);
 
-                    JSONArray JA = new JSONArray(new_items_data);
-
-                    for (int i = 0; i < JA.length(); ++i) {
-                        JSONObject JO = (JSONObject) JA.get(i);
-                        String imageUrl = "https://" + JO.get("image").toString().
-                                replace(".com", ".com/").
-                                replace("products", "products/");
-
-                        int opop = imageUrl.lastIndexOf("-");
-
-                        String color = imageUrl.substring(opop + 1);
-                        String id = JO.get("id").toString();
-                        String link = "https://www.asos.com/" + JO.get("url").toString().
-                                replace("prd", "/prd/").
-                                replace("asos-designasos", "asos-design/asos");
-
-                        String price = JO.get("price").toString();
-
-                        ArrayList<String> list = new ArrayList<>();
-                        String[] name = JO.get("description").toString().split(" ");
-                        for (String word : name) {
-                            if (!word.equals("")) {
-                                list.add(word.toLowerCase());
-                            }
+                        Document prod_elements;
+                        try {
+                            prod_elements = Jsoup.connect(link).get();
+                        } catch (org.jsoup.HttpStatusException ex) {
+                            Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() + ", " + ex.getMessage());
+                            continue;
                         }
 
-                        Currency shekel = Currency.getInstance("ILS");
-                        String currency_symbol = shekel.getSymbol();
-                        Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
+                        String json_prepare = prod_elements.
+                                childNode(2).childNode(3).
+                                childNode(15).childNode(17).
+                                childNode(0).toString();
 
-                        price = new DecimalFormat("##.##").format(current) + currency_symbol;
-                        RecyclerItem recyclerItem = new RecyclerItem(cat, link);
+                        String productIntroData = json_prepare.
+                                split("productIntroData:")[1].
+                                split("abt: ")[0];
+
+                        String json = "[" + productIntroData + "]";
+
+                        JSONArray jsonArray = new JSONArray(json);
+                        JSONArray imagesArray = jsonArray.getJSONObject(0).
+                                getJSONObject("goods_imgs").
+                                getJSONArray("detail_image");
+
+                        ArrayList<String> images = new ArrayList<>();
+                        for (int i = 0; i < imagesArray.length(); ++i) {
+                            String img = imagesArray.getJSONObject(i).getString("origin_image");
+                            images.add("http:" + img);
+                        }
+                        if (images.size() < 4) {
+                            for (int k = images.size(); k < 4; k++) {
+                                images.add(images.get(0));
+                            }
+                        }
+                        JSONObject details = jsonArray.getJSONObject(0).
+                                getJSONObject("detail");
+
+                        String price = details.
+                                getJSONObject("retailPrice").
+                                getString("amount");
+
+                        String salePrice = details.
+                                getJSONObject("salePrice").
+                                getString("amount");
+
+                        if (!salePrice.equals(price)) {
+                            recyclerItem.setReduced_price(salePrice);
+                            recyclerItem.setSale(true);
+                        }
+
+                        String brand = details.getString("brand").
+                                equals("") ? "SHEIN" : details.getString("brand");
+
                         recyclerItem.setPrice(price);
+                        recyclerItem.setImages(images);
                         recyclerItem.setLink(link);
                         recyclerItem.setType(cat);
-                        recyclerItem.setDescription(list);
-
-                        if ((boolean) JO.get("isOutlet")) {
-                            recyclerItem.setOutlet(true);
-                            recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                        } else
-                            recyclerItem.setOutlet(false);
-
-                        if ((boolean) JO.get("isSale")) {
-                            recyclerItem.setSale(true);
-                            recyclerItem.setReduced_price(JO.get("reducedPrice").toString());
-                        } else
-                            recyclerItem.setSale(false);
-
-                        Database connection = new Database();
-
-                        if (JO.get("url").toString().contains("prd"))
-                            recyclerItem.setImages(connection.getASOSRecyclerImage("product", color, id));
-                        else
-                            recyclerItem.setImages(connection.getASOSRecyclerImage("group", color, id));
-
-                        entranceModel.addWomenItem(recyclerItem);
+                        recyclerItem.setBrand(brand);
+                        entranceModel.addMenItem(recyclerItem);
                     }
+                    entranceModel.setList(gender);
                 }
-                entranceModel.setList(gender);
             }
-            catch (Exception e ) {
-                Log.d(Macros.TAG,"GenderFiltering::fetchNewInWomen() " +  Objects.requireNonNull(e.getMessage()));
+            catch (Exception e) {
+                Log.d(Macros.TAG, "getNewInShein() Failed " + e.getMessage());
             }
             return null;
         }
@@ -801,5 +793,4 @@ public class GenderFilteringActivity extends AppCompatActivity {
         if(findViewById(R.id.company_img_logo) != null)
             YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.company_img_logo));
     }
-
 }

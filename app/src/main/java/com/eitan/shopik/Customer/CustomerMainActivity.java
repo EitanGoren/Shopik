@@ -52,6 +52,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
@@ -202,7 +203,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 addOnSuccessListener(documentSnapshot -> {
                     for(DocumentSnapshot doc : documentSnapshot){
                         Map<String,Object> map = new HashMap<>();
-                        map.put("seller", doc.get("name"));
+                        map.put("seller", doc.get("seller"));
                         map.put("logo_url", doc.get("logo_url"));
                         mainModel.setCompanies_info(Objects.requireNonNull(doc.get("id")).toString(), map);
                     }
@@ -605,7 +606,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             asyntask = new ArrayList<>();
 
             //Add task to your array
-
+            asyntask.add(new getShein().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
             asyntask.add(new getCastro().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
             asyntask.add(new getAsos().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
             asyntask.add(new getTFS().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
@@ -654,28 +655,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 progressIndicator.setVisibility(View.GONE);
             }
         });
-        /*/
-        // Create an explicit intent for an Activity in your app
-        Intent intent = new Intent(this, LandingPageActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.tooki)
-                .setContentTitle("My notification")
-                .setContentText("Hello World!")
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Much longer text that cannot fit one line..."))
-                // Set the intent that will fire when the user taps the notification
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-// notificationId is a unique int for each notification that you must define
-        notificationManager.notify(123, builder.build());
-*/
     }
 
     private void setInterstitialAd() {
@@ -1103,7 +1082,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             String[] name = description.split(" ");
 
                             String seller_name = "ASOS";
-                            String seller_id = "gxGB5zUoNed0rizltWVC9y8FceA3";
+                            String seller_id = "odsIz0HNINevS2EP3mdIrryTIF72";
                             boolean isExclusive = description.toLowerCase().contains("exclusive");
 
                             shoppingItem.setId_in_seller(id);
@@ -1367,7 +1346,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             shoppingItem.setGender(item_gender);
                             shoppingItem.setSeller("TwentyFourSeven");
                             shoppingItem.setSub_category(item_sub_category);
-                            shoppingItem.setSellerId("7yIoEtn3uMXoIb5WGxHT84h7mQs1");
+                            shoppingItem.setSellerId("SjSqx6h2ZFd2CSW8HjIDhLejNza2");
                             shoppingItem.setId(id);
                             shoppingItem.setName(name);
                             shoppingItem.setSite_link(link);
@@ -1801,6 +1780,149 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Log.d(Macros.TAG,"getHoodies FINISHED");
+        }
+    }
+    private static class getShein extends AsyncTask <Integer, Integer, Void> {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Integer... page_num) {
+
+            String cat = Macros.Functions.translateCategoryToShein(item_gender,item_type,item_sub_category);
+            String sub_cat = Macros.Functions.translateSubCategoryToShein(item_gender,item_sub_category);
+
+            int iter = 0;
+            int shein_total = 0;
+            if(cat != null) {
+                try {
+                    for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
+                        Document document = null;
+                        if(!sub_cat.equals("")) {
+                            document = Jsoup.connect("https://il.shein.com/" +
+                                    item_gender.toLowerCase() + "-" + sub_cat + ".html?p=" + page).get();
+                        }
+                        else{
+                            document = Jsoup.connect("https://il.shein.com/" +
+                                    item_gender.toLowerCase() + "-" + cat + ".html?&page=" + page).get();
+                        }
+                        assert document != null;
+                        Elements elements = document.getElementsByClass("j-goodsli");
+
+                        total_items += elements.size();
+                        mainModel.getTotalItems().postValue(total_items);
+                        shein_total += elements.size();
+
+                        for(Element element : elements){
+                            iter++;
+                            ShoppingItem shoppingItem = new ShoppingItem();
+
+                            String link2 = element.getElementsByClass("c-goodsitem__goods-name").
+                                    get(1).attr("href");
+                            String link = "https://il.shein.com" + link2;
+
+                            Document prod_elements;
+                            try {
+                                prod_elements = Jsoup.connect(link).get();
+                            }
+                            catch (org.jsoup.HttpStatusException ex){
+                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
+                                total_items--;
+                                mainModel.getTotalItems().postValue(total_items);
+                                publishProgress(shein_total,iter);
+                                continue;
+                            }
+
+                            String json_prepare = prod_elements.
+                                    childNode(2).childNode(3).
+                                    childNode(15).childNode(17).
+                                    childNode(0).toString();
+
+                            String productIntroData = json_prepare.
+                                    split("productIntroData:")[1].
+                                    split("abt: ")[0];
+
+                            String json = "[" + productIntroData + "]";
+
+                            JSONArray jsonArray = new JSONArray(json);
+                            JSONArray imagesArray = jsonArray.getJSONObject(0).
+                                    getJSONObject("goods_imgs").
+                                    getJSONArray("detail_image");
+
+                            ArrayList<String> images = new ArrayList<>();
+                            for(int i = 0; i < imagesArray.length(); ++i){
+                                String img = imagesArray.getJSONObject(i).getString("origin_image");
+                                images.add("http:" + img);
+                            }
+                            if(images.size() < 4){
+                                for(int j = images.size(); j<4; j++){
+                                    images.add(images.get(0));
+                                }
+                            }
+                            JSONObject details = jsonArray.getJSONObject(0).
+                                    getJSONObject("detail");
+
+                            String price = details.
+                                    getJSONObject("retailPrice").
+                                    getString("amount");
+
+                            String salePrice = details.
+                                    getJSONObject("salePrice").
+                                    getString("amount");
+
+                            if(!salePrice.equals(price)){
+                                shoppingItem.setReduced_price(salePrice);
+                                shoppingItem.setOn_sale(true);
+                            }
+
+                            String name = details.getString("goods_url_name");
+
+                            String id = details.getString("goods_id");
+                            String brand = details.getString("brand").
+                                    equals("") ? "SHEIN" : details.getString("brand");
+
+                            ArrayList<String> description = new ArrayList<>(Arrays.asList(name.split(" ")));
+
+                            shoppingItem.setId_in_seller(id);
+                            shoppingItem.setPrice(price);
+                            shoppingItem.setImages(images);
+                            shoppingItem.setBrand(brand);
+                            shoppingItem.setType(item_type);
+                            shoppingItem.setGender(item_gender);
+                            shoppingItem.setSeller("SHEIN");
+                            shoppingItem.setSub_category(item_sub_category);
+                            shoppingItem.setSellerId("7yIoEtn3uMXoIb5WGxHT84h7mQs1");
+                            shoppingItem.setId(id);
+                            shoppingItem.setName(description);
+                            shoppingItem.setSite_link(link);
+                            shoppingItem.setSeen(mainModel.isSwiped(id));
+                            shoppingItem.setPage_num(page);
+
+                            if (favorites.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            }
+                            publishProgress(shein_total,iter);
+                            getLikes(shoppingItem);
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    Log.d(Macros.TAG, "getShein() Failed " + e.getMessage());
+                    publishProgress(shein_total, (shein_total - iter));
+                }
+            }
+            else{
+                publishProgress(1,1);
+            }
+            return null;
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            Log.d(Macros.TAG, "Shein : " + values[1] + "/" + values[0]);
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Log.d(Macros.TAG,"getShein FINISHED");
         }
     }
 }

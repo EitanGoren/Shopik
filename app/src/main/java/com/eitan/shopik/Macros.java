@@ -81,7 +81,7 @@ public class Macros {
         public static final String PASSWORD = "password";
     }
     public static final String[] CompanyNames = {
-        "Castro", "ASOS", "Terminal X", "TwentyFourSeven", "Renuar", "Aldo", "Hoodies",
+        "Castro", "ASOS", "Terminal X", "TwentyFourSeven", "Renuar", "Aldo", "Hoodies","Shein"
     };
 
     public static class CustomerMacros {
@@ -94,18 +94,16 @@ public class Macros {
 
     public static class Arrays {
 
-        public static final int[] WOMEN_CLOTHES_TYPES = {
-                6992,2623,13497
+        public static final String[] WOMEN_CLOTHES_TYPES = {
+                "Shoes-sc-00200195",
+                "Home-sc-00214997",
+                "Clothing-sc-00200200"
         };
 
-        public static final int[] MEN_CLOTHES_TYPES = {
-                17184,27441,13500
-        };
-
-        public static final String[] FAV_LINES = {
-                "Great choice!", "Nice!", "Good choice", "You're gonna love it!" ,
-                "Hey, We like it too!", "Very nice taste", "Lots of buyers for this one",
-                "It's worth it",
+        public static final String[] MEN_CLOTHES_TYPES = {
+                "Shoes-Accessories-sc-00201624",
+                "new-in-sc-00200410",
+                "Activewear-sc-00227302"
         };
 
         public static final String[] PRICES = {"between 50 to 100", "above 100" ,"less than 50"};
@@ -1352,6 +1350,106 @@ public class Macros {
                         return "long";
                     case "face masks":
                         return "מסכות-פנים";
+                    default:
+                        return "";
+                }
+            }
+            else {
+                switch (item_sub_category) {
+                    case "socks":
+                        return "socks";
+                    case "tank":
+                        return "tank_tops";
+                    case "t-shirt":
+                        return "short_shirts";
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        public static String translateCategoryToShein(String item_gender, String item_type, String item_sub_category) {
+            if(item_gender.equals(CustomerMacros.WOMEN)) {
+                switch (item_type) {
+                    case BAG:
+                        return "Bags-c-2043";
+                    case DRESS:
+                        return "dresses-c-1727";
+                    case SHIRT:
+                        return "Tops-c-2223";
+                    case JEANS:
+                        return "Jeans-c-1934";
+                    case SWIMWEAR:
+                        return "Beachwear-c-2039";
+                    case SHOES:
+                        return "shoes-c-1745";
+                    case JACKETS:
+                        return "Coats-Jackets-c-2037";
+                    case JEWELLERY:
+                        return "Jewelry-c-1760";
+                    case SUNGLASSES:
+                        return "Sunglasses-c-1770";
+                    case ACCESSORIES:
+                        return "Accessories-c-1765";
+                    case LINGERIE:
+                        return "Lingerie-c-2195";
+                    default:
+                        return null;
+                }
+            }
+            else{
+                switch (item_type) {
+                    case SHIRT:
+                        return "Tops-c-1970";
+                    case JEANS:
+                        return "Jeans-c-1989";
+                    case SWIMWEAR:
+                        return "Swimmer-sc-00818680";
+                    case SHOES:
+                        return "Shoes-c-2089";
+                    case JACKETS:
+                        return "Coats-Jackets-c-1983";
+                    case JEWELLERY:
+                        return "Jewelry-c-2028";
+                    case SUNGLASSES:
+                        return "Sunglasses-c-2137";
+                    case ACCESSORIES:
+                        return "Accessories-c-2027";
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        public static String translateSubCategoryToShein(String item_gender, String item_sub_category) {
+            if (item_gender.equals(CustomerMacros.WOMEN)) {
+                switch (item_sub_category) {
+                    case "socks":
+                        return "Socks-Tights-c-1899";
+                    case "hats":
+                        return "Hats-c-1772";
+                    case "backpack":
+                        return "Backpack-c-2151";
+                    case "purse":
+                        return "Purses-c-2154";
+                    case "underwear":
+                        return "Panties-c-2205";
+                    case "bras":
+                        return "Bras-Bralettes-c-2203";
+                    case "midi":
+                        return "Midi-Dresses-sc-00100629";
+                    case "maxi":
+                        return "Maxi-Dresses-sc-00100346";
+                    case "mini":
+                        return "Short-Dresses-sc-00100608";
+                    case "tank":
+                        return "Tank-Tops-Camis-c-1779";
+                    case "t-shirts":
+                        return "T-Shirts-c-1738";
+                    case "face masks":
+                        return "מסכות-פנים";
+                    case "hoodies":
+                        return "Hooded-Sweatshirts-sc-00104082";
                     default:
                         return "";
                 }

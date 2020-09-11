@@ -69,7 +69,7 @@ public class ShopikApplicationActivity extends Application {
 
             @Override
             public void onInterstitialDismissed(Ad ad) {
-                setInterstitialAd();
+
             }
 
             @Override
