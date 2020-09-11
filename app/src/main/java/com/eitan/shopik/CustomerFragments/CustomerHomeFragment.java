@@ -66,6 +66,8 @@ public class CustomerHomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
         GenderModel genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         item_gender = genderModel.getGender().getValue();
         item_type = genderModel.getType().getValue();
@@ -78,7 +80,7 @@ public class CustomerHomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_customer_home, container,false);
 
         flingContainer = view.findViewById(R.id.frame);
-        mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
+
         swipesModel = new ViewModelProvider(requireActivity()).get(SwipesModel.class);
         arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item,
                 swipesModel.getItems().getValue());
@@ -122,8 +124,6 @@ public class CustomerHomeFragment extends Fragment {
         flingContainer.setFlingListener(onFlingListener);
         arrayAdapter.setFlingContainer(flingContainer);
         flingContainer.setAdapter(arrayAdapter);
-        flingContainer.setFlingListener(onFlingListener);
-        arrayAdapter.setFlingContainer(flingContainer);
 
         percentage = view.findViewById(R.id.percentage);
         total = view.findViewById(R.id.total);
@@ -191,7 +191,6 @@ public class CustomerHomeFragment extends Fragment {
         mainModel.getAll_items().removeObserver(items_observer);
         mainModel.getCurrentItem().removeObserver(current_items_observer);
         mainModel.getTotalItems().removeObserver(total_items_observer);
-        swipesModel.clearAllItems();
         flingContainer = null;
         onFlingListener = null;
         items_observer = null;

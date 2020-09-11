@@ -1,6 +1,5 @@
 package com.eitan.shopik.CustomerFragments;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -150,24 +148,26 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         listObserver = shoppingItems -> {
             allItemsModel.clearItems();
             for (ShoppingItem shoppingItem : shoppingItems) {
-                if (!Objects.requireNonNull(allItemsModel.getItems().getValue()).contains(shoppingItem)) {
-                    int match_per = 0;
-                    if (mainModel.getPreferred().getValue() != null) {
-                        match_per = Objects.requireNonNull(mainModel.getPreferred().getValue()).
-                                calculateMatchingPercentage(shoppingItem);
+                if(shoppingItem.getType().equals(item_type) && shoppingItem.getSub_category().equals(item_sub_category)) {
+                    if (!Objects.requireNonNull(allItemsModel.getItems().getValue()).contains(shoppingItem)) {
+                        int match_per = 0;
+                        if (mainModel.getPreferred().getValue() != null) {
+                            match_per = Objects.requireNonNull(mainModel.getPreferred().getValue()).
+                                    calculateMatchingPercentage(shoppingItem);
+                        }
+                        shoppingItem.setPercentage(match_per);
+                        allItemsModel.addItem(shoppingItem);
+                        recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount() - 1);
                     }
-                    shoppingItem.setPercentage(match_per);
-                    allItemsModel.addItem(shoppingItem);
-                    recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount() - 1);
-                }
-                if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
-                    ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
-                    if (shoppingItemAd != null) {
-                        ShoppingItem adItem = new ShoppingItem();
-                        adItem.setNativeAd(shoppingItemAd.getNativeAd());
-                        adItem.setAd(true);
-                        allItemsModel.addItem(adItem);
-                        recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount() -1);
+                    if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
+                        ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
+                        if (shoppingItemAd != null) {
+                            ShoppingItem adItem = new ShoppingItem();
+                            adItem.setNativeAd(shoppingItemAd.getNativeAd());
+                            adItem.setAd(true);
+                            allItemsModel.addItem(adItem);
+                            recyclerGridAdapter.notifyItemInserted(recyclerGridAdapter.getItemCount() - 1);
+                        }
                     }
                 }
             }
@@ -229,17 +229,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 }
                 if(explore_items.getVisibility() == View.VISIBLE){
                     Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            YoYo.with(Techniques.FadeOut).onEnd(new YoYo.AnimatorCallback() {
-                                @Override
-                                public void call(Animator animator) {
-                                    explore_items.setVisibility(View.GONE);
-                                }
-                            }).playOn(explore_items);
-                        }
-                    },1000 * 5);
+                    handler.postDelayed(() -> YoYo.with(Techniques.FadeOut).
+                            onEnd(animator -> explore_items.setVisibility(View.GONE)).
+                            playOn(explore_items),1000 * 5);
                 }
             }
         };
@@ -267,7 +259,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(recyclerGridAdapter);
-        mainModel.getAll_items().observe(requireActivity(),listObserver );
+        mainModel.getAll_items().observe(requireActivity(), listObserver);
         mainModel.getCurrent_page().observe(requireActivity(),longObserver);
         mainModel.getCurrentItem().observe(requireActivity(), total_items_observer);
         mRecyclerView.addOnScrollListener(onScrollListener);
@@ -391,7 +383,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
         // Retrieve the SearchView and plug it into SearchManager
-        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.nav_search));
+        searchView = (SearchView) menu.findItem(R.id.nav_search).getActionView();
 
         String queryHint = "What's On Your Mind?";
         searchView.setQueryHint(queryHint);

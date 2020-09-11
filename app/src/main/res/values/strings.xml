@@ -44,7 +44,6 @@
     <string name="image_slider">image_slider</string>
     <string name="shop">SHOP</string>
     <string name="new_ic">new_ic</string>
-    <string name="home">Home</string>
     <string name="categories">categories</string>
     <string name="new_in">new in</string>
     <string name="favorite">favorite</string>
@@ -103,4 +102,12 @@
     <string name="channel_description">testing</string>
     <string name="star">star</string>
     <string name="powered_by_eitan_goren">Powered by Eitan Goren</string>
+    <string name="city">City</string>
+    <string name="home">Home</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="phone">Phone</string>
+    <string name="age">Age</string>
+    <string name="address">Address</string>
+    <string name="submit">submit</string>
 </resources>

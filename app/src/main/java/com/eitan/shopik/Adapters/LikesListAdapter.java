@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.eitan.shopik.LikedUser;
+import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 
 import java.io.Serializable;
@@ -53,7 +54,7 @@ public class LikesListAdapter extends ArrayAdapter<LikedUser> implements Seriali
         if(user.getProfile_image() != null)
             Glide.with(getContext()).load(user.getProfile_image()).into(user_icon);
         else
-            Glide.with(getContext()).asDrawable().load(R.drawable.ic_person_black).into(user_icon);
+            Glide.with(getContext()).load(Macros.DEFAULT_PROFILE_IMAGE).into(user_icon);
 
         visit.setOnClickListener(v -> Toast.makeText(getContext(),"under construction...", Toast.LENGTH_SHORT ).show());
         fav_icon.setImageDrawable(ContextCompat.getDrawable(getContext(),R.drawable.ic_favorite_black_24dp));

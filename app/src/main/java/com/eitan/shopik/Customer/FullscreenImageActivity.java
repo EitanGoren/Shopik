@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
@@ -60,6 +61,11 @@ public class FullscreenImageActivity extends AppCompatActivity {
         boolean isFavorite = getIntent().getBooleanExtra("isFav", false);
         String description = getIntent().getStringExtra("description");
         String id = getIntent().getStringExtra("id");
+
+        if(seller_logo == null && seller_name == null){
+            CardView comp_info = findViewById(R.id.comp_info);
+            comp_info.setVisibility(View.GONE);
+        }
 
         ArrayList<String> imagesUrl = new ArrayList<>();
         imagesUrl.add(getIntent().getStringExtra("img1"));

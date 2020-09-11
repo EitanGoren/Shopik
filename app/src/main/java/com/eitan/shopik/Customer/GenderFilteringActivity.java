@@ -1,5 +1,6 @@
 package com.eitan.shopik.Customer;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -24,6 +25,8 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.LandingPageActivity;
@@ -138,6 +141,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
         gender_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                animateLogo();
                 model.setGender(parent.getItemAtPosition(position).toString());
                 gender = parent.getItemAtPosition(position).toString();
                 model.setImageUrl(imageUrl);
@@ -170,6 +174,22 @@ public class GenderFilteringActivity extends AppCompatActivity {
         ExplanationPagerViewAdapter mExplanationPagerViewAdapter = new ExplanationPagerViewAdapter(getSupportFragmentManager());
         mMainPager.setAdapter(mExplanationPagerViewAdapter);
         mMainPager.setPageTransformer(false, new ZoomOutPageTransformer());
+        mMainPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                animateLogo();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void updateModel() {
@@ -348,16 +368,26 @@ public class GenderFilteringActivity extends AppCompatActivity {
     }
 
     private boolean isConnectedToInternet(){
-
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
-        assert connectivityManager != null;
-        //we are connected to a network
-        if(Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)).getState() == NetworkInfo.State.CONNECTED ||
-                Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)).getState() == NetworkInfo.State.CONNECTED){
-            return internetIsConnected();
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) {
+            // connected to the internet
+            switch (activeNetwork.getType()) {
+                case ConnectivityManager.TYPE_WIFI:
+                case ConnectivityManager.TYPE_MOBILE:
+                    // connected to mobile data
+                    // connected to wifi
+                    return internetIsConnected();
+                default:
+                    return true;
+            }
         }
-        else
+        else {
+            // not connected to the internet
             return false;
+        }
+
     }
 
     public boolean internetIsConnected() {
@@ -765,6 +795,11 @@ public class GenderFilteringActivity extends AppCompatActivity {
             }
             return null;
         }
+    }
+
+    private void animateLogo(){
+        if(findViewById(R.id.company_img_logo) != null)
+            YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.company_img_logo));
     }
 
 }

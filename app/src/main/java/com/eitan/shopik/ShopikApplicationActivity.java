@@ -9,10 +9,13 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.eitan.shopik.Items.ShoppingItem;
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdError;
 import com.facebook.ads.AdSettings;
 import com.facebook.ads.AudienceNetworkAds;
 import com.facebook.ads.CacheFlag;
 import com.facebook.ads.InterstitialAd;
+import com.facebook.ads.InterstitialAdListener;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.LoadAdError;
@@ -59,7 +62,43 @@ public class ShopikApplicationActivity extends Application {
         }
         interstitialAd = new com.facebook.ads.InterstitialAd(getContext(), Macros.FB_PLACEMENT_ID);
         // Load a new interstitial.
-        interstitialAd.loadAd(EnumSet.of(CacheFlag.VIDEO));
+        com.facebook.ads.InterstitialAdListener adListener = new InterstitialAdListener() {
+            @Override
+            public void onInterstitialDisplayed(Ad ad) {
+            }
+
+            @Override
+            public void onInterstitialDismissed(Ad ad) {
+                setInterstitialAd();
+            }
+
+            @Override
+            public void onError(Ad ad, AdError adError) {
+                Log.d(Macros.TAG, "Ad failed : " + adError.getErrorMessage());
+            }
+
+            @Override
+            public void onAdLoaded(Ad ad) {
+                Log.d(Macros.TAG, "New Ad is Loaded !");
+            }
+
+            @Override
+            public void onAdClicked(Ad ad) {
+
+            }
+
+            @Override
+            public void onLoggingImpression(Ad ad) {
+
+            }
+        };
+
+        InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
+                .withAdListener(adListener)
+                .withCacheFlags(EnumSet.of(CacheFlag.VIDEO))
+                .build();
+
+        interstitialAd.loadAd(LoadAdConfig);
     }
 
     //GOOGLE NATIVE ADS
@@ -104,9 +143,46 @@ public class ShopikApplicationActivity extends Application {
         AudienceNetworkAds.initialize(this);
 
         // AdSettings.addTestDevice("34464d11-359b-4022-86a5-22489c17269d");
-        interstitialAd = new com.facebook.ads.InterstitialAd(getApplicationContext(), Macros.FB_PLACEMENT_ID);
+        interstitialAd = new com.facebook.ads.InterstitialAd(this, Macros.FB_PLACEMENT_ID);
+
         // Load a new interstitial.
-        interstitialAd.loadAd(EnumSet.of(CacheFlag.VIDEO));
+        com.facebook.ads.InterstitialAdListener adListener = new InterstitialAdListener() {
+            @Override
+            public void onInterstitialDisplayed(Ad ad) {
+            }
+
+            @Override
+            public void onInterstitialDismissed(Ad ad) {
+                setInterstitialAd();
+            }
+
+            @Override
+            public void onError(Ad ad, AdError adError) {
+                Log.d(Macros.TAG, "Ad failed : " + adError.getErrorMessage());
+            }
+
+            @Override
+            public void onAdLoaded(Ad ad) {
+                Log.d(Macros.TAG, "New Ad is Loaded !");
+            }
+
+            @Override
+            public void onAdClicked(Ad ad) {
+
+            }
+
+            @Override
+            public void onLoggingImpression(Ad ad) {
+
+            }
+        };
+
+        InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
+                .withAdListener(adListener)
+                .withCacheFlags(EnumSet.of(CacheFlag.VIDEO))
+                .build();
+
+        interstitialAd.loadAd(LoadAdConfig);
     }
 
     public static void LoadAds(int num){
@@ -118,12 +194,6 @@ public class ShopikApplicationActivity extends Application {
             clearAds();
             LoadAds(num_of_ads);
         }
-    }
-
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-        clearAds();
     }
 
     private static class getAds extends AsyncTask<Integer, Void, Void> {

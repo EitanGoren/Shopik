@@ -39,6 +39,6 @@ public class AllItemsModel extends AndroidViewModel {
     }
 
     public void clearItems(){
-        Objects.requireNonNull(all_items_list.getValue()).clear();
+        Objects.requireNonNull(this.all_items_list.getValue()).clear();
     }
 }

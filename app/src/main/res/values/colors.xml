@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-
     <color name="colorPrimary">#000000</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#BF000000</color>
@@ -31,11 +30,9 @@
     <color name="CollapsedBackground">#FFFFFF</color>
     <color name="EditTextLine">#000000</color>
     <color name="CompanyProfileScrim">#47A9FF</color>
-    <color name="EditTexrHintColor">#EF3232</color>
+    <color name="EditTextHintColor">#EF3232</color>
     <color name="SnackbarBackground">#FFFAD7</color>
     <color name="FavoritesInfoLine">#D8D8D8</color>
     <color name="collapsingBG">#6249F1</color>
     <color name="GroupCategoryBG">#C1E6FF</color>
-
-
 </resources>

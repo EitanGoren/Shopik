@@ -1,19 +1,24 @@
 package com.eitan.shopik;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.agrawalsuneet.dotsloader.loaders.TashieLoader;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.Customer.Customer;
@@ -73,7 +78,24 @@ public class LandingPageActivity extends AppCompatActivity {
             );
         }
 
+        setNotifications();
+
         if(user == null){
+
+            TashieLoader loader = findViewById(R.id.loader);
+            TextView shopik = findViewById(R.id.shopik);
+            ImageView tooki = findViewById(R.id.imageView);
+
+            ActivityOptions options = ActivityOptions.
+                    makeSceneTransitionAnimation(this,
+                            Pair.create(tooki,"tooki"),
+                            Pair.create(shopik,"Shopik")
+                    );
+
+            YoYo.with(Techniques.Tada).duration(2500).repeat(1).playOn(shopik);
+            YoYo.with(Techniques.SlideInLeft).duration(2500).onEnd(
+                    animator -> YoYo.with(Techniques.SlideOutRight).
+                            duration(2500).playOn(tooki)).playOn(tooki);
             // Choose authentication providers
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.GoogleBuilder().build(),
@@ -88,15 +110,19 @@ public class LandingPageActivity extends AppCompatActivity {
                     .setFacebookButtonId(R.id.facebook_sign_in)
                     .setEmailButtonId(R.id.email_sign_in)
                     .build();
-            // Create and launch sign-in intent
-            startActivityForResult(AuthUI.getInstance()
-                    .createSignInIntentBuilder()
-                    .setAvailableProviders(providers)
-                    .setIsSmartLockEnabled(false)
-                    .setAuthMethodPickerLayout(customLayout)
-                    .setTheme(R.style.SignInStyle)
-                    .setLogo(R.mipmap.ic_launcher_shopik)
-                    .build(),1);
+
+            YoYo.with(Techniques.FadeOut).duration(5000).onEnd(animator -> {
+                // Create and launch sign-in intent
+                startActivityForResult(AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(false)
+                        .setAuthMethodPickerLayout(customLayout)
+                        .setTheme(R.style.SignInStyle)
+                        .setLogo(R.mipmap.ic_launcher_shopik)
+                        .build(),1,options.toBundle());
+            }).playOn(loader);
+
         }
         else {
             DocumentReference user_document = db.collection(Macros.CUSTOMERS).document(user.getUid());
@@ -201,7 +227,9 @@ public class LandingPageActivity extends AppCompatActivity {
 
     private void goToCustomer() {
 
-        setNotifications();
+        TashieLoader loader = findViewById(R.id.loader);
+        TextView shopik = findViewById(R.id.shopik);
+        ImageView tooki = findViewById(R.id.imageView);
 
         Intent intent = new Intent(LandingPageActivity.this, GenderFilteringActivity.class);
         Bundle bundle = new Bundle();
@@ -209,11 +237,19 @@ public class LandingPageActivity extends AppCompatActivity {
         bundle.putString("name", user.getDisplayName());
         intent.putExtra("bundle", bundle);
 
-        ImageView tooki = findViewById(R.id.imageView);
-        YoYo.with(Techniques.Hinge).duration(3000).onEnd(animator -> {
-            startActivity(intent);
+        ActivityOptions options = ActivityOptions.
+                makeSceneTransitionAnimation(this,
+                        Pair.create(tooki,"tooki"),
+                        Pair.create(shopik,"Shopik")
+                );
+
+        YoYo.with(Techniques.Tada).duration(2500).repeat(1).playOn(shopik);
+        YoYo.with(Techniques.SlideInLeft).duration(2500).onEnd(animator -> YoYo.with(Techniques.SlideOutRight).duration(2500).playOn(tooki)).playOn(tooki);
+
+        YoYo.with(Techniques.FadeOut).duration(5000).onEnd(animator -> {
+            startActivity(intent, options.toBundle());
             supportFinishAfterTransition();
-        }).playOn(tooki);
+        }).playOn(loader);
     }
 
     @SuppressLint("RestrictedApi")
@@ -279,17 +315,25 @@ public class LandingPageActivity extends AppCompatActivity {
     }
 
     private boolean isConnectedToInternet(){
-
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
-        assert connectivityManager != null;
-        //we are connected to a network
-        if(Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)).getState() == NetworkInfo.State.CONNECTED ||
-                Objects.requireNonNull(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)).getState() == NetworkInfo.State.CONNECTED){
-
-            return internetIsConnected();
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) {
+            // connected to the internet
+            switch (activeNetwork.getType()) {
+                case ConnectivityManager.TYPE_WIFI:
+                case ConnectivityManager.TYPE_MOBILE:
+                    // connected to mobile data
+                    // connected to wifi
+                    return internetIsConnected();
+                default:
+                    return true;
+            }
         }
-        else
+        else {
+            // not connected to the internet
             return false;
+        }
 
     }
 

@@ -58,7 +58,6 @@ public class E1Fragment extends Fragment {
     private Observer<ArrayList<RecyclerItem>> recentObserver;
     private ProgressIndicator progressIndicator;
     private DialogGridAdapter gridAdapter;
-    private GridView gridContainer;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -136,13 +135,13 @@ public class E1Fragment extends Fragment {
         dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.new_items_grid_dialog);
         gridAdapter = new DialogGridAdapter(requireActivity(), R.layout.e3_grid_item, new_items);
-        gridContainer = dialog.findViewById(R.id.new_items_grid);
+        GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
         gridContainer.setAdapter(gridAdapter);
         progressIndicator = dialog.findViewById(R.id.new_items_progress_bar);
         progressIndicator.setVisibility(View.VISIBLE);
 
-        ((ViewGroup) requireView().findViewById(R.id.root)).
-                getLayoutTransition().enableTransitionType(LayoutTransition.APPEARING);
+        ((ViewGroup) requireView().findViewById(R.id.root )).getLayoutTransition().
+                enableTransitionType(LayoutTransition.APPEARING);
 
         if(gender.equals(Macros.CustomerMacros.WOMEN))
             setWomenEntrance();
@@ -183,7 +182,7 @@ public class E1Fragment extends Fragment {
         }
         else{
             TextView header = dialog.findViewById(R.id.new_items_header);
-            header.setCompoundDrawablesWithIntrinsicBounds(null,null, null,null);
+            header.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null);
             text_header = "New " + type;
             header.setText(text_header);
         }

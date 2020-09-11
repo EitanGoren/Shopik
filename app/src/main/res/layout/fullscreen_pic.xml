@@ -47,7 +47,7 @@
             android:layout_height="match_parent"
             android:contentDescription="@string/image_item"
             android:transitionName="@string/image_item"
-            android:scaleType="fitCenter" />
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/No_video_text"

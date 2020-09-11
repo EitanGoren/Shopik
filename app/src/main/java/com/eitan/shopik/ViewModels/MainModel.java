@@ -34,7 +34,6 @@ public class MainModel extends ViewModel {
     public MainModel(){
 
         currentItem = new MutableLiveData<>();
-
         totalItems = new MutableLiveData<>();
 
         this.preferred = new MutableLiveData<>();

@@ -163,7 +163,6 @@ public class E2Fragment extends Fragment {
             addJeansSubCategory("slim", Macros.Items.MEN_SLIM_JEANS_RES, Macros.CustomerMacros.MEN);
             addJeansSubCategory("straight", Macros.Items.MEN_STRAIGHT_JEANS_RES, Macros.CustomerMacros.MEN);
             addJeansSubCategory("skinny", Macros.Items.MEN_SKINNY_JEANS_RES, Macros.CustomerMacros.MEN);
-            addJeansSubCategory("super-skinny", Macros.Items.MEN_SUPER_SKINNY_JEANS_RES, Macros.CustomerMacros.MEN);
 
             addJewellerySubCategory("ring", Macros.Items.MEN_RING_RES, Macros.CustomerMacros.MEN);
             addJewellerySubCategory("bracelet", Macros.Items.MEN_BRACELET_RES, Macros.CustomerMacros.MEN);
@@ -181,11 +180,11 @@ public class E2Fragment extends Fragment {
             addShoesSubCategory("sandals",Macros.Items.MEN_SANDALS_RES,Macros.CustomerMacros.MEN);
             addShoesSubCategory("sliders",Macros.Items.MEN_SLIDERS_RES,Macros.CustomerMacros.MEN);
 
-            addShirtsSubCategory("denim", Macros.Items.MEN_LONG_RES,Macros.CustomerMacros.MEN);
-            addShirtsSubCategory("check", Macros.Items.MEN_TANK_RES,Macros.CustomerMacros.MEN);
+            addShirtsSubCategory("denim", Macros.Items.MEN_DENIM_RES,Macros.CustomerMacros.MEN);
+            addShirtsSubCategory("check", Macros.Items.MEN_CHECK_RES,Macros.CustomerMacros.MEN);
             addShirtsSubCategory("t-shirt", Macros.Items.MEN_TSHIRT_RES,Macros.CustomerMacros.MEN);
             addShirtsSubCategory("oxford", Macros.Items.MEN_OXFORD_RES,Macros.CustomerMacros.MEN);
-            addShirtsSubCategory("slim-fit", Macros.Items.MEN_MUSCLE_RES, Macros.CustomerMacros.MEN);
+            addShirtsSubCategory("slim-fit", Macros.Items.MEN_SLIM_RES, Macros.CustomerMacros.MEN);
             addShirtsSubCategory("tank", Macros.Items.MEN_TANK_RES, Macros.CustomerMacros.MEN);
 
             addWatchesSubCategory("smart",Macros.Items.MEN_SMART_WATCH_RES,Macros.CustomerMacros.MEN);

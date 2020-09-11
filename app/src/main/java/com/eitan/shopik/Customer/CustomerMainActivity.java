@@ -40,9 +40,6 @@ import com.eitan.shopik.R;
 import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.MainModel;
-import com.facebook.ads.Ad;
-import com.facebook.ads.AdError;
-import com.facebook.ads.InterstitialAdListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.progressindicator.ProgressIndicator;
@@ -101,6 +98,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private static String item_type;
     private static String item_gender;
     private static String item_sub_category;
+    private ArrayList<AsyncTask <Integer, Integer, Void>> asyntask;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static void getCompanyInfo(final ShoppingItem shoppingItem) {
@@ -178,9 +176,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 Objects.requireNonNull(documentSnapshot.get("cover_photo")).toString() :
                                 Macros.DEFAULT_COVER_PHOTO;
                     }
-                }).addOnCompleteListener(task -> {
-                    Macros.Functions.GlidePicture(getApplicationContext(), cover, nav_bg);
-                });
+                }).addOnCompleteListener(task ->
+                    Macros.Functions.GlidePicture(getApplicationContext(), cover, nav_bg)
+                );
     }
 
     private void getCustomerFavorites() {
@@ -217,7 +215,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         mainPager = findViewById(R.id.customer_container);
         mainPager.setAdapter(mainPagerAdapter);
         mainPager.setPageTransformer(false, new ZoomOutPageTransformer());
-        mainPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mainPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
@@ -487,43 +485,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         postponeEnterTransition();
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
         mainModel = new ViewModelProvider(this).get(MainModel.class);
-        if(ShopikApplicationActivity.getInterstitialAd() != null){
-            if(ShopikApplicationActivity.getInterstitialAd().isAdLoaded() &&
-                    ShopikApplicationActivity.getCategoryClicks()%2 == 0) {
-                ShopikApplicationActivity.getInterstitialAd().show();
-                ShopikApplicationActivity.getInterstitialAd().setAdListener(new InterstitialAdListener() {
-                    @Override
-                    public void onInterstitialDisplayed(Ad ad) {
-                    }
-
-                    @Override
-                    public void onInterstitialDismissed(Ad ad) {
-                        setNewAd();
-                    }
-
-                    @Override
-                    public void onError(Ad ad, AdError adError) {
-                        Log.d(Macros.TAG, "Ad failed : " + adError.getErrorMessage());
-                    }
-
-                    @Override
-                    public void onAdLoaded(Ad ad) {
-                        Log.d(Macros.TAG, "New Ad is Loaded !");
-                    }
-
-                    @Override
-                    public void onAdClicked(Ad ad) {
-
-                    }
-
-                    @Override
-                    public void onLoggingImpression(Ad ad) {
-
-                    }
-                });
-            }
-        }
-        ShopikApplicationActivity.increaseCategoryClicks();
+        setInterstitialAd();
 
         createNotificationChannel();
         // inside your activity (if you did not enable transitions in your theme)
@@ -639,13 +601,18 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
         mainModel.getCurrent_page().observe(this, page -> {
 
-            new getCastro().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page);
-            new getAsos().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page);
-            new getTFS().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page);
-            new getTX().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page);
-            new getAldo().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page);
-            new getRenuar().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page);
-            new getHoodies().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page);
+            //Array of task
+            asyntask = new ArrayList<>();
+
+            //Add task to your array
+
+            asyntask.add(new getCastro().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getAsos().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getTFS().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getTX().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getAldo().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getRenuar().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getHoodies().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
 
         });
 
@@ -711,6 +678,17 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 */
     }
 
+    private void setInterstitialAd() {
+
+        if(ShopikApplicationActivity.getInterstitialAd() != null){
+            if( ShopikApplicationActivity.getInterstitialAd().isAdLoaded() &&
+                    ShopikApplicationActivity.getCategoryClicks() % 2 == 0) {
+                ShopikApplicationActivity.getInterstitialAd().show();
+            }
+        }
+        ShopikApplicationActivity.increaseCategoryClicks();
+    }
+
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -728,10 +706,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         }
     }
 
-    private void setNewAd() {
-        ShopikApplicationActivity.setInterstitialAd();
-    }
-
     private void loadCustomerInfo() {
 
         getCoverPic();
@@ -743,7 +717,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         if (imageUrl != null)
             Glide.with(this).load(imageUrl).into(nav_image);
         else
-            Glide.with(this).asDrawable().load(R.drawable.ic_person_black).into(nav_image);
+            Glide.with(this).load(Macros.DEFAULT_PROFILE_IMAGE).into(nav_image);
 
         Calendar calendar = new GregorianCalendar();
         Date trialTime = new Date();
@@ -819,6 +793,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         mainModel.getCurrentItem().removeObservers(this);
         mainModel.getCurrent_page().removeObservers(this);
         mainModel.getPreferred().removeObservers(this);
+
+        for(AsyncTask <Integer, Integer, Void> asyncTask : asyntask){
+            asyncTask.cancel(true);
+        }
     }
 
     @Override
@@ -827,8 +805,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         total_items = 0;
         if(drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
-        else
-            super.onBackPressed();
+        super.onBackPressed();
     }
 
     @Override

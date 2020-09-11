@@ -340,7 +340,6 @@ public class Macros {
         public static final String WOMEN_PYJAMAS = "https://sc02.alicdn.com/kf/HTB1Ya2WKFXXXXbIXFXXq6xXFXXX4.jpg_350x350.jpg";
         public static final String WOMEN_THONGS = "https://ae01.alicdn.com/kf/H9c48cec89f3049d0a4431a9bf18ec6a5E/Women-Thongs-Sexy-Seamless-G-string-Thong-Fashion-pink-letters-print-Low-Waist-Shorts-Briefs-woman.jpg";
 
-        public static final String WOMEN_DENIM_JACKETS_RES ="https://www1.assets-gap.com/webcontent/0018/557/707/cn18557707.jpg";
         public static final String WOMEN_LEATHER_JACKETS_RES = "https://d4zpg1jklewne.cloudfront.net/steak/spree-variant/000-012-blk-5/black-leather-moto-jacket-product.jpg?1546447623";
         public static final String WOMEN_PUFFER_JACKETS_RES = "https://i.pinimg.com/564x/9d/95/9a/9d959a0c5a3ec05c572769613011565c.jpg";
         public static final String WOMEN_TEDDY_JACKETS_RES = "https://cdn.shopify.com/s/files/1/2033/1473/products/shopify_9f083e8613ffd5621849c28434d1935e_teddy-jacket-tan_1230x1230.jpg?v=1571594952";
@@ -372,7 +371,6 @@ public class Macros {
 
         public static final String MEN_SLIM_JEANS_RES = "https://d4zpg1jklewne.cloudfront.net/steak/spree-variant/sks-009-blu-2-1547859752085/skinny-slim-jeans-in-dark-worn-wash-product.jpg?1547859758";
         public static final String MEN_SKINNY_JEANS_RES = "https://d4zpg1jklewne.cloudfront.net/steak/spree-variant/mens-skinny-jeans-in-faded-black-3/mens-faded-black-skinny-jeans-1-product.jpg?1527794179";
-        public static final String MEN_SUPER_SKINNY_JEANS_RES = "https://i1.adis.ws/i/boohooamplience/mzz50622_black_xl?pdp.template";
         public static final String MEN_STRAIGHT_JEANS_RES = "https://d4zpg1jklewne.cloudfront.net/steak/spree-variant/straight-jeans-in-black-worn-05/straight-jeans-in-black-worn-product.jpg?1537903204";
 
         public static final String WOMEN_SLIM_JEANS_RES = "https://cdn11.bigcommerce.com/s-pkla4xn3/images/stencil/1280x1280/products/21185/187304/Skinny-Jeans-Woman-Autumn-New-2018-High-waist-Women-Fashion-Slim-Jeans-Female-washed-casual-skinny__35509.1546333221.jpg?c=2?imbypass=on";
@@ -422,18 +420,15 @@ public class Macros {
         public static final String WOMEN_SWEATSHIRTS_RES = "https://i.pinimg.com/564x/06/25/d2/0625d21e19fffa33c03e9b01fdbe5434.jpg";
 
         public static final String MEN_TSHIRT_RES = "https://sc01.alicdn.com/kf/HT1IltqFOxbXXagOFbXg/220128135/HT1IltqFOxbXXagOFbXg.jpg";
-        public static final String MEN_LONG_RES = "https://www.rankandstyle.com/media/products/j/james-perse-long-sleeve-t-shirt-mens-long-slee.jpg";
+        public static final String MEN_DENIM_RES = "https://images-na.ssl-images-amazon.com/images/I/91LSbpHdSYL._AC_UY550_.jpg";
+        public static final String MEN_CHECK_RES = "https://cdn.anscommerce.com/image/tr:h-690,w-520,cm-pad_resize/data/celio/2d-images/NAFARM2_ROUGE_1.jpg";
         public static final String MEN_TANK_RES = "https://img1.g-star.com/product/c_fill,f_auto,h_630,q_80/v1586457099/D07206-124-110-Z01/g-star-raw-basic-tanktop-2-pack-white-model-front.jpg";
         public static final String MEN_OXFORD_RES = "https://sc01.alicdn.com/kf/HTB1Jd5iffjM8KJjSZFNq6zQjFXa7.jpg_350x350.jpg";
-        public static final String MEN_MUSCLE_RES = "https://i1.adis.ws/i/boohooamplience/mzz70546_black_xl?pdp.template";
+        public static final String MEN_SLIM_RES = "https://images-na.ssl-images-amazon.com/images/I/51Cap%2BrawjL._AC_UL1000_.jpg";
 
         public static final String MEN_SMART_WATCH_RES = "https://ae01.alicdn.com/kf/HTB1UJqQLxTpK1RjSZR0q6zEwXXaI/Q9-Sport-Smart-Watch-15-Days-Work-Message-Display-Multi-Sport-Model-Heart-Rate-Waterproof-Women.jpg";
-        public static final String MEN_LEATHER_WATCH_RES = "https://gloimg.gbtcdn.com/soa/gb/pdm-provider-img/straight-product-img/20180725/T025773/T0257730004/goods_img_big-v1/205829-5848.jpg";
-        public static final String MEN_BRACELET_WATCH_RES = "https://cdn.shopify.com/s/files/1/0627/5517/products/single-tan-black_1000x.jpg?v=1563463745";
         public static final String MEN_DIGITAL_RES = "https://www.micahtec.com/wp-content/uploads/2020/02/1815-b88b6f.jpg";
-        public static final String MEN_CHRONOGRAPH_WATCH_RES = "https://cdn.shopify.com/s/files/1/0122/6748/7328/products/CURREN-Fashion-Watches-Men-Coffee-Clock-Men-Quartz-Wristwatch-Stainless-Steel-Band-Chronograph-Watch-Male-Relogio_849c3883-4623-41fc-91ac-d3a0910f3700_1024x1024.jpg?v=1568644053";
-        public static final String MEN_MESH_WATCH_RES = "https://ae01.alicdn.com/kf/H1696f766eed6495b82173d648664483c0.jpg";
-        public static final String MEN_WATCHES_RES = "https://ae01.alicdn.com/kf/HTB17d9TmQ7mBKNjSZFyq6zydFXag/2019-Mens-Watches-AGELOCER-Swiss-Brand-Luxury-Saphire-Power-Reserve-Wristwatch-Leather-Strap-Male-Clock-watch.jpg_q50.jpg";
+         public static final String MEN_WATCHES_RES = "https://ae01.alicdn.com/kf/HTB17d9TmQ7mBKNjSZFyq6zydFXag/2019-Mens-Watches-AGELOCER-Swiss-Brand-Luxury-Saphire-Power-Reserve-Wristwatch-Leather-Strap-Male-Clock-watch.jpg_q50.jpg";
 
         public static final String WOMEN_DIGITAL_RES = "https://images-na.ssl-images-amazon.com/images/I/71LVIC%2B2kGL._AC_UX522_.jpg";
         public static final String WOMEN_SMART_RES = "https://forthesmarthome.com/wp-content/uploads/2017/10/Michael-Kors-Sofie-Best-Smartwatches-for-Women.jpg";
