@@ -56,7 +56,7 @@ public class LikesListAdapter extends ArrayAdapter<LikedUser> implements Seriali
         else
             Glide.with(getContext()).load(Macros.DEFAULT_PROFILE_IMAGE).into(user_icon);
 
-        visit.setOnClickListener(v -> Toast.makeText(getContext(),"under construction...", Toast.LENGTH_SHORT ).show());
+        visit.setOnClickListener(v -> Toast.makeText(getContext(),"Will Be Added...", Toast.LENGTH_SHORT ).show());
         fav_icon.setImageDrawable(ContextCompat.getDrawable(getContext(),R.drawable.ic_favorite_black_24dp));
 
         if (user.isFavorite()) {

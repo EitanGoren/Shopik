@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,7 +21,6 @@ import androidx.core.content.res.ResourcesCompat;
 import com.bumptech.glide.Glide;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.button.MaterialButton;
@@ -77,7 +75,6 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                         bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), resultUri);
                     } catch (IOException e) {
                         e.printStackTrace();
-                        Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
                     }
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -91,17 +88,14 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                     byte[] data2 = baos.toByteArray();
 
                     UploadTask uploadTask = filePath.putBytes(data2);
-                    uploadTask.addOnFailureListener(e -> Log.d(Macros.TAG, "failed to load customer picture:" + e.getMessage()));
 
-                    uploadTask.addOnSuccessListener(taskSnapshot -> filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Map<String, Object> userInfo = new HashMap<String, Object>();
-                            userInfo.put("imageUrl", uri.toString());
-                            profileImageUrl = uri.toString();
-                            customerFS.update(userInfo);
-                        }
-                    }).addOnFailureListener(exception -> Log.d(Macros.TAG, "failed to load customer picture:" + exception.getMessage())));
+                    uploadTask.addOnSuccessListener(taskSnapshot -> filePath.getDownloadUrl().
+                            addOnSuccessListener(uri -> {
+                        Map<String, Object> userInfo = new HashMap<>();
+                        userInfo.put("imageUrl", uri.toString());
+                        profileImageUrl = uri.toString();
+                        customerFS.update(userInfo);
+                    }));
                 }
             }
         }
@@ -121,7 +115,6 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                     }
                     catch (IOException e) {
                         e.printStackTrace();
-                        Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
                     }
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -140,8 +133,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                         userInfo.put("cover_photo", uri.toString());
                         cover = uri.toString();
                         customerFS.update(userInfo);
-                    }).addOnFailureListener(exception ->
-                            Log.d(Macros.TAG, "failed to load customer picture:" + exception.getMessage())));
+                    }));
                 }
             }
         }
@@ -160,14 +152,22 @@ public class CustomerSettingsActivity extends AppCompatActivity {
 
         customerFS.get().addOnSuccessListener(documentSnapshot -> {
             if(documentSnapshot.exists()){
-                age = documentSnapshot.get("age") != null ? Objects.requireNonNull(documentSnapshot.get("age")).toString() : null;
-                first_name = documentSnapshot.get("first_name") != null ? Objects.requireNonNull(documentSnapshot.get("first_name")).toString() : null;
-                last_name = documentSnapshot.get("last_name") != null ? Objects.requireNonNull(documentSnapshot.get("last_name")).toString() : null;
-                address = documentSnapshot.get("address") != null ? Objects.requireNonNull(documentSnapshot.get("address")).toString() : null;
-                city =  documentSnapshot.get("city") != null ? Objects.requireNonNull(documentSnapshot.get("city")).toString() : null;
-                phone = documentSnapshot.get("phone") != null ? Objects.requireNonNull(documentSnapshot.get("phone")).toString() : null;
-                profileImageUrl = documentSnapshot.get("imageUrl") != null ? Objects.requireNonNull(documentSnapshot.get("imageUrl")).toString() : Macros.DEFAULT_PROFILE_IMAGE;
-                cover = documentSnapshot.get("cover_photo") != null ? Objects.requireNonNull(documentSnapshot.get("cover_photo")).toString() : Macros.DEFAULT_COVER_PHOTO;
+                age = documentSnapshot.get("age") != null ?
+                        Objects.requireNonNull(documentSnapshot.get("age")).toString() : null;
+                first_name = documentSnapshot.get("first_name") != null ?
+                        Objects.requireNonNull(documentSnapshot.get("first_name")).toString() : null;
+                last_name = documentSnapshot.get("last_name") != null ?
+                        Objects.requireNonNull(documentSnapshot.get("last_name")).toString() : null;
+                address = documentSnapshot.get("address") != null ?
+                        Objects.requireNonNull(documentSnapshot.get("address")).toString() : null;
+                city =  documentSnapshot.get("city") != null ?
+                        Objects.requireNonNull(documentSnapshot.get("city")).toString() : null;
+                phone = documentSnapshot.get("phone") != null ?
+                        Objects.requireNonNull(documentSnapshot.get("phone")).toString() : null;
+                profileImageUrl = documentSnapshot.get("imageUrl") != null ?
+                        Objects.requireNonNull(documentSnapshot.get("imageUrl")).toString() : Macros.DEFAULT_PROFILE_IMAGE;
+                cover = documentSnapshot.get("cover_photo") != null ?
+                        Objects.requireNonNull(documentSnapshot.get("cover_photo")).toString() : Macros.DEFAULT_COVER_PHOTO;
             }
         }).addOnCompleteListener(task -> {
             mFirstNameField.setText(first_name);
@@ -182,7 +182,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             setTitle();
             setCollapsingBar();
 
-        }).addOnFailureListener(e -> Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage())));
+        });
 
         appBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
             if(verticalOffset <= -300) {
@@ -209,9 +209,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             return true;
         });
 
-        submit.setOnClickListener(v -> {
-            saveUserInformation();
-        });
+        submit.setOnClickListener(v -> saveUserInformation());
     }
 
     private void setNavigationBarButtonsColor(int navigationBarColor) {
@@ -295,7 +293,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             setTitle();
         }
         catch (Exception e){
-            Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
+            e.printStackTrace();
         }
     }
 

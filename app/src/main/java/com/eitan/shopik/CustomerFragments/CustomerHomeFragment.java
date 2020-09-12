@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.eitan.shopik.Adapters.CardsAdapter;
-import com.eitan.shopik.Database;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
@@ -34,9 +34,13 @@ import com.eitan.shopik.ViewModels.SwipesModel;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -217,7 +221,6 @@ public class CustomerHomeFragment extends Fragment {
     private void onItemLiked(Object dataObject) {
 
         final ShoppingItem shoppingItem = (ShoppingItem) dataObject;
-        Database connection = new Database();
         if (!shoppingItem.isAd()) {
             String item_id = shoppingItem.getId();
             String link = shoppingItem.getSite_link();
@@ -261,12 +264,12 @@ public class CustomerHomeFragment extends Fragment {
                         updateChildren(map);
 
                 // add user_id to items Liked field
-                connection.onItemAction(item_type, item_gender, item_id, action, seller, link, imageUrl);
+                onItemAction(item_type, item_gender, item_id, action, seller, link, imageUrl);
 
                 //TODO add parameters like color,brand,price,etc..
 
                 for (String attr : shoppingItem.getName()) {
-                    connection.increasePreferredFieldByOneRTDB(attr, item_type, item_gender, item_sub_category);
+                    increasePreferredFieldByOneRTDB(attr, item_type, item_gender, item_sub_category);
                 }
                 if (mainModel.getPreferred().getValue() != null) {
                     int match_per = Objects.requireNonNull(mainModel.getPreferred().getValue()).
@@ -278,6 +281,105 @@ public class CustomerHomeFragment extends Fragment {
                 }
             }
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void increasePreferredFieldByOneRTDB(String attribute, final String type,
+                                                final String gender, final String sub_category) {
+
+        if (attribute.equals("")
+                || sub_category.contains(attribute)
+                || Arrays.asList(Macros.Items.shit_words).contains(attribute)) {
+
+            return;
+        }
+
+        final String attr = attribute.
+                replace(".","").
+                replace("$","").
+                replace("#","").
+                replace("[","").
+                replace("]","").
+                replace(":","");
+
+        Map<String,Object> map = new HashMap<>();
+
+        FirebaseDatabase.getInstance().getReference().
+                child(Macros.CUSTOMERS).
+                child(userId).
+                child(gender).
+                child(Macros.CustomerMacros.PREFERRED_ITEMS).
+                child(type).
+                child(sub_category).
+                child(attr).
+                addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        long num;
+                        if(dataSnapshot.exists() && attr.equals(dataSnapshot.getKey())){
+                            num = (long) dataSnapshot.getValue();
+                            num++;
+                            map.put(attr,num);
+
+                            FirebaseDatabase.getInstance().getReference().
+                                    child(Macros.CUSTOMERS).
+                                    child(userId).
+                                    child(gender).
+                                    child(Macros.CustomerMacros.PREFERRED_ITEMS).
+                                    child(type).
+                                    child(sub_category).
+                                    updateChildren(map);
+                        }
+                        else if(attr.equals(dataSnapshot.getKey())){
+                            FirebaseDatabase.getInstance().getReference().
+                                    child(Macros.CUSTOMERS).
+                                    child(userId).
+                                    child(gender).
+                                    child(Macros.CustomerMacros.PREFERRED_ITEMS).
+                                    child(type).
+                                    child(sub_category).
+                                    child(attr).
+                                    setValue(1);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d(Macros.TAG,"Database::increasePreferredFieldByOneRTDB " + databaseError.getMessage());
+                    }
+                });
+    }
+
+    public void onItemAction(String type, String gender, String item_id,
+                             String action,String company,String link,
+                             String image){
+
+        String temp_action = action;
+        if(action.equals(Macros.CustomerMacros.FAVOURITE))
+            temp_action = Macros.CustomerMacros.LIKED;
+
+        Map<String,Object> map = new HashMap<>();
+        map.put(userId, action);
+
+        FirebaseDatabase.getInstance().getReference().
+                child(Macros.ITEMS).
+                child(gender).
+                child(type).
+                child(company + "-" + item_id).
+                child(temp_action).
+                updateChildren(map);
+
+        Map<String,Object> info = new HashMap<>();
+        info.put("link", link);
+        info.put("image", image);
+
+        FirebaseDatabase.getInstance().getReference().
+                child(Macros.ITEMS).
+                child(gender).
+                child(type).
+                child(company + "-" + item_id).
+                child("Info").
+                setValue(info);
     }
 
     private void onItemUnliked(Object dataObject) {
@@ -294,9 +396,8 @@ public class CustomerHomeFragment extends Fragment {
 
             mainModel.addSwipedItemId(item_id);
             mainModel.markItemAsSeen(item_id);
-            Database connection = new Database();
 
-            connection.onItemAction(item_type, item_gender, item_id, Macros.Items.UNLIKED, seller, link,imageUrl);
+            onItemAction(item_type, item_gender, item_id, Macros.Items.UNLIKED, seller, link,imageUrl);
 
             Map<String,Object> map = new HashMap<>();
             map.put(item_id, Macros.Items.UNLIKED);

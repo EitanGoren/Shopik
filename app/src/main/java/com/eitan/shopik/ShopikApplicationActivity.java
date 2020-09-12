@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -40,6 +39,7 @@ public class ShopikApplicationActivity extends Application {
     private static ShopikApplicationActivity instance;
     private static com.facebook.ads.InterstitialAd interstitialAd;
     private static ArrayList<ShoppingItem> shoppingAdsArray;
+    private static com.facebook.ads.InterstitialAdListener adListener;
     private static int categoryClicks = 0;
 
     public ShopikApplicationActivity() {
@@ -61,37 +61,6 @@ public class ShopikApplicationActivity extends Application {
             interstitialAd.destroy();
         }
         interstitialAd = new com.facebook.ads.InterstitialAd(getContext(), Macros.FB_PLACEMENT_ID);
-        // Load a new interstitial.
-        com.facebook.ads.InterstitialAdListener adListener = new InterstitialAdListener() {
-            @Override
-            public void onInterstitialDisplayed(Ad ad) {
-            }
-
-            @Override
-            public void onInterstitialDismissed(Ad ad) {
-
-            }
-
-            @Override
-            public void onError(Ad ad, AdError adError) {
-                Log.d(Macros.TAG, "Ad failed : " + adError.getErrorMessage());
-            }
-
-            @Override
-            public void onAdLoaded(Ad ad) {
-                Log.d(Macros.TAG, "New Ad is Loaded !");
-            }
-
-            @Override
-            public void onAdClicked(Ad ad) {
-
-            }
-
-            @Override
-            public void onLoggingImpression(Ad ad) {
-
-            }
-        };
 
         InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
                 .withAdListener(adListener)
@@ -146,10 +115,9 @@ public class ShopikApplicationActivity extends Application {
         interstitialAd = new com.facebook.ads.InterstitialAd(this, Macros.FB_PLACEMENT_ID);
 
         // Load a new interstitial.
-        com.facebook.ads.InterstitialAdListener adListener = new InterstitialAdListener() {
+       adListener = new InterstitialAdListener() {
             @Override
-            public void onInterstitialDisplayed(Ad ad) {
-            }
+            public void onInterstitialDisplayed(Ad ad) {}
 
             @Override
             public void onInterstitialDismissed(Ad ad) {
@@ -157,24 +125,16 @@ public class ShopikApplicationActivity extends Application {
             }
 
             @Override
-            public void onError(Ad ad, AdError adError) {
-                Log.d(Macros.TAG, "Ad failed : " + adError.getErrorMessage());
-            }
+            public void onError(Ad ad, AdError adError) {}
 
             @Override
-            public void onAdLoaded(Ad ad) {
-                Log.d(Macros.TAG, "New Ad is Loaded !");
-            }
+            public void onAdLoaded(Ad ad) {}
 
             @Override
-            public void onAdClicked(Ad ad) {
-
-            }
+            public void onAdClicked(Ad ad) {}
 
             @Override
-            public void onLoggingImpression(Ad ad) {
-
-            }
+            public void onLoggingImpression(Ad ad) {}
         };
 
         InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
@@ -238,7 +198,6 @@ public class ShopikApplicationActivity extends Application {
                             @Override
                             public void onAdFailedToLoad(LoadAdError loadAdError) {
                                 super.onAdFailedToLoad(loadAdError);
-                                Log.d(Macros.TAG, "Failed to load native ad: " + loadAdError.getMessage());
                             }
                         })
                         .withNativeAdOptions(nativeAdOptions)

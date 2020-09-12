@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.MenuItem;
 import android.view.View;
@@ -153,9 +152,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         shoppingItem.addLikedUser(likedUser);
                     }
                 }
-                else {
-                    Log.d(Macros.TAG, "CustomerHomeFragment::users : " + customer_id + " do not exist");
-                }
             });
         }
         if (unliked_users == null || unliked_users.isEmpty())
@@ -163,7 +159,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         else
             getUnlikedUserInfo(shoppingItem, unliked_users);
     }
-
     private void getCoverPic() {
 
         String userid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
@@ -395,9 +390,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled: " + databaseError.getMessage());
-                    }
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
     }
 
@@ -429,8 +422,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         mainModel.setCustomers_info(customer_id, likedUser);
                         shoppingItem.addUnlikedUser(likedUser);
                     }
-                } else {
-                    Log.d(Macros.TAG, "CustomerHomeFragment::users : " + customer_id + " do not exist");
                 }
             });
         }
@@ -518,9 +509,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(Macros.TAG, "CustomerHomeFragment::onCancelled()" + databaseError.getMessage());
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
 
         };
 
@@ -553,14 +542,12 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    mainModel.setPreferred(new PreferredItem((Map<String,Object>) dataSnapshot.getValue()));
+                    mainModel.setPreferred(new PreferredItem((Map<String,Long>) dataSnapshot.getValue()));
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(Macros.TAG, "getPreferred() " + Objects.requireNonNull(databaseError.getMessage()));
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
         };
         customerDB.addValueEventListener(valueEventListener);
 
@@ -576,9 +563,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.d(Macros.TAG," fav_single_listener failed: " + error.getMessage());
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         };
         getCustomerFavorites();
 
@@ -594,9 +579,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(Macros.TAG, "pageEventListener " + databaseError.getMessage());
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
         };
         pageListener.addValueEventListener(pageEventListener);
 
@@ -840,8 +823,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String tx_cat = Macros.Functions.translateCategoryToTerminalX(item_gender,item_type);
             String tx_sub_cat = Macros.Functions.translateSubCategoryToTerminalX(item_gender,item_sub_category);
 
-            int iter = 0;
-            int tx_total = 0;
             if(tx_cat != null && tx_sub_cat != null) {
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
@@ -857,9 +838,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                         total_items += items_photo.size();
                         mainModel.getTotalItems().postValue(total_items);
-                        tx_total += items_photo.size();
                         for (int i = 0; i < items_photo.size(); ++i) {
-                            iter++;
 
                             String link = items_photo.get(i).childNode(1).attr("href");
 
@@ -872,10 +851,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 doc = Jsoup.connect(link).get();
                             }
                             catch (org.jsoup.HttpStatusException ex){
-                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
                                 total_items--;
                                 mainModel.getTotalItems().postValue(total_items);
-                                publishProgress(tx_total,i+1);
                                 continue;
                             }
 
@@ -960,32 +937,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             if (favorites.containsKey(shoppingItem.getId())) {
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
-                            publishProgress(tx_total, i+1);
                             getLikes(shoppingItem);
                         }
                     }
                 }
                 catch (Exception e) {
-                    Log.d(Macros.TAG, "getTerminalX() " + e.getMessage());
-                    publishProgress(tx_total, (tx_total - iter));
+                    e.printStackTrace();
                 }
             }
-            else{
-                publishProgress(1,1);
-            }
             return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            Log.d(Macros.TAG, "TERMINAL X : " + values[1] + "/" + values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(Macros.TAG,"getTX FINISHED");
         }
     }
     private static class getAsos extends AsyncTask <Integer, Integer, Void> {
@@ -996,8 +956,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
             Pair<Integer, Integer> cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
 
-            int iter = 0;
-            int asos_total = 0;
             if(cat_num != null){
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
@@ -1007,9 +965,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                         total_items += products.size();
                         mainModel.getTotalItems().postValue(total_items);
-                        asos_total += products.size();
                         for(Element prod : products) {
-                            ++iter;
 
                             ShoppingItem shoppingItem = new ShoppingItem();
 
@@ -1037,10 +993,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 document2 = Jsoup.connect(link).get();
                             }
                             catch (org.jsoup.HttpStatusException ex){
-                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
                                 total_items--;
                                 mainModel.getTotalItems().postValue(total_items);
-                                publishProgress(asos_total,iter);
                                 continue;
                             }
                             Elements images_ele = document2.getElementsByClass("image-thumbnail");
@@ -1103,32 +1057,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             if (favorites.containsKey(shoppingItem.getId())) {
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
-                            publishProgress(asos_total,iter);
                             getLikes(shoppingItem);
                         }
                     }
                 }
                 catch (Exception e) {
-                    Log.d(Macros.TAG, "MainCustomerActivity::getASOS() :" +" iteration " + iter + e.getMessage());
-                    publishProgress(asos_total, (asos_total - iter));
+                    e.printStackTrace();
                 }
             }
-            else{
-                publishProgress(1,1);
-            }
             return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            Log.d(Macros.TAG, "ASOS : " + values[1] + "/" + values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(Macros.TAG,"getASOS FINISHED");
         }
     }
     private static class getAldo extends AsyncTask <Integer, Integer, Void> {
@@ -1140,8 +1077,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String aldo_cat = Macros.Functions.translateCategoryToAldo(item_gender,item_type);
             String aldo_sub_cat = Macros.Functions.translateSubCategoryToAldo(item_gender,item_sub_category);
 
-            int iteration = 0;
-            int aldo_total = 0;
             if(aldo_cat != null && !aldo_sub_cat.equals("")) {
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
@@ -1156,9 +1091,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                         total_items += products.size();
                         mainModel.getTotalItems().postValue(total_items);
-                        aldo_total += products.size();
+
                         for(Element prod : products){
-                            iteration++;
 
                             String link = prod.childNode(7).attributes().get("href");
                             String price = prod.childNode(7).attributes().get("data-price");
@@ -1171,10 +1105,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 prod_page = Jsoup.connect(link).get();
                             }
                             catch (org.jsoup.HttpStatusException ex){
-                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
                                 total_items--;
                                 mainModel.getTotalItems().postValue(total_items);
-                                publishProgress(aldo_total,iteration);
                                 continue;
                             }
 
@@ -1209,31 +1141,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             if (favorites.containsKey(shoppingItem.getId())) {
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
-                            publishProgress(aldo_total,iteration);
                             getLikes(shoppingItem);
                         }
                     }
                 }
                 catch (Exception e) {
-                    Log.d(Macros.TAG, "getAldo() " + e.getMessage());
-                    publishProgress(aldo_total, (aldo_total - iteration));
+                    e.printStackTrace();
                 }
             }
-            else{
-                publishProgress(1,1);
-            }
             return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            Log.d(Macros.TAG, "ALDO : " + values[1] + "/" + values[0]);
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(Macros.TAG,"getAldo FINISHED");
         }
     }
     private static class getTFS extends AsyncTask <Integer, Integer, Void> {
@@ -1245,8 +1161,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String cat = Macros.Functions.translateCategoryTo247(item_type,item_gender);
             String sub_cat = Macros.Functions.translateSubCategoryTo247(item_sub_category,item_gender);
 
-            int iter = 0;
-            int tfs_total = 0;
             if(cat != null && sub_cat != null) {
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
@@ -1258,9 +1172,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                         total_items += items.size();
                         mainModel.getTotalItems().postValue(total_items);
-                        tfs_total += items.size();
                         for (Node item_node : items) {
-                            iter++;
                             ShoppingItem shoppingItem = new ShoppingItem();
 
                             String link = item_node.childNode(3).childNode(0).attr("href");
@@ -1270,10 +1182,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 document1 = Jsoup.connect(link).get();
                             }
                             catch (org.jsoup.HttpStatusException ex){
-                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
                                 total_items--;
                                 mainModel.getTotalItems().postValue(total_items);
-                                publishProgress(tfs_total,iter);
                                 continue;
                             }
                             Elements elements1 = document1.
@@ -1358,31 +1268,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             if (favorites.containsKey(shoppingItem.getId())) {
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
-                            publishProgress(tfs_total,iter);
                             getLikes(shoppingItem);
                         }
                     }
                 }
                 catch (Exception e) {
-                    Log.d(Macros.TAG, "MainCustomerActivity::getTFS() " + e.getMessage());
-                    publishProgress(tfs_total, (tfs_total - iter));
+                   e.printStackTrace();
                 }
             }
-            else{
-                publishProgress(1,1);
-            }
             return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            Log.d(Macros.TAG, "TFS : " + values[1] + "/" + values[0]);
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(Macros.TAG,"getTFS FINISHED");
         }
     }
     private static class getCastro extends AsyncTask <Integer, Integer, Void> {
@@ -1394,8 +1288,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String cat = Macros.Functions.translateCategoryToCastro(item_type,item_sub_category,item_gender);
             Integer sub_cat = Macros.Functions.translateSubCategoryToCastro(item_sub_category);
 
-            int iter = 0;
-            int castro_total = 0;
             if(cat != null){
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
@@ -1422,9 +1314,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                         total_items += filtered_elements.size();
                         mainModel.getTotalItems().postValue(total_items);
-                        castro_total += filtered_elements.size();
+
                         for (Element element : filtered_elements) {
-                            iter++;
 
                             ShoppingItem shoppingItem = new ShoppingItem();
 
@@ -1444,10 +1335,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                     item_doc = Jsoup.connect(link).get();
                                 }
                                 catch (org.jsoup.HttpStatusException e){
-                                    Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
                                     total_items--;
                                     mainModel.getTotalItems().postValue(total_items);
-                                    publishProgress(castro_total,iter);
                                     continue;
                                 }
                             }
@@ -1506,33 +1395,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()),
                                         Macros.CustomerMacros.FAVOURITE));
                             }
-                            publishProgress(castro_total,iter);
                             getLikes(shoppingItem);
                         }
                     }
                 }
                 catch (Exception e) {
-                    Log.d(Macros.TAG, "getCastro() Failed " + e.getMessage());
-                    publishProgress(castro_total, (castro_total - iter));
+                    e.printStackTrace();
                 }
             }
-            else{
-                //NO ITEMS FOUND
-                publishProgress(1,1 );
-            }
             return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            Log.d(Macros.TAG, "CASTRO : " + values[1] + "/" + values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(Macros.TAG,"getCASTRO FINISHED");
         }
     }
     private static class getRenuar extends AsyncTask <Integer, Integer, Void> {
@@ -1544,8 +1415,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String cat = Macros.Functions.translateCategoryToRenuar(item_gender,item_type);
             String sub_cat = Macros.Functions.translateSubCategoryToRenuar(item_gender,item_sub_category);
 
-            int renuar_total = 0;
-            int iter = 0;
             if(cat != null && !sub_cat.equals("")){
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
@@ -1561,9 +1430,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                         total_items += products.size();
                         mainModel.getTotalItems().postValue(total_items);
-                        renuar_total += products.size();
                         for (Element element : products) {
-                            iter++;
                             ShoppingItem shoppingItem = new ShoppingItem();
 
                             String id = element.attr("data-sku");
@@ -1576,10 +1443,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 item_doc = Jsoup.connect(link).get();
                             }
                             catch (org.jsoup.HttpStatusException ex){
-                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
                                 total_items--;
                                 mainModel.getTotalItems().postValue(total_items);
-                                publishProgress(renuar_total,iter);
                                 continue;
                             }
 
@@ -1637,32 +1502,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             if (favorites.containsKey(shoppingItem.getId())) {
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
-                            publishProgress(renuar_total,iter);
                             getLikes(shoppingItem);
                         }
                     }
                 }
                 catch (Exception e) {
-                    Log.d(Macros.TAG, "getRenuar() Failed " + e.getMessage());
-                    publishProgress(renuar_total, renuar_total-iter);
+                    e.printStackTrace();
                 }
             }
-            else{
-                publishProgress(1,1);
-            }
             return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            Log.d(Macros.TAG, "RENUAR : " + values[1] + "/" + values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(Macros.TAG,"getRenuar FINISHED");
         }
     }
     private static class getHoodies extends AsyncTask <Integer, Integer, Void> {
@@ -1673,8 +1521,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String cat = Macros.Functions.translateCategoryToHoodies(item_gender,item_type,item_sub_category);
             String sub_cat = Macros.Functions.translateSubCategoryToHoodies(item_gender,item_sub_category);
 
-            int iter = 0;
-            int hoodies_total = 0;
             if(cat != null) {
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
@@ -1685,10 +1531,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                         total_items += elements.size();
                         mainModel.getTotalItems().postValue(total_items);
-                        hoodies_total += elements.size();
 
                         for(Element element : elements){
-                            iter++;
+
                             ShoppingItem shoppingItem = new ShoppingItem();
                             String link = element.childNode(1).attr("href");
 
@@ -1697,10 +1542,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 prod_elements = Jsoup.connect(link).get();
                             }
                             catch (org.jsoup.HttpStatusException ex){
-                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
                                 total_items--;
                                 mainModel.getTotalItems().postValue(total_items);
-                                publishProgress(hoodies_total,iter);
                                 continue;
                             }
 
@@ -1756,30 +1599,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             if (favorites.containsKey(shoppingItem.getId())) {
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
-                            publishProgress(hoodies_total,iter);
                             getLikes(shoppingItem);
                         }
                     }
                 }
                 catch (Exception e) {
-                    Log.d(Macros.TAG, "getHoodies() Failed " + e.getMessage());
-                    publishProgress(hoodies_total, (hoodies_total - iter));
+                   e.printStackTrace();
                 }
             }
-            else{
-                publishProgress(1,1);
-            }
             return null;
-        }
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            Log.d(Macros.TAG, "HOODIES : " + values[1] + "/" + values[0]);
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(Macros.TAG,"getHoodies FINISHED");
         }
     }
     private static class getShein extends AsyncTask <Integer, Integer, Void> {
@@ -1790,12 +1618,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             String cat = Macros.Functions.translateCategoryToShein(item_gender,item_type,item_sub_category);
             Pair<String,Boolean> sub_cat = Macros.Functions.translateSubCategoryToShein(item_gender,item_sub_category);
 
-            int iter = 0;
-            int shein_total = 0;
             if(cat != null) {
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
-                        Document document = null;
+                        Document document;
                         if(!sub_cat.second) {
                             if (!sub_cat.first.equals("")) {
                                 document = Jsoup.connect("https://il.shein.com/" +
@@ -1816,10 +1642,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                         total_items += elements.size();
                         mainModel.getTotalItems().postValue(total_items);
-                        shein_total += elements.size();
 
                         for(Element element : elements){
-                            iter++;
                             ShoppingItem shoppingItem = new ShoppingItem();
 
                             String link2 = element.getElementsByClass("c-goodsitem__goods-name").
@@ -1831,10 +1655,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                                 prod_elements = Jsoup.connect(link).get();
                             }
                             catch (org.jsoup.HttpStatusException ex){
-                                Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() +", " + ex.getMessage());
                                 total_items--;
                                 mainModel.getTotalItems().postValue(total_items);
-                                publishProgress(shein_total,iter);
                                 continue;
                             }
 
@@ -1906,30 +1728,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                             if (favorites.containsKey(shoppingItem.getId())) {
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }
-                            publishProgress(shein_total,iter);
                             getLikes(shoppingItem);
                         }
                     }
                 }
                 catch (Exception e) {
-                    Log.d(Macros.TAG, "getShein() Failed " + e.getMessage());
-                    publishProgress(shein_total, (shein_total - iter));
+                    e.printStackTrace();
                 }
             }
-            else{
-                publishProgress(1,1);
-            }
             return null;
-        }
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            Log.d(Macros.TAG, "Shein : " + values[1] + "/" + values[0]);
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(Macros.TAG,"getShein FINISHED");
         }
     }
 }

@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -466,9 +465,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Log.d(Macros.TAG,"Gender fetchData: " + error.getMessage());
-                            }
+                            public void onCancelled(@NonNull DatabaseError error) {}
                         });
             }
             return null;
@@ -573,7 +570,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 }
             }
             catch (Exception e ) {
-                Log.d(Macros.TAG,"outlets failed : iteration :" + i + ", " + Objects.requireNonNull(e.getMessage()));
+                e.printStackTrace();
             }
             return null;
         }
@@ -621,7 +618,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         try {
                             prod_elements = Jsoup.connect(link).get();
                         } catch (org.jsoup.HttpStatusException ex) {
-                            Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() + ", " + ex.getMessage());
                             continue;
                         }
 
@@ -681,7 +677,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 }
             }
             catch (Exception e) {
-                    Log.d(Macros.TAG, "getNewInWomenShein() Failed " + e.getMessage());
+                e.printStackTrace();
             }
             return null;
         }
@@ -723,7 +719,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         try {
                             prod_elements = Jsoup.connect(link).get();
                         } catch (org.jsoup.HttpStatusException ex) {
-                            Log.d(Macros.TAG, "failed fetching: " + ex.getUrl() + ", " + ex.getMessage());
                             continue;
                         }
 
@@ -784,7 +779,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 entranceModel.setList(gender);
             }
             catch (Exception e) {
-                Log.d(Macros.TAG, "getNewInShein() Failed " + e.getMessage());
+               e.printStackTrace();
             }
             return null;
         }

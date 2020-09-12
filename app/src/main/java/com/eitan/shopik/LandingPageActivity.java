@@ -1,6 +1,5 @@
 package com.eitan.shopik;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Context;
@@ -34,6 +33,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -48,6 +48,7 @@ import java.util.Objects;
 public class LandingPageActivity extends AppCompatActivity {
 
     private static String provider,token,email,imageUrl,id_in_provider;
+    private static CollectionReference customersFS;
     private static FirebaseUser user;
     private FirebaseFirestore db;
 
@@ -142,9 +143,6 @@ public class LandingPageActivity extends AppCompatActivity {
                         registerNewUser();
                     }
                 }
-                else {
-                    Log.d(Macros.TAG,"Failed with " + task.getException());
-                }
             });
         }
     }
@@ -152,13 +150,16 @@ public class LandingPageActivity extends AppCompatActivity {
     private void init() {
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
+        customersFS = FirebaseFirestore.getInstance().collection(Macros.CUSTOMERS);
     }
 
     private void registerNewUser() {
 
-        Database connection = new Database();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
+        String userId = user.getUid();
+        customersFS = FirebaseFirestore.getInstance().collection(Macros.CUSTOMERS);
+
         String first_name = Objects.requireNonNull(user.getDisplayName()).split(" ")[0];
         String last_name = Objects.requireNonNull(user.getDisplayName()).split(" ")[1];
         Customer new_customer = new Customer(
@@ -173,7 +174,7 @@ public class LandingPageActivity extends AppCompatActivity {
                 null,
                 null, imageUrl, provider, id_in_provider, email, token);
 
-        connection.pushNewCustomer(new_customer);
+        customersFS.document(userId).set(new_customer);
         goToCustomer();
     }
 
@@ -245,12 +246,9 @@ public class LandingPageActivity extends AppCompatActivity {
                         Pair.create(shopik,"Shopik")
                 );
 
-        YoYo.with(Techniques.RotateIn).duration(2500).onEnd(new YoYo.AnimatorCallback() {
-            @Override
-            public void call(Animator animator) {
-                YoYo.with(Techniques.Tada).duration(2500).playOn(shopik);
-                shopik.setVisibility(View.VISIBLE);
-            }
+        YoYo.with(Techniques.RotateIn).duration(2500).onEnd(animator -> {
+            YoYo.with(Techniques.Tada).duration(2500).playOn(shopik);
+            shopik.setVisibility(View.VISIBLE);
         }).playOn(tooki);
 
         YoYo.with(Techniques.FadeOut).duration(5000).onEnd(animator -> {
@@ -286,7 +284,7 @@ public class LandingPageActivity extends AppCompatActivity {
                                 checkCustomer(user.getUid());
                             }
                             catch (JSONException e) {
-                                Log.d(Macros.TAG, "facebook failed: " + e.getMessage());
+                                e.printStackTrace();
                             }
                         });
                         Bundle parameters = new Bundle();
@@ -303,7 +301,7 @@ public class LandingPageActivity extends AppCompatActivity {
                                 checkCustomer(user.getUid());
                             }
                         } catch (Exception e) {
-                            Log.d(Macros.TAG, "googleAuth failed: " + e.getMessage());
+                            e.printStackTrace();
                         }
                         break;
                     case Macros.Providers.PASSWORD:
@@ -314,7 +312,6 @@ public class LandingPageActivity extends AppCompatActivity {
             else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
-                Log.d(Macros.TAG, Objects.requireNonNull(Objects.requireNonNull(response.getError()).getMessage()));
                 //and handle the error.
                 Toast.makeText(this, "Something went wrong.. try again", Toast.LENGTH_SHORT).show();
             }

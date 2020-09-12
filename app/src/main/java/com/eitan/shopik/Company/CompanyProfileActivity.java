@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -42,8 +41,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CompanyProfileActivity extends AppCompatActivity {
 
     private DocumentReference companyFS;
-    private String companyId,imageUrl,name,facebook,twitter,youtube,instagram,site,
-                    cover,description;
+    private String companyId,imageUrl,name,facebook,twitter,youtube,instagram,site,cover,description;
     private CircleImageView mProfile_image,toolbar_pic;
     private ImageView mFacebook,mTwitter,mSite,mInstagram,mYoutube,bgimage;
     private TextView mDescription;
@@ -68,7 +66,7 @@ public class CompanyProfileActivity extends AppCompatActivity {
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), resultUri);
                     } catch (IOException e) {
-                        Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
+                        e.printStackTrace();
                     }
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -82,14 +80,13 @@ public class CompanyProfileActivity extends AppCompatActivity {
                     byte[] data2 = baos.toByteArray();
 
                     UploadTask uploadTask = filePath.putBytes(data2);
-                    uploadTask.addOnFailureListener(e -> Log.d(Macros.TAG, "failed to load company picture:" + e.getMessage()));
 
                     uploadTask.addOnSuccessListener(taskSnapshot -> filePath.getDownloadUrl().addOnSuccessListener(uri -> {
                         Map<String, Object> userInfo = new HashMap<>();
                         userInfo.put("logo_url", uri.toString());
                         imageUrl = uri.toString();
                         companyFS.update(userInfo);
-                    }).addOnFailureListener(exception -> Log.d(Macros.TAG, "failed to load company picture:" + exception.getMessage())));
+                    }));
 
                 }
             }
@@ -101,13 +98,14 @@ public class CompanyProfileActivity extends AppCompatActivity {
                 bgimage.setImageURI(resultUri);
                 if (resultUri != null) {
 
-                    final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("companyCovers").child(companyId);
+                    final StorageReference filePath = FirebaseStorage.getInstance().
+                            getReference().child("companyCovers").child(companyId);
                     Bitmap bitmap = null;
                     try {
-                        bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), resultUri);
+                        bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().
+                                getContentResolver(), resultUri);
                     } catch (IOException e) {
                         e.printStackTrace();
-                        Log.d(Macros.TAG, Objects.requireNonNull(e.getMessage()));
                     }
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -120,14 +118,14 @@ public class CompanyProfileActivity extends AppCompatActivity {
                     byte[] data2 = baos.toByteArray();
 
                     UploadTask uploadTask = filePath.putBytes(data2);
-                    uploadTask.addOnFailureListener(e -> Log.d(Macros.TAG, "failed to load company picture:" + e.getMessage()));
 
-                    uploadTask.addOnSuccessListener(taskSnapshot -> filePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                    uploadTask.addOnSuccessListener(taskSnapshot -> filePath.getDownloadUrl().
+                            addOnSuccessListener(uri -> {
                         Map<String, Object> userInfo = new HashMap<>();
                         userInfo.put("cover_image_url", uri.toString());
                         cover = uri.toString();
                         companyFS.update(userInfo);
-                    }).addOnFailureListener(exception -> Log.d(Macros.TAG, "failed to load company picture:" + exception.getMessage())));
+                    }));
                 }
             }
         }

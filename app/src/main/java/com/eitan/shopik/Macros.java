@@ -275,9 +275,9 @@ public class Macros {
                 "WeWoreWhat", "Whistles", "Who What Wear", "Wild Honey", "Without You", "Wolf & Whistle",
                 "Women'secret", "Wonderbra", "Wrangler", "Y.A.S", "Yaura", "Yes To", "Yours", "Z_Code_Z",
                 "Zulu & Zephyr", "ZYA"
-    };
+        };
 
-        static final String[] shit_words = {
+        public static final String[] shit_words = {
                 "fit","size","up",".", "#", "$", "[", "]" ,"with", "&" ,
                 "design","in","t","and","asos","'farleigh'","waist","waisted","jean","jeans",
                 "at","x","to","by","pu","the","tea","sunglasses","sandals","shoes","sandal","shirt","t-shirt",

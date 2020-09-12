@@ -24,14 +24,10 @@ public class EntranceViewModel extends AndroidViewModel {
     private MutableLiveData<ArrayList<RecyclerItem>> new_items;
     private MutableLiveData<ArrayList<RecyclerItem>> men_new_items;
     private MutableLiveData<ArrayList<RecyclerItem>> women_new_items;
-    private MutableLiveData<Map<String, Object>> men_new_num;
-    private MutableLiveData<Map<String, Object>> women_new_num;
 
     public EntranceViewModel(Application application) {
         super(application);
 
-        this.men_new_num = new MutableLiveData<>();
-        this.women_new_num = new MutableLiveData<>();
         this.liked_items = new MutableLiveData<>();
         this.men_liked_items = new MutableLiveData<>();
         this.women_liked_items = new MutableLiveData<>();
@@ -54,8 +50,6 @@ public class EntranceViewModel extends AndroidViewModel {
         men_new_items.setValue(new_men_list);
         women_new_items.setValue(new_women_list);
         new_items.setValue(new_items_list);
-        men_new_num.setValue(men_num_map);
-        women_new_num.setValue(women_num_map);
     }
 
     public LiveData<ArrayList<RecyclerItem>> getRecentLikedItems(){
@@ -110,12 +104,6 @@ public class EntranceViewModel extends AndroidViewModel {
     }
     public void addWomenItem(RecyclerItem recyclerItem){
         Objects.requireNonNull(women_new_items.getValue()).add(recyclerItem);
-    }
-    public void addMen_new_num(String key, Integer value) {
-        Objects.requireNonNull(this.men_new_num.getValue()).put(key,value);
-    }
-    public void addWomen_new_num(String key,Integer value) {
-        Objects.requireNonNull(this.women_new_num.getValue()).put(key,value);
     }
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void setList(String gender){

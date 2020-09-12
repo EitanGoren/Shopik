@@ -41,7 +41,4 @@ public class SwipesModel extends AndroidViewModel {
     public void addToItems(ShoppingItem shoppingItem) {
         Objects.requireNonNull(this.items.getValue()).add(shoppingItem);
     }
-    public void removeFromItems(){
-        Objects.requireNonNull(this.items.getValue()).remove(0);
-    }
 }

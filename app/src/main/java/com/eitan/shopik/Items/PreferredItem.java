@@ -15,11 +15,11 @@ import java.util.Set;
 
 public class PreferredItem implements Serializable {
 
-    private Map preferred;
-    private ArrayList fields_list;
+    private Map<String, Long> preferred;
+    private ArrayList<String> fields_list;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public PreferredItem(Map preferred){
+    public PreferredItem(Map<String, Long> preferred){
         // set of item strings from items description(name)..
      if(preferred == null)
          return;
@@ -31,9 +31,20 @@ public class PreferredItem implements Serializable {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private ArrayList<String> getAttributeSortedByPreferences2(){
 
-        ArrayList<String> sorted_fields = new ArrayList<String>(preferred.keySet());
+        ArrayList<String> sorted_fields = new ArrayList<>(preferred.keySet());
 
-        Comparator<String> c = (o1, o2) -> Long.compare((long)(preferred.get(o2)), (long)(preferred.get(o1)));
+        Comparator<String> c = (o1, o2) -> {
+            int res = 0;
+            if(preferred!=null) {
+                try {
+                    res = Long.compare(preferred.get(o2), preferred.get(o1));
+                }
+                catch (NullPointerException ex) {
+                    return 0;
+                }
+            }
+            return res;
+        };
 
         Set<String> set = preferred.keySet();
         ArrayList<String> sorted_prices = new ArrayList<>();
@@ -69,7 +80,7 @@ public class PreferredItem implements Serializable {
    }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private float getAttributeEvaluation(Object wanted_field) {
+    private float getAttributeEvaluation(String wanted_field) {
 
        int i = fields_list.indexOf(wanted_field);
        if( i == -1 ) return 0;
