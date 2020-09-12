@@ -1,5 +1,6 @@
 package com.eitan.shopik;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Context;
@@ -229,6 +230,7 @@ public class LandingPageActivity extends AppCompatActivity {
 
         TashieLoader loader = findViewById(R.id.loader);
         TextView shopik = findViewById(R.id.shopik);
+        shopik.setVisibility(View.INVISIBLE);
         ImageView tooki = findViewById(R.id.imageView);
 
         Intent intent = new Intent(LandingPageActivity.this, GenderFilteringActivity.class);
@@ -243,8 +245,13 @@ public class LandingPageActivity extends AppCompatActivity {
                         Pair.create(shopik,"Shopik")
                 );
 
-        YoYo.with(Techniques.Tada).duration(2500).repeat(1).playOn(shopik);
-        YoYo.with(Techniques.RollIn).duration(3500).playOn(tooki);
+        YoYo.with(Techniques.RotateIn).duration(2500).onEnd(new YoYo.AnimatorCallback() {
+            @Override
+            public void call(Animator animator) {
+                YoYo.with(Techniques.Tada).duration(2500).playOn(shopik);
+                shopik.setVisibility(View.VISIBLE);
+            }
+        }).playOn(tooki);
 
         YoYo.with(Techniques.FadeOut).duration(5000).onEnd(animator -> {
             startActivity(intent, options.toBundle());

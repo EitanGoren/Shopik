@@ -1386,7 +1386,7 @@ public class Macros {
                     case JACKETS:
                         return "Coats-Jackets-c-2037";
                     case JEWELLERY:
-                        return "Jewelry-c-1760";
+                        return item_sub_category.equals("anklet") ? "Body-Jewelry-c-1908.html?&tag_ids=400075" : "Jewelry-c-1760";
                     case SUNGLASSES:
                         return "Sunglasses-c-1770";
                     case ACCESSORIES:
@@ -1400,9 +1400,16 @@ public class Macros {
             else{
                 switch (item_type) {
                     case SHIRT:
-                        return "Tops-c-1970";
+                        return item_sub_category.equals("denim") ? "Denim-Shirts-c-1987" : "T-Shirts-Tanks-c-1980";
                     case JEANS:
-                        return "Jeans-c-1989";
+                        switch (item_sub_category){
+                            case "skinny":
+                                return "Skinny-Jeans-sc-00100497";
+                            case "straight":
+                                return "Straight-Jeans-sc-00126916";
+                            case "slim":
+                                    return "Jeans-c-1989";
+                        }
                     case SWIMWEAR:
                         return "Swimmer-sc-00818680";
                     case SHOES:
@@ -1421,49 +1428,151 @@ public class Macros {
             }
         }
 
-        public static String translateSubCategoryToShein(String item_gender, String item_sub_category) {
+        public static Pair<String,Boolean> translateSubCategoryToShein(String item_gender, String item_sub_category) {
             if (item_gender.equals(CustomerMacros.WOMEN)) {
                 switch (item_sub_category) {
                     case "socks":
-                        return "Socks-Tights-c-1899";
+                        return Pair.create("Socks-Tights-c-1899",false);
                     case "hats":
-                        return "Hats-c-1772";
+                        return Pair.create("Hats-c-1772",false);
                     case "backpack":
-                        return "Backpack-c-2151";
-                    case "purse":
-                        return "Purses-c-2154";
+                        return Pair.create("Backpack-c-2151",false);
                     case "underwear":
-                        return "Panties-c-2205";
+                        return Pair.create("Panties-c-2205",false);
                     case "bras":
-                        return "Bras-Bralettes-c-2203";
+                        return Pair.create("Bras-Bralettes-c-2203",false);
                     case "midi":
-                        return "Midi-Dresses-sc-00100629";
+                        return Pair.create("Midi-Dresses-sc-00100629",false);
                     case "maxi":
-                        return "Maxi-Dresses-sc-00100346";
+                        return Pair.create("Maxi-Dresses-sc-00100346",false);
                     case "mini":
-                        return "Short-Dresses-sc-00100608";
-                    case "tank":
-                        return "Tank-Tops-Camis-c-1779";
+                        return Pair.create("Short-Dresses-sc-00100608",false);
+                    case "tanks":
+                        return Pair.create("Tank-Tops-Camis-c-1779",false);
                     case "t-shirts":
-                        return "T-Shirts-c-1738";
-                    case "face masks":
-                        return "מסכות-פנים";
+                        return Pair.create("T-Shirts-c-1738",false);
+                    case "bra & panty":
+                        return Pair.create("Bra-Panty-Sets-c-2270",false);
                     case "hoodies":
-                        return "Hooded-Sweatshirts-sc-00104082";
+                        return Pair.create("Hooded-Sweatshirts-sc-00104082",false);
+                    case "bikini":
+                        return Pair.create("pdsearch/bikini/",false);
+                    case "one-piece":
+                        return Pair.create("?&tag_ids=30002193",true);
+                    case "swimwear":
+                        return Pair.create("?child_id=2192",true);
+                    case "sweatshirts":
+                        return Pair.create("Sweatshirts-c-1773",false);
+                    case "trainers":
+                        return Pair.create("Sneakers-c-1913",false);
+                    case "flat shoes":
+                        return Pair.create("Flats-c-1881",false);
+                    case "slippers":
+                        return Pair.create("Slippers-c-1929",false);
+                    case "boots":
+                        return Pair.create("Boots-c-1748",false);
+                    case "heels":
+                        return Pair.create("Pumps-c-1750",false);
+                    case "sandals":
+                        return Pair.create("Sandals-c-1751",false);
+                    case "scarves":
+                        return Pair.create( "Scarves-c-1872",false);
+                    case "belts":
+                        return Pair.create("Belts-c-1875",false);
+                    case "earrings":
+                        return Pair.create("Earrings-c-1757",false);
+                    case "teddy":
+                        return Pair.create("?&tag_ids=4000584",true);
+                    case "puffer":
+                        return Pair.create("?&tag_ids=40001774",true);
+                    case "jacket":
+                        return Pair.create("Jackets-c-1776",false);
+                    case "face masks":
+                        return Pair.create("pdsearch/face%20mask",true);
+                    case "coat":
+                        return Pair.create("?&tag_ids=70007011",true);
+                    case "shapewear":
+                        return Pair.create("pdsearch/shapewear/",true);
+                    case "necklace":
+                        return Pair.create("Necklaces-c-1755",false);
+                    case "ring":
+                        return Pair.create("Rings-c-1759",false);
+                    case "bracelet":
+                        return Pair.create("Bracelets-c-1758",false);
+                    case "round":
+                        return Pair.create("?&tag_ids=4000559",true);
+                    case "square":
+                        return Pair.create("?&tag_ids=40001691",true);
+                    case "cat-eye":
+                        return Pair.create("?&tag_ids=4000168",true);
+                    case "high-waist":
+                        return Pair.create("?&tag_ids=4000357",true);
+                    case "ripped":
+                        return Pair.create("?&tag_ids=4000554",true);
+                    case "skinny":
+                        return Pair.create("?&attr_ids=109_607",true);
+                    case "straight":
+                        return Pair.create("?&attr_ids=109_643",true);
+                    case "bum":
+                        return Pair.create("Bum-Bags-c-2156",false);
+                    case "clutch":
+                        return Pair.create("Evening-Clutch-c-2153",false);
+                    case "wallet":
+                        return Pair.create("Purses-c-2154",false);
+                    case "cross body":
+                        return Pair.create("Crossbody-c-2152",false);
+                    case "tote":
+                        return Pair.create("Shoulder-Tote-Bag-c-1764",false);
                     default:
-                        return "";
+                        return Pair.create("",false);
                 }
             }
             else {
                 switch (item_sub_category) {
                     case "socks":
-                        return "socks";
-                    case "tank":
-                        return "tank_tops";
-                    case "t-shirt":
-                        return "short_shirts";
+                        return Pair.create("Socks-c-2145",false);
+                    case "hats":
+                        return Pair.create("Hats-Gloves-c-2136",false);
+                    case "underwear":
+                        return Pair.create("Underwear-c-1985",false);
+                    case "tanks":
+                        return Pair.create("?&tag_ids=4000612",true);
+                    case "t-shirts":
+                        return Pair.create("?&tag_ids=4000592",true);
+                    case "shorts":
+                        return Pair.create("Swimwear-sc-00810098",false);
+                    case "sweatshirts":
+                        return Pair.create("Sweatshirts-c-1773",false);
+                    case "trainers":
+                        return Pair.create("Sneakers-c-2093",false);
+                    case "slippers":
+                        return Pair.create("Slippers-c-2330",false);
+                    case "boots":
+                        return Pair.create("Boots-c-1748",false);
+                    case "loafers":
+                        return Pair.create("Loafers-c-2092", false);
+                    case "sliders":
+                        return Pair.create("Flip-Flops-Slides-c-2331",false);
+                    case "sandals":
+                        return Pair.create("Sandals-c-2095",false);
+                    case "scarves":
+                        return Pair.create("Scarves-c-2139",false);
+                    case "belts":
+                        return Pair.create("Belts-Suspenders-c-2138",false);
+                    case "earrings":
+                        return Pair.create("?&child_id=2142",true);
+                    case "necklace":
+                        return Pair.create("?&child_id=2141",true);
+                    case "ring":
+                        return Pair.create("?&child_id=2140",true);
+                    case "bracelet":
+                        return Pair.create("?&child_id=2029",true);
+                    case "round":
+                        return Pair.create("?&tag_ids=4000559",true);
+                    case "square":
+                        return Pair.create("?&tag_ids=40001691",true);
                     default:
-                        return "";
+                        return Pair.create("",false);
                 }
             }
         }

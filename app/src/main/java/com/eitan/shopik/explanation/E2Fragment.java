@@ -208,9 +208,8 @@ public class E2Fragment extends Fragment {
             addLingerieSubCategory("bras", Macros.Items.WOMEN_BRAS, Macros.CustomerMacros.WOMEN);
             addLingerieSubCategory("shapewear", Macros.Items.WOMEN_SHAPEWEAR, Macros.CustomerMacros.WOMEN);
             addLingerieSubCategory("pyjamas", Macros.Items.WOMEN_PYJAMAS, Macros.CustomerMacros.WOMEN);
-            addLingerieSubCategory("thongs", Macros.Items.WOMEN_THONGS, Macros.CustomerMacros.WOMEN);
+            addLingerieSubCategory("bra & panty", Macros.Items.WOMEN_PYJAMAS, Macros.CustomerMacros.WOMEN);
 
-            addBagsSubCategory("leather",Macros.Items.LEATHER_RES);
             addBagsSubCategory("bum",Macros.Items.BUM_RES);
             addBagsSubCategory("clutch",Macros.Items.CLUTCH_RES);
             addBagsSubCategory("backpack",Macros.Items.BACKPACK_RES);
@@ -273,7 +272,6 @@ public class E2Fragment extends Fragment {
             addWatchesSubCategory("digital",Macros.Items.WOMEN_DIGITAL_RES,Macros.CustomerMacros.WOMEN);
 
             addSwimwearSubCategory("bikini", Macros.Items.WOMEN_BIKINI_RES,Macros.CustomerMacros.WOMEN);
-            addSwimwearSubCategory("swimsuit", Macros.Items.WOMEN_SWIMSUIT_RES,Macros.CustomerMacros.WOMEN);
             addSwimwearSubCategory("one-piece", Macros.Items.WOMEN_ONE_PIECE_RES,Macros.CustomerMacros.WOMEN);
             addSwimwearSubCategory("swimwear", Macros.Items.WOMEN_SWIMMWEAR_RES,Macros.CustomerMacros.WOMEN);
 

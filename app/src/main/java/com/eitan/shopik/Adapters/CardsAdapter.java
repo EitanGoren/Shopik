@@ -371,14 +371,10 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 Macros.Functions.fullscreen( getContext(), intent, pairs);
             });
 
-            String image = "";
-            for(String img : shoppingItem.getImages()){
-                if(img != null && !img.equals("")) {
-                    image = img;
-                    break;
-                }
-            }
-            Macros.Functions.GlidePicture(getContext(), image, imageView);
+            if(shoppingItem.getSeller().equals("Shein"))
+                Macros.Functions.GlidePicture(getContext(), shoppingItem.getImages().get(1), imageView);
+            else
+                Macros.Functions.GlidePicture(getContext(), shoppingItem.getImages().get(0), imageView);
         }
 
         return convertView;
