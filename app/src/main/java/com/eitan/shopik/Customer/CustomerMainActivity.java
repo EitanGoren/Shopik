@@ -1788,7 +1788,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         protected Void doInBackground(Integer... page_num) {
 
             String cat = Macros.Functions.translateCategoryToShein(item_gender,item_type,item_sub_category);
-            String sub_cat = Macros.Functions.translateSubCategoryToShein(item_gender,item_sub_category);
+            Pair<String,Boolean> sub_cat = Macros.Functions.translateSubCategoryToShein(item_gender,item_sub_category);
 
             int iter = 0;
             int shein_total = 0;
@@ -1796,14 +1796,21 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
                         Document document = null;
-                        if(!sub_cat.equals("")) {
-                            document = Jsoup.connect("https://il.shein.com/" +
-                                    item_gender.toLowerCase() + "-" + sub_cat + ".html?p=" + page).get();
+                        if(!sub_cat.second) {
+                            if (!sub_cat.first.equals("")) {
+                                document = Jsoup.connect("https://il.shein.com/" +
+                                        item_gender.toLowerCase() + "-" + sub_cat.first + ".html?&page=" + page).get();
+                            }
+                            else {
+                                document = Jsoup.connect("https://il.shein.com/" +
+                                        item_gender.toLowerCase() + "-" + cat + ".html?&page=" + page).get();
+                            }
                         }
-                        else{
+                        else {
                             document = Jsoup.connect("https://il.shein.com/" +
-                                    item_gender.toLowerCase() + "-" + cat + ".html?&page=" + page).get();
+                                    item_gender.toLowerCase() + "-" + cat + ".html" + sub_cat.first + "&page=" + page).get();
                         }
+
                         assert document != null;
                         Elements elements = document.getElementsByClass("j-goodsli");
 

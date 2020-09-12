@@ -1415,7 +1415,7 @@ public class Macros {
                     case SHOES:
                         return "Shoes-c-2089";
                     case JACKETS:
-                        return "Coats-Jackets-c-1983";
+                        return item_sub_category.equals("denim") ? "Denim-Jackets-c-1986" : "Coats-Jackets-c-1983";
                     case JEWELLERY:
                         return "Jewelry-c-2028";
                     case SUNGLASSES:
@@ -1535,7 +1535,7 @@ public class Macros {
                         return Pair.create("Hats-Gloves-c-2136",false);
                     case "underwear":
                         return Pair.create("Underwear-c-1985",false);
-                    case "tanks":
+                    case "tank":
                         return Pair.create("?&tag_ids=4000612",true);
                     case "t-shirts":
                         return Pair.create("?&tag_ids=4000592",true);
@@ -1571,6 +1571,12 @@ public class Macros {
                         return Pair.create("?&tag_ids=4000559",true);
                     case "square":
                         return Pair.create("?&tag_ids=40001691",true);
+                    case "biker":
+                        return Pair.create("?&attr_ids=109_109", true);
+                    case "puffer":
+                        return Pair.create("?&attr_ids=109_1774",true);
+                    case "trench":
+                        return Pair.create("?&attr_ids=109_690", true);
                     default:
                         return Pair.create("",false);
                 }
