@@ -27,20 +27,17 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 public class Macros {
 
-    public static final String TAG = "com.eitan.shopik";
+   // public static final String TAG = "com.eitan.shopik";
     public static final String COMPANIES = "Companies";
     public static final String DEFAULT_DESCRIPTION = "Write something here...";
     public static final String DEFAULT_COVER_PHOTO = "https://st2.depositphotos.com/1747568/8686/v/950/depositphotos_86864998-stock-illustration-abstract-background-consisting-of-small.jpg";
     public static final String DEFAULT_PROFILE_IMAGE = "https://clipartart.com/images/account-profile-clipart-4.png";
     public static final String CUSTOMERS = "Customers";
     public static final String ITEMS = "Items";
-    public static final String API_KEY = "AIzaSyA-NCcR_U7gBNm1BN3lXKTS8wC1W-VC9fE";
     public static final String TEST_DEVICE_ID = "7255B1C36174A2C33091060576730302";
-    public static final String NATIVE_VIDEO_TEST_AD = "ca-app-pub-3940256099942544/1044960115";
     public static final String PAGE_NUM = "page_num";
-    public static final String NATIVE_ADVANCED_AD = "ca-app-pub-3940256099942544/2247696110";
+    public static final String NATIVE_ADVANCED_AD = "ca-app-pub-5843605953860340/3737677950";
     public static final String FB_PLACEMENT_ID = "555191575133910_605556963430704";
-    public static final String VIDEO_LINK = "https://video.asos-media.com/products/ASOS/_media_";
     public static final String BAG = "Bag";
     public static final String SHOES = "Shoes";
     public static final String JEANS = "Jeans";
