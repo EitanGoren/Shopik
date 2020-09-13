@@ -65,7 +65,6 @@ public class ShopikApplicationActivity extends Application {
         AdSettings.setIntegrationErrorMode(INTEGRATION_ERROR_CRASH_DEBUG_MODE);
         AudienceNetworkAds.initialize(this);
 
-        // AdSettings.addTestDevice("34464d11-359b-4022-86a5-22489c17269d");
         interstitialAd = new com.facebook.ads.InterstitialAd(this, Macros.FB_PLACEMENT_ID);
 
         // Load a new interstitial.

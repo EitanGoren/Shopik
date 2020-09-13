@@ -23,13 +23,10 @@
             android:name=".ShopikApplicationActivity"
             android:label="@string/title_activity_shopik_application">
         </activity>
-        <!--
-        This is the sample AdMob App ID. Insert your own AdMob App ID in quotes
-        https://googlemobileadssdk.page.link/admob-android-update-manifest
-        -->
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-5843605953860340~8335398516" />
 
         <activity android:name=".Company.CompanyProfileActivity" />
         <activity
