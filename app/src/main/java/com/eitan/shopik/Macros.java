@@ -35,7 +35,6 @@ public class Macros {
     public static final String CUSTOMERS = "Customers";
     public static final String ITEMS = "Items";
     public static final String API_KEY = "AIzaSyA-NCcR_U7gBNm1BN3lXKTS8wC1W-VC9fE";
-    public static final String AD_MOB_INTERSTITIAL_AD_DEBUG_CODE = "ca-app-pub-3940256099942544/8691691433";
     public static final String TEST_DEVICE_ID = "7255B1C36174A2C33091060576730302";
     public static final String NATIVE_VIDEO_TEST_AD = "ca-app-pub-3940256099942544/1044960115";
     public static final String PAGE_NUM = "page_num";
@@ -81,7 +80,7 @@ public class Macros {
         public static final String PASSWORD = "password";
     }
     public static final String[] CompanyNames = {
-        "Castro", "ASOS", "Terminal X", "TwentyFourSeven", "Renuar", "Aldo", "Hoodies","Shein"
+        "Castro", "Asos", "Terminal X", "TwentyFourSeven", "Renuar", "Aldo", "Hoodies", "Shein"
     };
 
     public static class CustomerMacros {
@@ -472,12 +471,12 @@ public class Macros {
             if (view instanceof CircleImageView) Glide.with(context).
                     load(imageUrl).
                     placeholder(circularProgressDrawable).
-                    transition(withCrossFade(350)).
+                    transition(withCrossFade(150)).
                     into((CircleImageView) view);
             else
                 Glide.with(context).load(imageUrl).
                         placeholder(circularProgressDrawable).
-                        transition(withCrossFade(350)).
+                        transition(withCrossFade(150)).
                         into((ImageView) view);
         }
 
@@ -1372,27 +1371,101 @@ public class Macros {
             if(item_gender.equals(CustomerMacros.WOMEN)) {
                 switch (item_type) {
                     case BAG:
-                        return "Bags-c-2043";
+                        switch (item_sub_category){
+                            case "bum":
+                                return "Bum-Bags-c-2156";
+                            case "clutch":
+                                return "Evening-Clutch-c-2153";
+                            case "backpack":
+                                return "Backpack-c-2151";
+                            case "wallet":
+                                return "Purses-c-2154";
+                            case "cross body":
+                                return "Crossbody-c-2152";
+                            case "tote":
+                                return "Shoulder-Tote-Bag-c-1764";
+                        }
                     case DRESS:
-                        return "dresses-c-1727";
+                        switch (item_sub_category){
+                            case "midi":
+                                return "Midi-Dresses-sc-00100629";
+                            case "maxi":
+                                return "Maxi-Dresses-sc-00100346";
+                            case "mini":
+                                return "Short-Dresses-sc-00100608";
+                        }
                     case SHIRT:
-                        return "Tops-c-2223";
+                        switch (item_sub_category){
+                            case "tanks":
+                                return "Tank-Tops-Camis-c-1779";
+                            case "t-shirts":
+                                return "T-Shirts-c-1738";
+                            case "hoodies":
+                                return "Hooded-Sweatshirts-sc-00104082";
+                            case "sweatshirts":
+                                return "Sweatshirts-c-1773";
+                        }
                     case JEANS:
                         return "Jeans-c-1934";
                     case SWIMWEAR:
                         return "Beachwear-c-2039";
                     case SHOES:
-                        return "shoes-c-1745";
+                        switch (item_sub_category) {
+                            case "trainers":
+                                return "Sneakers-c-1913";
+                            case "flat shoes":
+                                return "Flats-c-1881";
+                            case "slippers":
+                                return "Slippers-c-1929";
+                            case "boots":
+                                return "Boots-c-1748";
+                            case "heels":
+                                return "Pumps-c-1750";
+                            case "sandals":
+                                return "Sandals-c-1751";
+                        }
                     case JACKETS:
-                        return "Coats-Jackets-c-2037";
+                        switch (item_sub_category){
+                            case "jacket":
+                                return "Jackets-c-1776";
+                            default:
+                                return "Coats-Jackets-c-2037";
+                        }
                     case JEWELLERY:
-                        return item_sub_category.equals("anklet") ? "Body-Jewelry-c-1908.html?&tag_ids=400075" : "Jewelry-c-1760";
+                        switch (item_sub_category) {
+                            case "earrings":
+                                return "Earrings-c-1757";
+                            case "anklet":
+                                   return  "Body-Jewelry-c-1908.html?&tag_ids=400075";
+                            case "necklace":
+                                return "Necklaces-c-1755";
+                            case "ring":
+                                return "Rings-c-1759";
+                            case "bracelet":
+                                return "Bracelets-c-1758";
+                        }
                     case SUNGLASSES:
                         return "Sunglasses-c-1770";
                     case ACCESSORIES:
-                        return "Accessories-c-1765";
+                        switch (item_sub_category) {
+                            case "socks":
+                                return "Socks-Tights-c-1899";
+                            case "hats":
+                                return "Hats-c-1772";
+                            case "scarves":
+                                return "Scarves-c-1872";
+                            case "belts":
+                                return "Belts-c-1875";
+                        }
                     case LINGERIE:
-                        return "Lingerie-c-2195";
+                        switch (item_sub_category){
+                            case "underwear":
+                                return "Panties-c-2205";
+                            case "bras":
+                                return "Bras-Bralettes-c-2203";
+                            case "bra & panty":
+                                return"Bra-Panty-Sets-c-2270";
+                        }
                     default:
                         return null;
                 }
@@ -1400,7 +1473,14 @@ public class Macros {
             else{
                 switch (item_type) {
                     case SHIRT:
-                        return item_sub_category.equals("denim") ? "Denim-Shirts-c-1987" : "T-Shirts-Tanks-c-1980";
+                        switch (item_sub_category) {
+                            case "denim":
+                                return  "Denim-Shirts-c-1987";
+                            case "sweatshirts":
+                                return "Sweatshirts-c-1773";
+                            default:
+                                return null;
+                        }
                     case JEANS:
                         switch (item_sub_category){
                             case "skinny":
@@ -1409,19 +1489,56 @@ public class Macros {
                                 return "Straight-Jeans-sc-00126916";
                             case "slim":
                                     return "Jeans-c-1989";
+                            default:
+                                return null;
                         }
                     case SWIMWEAR:
-                        return "Swimmer-sc-00818680";
+                    if (item_sub_category.equals("shorts"))
+                        return "Swimwear-sc-00810098";
+                    else
+                        return null;
                     case SHOES:
                         return "Shoes-c-2089";
                     case JACKETS:
                         return item_sub_category.equals("denim") ? "Denim-Jackets-c-1986" : "Coats-Jackets-c-1983";
                     case JEWELLERY:
-                        return "Jewelry-c-2028";
+                        switch (item_sub_category){
+                            case "trainers":
+                                return "Sneakers-c-2093";
+                            case "slippers":
+                                return "Slippers-c-2330";
+                            case "boots":
+                                return "Boots-c-1748";
+                            case "loafers":
+                                return "Loafers-c-2092";
+                            case "sliders":
+                                return "Flip-Flops-Slides-c-2331";
+                            case "sandals":
+                                return "Sandals-c-2095";
+                            default:
+                                return null;
+                        }
                     case SUNGLASSES:
                         return "Sunglasses-c-2137";
                     case ACCESSORIES:
-                        return "Accessories-c-2027";
+                        switch (item_sub_category){
+                            case "socks":
+                                return "Socks-c-2145";
+                            case "hats":
+                                return "Hats-Gloves-c-2136";
+                            case "scarves":
+                                return "Scarves-c-2139";
+                            case "belts":
+                                return "Belts-Suspenders-c-2138";
+                            default:
+                                return null;
+                        }
+                    case LINGERIE:
+                        if ("underwear".equals(item_sub_category)) {
+                            return "Underwear-c-1985";
+                        }
+                        else
+                            return null;
                     default:
                         return null;
                 }
@@ -1431,74 +1548,22 @@ public class Macros {
         public static Pair<String,Boolean> translateSubCategoryToShein(String item_gender, String item_sub_category) {
             if (item_gender.equals(CustomerMacros.WOMEN)) {
                 switch (item_sub_category) {
-                    case "socks":
-                        return Pair.create("Socks-Tights-c-1899",false);
-                    case "hats":
-                        return Pair.create("Hats-c-1772",false);
-                    case "backpack":
-                        return Pair.create("Backpack-c-2151",false);
-                    case "underwear":
-                        return Pair.create("Panties-c-2205",false);
-                    case "bras":
-                        return Pair.create("Bras-Bralettes-c-2203",false);
-                    case "midi":
-                        return Pair.create("Midi-Dresses-sc-00100629",false);
-                    case "maxi":
-                        return Pair.create("Maxi-Dresses-sc-00100346",false);
-                    case "mini":
-                        return Pair.create("Short-Dresses-sc-00100608",false);
-                    case "tanks":
-                        return Pair.create("Tank-Tops-Camis-c-1779",false);
-                    case "t-shirts":
-                        return Pair.create("T-Shirts-c-1738",false);
-                    case "bra & panty":
-                        return Pair.create("Bra-Panty-Sets-c-2270",false);
-                    case "hoodies":
-                        return Pair.create("Hooded-Sweatshirts-sc-00104082",false);
                     case "bikini":
                         return Pair.create("pdsearch/bikini/",false);
                     case "one-piece":
                         return Pair.create("?&tag_ids=30002193",true);
                     case "swimwear":
                         return Pair.create("?child_id=2192",true);
-                    case "sweatshirts":
-                        return Pair.create("Sweatshirts-c-1773",false);
-                    case "trainers":
-                        return Pair.create("Sneakers-c-1913",false);
-                    case "flat shoes":
-                        return Pair.create("Flats-c-1881",false);
-                    case "slippers":
-                        return Pair.create("Slippers-c-1929",false);
-                    case "boots":
-                        return Pair.create("Boots-c-1748",false);
-                    case "heels":
-                        return Pair.create("Pumps-c-1750",false);
-                    case "sandals":
-                        return Pair.create("Sandals-c-1751",false);
-                    case "scarves":
-                        return Pair.create( "Scarves-c-1872",false);
-                    case "belts":
-                        return Pair.create("Belts-c-1875",false);
-                    case "earrings":
-                        return Pair.create("Earrings-c-1757",false);
                     case "teddy":
                         return Pair.create("?&tag_ids=4000584",true);
                     case "puffer":
                         return Pair.create("?&tag_ids=40001774",true);
-                    case "jacket":
-                        return Pair.create("Jackets-c-1776",false);
                     case "face masks":
                         return Pair.create("pdsearch/face%20mask",true);
                     case "coat":
                         return Pair.create("?&tag_ids=70007011",true);
                     case "shapewear":
                         return Pair.create("pdsearch/shapewear/",true);
-                    case "necklace":
-                        return Pair.create("Necklaces-c-1755",false);
-                    case "ring":
-                        return Pair.create("Rings-c-1759",false);
-                    case "bracelet":
-                        return Pair.create("Bracelets-c-1758",false);
                     case "round":
                         return Pair.create("?&tag_ids=4000559",true);
                     case "square":
@@ -1513,52 +1578,16 @@ public class Macros {
                         return Pair.create("?&attr_ids=109_607",true);
                     case "straight":
                         return Pair.create("?&attr_ids=109_643",true);
-                    case "bum":
-                        return Pair.create("Bum-Bags-c-2156",false);
-                    case "clutch":
-                        return Pair.create("Evening-Clutch-c-2153",false);
-                    case "wallet":
-                        return Pair.create("Purses-c-2154",false);
-                    case "cross body":
-                        return Pair.create("Crossbody-c-2152",false);
-                    case "tote":
-                        return Pair.create("Shoulder-Tote-Bag-c-1764",false);
                     default:
                         return Pair.create("",false);
                 }
             }
             else {
                 switch (item_sub_category) {
-                    case "socks":
-                        return Pair.create("Socks-c-2145",false);
-                    case "hats":
-                        return Pair.create("Hats-Gloves-c-2136",false);
-                    case "underwear":
-                        return Pair.create("Underwear-c-1985",false);
                     case "tank":
                         return Pair.create("?&tag_ids=4000612",true);
                     case "t-shirts":
                         return Pair.create("?&tag_ids=4000592",true);
-                    case "shorts":
-                        return Pair.create("Swimwear-sc-00810098",false);
-                    case "sweatshirts":
-                        return Pair.create("Sweatshirts-c-1773",false);
-                    case "trainers":
-                        return Pair.create("Sneakers-c-2093",false);
-                    case "slippers":
-                        return Pair.create("Slippers-c-2330",false);
-                    case "boots":
-                        return Pair.create("Boots-c-1748",false);
-                    case "loafers":
-                        return Pair.create("Loafers-c-2092", false);
-                    case "sliders":
-                        return Pair.create("Flip-Flops-Slides-c-2331",false);
-                    case "sandals":
-                        return Pair.create("Sandals-c-2095",false);
-                    case "scarves":
-                        return Pair.create("Scarves-c-2139",false);
-                    case "belts":
-                        return Pair.create("Belts-Suspenders-c-2138",false);
                     case "earrings":
                         return Pair.create("?&child_id=2142",true);
                     case "necklace":

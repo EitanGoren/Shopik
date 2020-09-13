@@ -80,7 +80,8 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
         assert shoppingItem != null;
         if(shoppingItem.isAd() && shoppingItem.getNativeAd() != null && !shoppingItem.isDummyLastItem()) {
-            UnifiedNativeAdView adView = (UnifiedNativeAdView) LayoutInflater.from(getContext()).inflate(R.layout.native_card_ad_template, parent,false);
+            UnifiedNativeAdView adView = (UnifiedNativeAdView) LayoutInflater.
+                    from(getContext()).inflate(R.layout.native_card_ad_template, parent,false);
             // Set the media view.
             adView.setMediaView(adView.findViewById(R.id.ad_media));
 
@@ -103,14 +104,14 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             // These assets aren't guaranteed to be in every UnifiedNativeAd, so it's important to
             // check before trying to display them.
             if (nativeAd.getBody() == null) {
-                adView.getBodyView().setVisibility(View.INVISIBLE);
+                adView.getBodyView().setVisibility(View.GONE);
             } else {
                 adView.getBodyView().setVisibility(View.VISIBLE);
                 ((TextView) adView.getBodyView()).setText(nativeAd.getBody());
             }
 
             if (nativeAd.getCallToAction() == null) {
-                adView.getCallToActionView().setVisibility(View.INVISIBLE);
+                adView.getCallToActionView().setVisibility(View.GONE);
             } else {
                 adView.getCallToActionView().setVisibility(View.VISIBLE);
                 ((Button) adView.getCallToActionView()).setText(nativeAd.getCallToAction());
@@ -125,21 +126,21 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             }
 
             if (nativeAd.getPrice() == null) {
-                adView.getPriceView().setVisibility(View.INVISIBLE);
+                adView.getPriceView().setVisibility(View.GONE);
             } else {
                 adView.getPriceView().setVisibility(View.VISIBLE);
                 ((TextView) adView.getPriceView()).setText(nativeAd.getPrice());
             }
 
             if (nativeAd.getStore() == null) {
-                adView.getStoreView().setVisibility(View.INVISIBLE);
+                adView.getStoreView().setVisibility(View.GONE);
             } else {
                 adView.getStoreView().setVisibility(View.VISIBLE);
                 ((TextView) adView.getStoreView()).setText(nativeAd.getStore());
             }
 
             if (nativeAd.getStarRating() == null) {
-                adView.getStarRatingView().setVisibility(View.INVISIBLE);
+                adView.getStarRatingView().setVisibility(View.GONE);
             } else {
                 ((RatingBar) adView.getStarRatingView())
                         .setRating(nativeAd.getStarRating().floatValue());
@@ -147,7 +148,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
             }
 
             if (nativeAd.getAdvertiser() == null) {
-                adView.getAdvertiserView().setVisibility(View.INVISIBLE);
+                adView.getAdvertiserView().setVisibility(View.GONE);
             } else {
                 ((TextView) adView.getAdvertiserView()).setText(nativeAd.getAdvertiser());
                 adView.getAdvertiserView().setVisibility(View.VISIBLE);
@@ -371,10 +372,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 Macros.Functions.fullscreen( getContext(), intent, pairs);
             });
 
-            if(shoppingItem.getSeller().equals("Shein"))
-                Macros.Functions.GlidePicture(getContext(), shoppingItem.getImages().get(1), imageView);
-            else
-                Macros.Functions.GlidePicture(getContext(), shoppingItem.getImages().get(0), imageView);
+            Macros.Functions.GlidePicture(getContext(), shoppingItem.getImages().get(0), imageView);
         }
 
         return convertView;

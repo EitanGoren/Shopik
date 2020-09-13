@@ -90,6 +90,7 @@ public class FavoritesFragment extends Fragment {
 
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(0);
         mRecyclerView.addItemDecoration(verticalSpaceItemDecoration);
+        mRecyclerView.setItemAnimator(new CustomItemAnimator());
 
         fav_list = new CopyOnWriteArrayList<>();
         recyclerGridAdapter = new RecyclerGridAdapter(fav_list,"favorites");
@@ -134,14 +135,11 @@ public class FavoritesFragment extends Fragment {
             }
         };
         mainModel.getFavorite().observe(requireActivity(), shoppingItems -> {
-
             fav_list.clear();
             int count_ads = 0;
             for (ShoppingItem shoppingItem : shoppingItems) {
-
                 fav_list.add(shoppingItem);
                 recyclerGridAdapter.notifyItemInserted(0);
-
                 if(( fav_list.size() % Macros.FAV_TO_AD == 0 ) && fav_list.size() > 0 ) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
                     if(shoppingItemAd != null) {
@@ -151,7 +149,6 @@ public class FavoritesFragment extends Fragment {
                     }
                 }
             }
-
             String text;
             if(shoppingItems.size() > 0) {
                 String cat = shoppingItems.get(0).getType();

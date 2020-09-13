@@ -3,10 +3,10 @@ package com.eitan.shopik.CustomerFragments;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,6 +89,7 @@ public class CustomerHomeFragment extends Fragment {
         arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item,
                 swipesModel.getItems().getValue());
         onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
+
             @Override
             public void removeFirstObjectInAdapter() {
                 isSwiped = true;
@@ -234,14 +235,12 @@ public class CustomerHomeFragment extends Fragment {
                 shoppingItem.setFavorite(isFavorite);
                 String action;
 
-                if (isFavorite) {
+                if (isFavorite)
                     action = Macros.CustomerMacros.FAVOURITE;
-                }
                 else
                     action = Macros.CustomerMacros.LIKED;
 
                 mainModel.addSwipedItemId(item_id);
-                mainModel.markItemAsSeen(item_id);
 
                 updateLikes(shoppingItem);
                 updateBadge();
@@ -344,9 +343,7 @@ public class CustomerHomeFragment extends Fragment {
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d(Macros.TAG,"Database::increasePreferredFieldByOneRTDB " + databaseError.getMessage());
-                    }
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
     }
 
@@ -395,7 +392,6 @@ public class CustomerHomeFragment extends Fragment {
         if (item_id != null) {
 
             mainModel.addSwipedItemId(item_id);
-            mainModel.markItemAsSeen(item_id);
 
             onItemAction(item_type, item_gender, item_id, Macros.Items.UNLIKED, seller, link,imageUrl);
 
@@ -474,5 +470,19 @@ public class CustomerHomeFragment extends Fragment {
                 child(item_type).
                 child(item_sub_category).
                 setValue(new_page);
+    }
+
+    private static class updateInfo extends AsyncTask<Integer, Integer, Void> {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Integer... page_num) {
+            try {
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }

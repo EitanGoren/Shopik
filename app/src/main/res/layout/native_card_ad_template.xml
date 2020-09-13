@@ -25,45 +25,58 @@
             android:layout_height="match_parent"
             android:background="#FFFFFF">
 
-            <TextView
-                android:id="@+id/ad_card_seller_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_above="@id/ad_media"
-                android:gravity="center"
-                android:fontFamily="@font/martel_sans"
-                android:padding="7dp"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                android:textSize="22sp"
-                android:textStyle="bold" />
 
             <com.google.android.gms.ads.formats.MediaView
                 android:id="@+id/ad_media"
                 android:layout_width="match_parent"
-                android:layout_height="255dp"
-                android:layout_above="@id/ad_action_button"
+                android:layout_height="190dp"
+                android:layout_above="@id/ad_bottom_info_layout"
+                android:layout_marginBottom="60dp"
                 android:background="#ffffff"
                 android:scaleType="centerCrop" />
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/ad_card_seller_name"
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:fontFamily="@font/martel_sans"
+                android:padding="5dp"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <RatingBar
+                android:id="@+id/ad_stars"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ad_card_seller_name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:padding="5dp"
+                android:stepSize="0.5"
+                tools:visibility="visible"/>
+
+            <LinearLayout
                 android:id="@+id/ad_bottom_info_layout"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="@drawable/bottom_info_border_line">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/ad_brand_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:fontFamily="@font/martel_sans"
                     android:padding="3dp"
-                    android:textAlignment="center"
-                    android:textColor="#ffffff"
+                    android:textAlignment="viewStart"
+                    android:textColor="#000000"
                     android:textSize="17sp"
                     android:textStyle="bold" />
 
@@ -71,86 +84,53 @@
                     android:id="@+id/ad_body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/ad_brand_name"
-                    android:layout_alignParentBottom="true"
                     android:fontFamily="@font/martel_sans"
-                    android:textColor="#ffffff"
-                    android:textAlignment="center"
-                    android:padding="2dp"
+                    android:padding="5dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="#000000"
                     android:textSize="15sp" />
 
-            </RelativeLayout>
+                <TextView
+                    android:id="@+id/ad_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/martel_sans"
+                    android:padding="5dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/ad_action_button"
-                style="@style/GridBuyButtons"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_alignParentEnd="true"
-                android:layout_above="@id/ad_bottom_info_layout"
-                android:elegantTextHeight="true"
-                android:elevation="5dp"
-                android:text="@string/check_it_now"
-                android:fontFamily="@font/martel_sans"
-                android:translationZ="5dp"
-                android:textColor="#ffffff" />
+                <TextView
+                    android:id="@+id/ad_store"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="#000000"
+                    android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/AD"
-                style="@style/AppTheme.AdAttributionLarge"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="30sp"/>
+                <Button
+                    android:id="@+id/ad_action_button"
+                    style="@style/GridBuyButtons"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:fontFamily="@font/martel_sans"
+                    android:gravity="center"
+                    android:text="@string/check_it_now"
+                    android:textColor="#ffffff" />
 
-            <TextView
-                android:id="@+id/ad_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
-                android:layout_above="@id/ad_bottom_info_layout"
-                android:layout_marginStart="5dp"
-                android:fontFamily="@font/martel_sans"
-                android:padding="3dp"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/ad_store"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:layout_centerHorizontal="true"
-                android:textSize="18sp"
-                android:layout_marginBottom="10dp"
-                android:layout_above="@id/ad_bottom_info_layout"
-                android:textColor="#000000" />
-
-            <RatingBar
-                android:id="@+id/ad_stars"
-                style="?android:attr/ratingBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_centerHorizontal="true"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:padding="5dp"
-                android:stepSize="0.5"
-                tools:visibility="visible"/>
+            </LinearLayout>
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ad_card_seller_logo"
-                android:layout_width="65dp"
-                android:layout_height="65dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
                 android:layout_gravity="top|start"
-                android:layout_margin="5dp"
+                android:layout_margin="10dp"
                 app:civ_border_color="@color/borderLine"
                 android:elevation="15dp"
                 android:translationZ="15dp"
-                app:civ_border_width="2dp" />
+                app:civ_border_width="2dp"/>
 
         </RelativeLayout>
 
@@ -170,6 +150,14 @@
             android:layout_margin="10dp"
             android:alpha="0"
             android:fontFamily="@font/nunito_semibold" />
+
+        <TextView
+            android:id="@+id/AD"
+            style="@style/AppTheme.AdAttributionLarge"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="top|end"
+            android:layout_margin="10dp"/>
 
     </androidx.cardview.widget.CardView>
 

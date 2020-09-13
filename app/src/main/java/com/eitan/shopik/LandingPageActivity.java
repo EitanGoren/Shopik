@@ -91,13 +91,12 @@ public class LandingPageActivity extends AppCompatActivity {
             ActivityOptions options = ActivityOptions.
                     makeSceneTransitionAnimation(this,
                             Pair.create(tooki,"tooki"),
-                            Pair.create(shopik,"Shopik")
-                    );
+                            Pair.create(shopik,"Shopik"));
 
-            YoYo.with(Techniques.Tada).duration(2500).repeat(1).playOn(shopik);
-            YoYo.with(Techniques.SlideInLeft).duration(2500).onEnd(
-                    animator -> YoYo.with(Techniques.SlideOutRight).
-                            duration(2500).playOn(tooki)).playOn(tooki);
+            YoYo.with(Techniques.RotateIn).duration(2500).onEnd(animator -> {
+                YoYo.with(Techniques.Tada).duration(2500).playOn(shopik);
+                shopik.setVisibility(View.VISIBLE);
+            }).playOn(tooki);
             // Choose authentication providers
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.GoogleBuilder().build(),

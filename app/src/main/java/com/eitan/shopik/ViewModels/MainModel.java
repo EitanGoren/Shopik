@@ -71,11 +71,10 @@ public class MainModel extends ViewModel {
         Objects.requireNonNull(this.customers_info.getValue()).put(id,likedUser);
     }
 
-    public void markItemAsSeen(String item_id){
+    private void markItemAsSeen(String item_id){
         for(ShoppingItem shoppingItem : Objects.requireNonNull(all_items.getValue())){
             if(shoppingItem.getId().equals(item_id)) {
                 shoppingItem.setSeen(true);
-                //postAllItems();
                 return;
             }
         }
@@ -108,6 +107,7 @@ public class MainModel extends ViewModel {
     //SWIPED
     public void addSwipedItemId(String id){
         swipedItems.add(id);
+        markItemAsSeen(id);
     }
     public boolean isSwiped(String id){
         return swipedItems.contains(id);

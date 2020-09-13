@@ -51,52 +51,6 @@ public class ShopikApplicationActivity extends Application {
         return instance;
     }
 
-    //FACEBOOK INTERSTITIAL AD
-    public static InterstitialAd getInterstitialAd() {
-        return interstitialAd;
-    }
-
-    public static void setInterstitialAd() {
-        if (interstitialAd != null) {
-            interstitialAd.destroy();
-        }
-        interstitialAd = new com.facebook.ads.InterstitialAd(getContext(), Macros.FB_PLACEMENT_ID);
-
-        InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
-                .withAdListener(adListener)
-                .withCacheFlags(EnumSet.of(CacheFlag.VIDEO))
-                .build();
-
-        interstitialAd.loadAd(LoadAdConfig);
-    }
-
-    //GOOGLE NATIVE ADS
-    private static void clearAds(){
-        for(ShoppingItem item : shoppingAdsArray) {
-            item.destroyAd();
-        }
-        shoppingAdsArray.clear();
-    }
-
-    public static Object getNextAd() {
-        Random random = new Random();
-        if( shoppingAdsArray.size() > 0) {
-            int idx = (random.nextInt(shoppingAdsArray.size()));
-            return shoppingAdsArray.get(idx);
-        }
-        else
-            return null;
-    }
-
-    //TIMES CLICKED ON MAIN CUSTOMER
-    public static int getCategoryClicks() {
-        return categoryClicks;
-    }
-
-    public static void increaseCategoryClicks() {
-         categoryClicks++;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -143,6 +97,52 @@ public class ShopikApplicationActivity extends Application {
                 .build();
 
         interstitialAd.loadAd(LoadAdConfig);
+    }
+
+    //FACEBOOK INTERSTITIAL AD
+    public static InterstitialAd getInterstitialAd() {
+        return interstitialAd;
+    }
+
+    public static void setInterstitialAd() {
+        if (interstitialAd != null) {
+            interstitialAd.destroy();
+        }
+        interstitialAd = new com.facebook.ads.InterstitialAd(getContext(), Macros.FB_PLACEMENT_ID);
+
+        InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
+                .withAdListener(adListener)
+                .withCacheFlags(EnumSet.of(CacheFlag.VIDEO))
+                .build();
+
+        interstitialAd.loadAd(LoadAdConfig);
+    }
+
+    //GOOGLE NATIVE ADS
+    private static void clearAds(){
+        for(ShoppingItem item : shoppingAdsArray) {
+            item.destroyAd();
+        }
+        shoppingAdsArray.clear();
+    }
+
+    public static Object getNextAd() {
+        Random random = new Random();
+        if( shoppingAdsArray.size() > 0) {
+            int idx = (random.nextInt(shoppingAdsArray.size()));
+            return shoppingAdsArray.get(idx);
+        }
+        else
+            return null;
+    }
+
+    //TIMES CLICKED ON MAIN CUSTOMER
+    public static int getCategoryClicks() {
+        return categoryClicks;
+    }
+
+    public static void increaseCategoryClicks() {
+        categoryClicks++;
     }
 
     public static void LoadAds(int num){
