@@ -2,17 +2,13 @@ package com.eitan.shopik;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,17 +64,6 @@ public class LandingPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_landing_page);
 
         init();
-
-        //FirebaseAuth.getInstance().signOut();
-        if(!isConnectedToInternet()){
-            RelativeLayout LandingLayout = findViewById(R.id.LandingLayout);
-            Macros.Functions.showSnackbar (
-                     LandingLayout,
-                    "No Internet connection",
-                    this,
-                     R.drawable.ic_baseline_signal_cellular
-            );
-        }
 
         setNotifications();
 
@@ -312,41 +297,8 @@ public class LandingPageActivity extends AppCompatActivity {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
                 //and handle the error.
-                Toast.makeText(this, "Something went wrong.. try again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Something went wrong.. " + resultCode, Toast.LENGTH_SHORT).show();
             }
-        }
-    }
-
-    private boolean isConnectedToInternet(){
-        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        assert cm != null;
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (activeNetwork != null) {
-            // connected to the internet
-            switch (activeNetwork.getType()) {
-                case ConnectivityManager.TYPE_WIFI:
-                case ConnectivityManager.TYPE_MOBILE:
-                    // connected to mobile data
-                    // connected to wifi
-                    return internetIsConnected();
-                default:
-                    return true;
-            }
-        }
-        else {
-            // not connected to the internet
-            return false;
-        }
-
-    }
-
-    public boolean internetIsConnected() {
-        try {
-            String command = "ping -c 1 google.com";
-            return (Runtime.getRuntime().exec(command).waitFor() == 0);
-        }
-        catch (Exception e) {
-            return false;
         }
     }
 

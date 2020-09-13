@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "properties": [],
-      "versionCode": 2,
-      "versionName": "Pizza",
+      "versionCode": 4,
+      "versionName": "Pizza1",
       "enabled": true,
       "outputFile": "app-release.apk"
     }

@@ -23,7 +23,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_below="@id/welcome"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="25dp"
         android:contentDescription="@string/tooki"
         android:scaleType="centerCrop"
         android:transitionName="@string/tooki"
@@ -33,12 +33,12 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/google_card"
         style="@style/FirebaseUI.Button.AccountChooser.GoogleButton"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
+        android:layout_width="320dp"
+        android:layout_height="70dp"
         android:layout_centerInParent="true"
         android:layout_marginTop="0dp"
         android:gravity="center"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="25dp"
         app:cardUseCompatPadding="true">
 
     <TextView
@@ -57,13 +57,13 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/facebook_card"
         style="@style/FirebaseUI.Button.AccountChooser.FacebookButton"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
+        android:layout_width="320dp"
+        android:layout_height="70dp"
         android:layout_below="@id/google_card"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="0dp"
         android:gravity="center"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="25dp"
         app:cardUseCompatPadding="true">
 
         <TextView
@@ -82,13 +82,13 @@
 
     <androidx.cardview.widget.CardView
         style="@style/FirebaseUI.Button.AccountChooser.EmailButton"
-        android:layout_height="60dp"
-        android:layout_width="300dp"
+        android:layout_width="320dp"
+        android:layout_height="70dp"
         android:layout_below="@id/facebook_card"
         android:layout_marginTop="0dp"
         android:gravity="center"
         android:layout_centerHorizontal="true"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="25dp"
         app:cardUseCompatPadding="true">
 
         <TextView
@@ -115,7 +115,7 @@
         android:fontFamily="cursive"
         android:text="@string/app_name"
         android:textColor="#ffffff"
-        android:textSize="35sp"
+        android:textSize="45sp"
         android:transitionName="@string/app_name"
         android:textStyle="bold"/>
 
