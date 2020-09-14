@@ -198,6 +198,16 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <Spinner
+                android:id="@+id/gender_switch"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_margin="5dp"
+                android:paddingStart="45dp"
+                android:paddingEnd="0dp"
+                android:textAlignment="center"
+                android:theme="@style/Widget.AppCompat.Spinner.DropDown"/>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/address_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

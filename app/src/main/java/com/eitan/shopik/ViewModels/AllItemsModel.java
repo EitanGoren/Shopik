@@ -2,6 +2,7 @@ package com.eitan.shopik.ViewModels;
 
 import android.app.Application;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -9,10 +10,12 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.eitan.shopik.Items.ShoppingItem;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class AllItemsModel extends AndroidViewModel {
+@Keep
+public class AllItemsModel extends AndroidViewModel implements Serializable {
 
     private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> all_items_list;
 

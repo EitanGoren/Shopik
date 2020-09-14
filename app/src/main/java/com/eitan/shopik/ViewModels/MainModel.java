@@ -4,6 +4,7 @@ import android.os.Build;
 import android.util.ArraySet;
 import android.util.Pair;
 
+import androidx.annotation.Keep;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -13,13 +14,15 @@ import com.eitan.shopik.Items.PreferredItem;
 import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LikedUser;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MainModel extends ViewModel {
+@Keep
+public class MainModel extends ViewModel implements Serializable {
 
     private MutableLiveData<Map<String,Map<String,Object>>> companies_info;
     private MutableLiveData<Map<String, LikedUser>> customers_info;
@@ -139,5 +142,13 @@ public class MainModel extends ViewModel {
     //TOTAL ITEMS NUM
     public MutableLiveData<Integer> getTotalItems() {
         return totalItems;
+    }
+
+    public Set<String> getSwipedItems() {
+        return swipedItems;
+    }
+
+    public MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> getFavorites() {
+        return favorites;
     }
 }

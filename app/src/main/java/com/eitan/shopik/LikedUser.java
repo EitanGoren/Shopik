@@ -1,7 +1,10 @@
 package com.eitan.shopik;
 
+import androidx.annotation.Keep;
+
 import java.io.Serializable;
 
+@Keep
 public class LikedUser implements Serializable {
 
     private String profile_image;

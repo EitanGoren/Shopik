@@ -2,11 +2,15 @@ package com.eitan.shopik.ViewModels;
 
 import android.app.Application;
 
+import androidx.annotation.Keep;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-public class GenderModel extends AndroidViewModel {
+import java.io.Serializable;
+
+@Keep
+public class GenderModel extends AndroidViewModel implements Serializable {
 
     private MutableLiveData<String> gender, type, imageUrl,name, sub_category;
 

@@ -2,6 +2,7 @@ package com.eitan.shopik.Items;
 
 import android.os.Build;
 
+import androidx.annotation.Keep;
 import androidx.annotation.RequiresApi;
 
 import com.eitan.shopik.Macros;
@@ -12,7 +13,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
-
+@Keep
 public class PreferredItem implements Serializable {
 
     private Map<String, Long> preferred;

@@ -19,7 +19,7 @@
         android:paddingTop="7dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:paddingTop="5dp">
@@ -50,7 +50,7 @@
 
             <Spinner
                 android:id="@+id/gender_spinner"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_marginStart="20dp"

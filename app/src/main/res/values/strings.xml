@@ -19,12 +19,6 @@
 
     <string name="transition_photo">transition_photo</string>
     <string name="transition_author">transition_text</string>
-    <!-- -
-    This is an ad unit ID for an interstitial test ad. Replace with your own interstitial ad unit id.
-    For more information, see https://support.google.com/admob/answer/3052638
-<!- -->
-    <string name="interstitial_ad_unit_id">ca-app-pub-3940256099942544/8691691433</string>
-
 
     <string name="open_drawer">open_drawer</string>
     <string name="close_drawer">close_drawer</string>
@@ -93,7 +87,7 @@
     <string name="favorites">Favorites</string>
     <string name="Sale">Sale</string>
     <string name="all">All</string>
-    <string name="welcome">Welcome</string>
+    <string name="welcome">Welcome to</string>
     <string name="tooki">tooki</string>
     <string name="check_it_now">Check it Now</string>
     <string name="filter_by">Filter:</string>
@@ -111,4 +105,5 @@
     <string name="address">Address</string>
     <string name="submit">submit</string>
     <string name="shein">Shein</string>
+    <string name="gender">Gender</string>
 </resources>

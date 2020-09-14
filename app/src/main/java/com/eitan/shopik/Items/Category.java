@@ -1,8 +1,10 @@
 package com.eitan.shopik.Items;
 
+import androidx.annotation.Keep;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-
+@Keep
 public class Category implements Serializable {
 
     private String name,gender;

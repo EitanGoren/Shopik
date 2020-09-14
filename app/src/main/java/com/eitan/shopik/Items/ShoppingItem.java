@@ -1,11 +1,13 @@
 package com.eitan.shopik.Items;
 
+import androidx.annotation.Keep;
+
 import com.eitan.shopik.LikedUser;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
+@Keep
 public class ShoppingItem implements Serializable {
 
     private String id,color,type,brand,price,seller,discount,seller_id,seller_logo_url,

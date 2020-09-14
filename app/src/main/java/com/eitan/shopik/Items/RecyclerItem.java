@@ -1,10 +1,12 @@
 package com.eitan.shopik.Items;
 
+import androidx.annotation.Keep;
+
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
+@Keep
 public class RecyclerItem implements Serializable {
 
     private String link,text,type,gender,userImageUrl,item_sub_category,

@@ -26,6 +26,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.eitan.shopik.Adapters.ExplanationPagerViewAdapter;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.LandingPageActivity;
 import com.eitan.shopik.Macros;
@@ -34,7 +35,6 @@ import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.ViewModels.EntranceViewModel;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.eitan.shopik.ViewModels.OutletsModel;
-import com.eitan.shopik.explanation.ExplanationPagerViewAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -139,6 +139,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 animateLogo();
+
                 model.setGender(parent.getItemAtPosition(position).toString());
                 gender = parent.getItemAtPosition(position).toString();
                 model.setImageUrl(imageUrl);
@@ -488,6 +489,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + integers[0] + "&page=" + integers[1]).get();
                 Elements products = document.getElementsByAttributeValue("data-auto-id", "productTile");
 
+                outletsModel.setTotalItems(products.size());
                 for (Element prod : products) {
                     ++i;
                     RecyclerItem recyclerItem = new RecyclerItem(null,null);
@@ -566,19 +568,13 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     recyclerItem.setType("OUTLET");
 
                     outletsModel.addToOutlets(recyclerItem);
-                    publishProgress(i, products.size(), integers[1]);
+                    outletsModel.setCurrentItem(i);
                 }
             }
             catch (Exception e ) {
                 e.printStackTrace();
             }
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            outletsModel.postOutlets();
         }
     }
 

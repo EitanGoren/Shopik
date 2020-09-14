@@ -11,8 +11,11 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,6 +46,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
 
     private EditText mFirstNameField,mLastNameField,mAge,mAddress,mCity,mPhone;
     private MaterialButton submit;
+    private Spinner gender_spinner;
     private ImageView bgImage;
     private CircleImageView mProfileImage,toolbar_pic;
     private String UserId;
@@ -54,6 +58,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     private String address;
     private String city;
     private String phone;
+    private String gender;
     private DocumentReference customerFS;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout appBar;
@@ -168,6 +173,8 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                         Objects.requireNonNull(documentSnapshot.get("imageUrl")).toString() : Macros.DEFAULT_PROFILE_IMAGE;
                 cover = documentSnapshot.get("cover_photo") != null ?
                         Objects.requireNonNull(documentSnapshot.get("cover_photo")).toString() : Macros.DEFAULT_COVER_PHOTO;
+                gender = documentSnapshot.get("gender") != null ?
+                        Objects.requireNonNull(documentSnapshot.get("gender")).toString() : Macros.CustomerMacros.WOMEN;
             }
         }).addOnCompleteListener(task -> {
             mFirstNameField.setText(first_name);
@@ -179,9 +186,9 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             mCity.setText(city);
             mAddress.setText(address);
             mPhone.setText(phone);
+            gender_spinner.setSelection(gender.equals(Macros.CustomerMacros.WOMEN) ? 0 : 1);
             setTitle();
             setCollapsingBar();
-
         });
 
         appBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
@@ -207,6 +214,17 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             intent.setType("image/*");
             startActivityForResult(intent,2);
             return true;
+        });
+
+        setSpinner();
+        gender_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                gender = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         submit.setOnClickListener(v -> saveUserInformation());
@@ -266,6 +284,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
         mCity = findViewById(R.id.city);
         mPhone = findViewById(R.id.phone);
         submit = findViewById(R.id.submit_btn);
+        gender_spinner = findViewById(R.id.gender_switch);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         UserId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         customerFS = FirebaseFirestore.getInstance().collection(Macros.CUSTOMERS).document(UserId);
@@ -288,6 +307,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             userInfo.put("city", city);
             userInfo.put("address", address);
             userInfo.put("phone", phone);
+            userInfo.put("gender", gender);
 
             customerFS.update(userInfo);
             setTitle();
@@ -301,5 +321,13 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         this.supportFinishAfterTransition();
+    }
+
+    private void setSpinner() {
+        ArrayAdapter<CharSequence> gender_adapter = ArrayAdapter.
+                createFromResource(CustomerSettingsActivity.this,
+                        R.array.gender, R.layout.gender_item_drop_down);
+        gender_adapter.setDropDownViewResource(R.layout.gender_item_drop_down);
+        gender_spinner.setAdapter(gender_adapter);
     }
 }

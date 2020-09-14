@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 
+import androidx.annotation.Keep;
 import androidx.annotation.RequiresApi;
 
 import com.eitan.shopik.Items.ShoppingItem;
@@ -33,7 +34,7 @@ import java.util.Random;
 
 import static com.facebook.ads.AdSettings.IntegrationErrorMode.INTEGRATION_ERROR_CRASH_DEBUG_MODE;
 import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_LEFT;
-
+@Keep
 public class ShopikApplicationActivity extends Application {
 
     private static ShopikApplicationActivity instance;

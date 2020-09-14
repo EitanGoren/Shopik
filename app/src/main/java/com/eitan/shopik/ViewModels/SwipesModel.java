@@ -2,18 +2,21 @@ package com.eitan.shopik.ViewModels;
 
 import android.app.Application;
 
+import androidx.annotation.Keep;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.eitan.shopik.Items.ShoppingItem;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SwipesModel extends AndroidViewModel {
+@Keep
+public class SwipesModel extends AndroidViewModel implements Serializable {
 
     private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> items;
 
@@ -41,4 +44,6 @@ public class SwipesModel extends AndroidViewModel {
     public void addToItems(ShoppingItem shoppingItem) {
         Objects.requireNonNull(this.items.getValue()).add(shoppingItem);
     }
+
+
 }

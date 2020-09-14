@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/e1Fragment"
-        android:name="com.eitan.shopik.explanation.E1Fragment"
+        android:name="com.eitan.shopik.GenderFilteringPages.HotTrendingFragment"
         android:label="fragment_e1"
         tools:layout="@layout/fragment_e1">
         <action
@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/e2Fragment"
-        android:name="com.eitan.shopik.explanation.E2Fragment"
+        android:name="com.eitan.shopik.GenderFilteringPages.CategoryPickFragment"
         android:label="fragment_e2"
         tools:layout="@layout/fragment_e2" >
         <action
@@ -45,7 +45,7 @@
 
     <fragment
         android:id="@+id/e3Fragment"
-        android:name="com.eitan.shopik.explanation.E3Fragment"
+        android:name="com.eitan.shopik.GenderFilteringPages.OutletsFragment"
         android:label="fragment_e3"
         tools:layout="@layout/fragment_e3" >
         <action

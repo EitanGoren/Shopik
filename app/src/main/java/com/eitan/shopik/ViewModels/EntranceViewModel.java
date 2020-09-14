@@ -3,6 +3,7 @@ package com.eitan.shopik.ViewModels;
 import android.app.Application;
 import android.os.Build;
 
+import androidx.annotation.Keep;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -11,12 +12,12 @@ import androidx.lifecycle.MutableLiveData;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
-public class EntranceViewModel extends AndroidViewModel {
+@Keep
+public class EntranceViewModel extends AndroidViewModel implements Serializable {
 
     private MutableLiveData<ArrayList<RecyclerItem>> liked_items;
     private MutableLiveData<ArrayList<RecyclerItem>> men_liked_items;
@@ -35,8 +36,6 @@ public class EntranceViewModel extends AndroidViewModel {
         this.women_new_items = new MutableLiveData<>();
         this.new_items = new MutableLiveData<>();
 
-        Map<String,Object> men_num_map = new HashMap<>();
-        Map<String,Object> women_num_map = new HashMap<>();
         ArrayList<RecyclerItem> likes = new ArrayList<>();
         ArrayList<RecyclerItem> men_likes = new ArrayList<>();
         ArrayList<RecyclerItem> women_likes = new ArrayList<>();
@@ -111,5 +110,29 @@ public class EntranceViewModel extends AndroidViewModel {
             setNew_items(this.women_new_items);
         else
             setNew_items(this.men_new_items);
+    }
+
+    public MutableLiveData<ArrayList<RecyclerItem>> getLiked_items() {
+        return liked_items;
+    }
+
+    public MutableLiveData<ArrayList<RecyclerItem>> getMen_liked_items() {
+        return men_liked_items;
+    }
+
+    public MutableLiveData<ArrayList<RecyclerItem>> getWomen_liked_items() {
+        return women_liked_items;
+    }
+
+    public MutableLiveData<ArrayList<RecyclerItem>> getNew_items() {
+        return new_items;
+    }
+
+    public MutableLiveData<ArrayList<RecyclerItem>> getMen_new_items() {
+        return men_new_items;
+    }
+
+    public MutableLiveData<ArrayList<RecyclerItem>> getWomen_new_items() {
+        return women_new_items;
     }
 }
