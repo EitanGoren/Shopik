@@ -49,20 +49,22 @@ public class LandingPageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        postponeEnterTransition();
         View decorView = getWindow().getDecorView();
         int uiOptions =
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE;
-
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE;
         decorView.setSystemUiVisibility(uiOptions);
+
         // inside your activity (if you did not enable transitions in your theme)
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_landing_page);
 
-        FirebaseAuth.getInstance().signOut();
+       //FirebaseAuth.getInstance().signOut();
         init();
+
+        startPostponedEnterTransition();
 
         if(user == null){
             AuthenticateUser();
@@ -86,6 +88,7 @@ public class LandingPageActivity extends AppCompatActivity {
                 }
             });
         }
+
     }
 
     private void AuthenticateUser() {
@@ -93,10 +96,9 @@ public class LandingPageActivity extends AppCompatActivity {
         TextView shopik = findViewById(R.id.shopik);
         ImageView tooki = findViewById(R.id.imageView);
 
-        ActivityOptions options = ActivityOptions.
-                makeSceneTransitionAnimation(this,
-                        Pair.create(tooki,"tooki"),
-                        Pair.create(shopik,"Shopik"));
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this,
+                Pair.create(tooki,"tooki"),
+                Pair.create(shopik,"Shopik"));
 
         YoYo.with(Techniques.RotateIn).duration(2500).onEnd(animator -> {
             YoYo.with(Techniques.Tada).duration(2500).playOn(shopik);

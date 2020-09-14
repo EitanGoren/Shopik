@@ -12,7 +12,7 @@
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 
         <!-- to line of phone, clock... -->
-        <item name="colorPrimaryDark">#ffffff</item>
+        <item name="colorPrimaryDark"> #ffffff </item>
 
         <item name="colorAccent">#000000</item>
         <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
@@ -30,7 +30,6 @@
 
         <!-- line of phone, clock... -->
         <item name="colorPrimaryDark">#000000</item>
-
         <item name="colorAccent">#000000</item>
     </style>
 

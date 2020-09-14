@@ -85,7 +85,8 @@ public class OutletsFragment extends Fragment {
             }
         });
 
-        gridAdapter = new E3GridAdapter(requireActivity(), R.layout.grid_clean_item, outletsModel.getOutlets().getValue());
+        gridAdapter = new E3GridAdapter(requireActivity(), R.layout.grid_clean_item,
+                outletsModel.getOutlets().getValue());
         gridContainer.setAdapter(gridAdapter);
 
         outletsModel.getOutlets().observe(requireActivity(), recyclerItems -> {
@@ -94,12 +95,14 @@ public class OutletsFragment extends Fragment {
         });
 
         outletsModel.getTotalItems().observe(requireActivity(), integer -> {
-            String text = "/" + integer;
+            String text = "/ " + integer;
             total.setText(text);
         });
 
-        outletsModel.getCurrentItem().observe(requireActivity(), integer ->
-                count.setText(String.valueOf(integer)));
+        outletsModel.getCurrentItem().observe(requireActivity(), integer ->{
+            count.setText(String.valueOf(integer));
+            gridAdapter.notifyDataSetChanged();
+        });
     }
 
     @Override

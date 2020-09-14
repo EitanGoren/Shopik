@@ -43,8 +43,7 @@ public class OutletsModel extends AndroidViewModel implements Serializable {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addToOutlets(RecyclerItem recyclerItem) {
         Objects.requireNonNull(this.outlets.getValue()).add(recyclerItem);
-        CopyOnWriteArrayList<RecyclerItem> temp = new CopyOnWriteArrayList<>(outlets.getValue());
-        outlets.postValue(temp);
+        outlets.postValue(outlets.getValue());
     }
 
     public MutableLiveData<Integer> getTotalItems() {

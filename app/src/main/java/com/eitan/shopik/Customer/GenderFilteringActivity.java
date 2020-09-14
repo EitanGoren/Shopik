@@ -530,6 +530,11 @@ public class GenderFilteringActivity extends AppCompatActivity {
                                 split("\\?")[0] + "?$XXL$&wid=513&fit=constrain";
                         images.add(_img);
                     }
+                    if(images.size() < 4){
+                        for( int k=images.size(); k<4; ++k){
+                            images.add(images.get(0));
+                        }
+                    }
 
                     //BRAND
                     String brand;
@@ -601,6 +606,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
                     assert document != null;
                     Elements elements = document.getElementsByClass("j-goodsli");
+
 
                     for (int j = 0; j < 20; ++j) {
 
