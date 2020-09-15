@@ -21,6 +21,7 @@
     <style name="MainStyle" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:statusBarColor">#ffffff</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowTranslucentNavigation">true</item>
 
         <!-- navigation buttons etc.. -->
         <item name="colorPrimary">#DC333333</item>

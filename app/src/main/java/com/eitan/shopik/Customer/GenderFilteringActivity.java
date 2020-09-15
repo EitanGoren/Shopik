@@ -148,12 +148,12 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
                 Objects.requireNonNull(entranceModel.getItems().getValue()).clear();
 
-                //LIKED ITEMM
-                new fetchLikedItems().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
                 //Outlet Items
                 int num = gender.equals(Macros.CustomerMacros.WOMEN) ? WOMEN_OUTLET_NUM : MEN_OUTLET_NUM;
                 new fetchOutlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num,1);
+
+                //LIKED ITEM
+                new fetchLikedItems().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                 if (gender.equals(Macros.CustomerMacros.WOMEN))
                     new getNewInWomenShein().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1);
@@ -415,7 +415,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                             @SuppressWarnings("unchecked")
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                entranceModel.removeAllType(type,gender);
+                                entranceModel.removeAllType( type, gender );
                                 if (snapshot.exists()) {
                                     long count = 0;
                                     long max = 0;

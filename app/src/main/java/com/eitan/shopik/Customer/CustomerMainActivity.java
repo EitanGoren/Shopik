@@ -948,7 +948,7 @@ public class CustomerMainActivity extends AppCompatActivity
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    total_items -= (total - iter);
+                    total_items = Math.max(total_items - (total - iter), 0);
                     mainModel.getTotalItems().postValue(total_items);
                 }
             }
@@ -1076,7 +1076,7 @@ public class CustomerMainActivity extends AppCompatActivity
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    total_items -= (total - iter);
+                    total_items = Math.max(total_items - (total - iter), 0);
                     mainModel.getTotalItems().postValue(total_items);
                 }
             }
@@ -1167,7 +1167,7 @@ public class CustomerMainActivity extends AppCompatActivity
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    total_items -= (total - iter);
+                    total_items = Math.max(total_items - (total - iter), 0);
                     mainModel.getTotalItems().postValue(total_items);
                 }
             }
@@ -1300,7 +1300,7 @@ public class CustomerMainActivity extends AppCompatActivity
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    total_items -= (total - iter);
+                    total_items = Math.max(total_items - (total - iter), 0);
                     mainModel.getTotalItems().postValue(total_items);
                 }
             }
@@ -1434,7 +1434,7 @@ public class CustomerMainActivity extends AppCompatActivity
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    total_items -= (total - iter);
+                    total_items = Math.max(total_items - (total - iter), 0);
                     mainModel.getTotalItems().postValue(total_items);
                 }
             }
@@ -1549,7 +1549,7 @@ public class CustomerMainActivity extends AppCompatActivity
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    total_items -= (total - iter);
+                    total_items = Math.max(total_items - (total - iter), 0);
                     mainModel.getTotalItems().postValue(total_items);
                 }
             }
@@ -1652,7 +1652,7 @@ public class CustomerMainActivity extends AppCompatActivity
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    total_items -= (total - iter);
+                    total_items = Math.max(total_items - (total - iter), 0);
                     mainModel.getTotalItems().postValue(total_items);
                 }
             }
@@ -1788,7 +1788,7 @@ public class CustomerMainActivity extends AppCompatActivity
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    total_items -= (total - iter);
+                    total_items = Math.max(total_items - (total - iter), 0);
                     mainModel.getTotalItems().postValue(total_items);
                 }
             }

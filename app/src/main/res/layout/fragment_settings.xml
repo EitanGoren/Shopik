@@ -205,8 +205,7 @@
                 android:layout_margin="5dp"
                 android:paddingStart="45dp"
                 android:paddingEnd="0dp"
-                android:textAlignment="center"
-                android:theme="@style/Widget.AppCompat.Spinner.DropDown"/>
+                android:textAlignment="center" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/address_layout"
