@@ -22,33 +22,56 @@ public class EntranceViewModel extends AndroidViewModel implements Serializable 
     private MutableLiveData<ArrayList<RecyclerItem>> liked_items;
     private MutableLiveData<ArrayList<RecyclerItem>> men_liked_items;
     private MutableLiveData<ArrayList<RecyclerItem>> women_liked_items;
-    private MutableLiveData<ArrayList<RecyclerItem>> new_items;
-    private MutableLiveData<ArrayList<RecyclerItem>> men_new_items;
-    private MutableLiveData<ArrayList<RecyclerItem>> women_new_items;
+
+    private MutableLiveData<ArrayList<RecyclerItem>> men_new_trending_items;
+    private MutableLiveData<ArrayList<RecyclerItem>> women_new_trending_items;
+
+    private MutableLiveData<ArrayList<RecyclerItem>> men_shoes_items;
+    private MutableLiveData<ArrayList<RecyclerItem>> women_shoes_items;
+
+    private MutableLiveData<ArrayList<RecyclerItem>> men_clothing_items;
+    private MutableLiveData<ArrayList<RecyclerItem>> women_clothing_items;
+
+    private MutableLiveData<Integer> current_trending_item;
+    private MutableLiveData<Integer> current_shoes_item;
+    private MutableLiveData<Integer> current_clothing_item;
+
 
     public EntranceViewModel(Application application) {
         super(application);
 
+        this.current_trending_item = new MutableLiveData<>();
+        this.current_clothing_item = new MutableLiveData<>();
+        this.current_shoes_item = new MutableLiveData<>();
         this.liked_items = new MutableLiveData<>();
         this.men_liked_items = new MutableLiveData<>();
         this.women_liked_items = new MutableLiveData<>();
-        this.men_new_items = new MutableLiveData<>();
-        this.women_new_items = new MutableLiveData<>();
-        this.new_items = new MutableLiveData<>();
+        this.men_new_trending_items = new MutableLiveData<>();
+        this.women_new_trending_items = new MutableLiveData<>();
+        this.men_shoes_items = new MutableLiveData<>();
+        this.women_shoes_items = new MutableLiveData<>();
+        this.men_clothing_items = new MutableLiveData<>();
+        this.women_clothing_items = new MutableLiveData<>();
 
         ArrayList<RecyclerItem> likes = new ArrayList<>();
         ArrayList<RecyclerItem> men_likes = new ArrayList<>();
         ArrayList<RecyclerItem> women_likes = new ArrayList<>();
-        ArrayList<RecyclerItem> new_items_list = new ArrayList<>();
         ArrayList<RecyclerItem> new_women_list = new ArrayList<>();
         ArrayList<RecyclerItem> new_men_list = new ArrayList<>();
+        ArrayList<RecyclerItem> new_women_shoes = new ArrayList<>();
+        ArrayList<RecyclerItem> new_men_shoes = new ArrayList<>();
+        ArrayList<RecyclerItem> new_women_clothing = new ArrayList<>();
+        ArrayList<RecyclerItem> new_men_clothing = new ArrayList<>();
 
         liked_items.setValue(likes);
         women_liked_items.setValue(women_likes);
         men_liked_items.setValue(men_likes);
-        men_new_items.setValue(new_men_list);
-        women_new_items.setValue(new_women_list);
-        new_items.setValue(new_items_list);
+        men_new_trending_items.setValue(new_men_list);
+        women_new_trending_items.setValue(new_women_list);
+        women_clothing_items.setValue(new_women_clothing);
+        men_clothing_items.setValue(new_men_clothing);
+        women_shoes_items.setValue(new_women_shoes);
+        men_shoes_items.setValue(new_men_shoes);
     }
 
     public LiveData<ArrayList<RecyclerItem>> getRecentLikedItems(){
@@ -88,51 +111,86 @@ public class EntranceViewModel extends AndroidViewModel implements Serializable 
             Objects.requireNonNull(women_liked_items.getValue()).removeIf(item -> item.getType().equals(type));
         }
     }
-    public LiveData<ArrayList<RecyclerItem>> getItems(){
-        return new_items;
+
+    public void addMenShoesItem(RecyclerItem recyclerItem){
+        Objects.requireNonNull(men_shoes_items.getValue()).add(recyclerItem);
+        men_shoes_items.postValue(men_shoes_items.getValue());
     }
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void setNew_items(MutableLiveData<ArrayList<RecyclerItem>> items) {
-        Objects.requireNonNull(this.new_items.getValue()).clear();
-        this.new_items.getValue().addAll(Objects.requireNonNull(items.getValue()));
-        ArrayList<RecyclerItem> temp = new_items.getValue();
-        new_items.postValue(temp);
+    public void addWomenShoesItem(RecyclerItem recyclerItem){
+        Objects.requireNonNull(women_shoes_items.getValue()).add(recyclerItem);
+        women_shoes_items.postValue(women_shoes_items.getValue());
     }
-    public void addMenItem(RecyclerItem recyclerItem){
-        Objects.requireNonNull(men_new_items.getValue()).add(recyclerItem);
+    public LiveData<ArrayList<RecyclerItem>> getMen_shoes_items() {
+        return men_shoes_items;
     }
-    public void addWomenItem(RecyclerItem recyclerItem){
-        Objects.requireNonNull(women_new_items.getValue()).add(recyclerItem);
-    }
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void setList(String gender){
-        if(gender.equals(Macros.CustomerMacros.WOMEN))
-            setNew_items(this.women_new_items);
-        else
-            setNew_items(this.men_new_items);
+    public LiveData<ArrayList<RecyclerItem>> getWomen_shoes_items() {
+        return women_shoes_items;
     }
 
-    public MutableLiveData<ArrayList<RecyclerItem>> getLiked_items() {
-        return liked_items;
+    public void addMenClothingItem(RecyclerItem recyclerItem){
+        Objects.requireNonNull(men_clothing_items.getValue()).add(recyclerItem);
+        men_clothing_items.postValue(men_clothing_items.getValue());
+    }
+    public void addWomenClothingItem(RecyclerItem recyclerItem){
+        Objects.requireNonNull(women_clothing_items.getValue()).add(recyclerItem);
+        women_clothing_items.postValue(women_clothing_items.getValue());
+    }
+    public LiveData<ArrayList<RecyclerItem>> getMen_clothing_items() {
+        return men_clothing_items;
+    }
+    public LiveData<ArrayList<RecyclerItem>> getWomen_clothing_items() {
+        return women_clothing_items;
     }
 
-    public MutableLiveData<ArrayList<RecyclerItem>> getMen_liked_items() {
-        return men_liked_items;
+    public void addMenTrendingItem(RecyclerItem recyclerItem){
+        Objects.requireNonNull(men_new_trending_items.getValue()).add(recyclerItem);
+        men_new_trending_items.postValue(men_new_trending_items.getValue());
+    }
+    public void addWomenTrendingItem(RecyclerItem recyclerItem){
+        Objects.requireNonNull(women_new_trending_items.getValue()).add(recyclerItem);
+        women_new_trending_items.postValue(women_new_trending_items.getValue());
+    }
+    public LiveData<ArrayList<RecyclerItem>> getMen_new_trending_items() {
+        return men_new_trending_items;
+    }
+    public LiveData<ArrayList<RecyclerItem>> getWomen_new_trending_items() {
+        return women_new_trending_items;
     }
 
-    public MutableLiveData<ArrayList<RecyclerItem>> getWomen_liked_items() {
-        return women_liked_items;
+    public LiveData<Integer> getCurrentTrendingItem() {
+        return current_trending_item;
     }
 
-    public MutableLiveData<ArrayList<RecyclerItem>> getNew_items() {
-        return new_items;
+    public void setCurrentTrendingItem(Integer integer){
+        this.current_trending_item.postValue(integer);
     }
 
-    public MutableLiveData<ArrayList<RecyclerItem>> getMen_new_items() {
-        return men_new_items;
+    public LiveData<Integer> getCurrentClothingItem() {
+        return current_clothing_item;
     }
 
-    public MutableLiveData<ArrayList<RecyclerItem>> getWomen_new_items() {
-        return women_new_items;
+    public void setCurrentClothingItem(Integer integer){
+        this.current_clothing_item.postValue(integer);
+    }
+
+    public LiveData<Integer> getCurrentShoesItem() {
+        return current_shoes_item;
+    }
+
+    public void setCurrentShoesItem(Integer integer){
+        this.current_shoes_item.postValue(integer);
+    }
+
+    public void clearAllShoesItems(){
+        Objects.requireNonNull(this.women_shoes_items.getValue()).clear();
+        Objects.requireNonNull(this.men_shoes_items.getValue()).clear();
+    }
+    public void clearAllTrendingItems(){
+        Objects.requireNonNull(this.women_new_trending_items.getValue()).clear();
+        Objects.requireNonNull(this.men_new_trending_items.getValue()).clear();
+    }
+    public void clearAllClothingItems(){
+        Objects.requireNonNull(this.women_clothing_items.getValue()).clear();
+        Objects.requireNonNull(this.men_clothing_items.getValue()).clear();
     }
 }

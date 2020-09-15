@@ -35,7 +35,6 @@ public class OutletsModel extends AndroidViewModel implements Serializable {
 
     public void clearAllOutlets(){
         Objects.requireNonNull(this.outlets.getValue()).clear();
-
     }
     public LiveData<CopyOnWriteArrayList<RecyclerItem>> getOutlets() {
         return outlets;

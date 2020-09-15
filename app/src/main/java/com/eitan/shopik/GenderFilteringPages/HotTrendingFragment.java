@@ -48,16 +48,18 @@ public class HotTrendingFragment extends Fragment {
     private EntranceViewModel entranceViewModel;
     private GenderModel model;
     private Dialog dialog;
-    private ArrayList<RecyclerItem> new_items;
+    private ArrayList<RecyclerItem> new_trending_items;
+    private ArrayList<RecyclerItem> new_shoes_items;
+    private ArrayList<RecyclerItem> new_clothing_items;
     private RelativeLayout layout1,layout2,layout3;
     private TextView liked_counter;
     private RelativeLayout layout;
     private TextView header;
     private RecyclerView recyclerView;
     private Observer<String> observer;
-    private Observer<ArrayList<RecyclerItem>> recentObserver;
+    private Observer<ArrayList<RecyclerItem>> recentObserver,trendingObserver,shoesObserver,clothingObserver;
     private ProgressIndicator progressIndicator;
-    private DialogGridAdapter gridAdapter;
+    private DialogGridAdapter trendingGridAdapter,shoesGridAdapter,clothingGridAdapter;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -65,6 +67,9 @@ public class HotTrendingFragment extends Fragment {
         super.onCreate(savedInstanceState);
         entranceViewModel = new ViewModelProvider(requireActivity()).get(EntranceViewModel.class);
         recyclerAdapter = new RecyclerAdapter(entranceViewModel.getRecentLikedItems().getValue(),"Item");
+        new_trending_items = new ArrayList<>();
+        new_clothing_items = new ArrayList<>();
+        new_shoes_items = new ArrayList<>();
         model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
     }
 
@@ -97,9 +102,9 @@ public class HotTrendingFragment extends Fragment {
             }
         };
 
-        layout1.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_CLOTHING));
-        layout2.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_SHOES));
-        layout3.setOnClickListener(v -> showNewItemsDialog(Macros.NEW_TRENDING));
+        layout3.setOnClickListener(v -> MostTrendingDialog());
+        layout1.setOnClickListener(v -> ClothingDialog());
+        layout2.setOnClickListener(v -> ShoesDialog());
 
         recentObserver = recyclerItems -> {
             if(recyclerItems.isEmpty())
@@ -113,6 +118,25 @@ public class HotTrendingFragment extends Fragment {
             }
         };
 
+        trendingObserver = recyclerItems -> {
+            new_trending_items.clear();
+            new_trending_items.addAll(recyclerItems);
+            trendingGridAdapter.notifyDataSetChanged();
+            progressIndicator.setVisibility(View.GONE);
+        };
+        clothingObserver = recyclerItems -> {
+            new_clothing_items.clear();
+            new_clothing_items.addAll(recyclerItems);
+            clothingGridAdapter.notifyDataSetChanged();
+            progressIndicator.setVisibility(View.GONE);
+        };
+        shoesObserver = recyclerItems -> {
+            new_shoes_items.clear();
+            new_shoes_items.addAll(recyclerItems);
+            shoesGridAdapter.notifyDataSetChanged();
+            progressIndicator.setVisibility(View.GONE);
+        };
+
         return view;
     }
 
@@ -122,21 +146,19 @@ public class HotTrendingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         init();
-
-        model.getGender().observe(getViewLifecycleOwner(),observer);
-        entranceViewModel.getRecentLikedItems().observe(requireActivity(), recentObserver );
+        model.getGender().observe(getViewLifecycleOwner(), observer);
+        entranceViewModel.getRecentLikedItems().observe(requireActivity(), recentObserver);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void init() {
 
-        new_items = new ArrayList<>();
         gender = model.getGender().getValue();
         dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.new_items_grid_dialog);
-        gridAdapter = new DialogGridAdapter(requireActivity(), R.layout.e3_grid_item, new_items);
-        GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
-        gridContainer.setAdapter(gridAdapter);
+        trendingGridAdapter = new DialogGridAdapter( requireActivity(), R.layout.e3_grid_item, new_trending_items );
+        shoesGridAdapter = new DialogGridAdapter( requireActivity(), R.layout.e3_grid_item, new_shoes_items );
+        clothingGridAdapter = new DialogGridAdapter( requireActivity(), R.layout.e3_grid_item, new_clothing_items );
         progressIndicator = dialog.findViewById(R.id.new_items_progress_bar);
         progressIndicator.setVisibility(View.VISIBLE);
 
@@ -154,43 +176,99 @@ public class HotTrendingFragment extends Fragment {
         header.setText(text);
     }
 
-    private void showNewItemsDialog(String type) {
+    private void ClothingDialog() {
 
+       GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
+       gridContainer.setAdapter(clothingGridAdapter);
+       TextView txt = dialog.findViewById(R.id.items_count);
+       entranceViewModel.getCurrentClothingItem().observe(getViewLifecycleOwner(), integer -> {
+           String text = "(" + integer + " items)";
+           txt.setText(text);
+       });
+
+       if(gender.equals(Macros.CustomerMacros.WOMEN)) {
+           entranceViewModel.getWomen_clothing_items().observe(getViewLifecycleOwner(), clothingObserver);
+       }
+       else {
+           entranceViewModel.getMen_clothing_items().observe(getViewLifecycleOwner(),clothingObserver);
+       }
+
+       String text_header;
+       TextView header = dialog.findViewById(R.id.new_items_header);
+       header.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null);
+       text_header = "New Clothing";
+       header.setText(text_header);
+
+       Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+       dialog.getWindow().setGravity(Gravity.BOTTOM);
+       dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+       dialog.show();
+    }
+
+    private void MostTrendingDialog() {
+
+        GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
+        gridContainer.setAdapter(trendingGridAdapter);
         TextView txt = dialog.findViewById(R.id.items_count);
+        entranceViewModel.getCurrentTrendingItem().observe(getViewLifecycleOwner(), integer -> {
+            String text = "(" + integer + " items)";
+            txt.setText(text);
+        });
 
-        new_items.clear();
-        int i=0;
-        for( RecyclerItem recyclerItem : Objects.requireNonNull(entranceViewModel.getItems().getValue())) {
-            if(recyclerItem.getType().equals(type)) {
-                new_items.add(recyclerItem);
-                gridAdapter.notifyDataSetChanged();
-                progressIndicator.setVisibility(View.GONE);
-                ++i;
-                String text = "(" + i + " items)";
-                txt.setText(text);
-            }
+        if(gender.equals(Macros.CustomerMacros.WOMEN)) {
+            entranceViewModel.getWomen_new_trending_items().observe(getViewLifecycleOwner(), trendingObserver);
+        }
+        else {
+            entranceViewModel.getMen_new_trending_items().observe(getViewLifecycleOwner(),trendingObserver);
         }
 
         String text_header;
-        if(type.equals(Macros.NEW_TRENDING)){
-            text_header = "Trending Now";
-            TextView header = dialog.findViewById(R.id.new_items_header);
-            header.setText(text_header);
-            header.setCompoundDrawablesWithIntrinsicBounds(null,null, ContextCompat.
-                    getDrawable(dialog.getContext(),R.drawable.ic_baseline_trending_up),null);
-            header.setCompoundDrawablePadding(20);
-        }
-        else{
-            TextView header = dialog.findViewById(R.id.new_items_header);
-            header.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null);
-            text_header = "New " + type;
-            header.setText(text_header);
-        }
+        text_header = "Trending Now";
+        TextView header = dialog.findViewById(R.id.new_items_header);
+        header.setText(text_header);
+        header.setCompoundDrawablesWithIntrinsicBounds(null,null,
+                ContextCompat.getDrawable(dialog.getContext(),
+                        R.drawable.ic_baseline_trending_up),null);
+        header.setCompoundDrawablePadding(20);
+
+      /*   TextView header = dialog.findViewById(R.id.new_items_header);
+           header.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null);
+           text_header = "New " + type;
+           header.setText(text_header);
+       */
 
         Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().setGravity(Gravity.BOTTOM);
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.show();
+    }
+
+    private void ShoesDialog() {
+
+       GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
+       gridContainer.setAdapter(shoesGridAdapter);
+       TextView txt = dialog.findViewById(R.id.items_count);
+       entranceViewModel.getCurrentShoesItem().observe(getViewLifecycleOwner(), integer -> {
+           String text = "(" + integer + " items)";
+           txt.setText(text);
+       });
+
+       if(gender.equals(Macros.CustomerMacros.WOMEN))
+           entranceViewModel.getWomen_shoes_items().observe(getViewLifecycleOwner(), shoesObserver);
+       else
+           entranceViewModel.getMen_shoes_items().observe(getViewLifecycleOwner(), shoesObserver);
+
+       String text_header;
+
+       TextView header = dialog.findViewById(R.id.new_items_header);
+           header.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null);
+           text_header = "New Shoes";
+           header.setText(text_header);
+
+       Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+       dialog.getWindow().setGravity(Gravity.BOTTOM);
+       dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+       dialog.show();
     }
 
     private void setAnimation() {
@@ -203,9 +281,9 @@ public class HotTrendingFragment extends Fragment {
 
     private void setWomenEntrance() {
 
-        String first_header = "ALL NEW CLOTHING ITEMS";
-        String second_header = "OUR NEWEST SHOES COLLECTION";
-        String third_header = "MOST TRENDING NOW";
+        String first_header = "NEW IN CASTRO COLLECTION";
+        String second_header = "BEST SELLER ALDO ITEMS";
+        String third_header = "TRENDING NOW";
 
         setAnimation();
 
@@ -228,8 +306,8 @@ public class HotTrendingFragment extends Fragment {
 
     private void setMenEntrance() {
 
-        String first_header = "ALL NEW CLOTHING ITEMS";
-        String second_header = "OUR NEWEST SHOES COLLECTION";
+        String first_header = "NEW IN CASTRO COLLECTION";
+        String second_header = "BEST SELLER ALDO ITEMS";
         String third_header = "TRENDING NOW";
 
         setAnimation();

@@ -42,12 +42,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import java.text.DecimalFormat;
@@ -146,19 +145,19 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 model.setName(name);
                 setColors();
 
-                Objects.requireNonNull(entranceModel.getItems().getValue()).clear();
-
-                //Outlet Items
+                // OUTLET ITEMS
                 int num = gender.equals(Macros.CustomerMacros.WOMEN) ? WOMEN_OUTLET_NUM : MEN_OUTLET_NUM;
-                new fetchOutlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num,1);
+                new fetchOutlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num, 1);
 
-                //LIKED ITEM
+                // LIKED ITEMS
                 new fetchLikedItems().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                if (gender.equals(Macros.CustomerMacros.WOMEN))
-                    new getNewInWomenShein().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1);
-                else
-                    new getNewInMenShein().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,1);
+                // TRENDING ITEMS
+                // new getAldoMostTrending().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                // SHOES ITEMS
+                new getAldoShoes().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                // CLOTHING ITEMS
+                new getCastroClothing().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
 
             @Override
@@ -472,7 +471,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
             return null;
         }
     }
-
     private static class fetchOutlet extends AsyncTask<Integer,Integer,Void> {
 
         @Override
@@ -583,205 +581,190 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
     }
 
-    private static class getNewInWomenShein extends AsyncTask <Integer, Integer, Void> {
+    private static class getAldoShoes extends AsyncTask <Integer, Integer, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            entranceModel.clearAllShoesItems();
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Integer... page_num) {
+
+            int iter = 0;
+                try {
+                    Document temp;
+                    if(gender.equals(Macros.CustomerMacros.WOMEN)) {
+                        temp = Jsoup.connect("https://www.aldoshoes.co.il/" +
+                                gender.toLowerCase() + "/w-best-sellers.html").get();
+                    }
+                    else{
+                        temp = Jsoup.connect("https://www.aldoshoes.co.il/" +
+                                gender.toLowerCase() + "/m-best-sellers.html").get();
+                    }
+
+                    Elements list_items = temp.getElementsByAttributeValue("id", "prod-list-cat");
+                    Elements products = list_items.get(0).getElementsByClass("cat-product");
+
+                    for(Element prod : products){
+
+                        iter++;
+                        String link = prod.childNode(7).attributes().get("href");
+                        String price = prod.childNode(7).attributes().get("data-price");
+                        String description = prod.childNode(7).attributes().get("data-name");
+                        ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
+                        String id = prod.childNode(7).attributes().get("data-id");
+
+                        Document prod_page;
+                        try {
+                            prod_page = Jsoup.connect(link).get();
+                        }
+                        catch (org.jsoup.HttpStatusException ex){
+                            continue;
+                        }
+
+                        Elements prod_info = prod_page.getElementsByClass("product-image-gallery");
+                        Elements images_elements = prod_info.get(0).getElementsByClass("gallery-image-link");
+
+                        RecyclerItem recyclerItem = new RecyclerItem("Aldo",link);
+                        ArrayList<String> images = new ArrayList<>();
+                        for(Node img : images_elements){
+                            images.add(img.attr("data-source"));
+                        }
+                        if(images.size() < 4){
+                            for(int j = images.size(); j<4; j++){
+                                images.add(images.get(0));
+                            }
+                        }
+
+                        recyclerItem.setPrice(price);
+                        recyclerItem.setImages(images);
+                        recyclerItem.setBrand("Aldo");
+                        recyclerItem.setGender(gender);
+                        recyclerItem.setSeller("Aldo");
+                        recyclerItem.setId(id);
+                        recyclerItem.setDescription(name);
+                        recyclerItem.setLink(link);
+
+                        if(gender.equals(Macros.CustomerMacros.WOMEN))
+                            entranceModel.addWomenShoesItem(recyclerItem);
+                        else
+                            entranceModel.addMenShoesItem(recyclerItem);
+
+                        entranceModel.setCurrentShoesItem(iter);
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            return null;
+        }
+    }
+    private static class getCastroClothing extends AsyncTask <Integer, Integer, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            entranceModel.clearAllClothingItems();
+        }
+
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected Void doInBackground(Integer... page_num) {
             try {
-                for (String cat_name : Macros.Arrays.WOMEN_CLOTHES_TYPES) {
-                    String cat = "";
-                    switch (cat_name) {
-                        case "Shoes-sc-00200195":
-                            cat = Macros.NEW_SHOES;
-                            break;
-                        case "Clothing-sc-00200200":
-                            cat = Macros.NEW_CLOTHING;
-                            break;
-                        case "Home-sc-00214997":
-                            cat = Macros.NEW_TRENDING;
+                int iter = 0;
+
+                Document document;
+                document = Jsoup.connect("https://www.castro.com/"
+                        + gender.toLowerCase()
+                        + "/shop_by_collection/hot_trends").get();
+
+                Elements elements = document.
+                        getElementsByClass("products list items product-items ");
+                Elements filtered_elements = elements.get(0).
+                        getElementsByAttributeValueStarting("id","product_category_");
+
+                for (Element element : filtered_elements) {
+
+                    String id = element.getElementsByClass("start-product-item").
+                            get(0).attr("data-product-sku");
+
+                    String link = "https://www.castro.com/" + id;
+                    RecyclerItem recyclerItem = new RecyclerItem("Castro", link);
+
+                    Document item_doc;
+                    try {
+                        item_doc = Jsoup.connect(link).get();
                     }
-
-                    Document document = Jsoup.connect("https://il.shein.com/" +
-                            gender.toLowerCase() + "-" + cat_name + ".html").get();
-
-                    assert document != null;
-                    Elements elements = document.getElementsByClass("j-goodsli");
-
-
-                    for (int j = 0; j < 20; ++j) {
-
-                        String link2 = elements.get(j).getElementsByClass("c-goodsitem__goods-name").
-                                get(1).attr("href");
-                        String link = "https://il.shein.com" + link2;
-
-                        RecyclerItem recyclerItem = new RecyclerItem(cat, link);
-
-                        Document prod_elements;
+                    catch (org.jsoup.HttpStatusException ex){
+                        String prod_id = element.attr("data-productid");
+                        link = "https://www.castro.com/catalog/product/view/id/" + prod_id;
                         try {
-                            prod_elements = Jsoup.connect(link).get();
-                        } catch (org.jsoup.HttpStatusException ex) {
+                            item_doc = Jsoup.connect(link).get();
+                        }
+                        catch (org.jsoup.HttpStatusException e){
                             continue;
                         }
-
-                        String json_prepare = prod_elements.
-                                childNode(2).childNode(3).
-                                childNode(15).childNode(17).
-                                childNode(0).toString();
-
-                        String productIntroData = json_prepare.
-                                split("productIntroData:")[1].
-                                split("abt: ")[0];
-
-                        String json = "[" + productIntroData + "]";
-
-                        JSONArray jsonArray = new JSONArray(json);
-                        JSONArray imagesArray = jsonArray.getJSONObject(0).
-                                getJSONObject("goods_imgs").
-                                getJSONArray("detail_image");
-
-                        ArrayList<String> images = new ArrayList<>();
-                        for (int i = 0; i < imagesArray.length(); ++i) {
-                            String img = imagesArray.getJSONObject(i).getString("origin_image");
-                            images.add("http:" + img);
-                        }
-                        if (images.size() < 4) {
-                            for (int k = images.size(); k < 4; k++) {
-                                images.add(images.get(0));
-                            }
-                        }
-                        JSONObject details = jsonArray.getJSONObject(0).
-                                getJSONObject("detail");
-
-                        String price = details.
-                                getJSONObject("retailPrice").
-                                getString("amountWithSymbol");
-
-                        String salePrice = details.
-                                getJSONObject("salePrice").
-                                getString("amount");
-
-                        if (!salePrice.equals(price)) {
-                            recyclerItem.setReduced_price(salePrice);
-                            recyclerItem.setSale(true);
-                        }
-
-                        String brand = details.getString("brand").
-                                equals("") ? "SHEIN" : details.getString("brand");
-
-                        recyclerItem.setPrice(price);
-                        recyclerItem.setImages(images);
-                        recyclerItem.setLink(link);
-                        recyclerItem.setType(cat);
-                        recyclerItem.setBrand(brand);
-                        entranceModel.addWomenItem(recyclerItem);
                     }
-                    entranceModel.setList(gender);
+
+                    Elements images_doc = item_doc.getElementsByClass("product_gallery");
+
+                    String price;
+                    Elements price_doc = item_doc.getElementsByClass("price");
+
+                    if (price_doc.hasClass("old-price")) {
+                        price = price_doc.get(0).childNode(0).toString().replace("₪","");
+                        String old_price = price_doc.get(1).childNode(0).toString().
+                                replace("₪", "");
+                        recyclerItem.setReduced_price(price);
+                        recyclerItem.setSale(true);
+                        recyclerItem.setPrice(old_price);
+                    }
+                    else {
+                        price = price_doc.get(0).childNode(0).toString().replace("₪", "");
+                        recyclerItem.setPrice(price);
+                    }
+
+                    String name = "";
+                    ArrayList<String> images = new ArrayList<>();
+                    Elements images_elements = images_doc.get(0).getElementsByClass("idus-slider-slide ");
+                    for (Node img : images_elements) {
+                        String image = img.childNode(1).attr("src");
+                        if (image.equals(""))
+                            image = img.childNode(1).attr("data-lazy");
+
+                        name = img.childNode(1).attr("alt");
+                        images.add(image);
+                    }
+                    if(images.size() < 4){
+                        for( int i=images.size(); i<4; ++i){
+                            images.add(images.get(0));
+                        }
+                    }
+
+                    ArrayList<String> description = new ArrayList<>(Arrays.asList(name.split(" ")));
+
+                    recyclerItem.setImages(images);
+                    recyclerItem.setBrand("Castro");
+                    recyclerItem.setGender(gender);
+                    recyclerItem.setSeller("Castro");
+                    recyclerItem.setId(id);
+                    recyclerItem.setDescription(description);
+                    recyclerItem.setLink(link);
+
+                    iter++;
+                    if(gender.equals(Macros.CustomerMacros.WOMEN))
+                        entranceModel.addWomenClothingItem(recyclerItem);
+                    else
+                        entranceModel.addMenClothingItem(recyclerItem);
+
+                    entranceModel.setCurrentClothingItem(iter);
                 }
             }
             catch (Exception e) {
                 e.printStackTrace();
-            }
-            return null;
-        }
-    }
-
-    private static class getNewInMenShein extends AsyncTask <Integer, Integer, Void> {
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected Void doInBackground(Integer... page_num) {
-            try {
-                for (String cat_name : Macros.Arrays.MEN_CLOTHES_TYPES) {
-                    String cat = "";
-                    switch (cat_name) {
-                        case "Shoes-Accessories-sc-00201624":
-                            cat = Macros.NEW_SHOES;
-                            break;
-                        case "new-in-sc-00200410":
-                            cat = Macros.NEW_CLOTHING;
-                            break;
-                        case "Activewear-sc-00227302":
-                            cat = Macros.NEW_TRENDING;
-                    }
-
-                    Document document = Jsoup.connect("https://il.shein.com/" +
-                            gender.toLowerCase() + "-" + cat_name + ".html").get();
-
-                    assert document != null;
-                    Elements elements = document.getElementsByClass("j-goodsli");
-
-                    for (int j = 0; j < elements.size(); ++j) {
-
-                        String link2 = elements.get(j).getElementsByClass("c-goodsitem__goods-name").
-                                get(1).attr("href");
-                        String link = "https://il.shein.com" + link2;
-
-                        RecyclerItem recyclerItem = new RecyclerItem(cat, link);
-
-                        Document prod_elements;
-                        try {
-                            prod_elements = Jsoup.connect(link).get();
-                        } catch (org.jsoup.HttpStatusException ex) {
-                            continue;
-                        }
-
-                        String json_prepare = prod_elements.
-                                childNode(2).childNode(3).
-                                childNode(15).childNode(17).
-                                childNode(0).toString();
-
-                        String productIntroData = json_prepare.
-                                split("productIntroData:")[1].
-                                split("abt: ")[0];
-
-                        String json = "[" + productIntroData + "]";
-
-                        JSONArray jsonArray = new JSONArray(json);
-                        JSONArray imagesArray = jsonArray.getJSONObject(0).
-                                getJSONObject("goods_imgs").
-                                getJSONArray("detail_image");
-
-                        ArrayList<String> images = new ArrayList<>();
-                        for (int i = 0; i < imagesArray.length(); ++i) {
-                            String img = imagesArray.getJSONObject(i).getString("origin_image");
-                            images.add("http:" + img);
-                        }
-                        if (images.size() < 4) {
-                            for (int k = images.size(); k < 4; k++) {
-                                images.add(images.get(0));
-                            }
-                        }
-                        JSONObject details = jsonArray.getJSONObject(0).
-                                getJSONObject("detail");
-
-                        String price = details.
-                                getJSONObject("retailPrice").
-                                getString("amount");
-
-                        String salePrice = details.
-                                getJSONObject("salePrice").
-                                getString("amount");
-
-                        if (!salePrice.equals(price)) {
-                            recyclerItem.setReduced_price(salePrice);
-                            recyclerItem.setSale(true);
-                        }
-
-                        String brand = details.getString("brand").
-                                equals("") ? "SHEIN" : details.getString("brand");
-
-                        recyclerItem.setPrice(price);
-                        recyclerItem.setImages(images);
-                        recyclerItem.setLink(link);
-                        recyclerItem.setType(cat);
-                        recyclerItem.setBrand(brand);
-                        entranceModel.addMenItem(recyclerItem);
-                    }
-                    entranceModel.setList(gender);
-                }
-                entranceModel.setList(gender);
-            }
-            catch (Exception e) {
-               e.printStackTrace();
             }
             return null;
         }

@@ -19,7 +19,6 @@ import com.eitan.shopik.Items.Category;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.eitan.shopik.ViewModels.EntranceViewModel;
 import com.eitan.shopik.ViewModels.GenderModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,7 +47,6 @@ public class CategoryPickFragment extends Fragment {
     private Category swimwear;
     private Category lingerie;
     private Category accessories;
-    private EntranceViewModel viewModel;
     private androidx.lifecycle.Observer<String> observer;
 
     @Override
@@ -59,11 +57,14 @@ public class CategoryPickFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_e2, container, false);
+        View view = inflater.inflate(R.layout.fragment_e2, container, false);
+
+        return view;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -88,7 +89,6 @@ public class CategoryPickFragment extends Fragment {
 
         if(gender != null){
             setCategories();
-            viewModel.setList(gender);
         }
 
         adapter = new ItemsCategoriesListAdapter(categories);
@@ -103,7 +103,6 @@ public class CategoryPickFragment extends Fragment {
             if(!gender.equals(s)) {
                 gender = s;
                 setCategories();
-                viewModel.setList(gender);
                 adapter.collapseAll(listContainer);
             }
             adapter.notifyDataSetChanged();
@@ -122,10 +121,7 @@ public class CategoryPickFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         categories = new ArrayList<>();
 
-        model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         gender = model.getGender().getValue();
-
-        viewModel = new ViewModelProvider(requireActivity()).get(EntranceViewModel.class);
 
         sub_bags = new ArrayList<>();
         sub_dress = new ArrayList<>();
@@ -168,10 +164,6 @@ public class CategoryPickFragment extends Fragment {
             addJewellerySubCategory("bracelet", Macros.Items.MEN_BRACELET_RES, Macros.CustomerMacros.MEN);
             addJewellerySubCategory("necklace", Macros.Items.MEN_NECKLACE_RES, Macros.CustomerMacros.MEN);
             addJewellerySubCategory("earrings", Macros.Items.MEN_EARRING_RES, Macros.CustomerMacros.MEN);
-
-            addGlassesSubCategory("round", Macros.Items.MEN_ROUND_GLASSES_RES,Macros.CustomerMacros.MEN);
-            addGlassesSubCategory("oversized", Macros.Items.MEN_OVERSIZED_GLASSES_RES,Macros.CustomerMacros.MEN);
-            addGlassesSubCategory("square", Macros.Items.MEN_SQUARE_GLASSES_RES,Macros.CustomerMacros.MEN);
 
             addShoesSubCategory("loafers",Macros.Items.MEN_LOAFERS_RES,Macros.CustomerMacros.MEN);
             addShoesSubCategory("boots",Macros.Items.MEN_BOOTS_RES,Macros.CustomerMacros.MEN);

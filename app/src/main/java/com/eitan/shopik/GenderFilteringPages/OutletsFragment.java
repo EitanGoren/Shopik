@@ -139,7 +139,6 @@ public class OutletsFragment extends Fragment {
 
             ImageView imageView = convertView.findViewById(R.id.image_slider);
             Button link = convertView.findViewById(R.id.store_link);
-            final Button fullscreen = convertView.findViewById(R.id.fullscreen_button);
             TextView price = convertView.findViewById(R.id.slider_brand);
             TextView reduced_price = convertView.findViewById(R.id.reduced_price);
             TextView sale = convertView.findViewById(R.id.sale);
@@ -158,7 +157,7 @@ public class OutletsFragment extends Fragment {
             if(item.isSale())
                 sale.setVisibility(View.VISIBLE);
             else
-                sale.setVisibility(View.INVISIBLE);
+                sale.setVisibility(View.GONE);
 
             if(item.isOutlet() || item.isSale()){
                 Currency shekel = Currency.getInstance("ILS");
@@ -181,7 +180,7 @@ public class OutletsFragment extends Fragment {
                 price.setTextSize(16);
             }
 
-            fullscreen.setOnClickListener(v -> {
+            imageView.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
                 intent.putExtra("isFav", false);
                 intent.putExtra("brand", item.getSeller());
