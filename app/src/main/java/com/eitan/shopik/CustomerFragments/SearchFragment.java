@@ -49,9 +49,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private AllItemsModel allItemsModel;
     private MainModel mainModel;
     private FloatingActionButton scrollUpFAB,scrollDownFAB;
-    private RecyclerGridAdapter recyclerGridAdapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerGridAdapter recyclerGridAdapter;
     private AppBarLayout appBarLayout;
     private AppBarLayout.OnOffsetChangedListener listener;
     private RecyclerView.OnScrollListener onScrollListener;

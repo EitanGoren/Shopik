@@ -365,7 +365,8 @@ public class Macros {
             else
                 context.startActivity(intent);
 
-            ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+            if(context instanceof Activity)
+                ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         }
 
         public static void sellerProfile(Context context, String sellerId, ArrayList<Pair<View, String>> pairs) {
@@ -381,7 +382,8 @@ public class Macros {
             else
                 context.startActivity(intent);
 
-            ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+            if(context instanceof Activity)
+                ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         }
 
         public static Pair<Integer, Integer> getCategoryNum(String gender, String sub_cat, String item_type) {

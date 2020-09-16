@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Filter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.eitan.shopik.Adapters.RecyclerGridAdapter;
+import com.eitan.shopik.CustomItemAnimator;
 import com.eitan.shopik.Customer.FullscreenImageActivity;
 import com.eitan.shopik.Items.RecyclerItem;
 import com.eitan.shopik.Macros;
@@ -40,13 +43,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OutletsFragment extends Fragment {
 
-    private GridView gridContainer;
+    private RecyclerView recyclerView;
     private String gender;
-    private E3GridAdapter gridAdapter;
     private GenderModel model;
     private OutletsModel outletsModel;
     private TextView header;
     private TextView count,total;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerGridAdapter recyclerGridAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,10 +64,14 @@ public class OutletsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_e3, container, false);
 
+
         header = view.findViewById(R.id.best_sellers2);
         count = view.findViewById(R.id.items_count);
         total = view.findViewById(R.id.items_total);
-        gridContainer = view.findViewById(R.id.grid_view);
+        recyclerView = view.findViewById(R.id.grid_view);
+        mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recyclerGridAdapter = new RecyclerGridAdapter(outletsModel.getOutlets().getValue(),"outlets");
+        recyclerView.setItemAnimator(new CustomItemAnimator());
 
         return view;
     }
@@ -80,28 +88,24 @@ public class OutletsFragment extends Fragment {
             if(!gender.equals(s)) {
                 gender = s;
                 outletsModel.clearAllOutlets();
-                gridAdapter.clearItems();
-                gridAdapter.notifyDataSetChanged();
+                recyclerGridAdapter.notifyDataSetChanged();
             }
         });
 
-        gridAdapter = new E3GridAdapter(requireActivity(), R.layout.grid_clean_item,
-                outletsModel.getOutlets().getValue());
-        gridContainer.setAdapter(gridAdapter);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setAdapter(recyclerGridAdapter);
 
-        outletsModel.getOutlets().observe(requireActivity(), recyclerItems -> {
-            gridAdapter.setAllItems(recyclerItems);
-            gridAdapter.notifyDataSetChanged();
+        outletsModel.getOutlets().observe(requireActivity(), shoppingItems -> {
+            recyclerGridAdapter.setAllItems(shoppingItems);
+            recyclerGridAdapter.notifyDataSetChanged();
         });
-
         outletsModel.getTotalItems().observe(requireActivity(), integer -> {
             String text = "/ " + integer;
             total.setText(text);
         });
-
         outletsModel.getCurrentItem().observe(requireActivity(), integer ->{
             count.setText(String.valueOf(integer));
-            gridAdapter.notifyDataSetChanged();
+            recyclerGridAdapter.notifyDataSetChanged();
         });
     }
 
@@ -142,6 +146,7 @@ public class OutletsFragment extends Fragment {
             TextView price = convertView.findViewById(R.id.slider_brand);
             TextView reduced_price = convertView.findViewById(R.id.reduced_price);
             TextView sale = convertView.findViewById(R.id.sale);
+            TextView description = convertView.findViewById(R.id.description);
 
             link.setOnClickListener(v -> {
                 assert item != null;
@@ -150,6 +155,13 @@ public class OutletsFragment extends Fragment {
 
             assert item != null;
             final ArrayList<String> imagesUrl = item.getImages();
+
+            if(item.getBrand() != null){
+                description.setVisibility(View.VISIBLE);
+                description.setText(item.getBrand());
+            }
+            else
+                description.setVisibility(View.GONE);
 
             if(imagesUrl.size() > 0)
                 Macros.Functions.GlidePicture(getContext(),imagesUrl.get(0),imageView);

@@ -1022,27 +1022,17 @@ public class CustomerMainActivity extends AppCompatActivity
                                 }
                             }
 
+                            //BRAND
                             String brand;
                             Elements brand_ele;
                             try {
                                 brand_ele = document2.getElementsByClass("brand-description");
-                                Elements pop = brand_ele.get(0).getAllElements();
-                                brand = pop.get(4).childNode(0).toString().
-                                        replace("&amp;","&").
-                                        replace("&nbsp;","");
+                                Elements poki = brand_ele.get(0).getElementsByTag("strong");
+                                brand = poki.get(0).text();
                                 shoppingItem.setBrand(brand);
                             }
-                            catch(IndexOutOfBoundsException ex){
-                                try {
-                                    brand_ele = document2.getElementsByClass("product-description");
-                                    brand = brand_ele.get(1).childNode(4).
-                                            childNode(0).childNode(1).toString().
-                                            replace(" by ", "");
-                                    shoppingItem.setBrand(brand);
-                                }
-                                catch (IndexOutOfBoundsException e){
-                                    shoppingItem.setBrand("ASOS");
-                                }
+                            catch (IndexOutOfBoundsException ex) {
+                                shoppingItem.setBrand("ASOS");
                             }
 
                             String[] name = description.split(" ");

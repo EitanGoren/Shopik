@@ -9,7 +9,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.eitan.shopik.Items.RecyclerItem;
+import com.eitan.shopik.Items.ShoppingItem;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Keep
 public class OutletsModel extends AndroidViewModel implements Serializable {
 
-    private MutableLiveData<CopyOnWriteArrayList<RecyclerItem>> outlets;
+    private MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> outlets;
     private MutableLiveData<Integer> currentItem;
     private MutableLiveData<Integer> totalItems;
 
@@ -29,19 +29,19 @@ public class OutletsModel extends AndroidViewModel implements Serializable {
         this.currentItem = new MutableLiveData<>();
         this.totalItems = new MutableLiveData<>();
 
-        CopyOnWriteArrayList<RecyclerItem> outlets = new CopyOnWriteArrayList<>();
+        CopyOnWriteArrayList<ShoppingItem> outlets = new CopyOnWriteArrayList<>();
         this.outlets.setValue(outlets);
     }
 
     public void clearAllOutlets(){
         Objects.requireNonNull(this.outlets.getValue()).clear();
     }
-    public LiveData<CopyOnWriteArrayList<RecyclerItem>> getOutlets() {
+    public LiveData<CopyOnWriteArrayList<ShoppingItem>> getOutlets() {
         return outlets;
     }
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void addToOutlets(RecyclerItem recyclerItem) {
-        Objects.requireNonNull(this.outlets.getValue()).add(recyclerItem);
+    public void addToOutlets(ShoppingItem shoppingItem) {
+        Objects.requireNonNull(this.outlets.getValue()).add(shoppingItem);
         outlets.postValue(outlets.getValue());
     }
 

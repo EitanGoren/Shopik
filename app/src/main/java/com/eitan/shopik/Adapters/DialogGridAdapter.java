@@ -47,6 +47,7 @@ public class DialogGridAdapter extends ArrayAdapter<RecyclerItem> {
         TextView price = convertView.findViewById(R.id.slider_brand);
         TextView reduced_price = convertView.findViewById(R.id.reduced_price);
         TextView sale = convertView.findViewById(R.id.sale);
+        TextView description = convertView.findViewById(R.id.description);
 
         link.setOnClickListener(v -> {
             assert item != null;
@@ -55,6 +56,17 @@ public class DialogGridAdapter extends ArrayAdapter<RecyclerItem> {
 
         assert item != null;
         Macros.Functions.GlidePicture(getContext(),item.getImages().get(0),imageView);
+
+        if(item.getDescription() != null){
+            StringBuilder desc = new StringBuilder();
+            for(String word : item.getDescription()){
+                desc.append(word).append(" ");
+            }
+            description.setVisibility(View.VISIBLE);
+            description.setText(desc);
+        }
+        else
+            description.setVisibility(View.GONE);
 
         imageView.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
@@ -96,7 +108,7 @@ public class DialogGridAdapter extends ArrayAdapter<RecyclerItem> {
             price.setTextSize(12);
         }
         else {
-            reduced_price.setVisibility(View.INVISIBLE);
+            reduced_price.setVisibility(View.GONE);
             price.setText(item.getPrice());
             price.setTextSize(16);
         }

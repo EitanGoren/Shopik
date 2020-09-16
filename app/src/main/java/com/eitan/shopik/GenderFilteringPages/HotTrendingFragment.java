@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,17 +19,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.eitan.shopik.Adapters.DialogGridAdapter;
 import com.eitan.shopik.Adapters.RecyclerAdapter;
+import com.eitan.shopik.Adapters.RecyclerGridAdapter;
 import com.eitan.shopik.CustomItemAnimator;
 import com.eitan.shopik.Items.RecyclerItem;
+import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ViewModels.EntranceViewModel;
@@ -40,6 +40,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class HotTrendingFragment extends Fragment {
 
@@ -48,28 +49,29 @@ public class HotTrendingFragment extends Fragment {
     private EntranceViewModel entranceViewModel;
     private GenderModel model;
     private Dialog dialog;
-    private ArrayList<RecyclerItem> new_trending_items;
-    private ArrayList<RecyclerItem> new_shoes_items;
-    private ArrayList<RecyclerItem> new_clothing_items;
-    private RelativeLayout layout1,layout2,layout3;
+    private CopyOnWriteArrayList<ShoppingItem> new_shoes_items;
+    private CopyOnWriteArrayList<ShoppingItem> new_clothing_items;
+    private RelativeLayout layout1,layout2;
     private TextView liked_counter;
     private RelativeLayout layout;
     private TextView header;
     private RecyclerView recyclerView;
     private Observer<String> observer;
-    private Observer<ArrayList<RecyclerItem>> recentObserver,trendingObserver,shoesObserver,clothingObserver;
+    private Observer<ArrayList<RecyclerItem>> recentObserver;
+    private Observer<ArrayList<ShoppingItem>> shoesObserver,clothingObserver;
     private ProgressIndicator progressIndicator;
-    private DialogGridAdapter trendingGridAdapter,shoesGridAdapter,clothingGridAdapter;
+    private RecyclerGridAdapter shoesGridAdapter,clothingGridAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         entranceViewModel = new ViewModelProvider(requireActivity()).get(EntranceViewModel.class);
         recyclerAdapter = new RecyclerAdapter(entranceViewModel.getRecentLikedItems().getValue(),"Item");
-        new_trending_items = new ArrayList<>();
-        new_clothing_items = new ArrayList<>();
-        new_shoes_items = new ArrayList<>();
+        new_clothing_items = new CopyOnWriteArrayList<>();
+        new_shoes_items = new CopyOnWriteArrayList<>();
         model = new ViewModelProvider(requireActivity()).get(GenderModel.class);
     }
 
@@ -80,7 +82,6 @@ public class HotTrendingFragment extends Fragment {
         liked_counter = view.findViewById(R.id.best_sellers_count);
         layout1 = view.findViewById(R.id.layout2);
         layout2 = view.findViewById(R.id.layout3);
-        layout3 = view.findViewById(R.id.layout4);
         layout = view.findViewById(R.id.layout1);
         header = view.findViewById(R.id.header);
         recyclerView = view.findViewById(R.id.recycler);
@@ -102,7 +103,6 @@ public class HotTrendingFragment extends Fragment {
             }
         };
 
-        layout3.setOnClickListener(v -> MostTrendingDialog());
         layout1.setOnClickListener(v -> ClothingDialog());
         layout2.setOnClickListener(v -> ShoesDialog());
 
@@ -116,13 +116,6 @@ public class HotTrendingFragment extends Fragment {
                 recyclerAdapter.notifyDataSetChanged();
                 recyclerView.setAdapter(recyclerAdapter);
             }
-        };
-
-        trendingObserver = recyclerItems -> {
-            new_trending_items.clear();
-            new_trending_items.addAll(recyclerItems);
-            trendingGridAdapter.notifyDataSetChanged();
-            progressIndicator.setVisibility(View.GONE);
         };
         clothingObserver = recyclerItems -> {
             new_clothing_items.clear();
@@ -154,11 +147,14 @@ public class HotTrendingFragment extends Fragment {
     private void init() {
 
         gender = model.getGender().getValue();
-        dialog = new Dialog(requireContext());
+        dialog = new Dialog(requireActivity());
         dialog.setContentView(R.layout.new_items_grid_dialog);
-        trendingGridAdapter = new DialogGridAdapter( requireActivity(), R.layout.e3_grid_item, new_trending_items );
-        shoesGridAdapter = new DialogGridAdapter( requireActivity(), R.layout.e3_grid_item, new_shoes_items );
-        clothingGridAdapter = new DialogGridAdapter( requireActivity(), R.layout.e3_grid_item, new_clothing_items );
+
+        mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        clothingGridAdapter = new RecyclerGridAdapter(new_clothing_items,"outlets");
+        shoesGridAdapter = new RecyclerGridAdapter(new_shoes_items,"outlets");
+        recyclerView.setItemAnimator(new CustomItemAnimator());
+
         progressIndicator = dialog.findViewById(R.id.new_items_progress_bar);
         progressIndicator.setVisibility(View.VISIBLE);
 
@@ -178,20 +174,22 @@ public class HotTrendingFragment extends Fragment {
 
     private void ClothingDialog() {
 
-       GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
-       gridContainer.setAdapter(clothingGridAdapter);
+       RecyclerView recyclerView = dialog.findViewById(R.id.new_items_grid);
+       clothingGridAdapter = new RecyclerGridAdapter(new_clothing_items,"outlets");
+       recyclerView.setItemAnimator(new CustomItemAnimator());
+       recyclerView.setAdapter(clothingGridAdapter);
+       recyclerView.setLayoutManager(mLayoutManager);
+
        TextView txt = dialog.findViewById(R.id.items_count);
        entranceViewModel.getCurrentClothingItem().observe(getViewLifecycleOwner(), integer -> {
            String text = "(" + integer + " items)";
            txt.setText(text);
        });
 
-       if(gender.equals(Macros.CustomerMacros.WOMEN)) {
+       if(gender.equals(Macros.CustomerMacros.WOMEN))
            entranceViewModel.getWomen_clothing_items().observe(getViewLifecycleOwner(), clothingObserver);
-       }
-       else {
+       else
            entranceViewModel.getMen_clothing_items().observe(getViewLifecycleOwner(),clothingObserver);
-       }
 
        String text_header;
        TextView header = dialog.findViewById(R.id.new_items_header);
@@ -205,48 +203,14 @@ public class HotTrendingFragment extends Fragment {
        dialog.show();
     }
 
-    private void MostTrendingDialog() {
-
-        GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
-        gridContainer.setAdapter(trendingGridAdapter);
-        TextView txt = dialog.findViewById(R.id.items_count);
-        entranceViewModel.getCurrentTrendingItem().observe(getViewLifecycleOwner(), integer -> {
-            String text = "(" + integer + " items)";
-            txt.setText(text);
-        });
-
-        if(gender.equals(Macros.CustomerMacros.WOMEN)) {
-            entranceViewModel.getWomen_new_trending_items().observe(getViewLifecycleOwner(), trendingObserver);
-        }
-        else {
-            entranceViewModel.getMen_new_trending_items().observe(getViewLifecycleOwner(),trendingObserver);
-        }
-
-        String text_header;
-        text_header = "Trending Now";
-        TextView header = dialog.findViewById(R.id.new_items_header);
-        header.setText(text_header);
-        header.setCompoundDrawablesWithIntrinsicBounds(null,null,
-                ContextCompat.getDrawable(dialog.getContext(),
-                        R.drawable.ic_baseline_trending_up),null);
-        header.setCompoundDrawablePadding(20);
-
-      /*   TextView header = dialog.findViewById(R.id.new_items_header);
-           header.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null);
-           text_header = "New " + type;
-           header.setText(text_header);
-       */
-
-        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().setGravity(Gravity.BOTTOM);
-        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        dialog.show();
-    }
-
     private void ShoesDialog() {
 
-       GridView gridContainer = dialog.findViewById(R.id.new_items_grid);
-       gridContainer.setAdapter(shoesGridAdapter);
+        RecyclerView recyclerView = dialog.findViewById(R.id.new_items_grid);
+        shoesGridAdapter = new RecyclerGridAdapter(new_shoes_items,"outlets");
+        recyclerView.setItemAnimator(new CustomItemAnimator());
+        recyclerView.setAdapter(shoesGridAdapter);
+        recyclerView.setLayoutManager(mLayoutManager);
+
        TextView txt = dialog.findViewById(R.id.items_count);
        entranceViewModel.getCurrentShoesItem().observe(getViewLifecycleOwner(), integer -> {
            String text = "(" + integer + " items)";
@@ -276,32 +240,26 @@ public class HotTrendingFragment extends Fragment {
 
         layout1.startAnimation(fading);
         layout2.startAnimation(fading);
-        layout3.startAnimation(fading);
     }
 
     private void setWomenEntrance() {
 
         String first_header = "NEW IN CASTRO COLLECTION";
         String second_header = "BEST SELLER ALDO ITEMS";
-        String third_header = "TRENDING NOW";
 
         setAnimation();
 
         ImageView textView1 = requireView().findViewById(R.id.text_btn1);
         ImageView textView2 = requireView().findViewById(R.id.text_btn2);
-        ImageView textView3 = requireView().findViewById(R.id.text_btn3);
 
         TextView text_header1 = requireView().findViewById(R.id.text_header1);
         TextView text_header2 = requireView().findViewById(R.id.text_header2);
-        TextView text_header3 = requireView().findViewById(R.id.text_header3);
 
         text_header1.setText(first_header);
         text_header2.setText(second_header);
-        text_header3.setText(third_header);
 
         Macros.Functions.GlidePicture(getContext(),Macros.WOMEN_FIRST_PIC,textView1);
         Macros.Functions.GlidePicture(getContext(),Macros.WOMEN_SECOND_PIC,textView2);
-        Macros.Functions.GlidePicture(getContext(),Macros.WOMEN_THIRD_PIC,textView3);
     }
 
     private void setMenEntrance() {
@@ -314,19 +272,15 @@ public class HotTrendingFragment extends Fragment {
 
         ImageView textView1 = requireView().findViewById(R.id.text_btn1);
         ImageView textView2 = requireView().findViewById(R.id.text_btn2);
-        ImageView textView3 = requireView().findViewById(R.id.text_btn3);
 
         TextView text_header1 = requireView().findViewById(R.id.text_header1);
         TextView text_header2 = requireView().findViewById(R.id.text_header2);
-        TextView text_header3 = requireView().findViewById(R.id.text_header3);
 
         text_header1.setText(first_header);
         text_header2.setText(second_header);
-        text_header3.setText(third_header);
 
         Macros.Functions.GlidePicture(getContext(),Macros.MEN_FIRST_PIC,textView1);
         Macros.Functions.GlidePicture(getContext(),Macros.MEN_SECOND_PIC,textView2);
-        Macros.Functions.GlidePicture(getContext(),Macros.MEN_THIRD_PIC,textView3);
     }
 
     @Override
@@ -337,6 +291,5 @@ public class HotTrendingFragment extends Fragment {
         layout = null;
         layout1 = null;
         layout2 = null;
-        layout3 = null;
     }
 }

@@ -66,6 +66,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int TYPE_ITEM = 1;
     private static final int TYPE_FAVORITES = 2;
     private static final int TYPE_FAVORITES_AD = 3;
+    private static final int TYPE_NEW_ITEM = 4;
 
     private List<ShoppingItem> AllItemsList;
     private List<ShoppingItem> ItemsList;
@@ -89,12 +90,14 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 return TYPE_ITEM;
         }
         else {
-
             if(type != null && type.equals("favorites")){
                 if (items.get(position).isAd())
                     return TYPE_FAVORITES_AD;
                 else
                     return TYPE_FAVORITES;
+            }
+            else if(type != null && type.equals("outlets")){
+                return TYPE_NEW_ITEM;
             }
             else
                 return 1;
@@ -125,6 +128,12 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             return new FavoritesViewHolder(view);
         }
+        else if( viewType == TYPE_NEW_ITEM){
+            View view = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.e3_grid_item, parent,false);
+
+            return new NewItemViewHolder(view);
+        }
         else {
             UnifiedNativeAdView view = (UnifiedNativeAdView) LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.favorites_ad_item, parent,false);
@@ -143,6 +152,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((FavoritesViewHolder) holder).setItem(items.get(position));
         else if (getItemViewType(position) == TYPE_FAVORITES_AD)
             ((ADViewHolder) holder).setAd(items.get(position));
+        else if (getItemViewType(position) == TYPE_NEW_ITEM)
+            ((NewItemViewHolder) holder).setItem(items.get(position));
     }
 
     @Override
@@ -396,7 +407,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
     }
-
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private TextView brand_name,buy,sale,sale_percentage,price,old_price,description,percentage,
@@ -1021,5 +1031,105 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
+    }
+    private class NewItemViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView imageView;
+        Button link;
+        TextView price;
+        TextView reduced_price;
+        TextView sale;
+        TextView brand;
+        TextView description;
+
+        public NewItemViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            imageView = itemView.findViewById(R.id.image_slider);
+            link = itemView.findViewById(R.id.store_link);
+            price = itemView.findViewById(R.id.slider_brand);
+            reduced_price = itemView.findViewById(R.id.reduced_price);
+            sale = itemView.findViewById(R.id.sale);
+            brand = itemView.findViewById(R.id.brand);
+            description = itemView.findViewById(R.id.description);
+        }
+
+        public void setItem(final ShoppingItem item) {
+
+            ItemsList = items;
+
+            link.setOnClickListener(v -> {
+                assert item != null;
+                Macros.Functions.buy(getContext(), item.getSite_link());
+            });
+
+            assert item != null;
+            final ArrayList<String> imagesUrl = item.getImages();
+
+            if(item.getBrand() != null){
+                brand.setVisibility(View.VISIBLE);
+                brand.setText(item.getBrand().toUpperCase());
+            }
+            else
+                brand.setVisibility(View.GONE);
+
+            if(item.getName() != null){
+                StringBuilder desc = new StringBuilder();
+                for(String word : item.getName()){
+                    desc.append(word).append(" ");
+                }
+                description.setVisibility(View.VISIBLE);
+                description.setText(desc);
+            }
+            else
+                description.setVisibility(View.GONE);
+
+            if(imagesUrl.size() > 0)
+                Macros.Functions.GlidePicture(getContext(),imagesUrl.get(0),imageView);
+
+            if(item.isOn_sale())
+                sale.setVisibility(View.VISIBLE);
+            else
+                sale.setVisibility(View.GONE);
+
+            if(item.isOutlet() || item.isOn_sale()){
+                Currency shekel = Currency.getInstance("ILS");
+                String currency_symbol = shekel.getSymbol();
+                Double old = Double.parseDouble(item.getReduced_price()) * Macros.POUND_TO_ILS;
+                String cur_price = new DecimalFormat("##.##").format(old) + currency_symbol;
+
+                reduced_price.setVisibility(View.VISIBLE);
+                reduced_price.setText(cur_price);
+                reduced_price.setTextColor(Color.RED);
+                reduced_price.setTextSize(16);
+
+                price.setPaintFlags(price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                price.setText(item.getPrice());
+                price.setTextSize(12);
+            }
+            else {
+                reduced_price.setVisibility(View.GONE);
+                price.setText(item.getPrice());
+                price.setTextSize(16);
+            }
+
+            imageView.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
+                intent.putExtra("isFav", false);
+                intent.putExtra("brand", item.getSeller());
+                intent.putExtra("id", item.getId());
+                intent.putExtra("img1", item.getImages().get(0));
+                intent.putExtra("img2", item.getImages().get(1));
+                intent.putExtra("img3", item.getImages().get(2));
+                intent.putExtra("img4", item.getImages().get(3));
+                intent.putExtra("seller_logo", item.getSellerLogoUrl());
+                intent.putExtra("description", item.toString());
+                intent.putExtra("type", item.getType());
+
+                Macros.Functions.fullscreen(getContext(), intent, null);
+            });
+        }
+
+        public Context getContext() { return itemView.getContext(); }
     }
 }

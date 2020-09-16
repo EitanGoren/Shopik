@@ -28,6 +28,7 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.Adapters.ExplanationPagerViewAdapter;
 import com.eitan.shopik.Items.RecyclerItem;
+import com.eitan.shopik.Items.ShoppingItem;
 import com.eitan.shopik.LandingPageActivity;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
@@ -152,10 +153,9 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 // LIKED ITEMS
                 new fetchLikedItems().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                // TRENDING ITEMS
-                // new getAldoMostTrending().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 // SHOES ITEMS
                 new getAldoShoes().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
                 // CLOTHING ITEMS
                 new getCastroClothing().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
@@ -315,46 +315,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
             mMainPager.setCurrentItem(0);
     }
 
-    public static class ZoomOutPageTransformer implements ViewPager.PageTransformer {
-
-        private static final float MIN_SCALE = 0.85f;
-        private static final float MIN_ALPHA = 0.5f;
-
-        public void transformPage(View view, float position) {
-            int pageWidth = view.getWidth();
-            int pageHeight = view.getHeight();
-
-            if (position < -1) { // [-Infinity,-1)
-                // This page is way off-screen to the left.
-                view.setAlpha(0f);
-
-            } else if (position <= 1) { // [-1,1]
-                // Modify the default slide transition to shrink the page as well
-                float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
-                float vertMargin = pageHeight * (1 - scaleFactor) / 2;
-                float horzMargin = pageWidth * (1 - scaleFactor) / 2;
-                if (position < 0) {
-                    view.setTranslationX(horzMargin - vertMargin / 2);
-                } else {
-                    view.setTranslationX(-horzMargin + vertMargin / 2);
-                }
-
-                // Scale the page down (between MIN_SCALE and 1)
-                view.setScaleX(scaleFactor);
-                view.setScaleY(scaleFactor);
-
-                // Fade the page relative to its size.
-                view.setAlpha(MIN_ALPHA +
-                        (scaleFactor - MIN_SCALE) /
-                                (1 - MIN_SCALE) * (1 - MIN_ALPHA));
-
-            } else { // (1,+Infinity]
-                // This page is way off-screen to the right.
-                view.setAlpha(0f);
-            }
-        }
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -484,13 +444,16 @@ public class GenderFilteringActivity extends AppCompatActivity {
         protected Void doInBackground(Integer... integers) {
             int i=0;
             try {
-                Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + integers[0] + "&page=" + integers[1]).get();
+                Document document = Jsoup.connect("https://www.asos.com/cat/?cid="
+                        + integers[0]
+                        + "&page="
+                        + integers[1]).get();
                 Elements products = document.getElementsByAttributeValue("data-auto-id", "productTile");
 
                 outletsModel.setTotalItems(products.size());
                 for (Element prod : products) {
                     ++i;
-                    RecyclerItem recyclerItem = new RecyclerItem(null,null);
+                    ShoppingItem shoppingItem = new ShoppingItem();
 
                     // PRICE
                     String price = "", red = "";
@@ -502,13 +465,13 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         catch (IndexOutOfBoundsException ex){
                             price = pook.get(0).childNode(0).childNode(0).toString().replace("£", "");
                         }
-                        recyclerItem.setPrice(price);
+                        shoppingItem.setPrice(price);
                     }
                     Elements pook2 = prod.getElementsByAttributeValue("data-auto-id", "productTileSaleAmount");
                     if (pook2.size() > 0) {
                         red = pook2.get(0).childNode(0).toString().replace("£", "");
-                        recyclerItem.setSale(true);
-                        recyclerItem.setReduced_price(red);
+                        shoppingItem.setOn_sale(true);
+                        shoppingItem.setReduced_price(red);
                     }
 
                     //ID
@@ -539,21 +502,12 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     Elements brand_ele;
                     try {
                         brand_ele = document2.getElementsByClass("brand-description");
-                        Elements pop = brand_ele.get(0).getAllElements();
-                        brand = pop.get(4).childNode(0).toString().replace("&amp;", "&");
-                        recyclerItem.setBrand(brand);
+                        Elements poki = brand_ele.get(0).getElementsByTag("strong");
+                        brand = poki.get(0).text();
+                        shoppingItem.setBrand(brand);
                     }
                     catch (IndexOutOfBoundsException ex) {
-                        try {
-                            brand_ele = document2.getElementsByClass("product-description");
-                            brand = brand_ele.get(1).childNode(4).
-                                    childNode(0).childNode(1).toString().
-                                    replace(" by ", "");
-                            recyclerItem.setBrand(brand);
-                        }
-                        catch (IndexOutOfBoundsException e) {
-                            recyclerItem.setBrand("ASOS");
-                        }
+                        shoppingItem.setBrand("ASOS");
                     }
 
                     Currency shekel = Currency.getInstance("ILS");
@@ -561,16 +515,16 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
                     String _price = new DecimalFormat("##.##").format(current) + currency_symbol;
 
-                    recyclerItem.setSeller("ASOS");
-                    recyclerItem.setImages(images);
-                    recyclerItem.setPrice(_price);
-                    recyclerItem.setReduced_price(red);
-                    recyclerItem.setLink(link);
-                    recyclerItem.setId(id);
-                    recyclerItem.setDescription(new ArrayList<>(Arrays.asList(description.split(" "))));
-                    recyclerItem.setType("OUTLET");
+                    shoppingItem.setSeller("ASOS");
+                    shoppingItem.setImages(images);
+                    shoppingItem.setPrice(_price);
+                    shoppingItem.setReduced_price(red);
+                    shoppingItem.setSite_link(link);
+                    shoppingItem.setId(id);
+                    shoppingItem.setName(new ArrayList<>(Arrays.asList(description.split(" "))));
+                    shoppingItem.setType("OUTLET");
 
-                    outletsModel.addToOutlets(recyclerItem);
+                    outletsModel.addToOutlets(shoppingItem);
                     outletsModel.setCurrentItem(i);
                 }
             }
@@ -578,6 +532,46 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             return null;
+        }
+    }
+
+    public static class ZoomOutPageTransformer implements ViewPager.PageTransformer {
+
+        private static final float MIN_SCALE = 0.85f;
+        private static final float MIN_ALPHA = 0.5f;
+
+        public void transformPage(View view, float position) {
+            int pageWidth = view.getWidth();
+            int pageHeight = view.getHeight();
+
+            if (position < -1) { // [-Infinity,-1)
+                // This page is way off-screen to the left.
+                view.setAlpha(0f);
+
+            } else if (position <= 1) { // [-1,1]
+                // Modify the default slide transition to shrink the page as well
+                float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
+                float vertMargin = pageHeight * (1 - scaleFactor) / 2;
+                float horzMargin = pageWidth * (1 - scaleFactor) / 2;
+                if (position < 0) {
+                    view.setTranslationX(horzMargin - vertMargin / 2);
+                } else {
+                    view.setTranslationX(-horzMargin + vertMargin / 2);
+                }
+
+                // Scale the page down (between MIN_SCALE and 1)
+                view.setScaleX(scaleFactor);
+                view.setScaleY(scaleFactor);
+
+                // Fade the page relative to its size.
+                view.setAlpha(MIN_ALPHA +
+                        (scaleFactor - MIN_SCALE) /
+                                (1 - MIN_SCALE) * (1 - MIN_ALPHA));
+
+            } else { // (1,+Infinity]
+                // This page is way off-screen to the right.
+                view.setAlpha(0f);
+            }
         }
     }
 
@@ -628,7 +622,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         Elements prod_info = prod_page.getElementsByClass("product-image-gallery");
                         Elements images_elements = prod_info.get(0).getElementsByClass("gallery-image-link");
 
-                        RecyclerItem recyclerItem = new RecyclerItem("Aldo",link);
+                        ShoppingItem shoppingItem = new ShoppingItem();
                         ArrayList<String> images = new ArrayList<>();
                         for(Node img : images_elements){
                             images.add(img.attr("data-source"));
@@ -639,19 +633,19 @@ public class GenderFilteringActivity extends AppCompatActivity {
                             }
                         }
 
-                        recyclerItem.setPrice(price);
-                        recyclerItem.setImages(images);
-                        recyclerItem.setBrand("Aldo");
-                        recyclerItem.setGender(gender);
-                        recyclerItem.setSeller("Aldo");
-                        recyclerItem.setId(id);
-                        recyclerItem.setDescription(name);
-                        recyclerItem.setLink(link);
+                        shoppingItem.setPrice(price);
+                        shoppingItem.setImages(images);
+                        shoppingItem.setBrand("Aldo");
+                        shoppingItem.setGender(gender);
+                        shoppingItem.setSeller("Aldo");
+                        shoppingItem.setId(id);
+                        shoppingItem.setName(name);
+                        shoppingItem.setSite_link(link);
 
                         if(gender.equals(Macros.CustomerMacros.WOMEN))
-                            entranceModel.addWomenShoesItem(recyclerItem);
+                            entranceModel.addWomenShoesItem(shoppingItem);
                         else
-                            entranceModel.addMenShoesItem(recyclerItem);
+                            entranceModel.addMenShoesItem(shoppingItem);
 
                         entranceModel.setCurrentShoesItem(iter);
                     }
@@ -692,7 +686,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
                             get(0).attr("data-product-sku");
 
                     String link = "https://www.castro.com/" + id;
-                    RecyclerItem recyclerItem = new RecyclerItem("Castro", link);
 
                     Document item_doc;
                     try {
@@ -714,17 +707,19 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     String price;
                     Elements price_doc = item_doc.getElementsByClass("price");
 
+                    ShoppingItem shoppingItem = new ShoppingItem();
+
                     if (price_doc.hasClass("old-price")) {
                         price = price_doc.get(0).childNode(0).toString().replace("₪","");
                         String old_price = price_doc.get(1).childNode(0).toString().
                                 replace("₪", "");
-                        recyclerItem.setReduced_price(price);
-                        recyclerItem.setSale(true);
-                        recyclerItem.setPrice(old_price);
+                        shoppingItem.setReduced_price(price);
+                        shoppingItem.setOn_sale(true);
+                        shoppingItem.setPrice(old_price);
                     }
                     else {
                         price = price_doc.get(0).childNode(0).toString().replace("₪", "");
-                        recyclerItem.setPrice(price);
+                        shoppingItem.setPrice(price);
                     }
 
                     String name = "";
@@ -746,19 +741,19 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
                     ArrayList<String> description = new ArrayList<>(Arrays.asList(name.split(" ")));
 
-                    recyclerItem.setImages(images);
-                    recyclerItem.setBrand("Castro");
-                    recyclerItem.setGender(gender);
-                    recyclerItem.setSeller("Castro");
-                    recyclerItem.setId(id);
-                    recyclerItem.setDescription(description);
-                    recyclerItem.setLink(link);
+                    shoppingItem.setImages(images);
+                    shoppingItem.setBrand("Castro");
+                    shoppingItem.setGender(gender);
+                    shoppingItem.setSeller("Castro");
+                    shoppingItem.setId(id);
+                    shoppingItem.setName(description);
+                    shoppingItem.setSite_link(link);
 
                     iter++;
                     if(gender.equals(Macros.CustomerMacros.WOMEN))
-                        entranceModel.addWomenClothingItem(recyclerItem);
+                        entranceModel.addWomenClothingItem(shoppingItem);
                     else
-                        entranceModel.addMenClothingItem(recyclerItem);
+                        entranceModel.addMenClothingItem(shoppingItem);
 
                     entranceModel.setCurrentClothingItem(iter);
                 }
