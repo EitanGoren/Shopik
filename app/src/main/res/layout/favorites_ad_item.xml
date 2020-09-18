@@ -131,7 +131,6 @@
                 app:civ_border_width="2dp" />
 
             <TextView
-                android:id="@+id/AD"
                 style="@style/AppTheme.AdAttribution"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="9dp"/>

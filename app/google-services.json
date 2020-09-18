@@ -15,11 +15,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "260470087065-t4aveuro8si1e9ch05d89jcgsl31umip.apps.googleusercontent.com",
+          "client_id": "260470087065-1nr0pqig7gteabcbg5gc7588hqb9t76n.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.eitan.shopik",
             "certificate_hash": "5a70b5f771a7c08c02c688243e9201445e2668f4"
+          }
+        },
+        {
+          "client_id": "260470087065-2vamig7v1dhiirjltf3f6rv3g8dtm411.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eitan.shopik",
+            "certificate_hash": "580bf67b14f59503d116fa6c616ac4c0ca5a893b"
+          }
+        },
+        {
+          "client_id": "260470087065-h7l9hdme96kj0qb9mme97ua2fpd5pl70.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eitan.shopik",
+            "certificate_hash": "18bdce7ef202d9d668ba79eb18a9c7a2e7e7f60b"
           }
         },
         {

@@ -4,9 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Pair;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,10 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.Keep;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.agrawalsuneet.dotsloader.loaders.TashieLoader;
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
-import com.eitan.shopik.Customer.GenderFilteringActivity;
+import com.eitan.shopik.customer.GenderFilteringActivity;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.firebase.ui.auth.AuthMethodPickerLayout;
@@ -39,29 +40,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 @Keep
 public class LandingPageActivity extends AppCompatActivity {
 
     private static String provider,email,imageUrl,id_in_provider;
     private static FirebaseUser user;
     private FirebaseFirestore db;
+    private TextView shopik;
+    private ImageView tooki;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         postponeEnterTransition();
         View decorView = getWindow().getDecorView();
-        int uiOptions =
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE;
+        // Hide both the navigation bar and the status bar.
+        // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
+        // a general rule, you should design your app to hide the status bar whenever you
+        // hide the navigation bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
-
-        // inside your activity (if you did not enable transitions in your theme)
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        ShopikApplicationActivity.RefreshAds(5);
         setContentView(R.layout.activity_landing_page);
 
-       //FirebaseAuth.getInstance().signOut();
+        //FirebaseAuth.getInstance().signOut();
         init();
 
         startPostponedEnterTransition();
@@ -92,18 +99,7 @@ public class LandingPageActivity extends AppCompatActivity {
     }
 
     private void AuthenticateUser() {
-        TashieLoader loader = findViewById(R.id.loader);
-        TextView shopik = findViewById(R.id.shopik);
-        ImageView tooki = findViewById(R.id.imageView);
 
-        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this,
-                Pair.create(tooki,"tooki"),
-                Pair.create(shopik,"Shopik"));
-
-        YoYo.with(Techniques.RotateIn).duration(2500).onEnd(animator -> {
-            YoYo.with(Techniques.Tada).duration(2500).playOn(shopik);
-            shopik.setVisibility(View.VISIBLE);
-        }).playOn(tooki);
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
@@ -119,22 +115,26 @@ public class LandingPageActivity extends AppCompatActivity {
                 .setEmailButtonId(R.id.email_sign_in)
                 .build();
 
-        YoYo.with(Techniques.FadeOut).duration(5000).onEnd(animator -> {
-            // Create and launch sign-in intent
-            startActivityForResult(AuthUI.getInstance()
-                    .createSignInIntentBuilder()
-                    .setAvailableProviders(providers)
-                    .setIsSmartLockEnabled(false)
-                    .setAuthMethodPickerLayout(customLayout)
-                    .setTheme(R.style.SignInStyle)
-                    .setLogo(R.mipmap.ic_launcher_shopik)
-                    .build(),1,options.toBundle());
-        }).playOn(loader);
+        // Create and launch sign-in intent
+        startActivityForResult(AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .setIsSmartLockEnabled(false)
+                .setAuthMethodPickerLayout(customLayout)
+                .setTheme(R.style.SignInStyle)
+                .setLogo(R.mipmap.ic_launcher_shopik)
+                .build(),1);
     }
 
     private void init() {
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
+
+        shopik = findViewById(R.id.shopik);
+        tooki = findViewById(R.id.imageView);
+
+        Animation blink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink_anim);
+        shopik.startAnimation(blink);
     }
 
     private void registerNewUser() {
@@ -188,32 +188,21 @@ public class LandingPageActivity extends AppCompatActivity {
 
     private void goToCustomer() {
 
-        TashieLoader loader = findViewById(R.id.loader);
-        TextView shopik = findViewById(R.id.shopik);
-        shopik.setVisibility(View.INVISIBLE);
-        ImageView tooki = findViewById(R.id.imageView);
-
         Intent intent = new Intent(LandingPageActivity.this, GenderFilteringActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("imageUrl", imageUrl);
         bundle.putString("name", user.getDisplayName());
         intent.putExtra("bundle", bundle);
 
-        ActivityOptions options = ActivityOptions.
-                makeSceneTransitionAnimation(this,
-                        Pair.create(tooki,"tooki"),
-                        Pair.create(shopik,"Shopik")
-                );
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this,
+                Pair.create(tooki,"tooki"),
+                Pair.create(shopik,"Shopik"));
 
-        YoYo.with(Techniques.RotateIn).duration(2500).onEnd(animator -> {
-            YoYo.with(Techniques.Tada).duration(2500).playOn(shopik);
-            shopik.setVisibility(View.VISIBLE);
-        }).playOn(tooki);
-
-        YoYo.with(Techniques.FadeOut).duration(5000).onEnd(animator -> {
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
             startActivity(intent, options.toBundle());
             supportFinishAfterTransition();
-        }).playOn(loader);
+        },1000 * 4 );
     }
 
     @SuppressLint("RestrictedApi")
@@ -238,9 +227,7 @@ public class LandingPageActivity extends AppCompatActivity {
                         GraphRequest request = GraphRequest.newMeRequest( accessToken, (object, response1) -> {
                             try {
                                 id_in_provider = object.getString("id");
-                                imageUrl = "http://graph.facebook.com/"
-                                        + id_in_provider
-                                        + "/picture?type=large&width=720&height=720";
+                                imageUrl = object.getJSONObject("picture").getJSONObject("data").getString("url");
                                 checkCustomer(user.getUid());
                             }
                             catch (JSONException e) {
@@ -248,7 +235,7 @@ public class LandingPageActivity extends AppCompatActivity {
                             }
                         });
                         Bundle parameters = new Bundle();
-                        parameters.putString("fields", "id");
+                        parameters.putString("fields", "picture.width(200).height(200),id");
                         request.setParameters(parameters);
                         request.executeAsync();
                        break;
@@ -287,4 +274,5 @@ public class LandingPageActivity extends AppCompatActivity {
         super.finishAfterTransition();
         overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
     }
+
 }

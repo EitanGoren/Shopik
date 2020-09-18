@@ -1,72 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/LandingLayout"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff">
+    android:layout_width="match_parent"
+    android:background="#000000">
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="75dp"
-        android:layout_height="85dp"
-        android:layout_marginTop="44dp"
+        android:layout_width="65dp"
+        android:layout_height="75dp"
         android:contentDescription="@string/logo"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:padding="5dp"
         android:src="@drawable/tooki"
-        android:transitionName="@string/tooki"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shopik" />
+        android:transitionName="@string/tooki" />
 
     <TextView
         android:id="@+id/shopik"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="192dp"
+        android:layout_above="@id/imageView"
+        android:layout_centerHorizontal="true"
         android:fontFamily="cursive"
         android:paddingStart="10dp"
         android:paddingEnd="0dp"
         android:text="@string/app_name"
-        android:textColor="@color/SplashScreenBackground"
-        android:textSize="70sp"
+        android:textColor="#ffffff"
+        android:textSize="60sp"
         android:textStyle="bold"
-        android:transitionName="@string/app_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:transitionName="@string/app_name" />
 
     <com.agrawalsuneet.dotsloader.loaders.TashieLoader
         android:id="@+id/loader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        android:layout_below="@id/imageView"
+        android:layout_centerHorizontal="true"
         app:tashieloader_animDelay="70"
         app:tashieloader_animDur="500"
-        app:tashieloader_dotsColor="@color/SplashScreenBackground"
+        app:tashieloader_dotsColor="#ffffff"
         app:tashieloader_dotsDist="12dp"
         app:tashieloader_dotsRadius="5dp"
         app:tashieloader_interpolator="@android:anim/accelerate_interpolator"
         app:tashieloader_noOfDots="6" />
 
     <TextView
-        android:id="@+id/copyright_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="252dp"
         android:fontFamily="@font/nunito_semibold"
         android:text="@string/powered_by_eitan_goren"
         android:textAlignment="center"
-        android:textColor="@color/SplashScreenBackground"
+        android:layout_alignParentBottom="true"
         android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loader" />
+        android:layout_marginBottom="25dp"
+        android:textColor="#ffffff"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

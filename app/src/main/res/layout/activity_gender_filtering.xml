@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Customer.GenderFilteringActivity">
+    tools:context=".customer.GenderFilteringActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/gender_toolbar"
@@ -25,7 +25,6 @@
             android:paddingTop="5dp">
 
             <TextView
-                android:id="@+id/company_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="cursive"
@@ -76,21 +75,18 @@
         android:translationZ="5dp">
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/top_home"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/home"
             android:tag="home"/>
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/top_categories"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:tag="categories"
             android:text="@string/categories"/>
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/top_new_in"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/new_in"
@@ -102,7 +98,7 @@
         android:id="@+id/brands_roller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#878787"
+        android:background="#7E7E7E"
         android:elevation="5dp"
         android:translationZ="5dp"
         android:layout_below="@id/gender_top_nav">

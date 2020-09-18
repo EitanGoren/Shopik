@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- res/transition/change_image_transform.xml -->
-
-<transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
-    android:transitionOrdering="sequential">
-    <changeBounds />
-    <fade android:fadingMode="fade_out" />
-</transitionSet>

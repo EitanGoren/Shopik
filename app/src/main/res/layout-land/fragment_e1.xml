@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    tools:context=".genderFilteringPages.HotTrendingFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:fitsSystemWindows="true"
+        app:liftOnScroll="true">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="#FFFFFF"
+            android:elevation="15dp"
+            android:minHeight="45dp"
+            app:contentScrim="@color/SplashScreenBackground"
+            app:layout_collapseMode="parallax"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed|snap"
+            app:statusBarScrim="@color/fragmentBackground">
+
+            <TextView
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/multicolor_bg"
+                android:fontFamily="@font/martel_sans"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="#ffffff"
+                android:textSize="16sp"
+                app:layout_collapseMode="parallax" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layout1"
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:layout_marginTop="10dp"
+                android:animateLayoutChanges="true"
+                android:background="#ffffff"
+                app:layout_collapseMode="parallax">
+
+                <TextView
+                    android:id="@+id/best_sellers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:drawableStart="@drawable/ic_loyalty_red"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/nunito_bold"
+                    android:gravity="center_vertical"
+                    android:letterSpacing="0.1"
+                    android:text="@string/hot_trending"
+                    android:textColor="#000000"
+                    android:textSize="34sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/best_sellers_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:fontFamily="@font/nunito_bold"
+                    android:gravity="center_vertical"
+                    android:textColor="#000000"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_width="450dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:background="#ffffff"
+                    android:scrollbars="none"
+                    app:layout_collapseMode="parallax" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/layout2"
+                    android:layout_width="400dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/textview_border_line"
+                    android:clickable="true"
+                    android:elevation="10dp"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                    <ImageView
+                        android:id="@+id/text_btn1"
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginTop="2.3dp"
+                        android:layout_marginBottom="2.3dp"
+                        android:contentDescription="@string/castro_new"
+                        android:gravity="center"
+                        android:scaleType="centerCrop"
+                        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+                    <TextView
+                        android:id="@+id/text_header1"
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginTop="2.3dp"
+                        android:layout_marginBottom="2.3dp"
+                        android:background="#40000000"
+                        android:fontFamily="@font/roboto_thin"
+                        android:gravity="center"
+                        android:textAlignment="center"
+                        android:textColor="#ffffff"
+                        android:textSize="45sp"
+                        android:textStyle="bold"
+                        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layout3"
+                    android:layout_width="400dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="40dp"
+                    android:background="@drawable/textview_border_line"
+                    android:clickable="true"
+                    android:elevation="10dp"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                    <ImageView
+                        android:id="@+id/text_btn2"
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginTop="2.3dp"
+                        android:layout_marginBottom="2.3dp"
+                        android:contentDescription="@string/aldo_new"
+                        android:gravity="center"
+                        android:scaleType="centerCrop" />
+
+                    <TextView
+                        android:id="@+id/text_header2"
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginTop="2.3dp"
+                        android:layout_marginBottom="2.3dp"
+                        android:background="#40000000"
+                        android:fontFamily="@font/roboto_thin"
+                        android:gravity="center"
+                        android:padding="20dp"
+                        android:textAlignment="center"
+                        android:textColor="#ffffff"
+                        android:textSize="45sp"
+                        android:textStyle="bold"
+                        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

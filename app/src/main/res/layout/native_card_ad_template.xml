@@ -9,7 +9,6 @@
     tools:menu="@menu/menu_customer_toolbar">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/ad_swipe_cardView"
         android:layout_width="wrap_content"
         android:layout_height="525dp"
         android:layout_gravity="center"
@@ -152,7 +151,6 @@
             android:fontFamily="@font/nunito_semibold" />
 
         <TextView
-            android:id="@+id/AD"
             style="@style/AppTheme.AdAttributionLarge"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"

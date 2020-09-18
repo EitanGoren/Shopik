@@ -16,12 +16,16 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    dexOptions {
+        javaMaxHeapSize "2g"
+    }
+
     defaultConfig {
         applicationId "com.eitan.shopik"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 6
-        versionName "1.1"
+        versionCode 11
+        versionName "1.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         useLibrary 'android.test.base'
@@ -66,7 +70,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.firebase:firebase-firestore:21.6.0'
 
-    implementation 'com.google.firebase:firebase-ads:19.3.0'
+    implementation 'com.google.firebase:firebase-ads:19.4.0'
 
     def work_version = "2.3.4"
     //noinspection GradleDependency
@@ -79,7 +83,7 @@ dependencies {
     implementation 'com.android.support:support-core-utils:28.0.0'
     //noinspection GradleCompatible
     implementation 'com.android.support:cardview-v7:28.0.0'
-    implementation 'com.google.firebase:firebase-auth:19.3.2'
+    implementation 'com.google.firebase:firebase-auth:19.4.0'
     implementation 'com.google.firebase:firebase-database:19.4.0'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
@@ -111,7 +115,7 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'com.android.support:percent:25.3.1'
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
-    implementation 'com.google.android.gms:play-services-ads:19.3.0'
+    implementation 'com.google.android.gms:play-services-ads:19.4.0'
     implementation 'com.braintreepayments.api:braintree:'
 
     //Youtube

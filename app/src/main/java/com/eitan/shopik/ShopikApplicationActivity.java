@@ -8,7 +8,7 @@ import android.os.Build;
 import androidx.annotation.Keep;
 import androidx.annotation.RequiresApi;
 
-import com.eitan.shopik.Items.ShoppingItem;
+import com.eitan.shopik.items.ShoppingItem;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdSettings;
@@ -52,51 +52,8 @@ public class ShopikApplicationActivity extends Application {
         return instance;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        //Google Ads
-        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
-        RequestConfiguration configuration = new RequestConfiguration.Builder().
-                setTestDeviceIds(testDeviceIds).build();
-        MobileAds.setRequestConfiguration(configuration);
-
-        //Facebook Ads
-        AdSettings.setIntegrationErrorMode(INTEGRATION_ERROR_CRASH_DEBUG_MODE);
-        AudienceNetworkAds.initialize(this);
-
-        interstitialAd = new com.facebook.ads.InterstitialAd(this, Macros.FB_PLACEMENT_ID);
-
-        // Load a new interstitial.
-       adListener = new InterstitialAdListener() {
-            @Override
-            public void onInterstitialDisplayed(Ad ad) {}
-
-            @Override
-            public void onInterstitialDismissed(Ad ad) {
-                setInterstitialAd();
-            }
-
-            @Override
-            public void onError(Ad ad, AdError adError) {}
-
-            @Override
-            public void onAdLoaded(Ad ad) {}
-
-            @Override
-            public void onAdClicked(Ad ad) {}
-
-            @Override
-            public void onLoggingImpression(Ad ad) {}
-        };
-
-        InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
-                .withAdListener(adListener)
-                .withCacheFlags(EnumSet.of(CacheFlag.VIDEO))
-                .build();
-
-        interstitialAd.loadAd(LoadAdConfig);
+    public static void LoadAds(int num){
+        new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num);
     }
 
     //FACEBOOK INTERSTITIAL AD
@@ -145,8 +102,51 @@ public class ShopikApplicationActivity extends Application {
         categoryClicks++;
     }
 
-    public static void LoadAds(int num){
-        new getAds().execute(num);
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        //Google Ads
+        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
+        RequestConfiguration configuration = new RequestConfiguration.Builder().
+                setTestDeviceIds(testDeviceIds).build();
+        MobileAds.setRequestConfiguration(configuration);
+
+        //Facebook Ads
+        AdSettings.setIntegrationErrorMode(INTEGRATION_ERROR_CRASH_DEBUG_MODE);
+        AudienceNetworkAds.initialize(this);
+
+        interstitialAd = new com.facebook.ads.InterstitialAd(this, Macros.FB_PLACEMENT_ID);
+
+        // Load a new interstitial.
+        adListener = new InterstitialAdListener() {
+            @Override
+            public void onInterstitialDisplayed(Ad ad) {}
+
+            @Override
+            public void onInterstitialDismissed(Ad ad) {
+                setInterstitialAd();
+            }
+
+            @Override
+            public void onError(Ad ad, AdError adError) {}
+
+            @Override
+            public void onAdLoaded(Ad ad) {}
+
+            @Override
+            public void onAdClicked(Ad ad) {}
+
+            @Override
+            public void onLoggingImpression(Ad ad) {}
+        };
+
+        InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
+                .withAdListener(adListener)
+                .withCacheFlags(EnumSet.of(CacheFlag.VIDEO))
+                .build();
+
+        interstitialAd.loadAd(LoadAdConfig);
     }
 
     public static void RefreshAds(int num_of_ads){

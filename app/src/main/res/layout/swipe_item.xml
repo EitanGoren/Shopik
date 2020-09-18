@@ -9,7 +9,6 @@
     tools:menu="@menu/menu_customer_toolbar">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/swipe_cardView"
         android:layout_width="wrap_content"
         android:layout_height="525dp"
         android:layout_centerInParent="true"
@@ -22,7 +21,6 @@
         android:background="@drawable/top_border_line">
 
         <RelativeLayout
-            android:id="@+id/card_info"
             android:layout_width="match_parent"
             android:layout_height="95dp"
             android:layout_gravity="bottom"
@@ -82,7 +80,6 @@
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true"
                 android:layout_toEndOf="@id/unlike"
-                android:drawableStart="@drawable/ic_thumb_up_seleste"
                 android:drawablePadding="5dp"
                 android:elevation="5dp"
                 android:gravity="center"
@@ -90,6 +87,7 @@
                 android:transitionName="like"
                 android:textColor="#ffffff"
                 android:theme="@style/Buttons"
+                android:drawableStart="@drawable/ic_thumb_up_seleste"
                 android:translationZ="5dp" />
 
             <TextView
@@ -98,13 +96,13 @@
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="10dp"
-                android:drawableStart="@drawable/ic_thumb_down_pink"
                 android:drawablePadding="5dp"
                 android:elevation="5dp"
                 android:gravity="center"
                 android:padding="8dp"
                 android:textColor="#ffffff"
                 android:theme="@style/Buttons"
+                android:drawableStart="@drawable/ic_thumb_down_pink"
                 android:translationZ="5dp" />
 
         </RelativeLayout>
@@ -168,7 +166,8 @@
                 android:layout_toStartOf="@id/customer_toolbar"
                 android:translationZ="5dp"
                 android:elevation="5dp"
-                android:background="@color/colorTransparentWhite"/>
+                android:background="@color/colorTransparentWhite"
+                tools:ignore="RelativeOverlap" />
 
             <View
                 android:id="@+id/item_swipe_right_indicator"

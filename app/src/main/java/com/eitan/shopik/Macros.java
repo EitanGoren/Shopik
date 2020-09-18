@@ -15,7 +15,7 @@ import androidx.annotation.Keep;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
-import com.eitan.shopik.Company.CompanyProfileActivity;
+import com.eitan.shopik.company.CompanyProfileActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -34,7 +34,7 @@ public class Macros {
     public static final String DEFAULT_COVER_PHOTO = "https://st2.depositphotos.com/1747568/8686/v/950/depositphotos_86864998-stock-illustration-abstract-background-consisting-of-small.jpg";
     public static final String DEFAULT_PROFILE_IMAGE = "https://clipartart.com/images/account-profile-clipart-4.png";
     public static final String CUSTOMERS = "Customers";
-    public static final String ITEMS = "Items";
+    public static final String ITEMS = "items";
     public static final String TEST_DEVICE_ID = "7255B1C36174A2C33091060576730302";
     public static final String PAGE_NUM = "page_num";
     public static final String NATIVE_ADVANCED_AD = "ca-app-pub-5843605953860340/3737677950";
@@ -51,15 +51,10 @@ public class Macros {
     public static final String JACKETS = "Jackets";
     public static final String JEWELLERY = "Jewellery";
     public static final String WATCH = "Watch";
-    public static final String NEW_SHOES = "Shoes";
-    public static final String NEW_TRENDING = "TrendingNow";
-    public static final String NEW_CLOTHING = "Clothing";
     public static final String WOMEN_FIRST_PIC = "https://img.freepik.com/free-photo/portrait-beautiful-caucasian-sunbathed-woman-model-transparent-white-blouse-sitting-summer-beach-blue-ocean-background_158538-9730.jpg?size=626&ext=jpg";
     public static final String WOMEN_SECOND_PIC = "https://media.gettyimages.com/photos/female-hands-lacing-running-shoes-closeup-picture-id531912454?b=1&k=6&m=531912454&s=612x612&w=0&h=U0OPbVWYvR4XkM_0uOslKgx8yg3TWGUP_99j-KOMUHk=";
-    public static final String WOMEN_THIRD_PIC = "https://i.pinimg.com/736x/01/29/e4/0129e4d6d132dd5431c81b854386a44e.jpg";
     public static final String MEN_FIRST_PIC = "https://www.thefashionisto.com/wp-content/uploads/2015/07/Matt-Trethe-Matches-Fashion-Summer-Swimwear-Shoot-2015-Mens-Style-007.jpg";
     public static final String MEN_SECOND_PIC = "https://cdn.hiconsumption.com/wp-content/uploads/2019/08/Best-Mens-Sneakers-For-Summer-0-Hero.jpg";
-    public static final String MEN_THIRD_PIC = "https://www.rankandstyle.com/media/products/e/eddie-bauer-2-mens-clothing-websites.jpg";
     public static final String YOUTUBE_IC = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1200px-YouTube_full-color_icon_%282017%29.svg.png";
     public static final String TWITTER_IC = "https://www.aps.edu/sapr/images/pnglot.comtwitterbirdlogopng139932.png/image";
     public static final String FACEBOOK_IC = "https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png";
@@ -90,18 +85,6 @@ public class Macros {
     }
 
     public static class Arrays {
-
-        public static final String[] WOMEN_CLOTHES_TYPES = {
-                "Shoes-sc-00200195",
-                "Home-sc-00214997",
-                "Clothing-sc-00200200"
-        };
-
-        public static final String[] MEN_CLOTHES_TYPES = {
-                "Shoes-Accessories-sc-00201624",
-                "new-in-sc-00200410",
-                "Activewear-sc-00227302"
-        };
 
         public static final String[] PRICES = {"between 50 to 100", "above 100" ,"less than 50"};
     }
@@ -178,7 +161,6 @@ public class Macros {
 
         public static final String TOTE_RES = "https://cdn.shopify.com/s/files/1/0166/6656/products/Oh_honey_tote022.jpg?v=1563184080";
         public static final String CROSS_RES = "https://cdn-com.thelittlegreenbag.com/upload/artikelen/Matt-Nat/ss20/bee-dwell-crossbody-bag/Matt-Nat-Bee-Dwell-Crossbody-bag-SS20-crossbody-tas-mojito-crossbody-bag-model-600.jpg";
-        public static final String LEATHER_RES = "https://www.danburymint.co.uk/wp-content/uploads/2017/10/ce211ff0-be9d-4dd3-b911-fd158deaa6a0.jpg";
         public static final String BACKPACK_RES = "https://i.pinimg.com/236x/67/4f/a0/674fa0e41bcc893f8a4112c288ca9442.jpg";
         public static final String BUM_RES = "https://www.mohito.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/X/Y/XY082-99X-020_1.jpg";
         public static final String CLUTCH_RES = "https://ae01.alicdn.com/kf/HTB14qFGLpXXXXX.aXXXq6xXFXXXb/women-genuine-leather-evening-clutch-bag-stone-pattern-flap-handbag-for-female-wristlet-purse-fashion-shoulder.jpg";
@@ -202,7 +184,6 @@ public class Macros {
         public static final String WOMEN_BRAS = "https://img.joomcdn.net/517caacbae366bd288a824d31a35e36aa33e7390_400_400.jpeg";
         public static final String WOMEN_SHAPEWEAR = "https://i5.walmartimages.com/asr/c52237fe-5bb5-4349-8217-5d782a4b63aa_1.4413efef7927471436bbc3ddd4d47a78.jpeg";
         public static final String WOMEN_PYJAMAS = "https://sc02.alicdn.com/kf/HTB1Ya2WKFXXXXbIXFXXq6xXFXXX4.jpg_350x350.jpg";
-        public static final String WOMEN_THONGS = "https://ae01.alicdn.com/kf/H9c48cec89f3049d0a4431a9bf18ec6a5E/Women-Thongs-Sexy-Seamless-G-string-Thong-Fashion-pink-letters-print-Low-Waist-Shorts-Briefs-woman.jpg";
 
         public static final String WOMEN_LEATHER_JACKETS_RES = "https://d4zpg1jklewne.cloudfront.net/steak/spree-variant/000-012-blk-5/black-leather-moto-jacket-product.jpg?1546447623";
         public static final String WOMEN_PUFFER_JACKETS_RES = "https://i.pinimg.com/564x/9d/95/9a/9d959a0c5a3ec05c572769613011565c.jpg";
@@ -258,14 +239,13 @@ public class Macros {
         public static final String WOMEN_EARRING_RES = "https://www.besttohave.com/images/925-sterling-silver-white-freshwater-pearl-drop-earrings-p183-2477_image.jpg";
         public static final String WOMEN_ANKLET_RES = "https://cdn.lisaangel.co.uk/image/cache/data/product-images/ss19/su-ss19/layered-beaded-anklet-in-grey-and-rose-gold-4x3a1249-515x515.jpg";
 
-        public static final String MEN_ROUND_GLASSES_RES = "https://global2019-static-cdn.kikuu.com/upload-productImg-1533462659898_320_234.jpeg?";
-        public static final String MEN_OVERSIZED_GLASSES_RES = "https://i.pinimg.com/736x/f7/07/c3/f707c36f92f10bb6afe727523e0e39ca.jpg";
-        public static final String MEN_SQUARE_GLASSES_RES = "https://cdn.shopify.com/s/files/1/2403/6313/products/product-image-491666868_1200x1200.jpg?v=1571709186";
-
         public static final String WOMEN_SQUARE_GLASSES_RES = "https://ae01.alicdn.com/kf/H661c51c6971345b58d2c0fb61b7607c82/GIFANSEE-women-square-sunglasses-oversized-uxury-brand-glasses-vintage-design-eyewear-uv400.jpg";
         public static final String WOMEN_AVIATOR_GLASSES_RES = "https://cdn.shopify.com/s/files/1/0166/6656/products/Skinnydip_London_Rainbow_Aviator_Sunglasses_Model_Image_1_600x.jpg?v=1579790986";
         public static final String WOMEN_CATEYE_GLASSES_RES = "https://ae01.alicdn.com/kf/HLB1YKs2LHvpK1RjSZFqq6AXUVXah.jpg";
         public static final String WOMEN_ROUND_GLASSES_RES = "https://ae01.alicdn.com/kf/HTB1q60jdLjM8KJjSZFyq6xdzVXaC/DOKLY-New-Polarized-Mirror-Round-Sunglasses-women-Vintage-RetroWomen-Designer-Eyewear-Green-Color-UV400-Glasses-oculos.jpg";
+
+        public static final String MEN_ROUND_GLASSES_RES = "https://images.51microshop.com/4602/product/20190807/New_Fashion_Mens_Driving_Sunglasses_Polarized_Retro_Men_Round_Popular_Sunglasses_1565161878828_0.jpg";
+        public static final String MEN_SQUARE_GLASSES_RES = "https://pipiluxury.com/wp-content/uploads/2020/02/VIVIBEE-Color-Change-Grey-Frame-Photochromic-Polarized-Sunglasses-Men-Square-Classic-Chameleon-Glaases-Transition-Lens-Eyewear-1.jpg";
 
         public static final String MEN_LOAFERS_RES = "https://cf.shopee.ph/file/906adc125c1045c1dd079ed0cdd8afb9";
         public static final String MEN_BOOTS_RES = "https://clarks.scene7.com/is/image/Pangaea2Build/db-winter-boots-2-854-wk31-aw19?wid=854&fmt=pjpeg";
@@ -303,7 +283,6 @@ public class Macros {
         public static final String MEN_PLUS_SWIM_RES = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTqBJ_k6Dg4LBHbXufOQ-6hsXS9Gjwo-DBCH-PP18fcA3wHM0Tc&usqp=CAU";
 
         public static final String WOMEN_BIKINI_RES = "https://ae01.alicdn.com/kf/HTB1GFvBRgHqK1RjSZFPq6AwapXaW/Trend-Plus-Size-2XL-Swimsuit-Women-Sexy-Bikini-Swimwear-Women-Bikini-Push-Up-Brazilian-Beach-Bathing.jpg";
-        public static final String WOMEN_SWIMSUIT_RES = "https://www.womenfashionnista.com/wp-content/uploads/2019/06/costumi-curvy-9-1000-76.jpg";
         public static final String WOMEN_ONE_PIECE_RES = "https://i.pinimg.com/736x/93/61/6a/93616a54b232233777faf3fa70b1356b.jpg";
         public static final String WOMEN_SWIMMWEAR_RES = "https://i.pinimg.com/originals/97/f5/d0/97f5d0d7d08686f8d5b278b2d048a125.jpg";
 
@@ -317,7 +296,7 @@ public class Macros {
             Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
             View snackbarLayout = snackbar.getView();
             TextView textView = snackbarLayout.findViewById(com.google.android.material.R.id.snackbar_text);
-            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, drawableRes, 0);
+            textView.setCompoundDrawablesWithIntrinsicBounds(0,0, drawableRes,0);
             textView.setAllCaps(true);
             textView.setBackgroundColor(Color.TRANSPARENT);
             snackbarLayout.setBackgroundColor(context.getColor(R.color.SnackbarBackground));
@@ -336,14 +315,12 @@ public class Macros {
             circularProgressDrawable.start();
 
             if (view instanceof CircleImageView) Glide.with(context).
-                    load(imageUrl).
-                    placeholder(circularProgressDrawable).
-                    transition(withCrossFade(150)).
+                    load(imageUrl).placeholder(circularProgressDrawable).
+                    transition(withCrossFade(350)).
                     into((CircleImageView) view);
             else
-                Glide.with(context).load(imageUrl).
-                        placeholder(circularProgressDrawable).
-                        transition(withCrossFade(150)).
+                Glide.with(context).load(imageUrl).placeholder(circularProgressDrawable).
+                        transition(withCrossFade(350)).
                         into((ImageView) view);
         }
 
@@ -389,7 +366,7 @@ public class Macros {
         public static Pair<Integer, Integer> getCategoryNum(String gender, String sub_cat, String item_type) {
             switch (item_type) {
                 case BAG:
-                    return getBag(gender, sub_cat);
+                    return getBag(sub_cat);
                 case JEANS:
                     return getJeans(gender, sub_cat);
                 case SHOES:
@@ -411,7 +388,7 @@ public class Macros {
                 case LINGERIE:
                     return getLingerie(gender, sub_cat);
                 case SWIMWEAR:
-                    return getSwimwear(gender, sub_cat);
+                    return getSwimwear(sub_cat);
                 default:
                     return null;
             }
@@ -574,7 +551,7 @@ public class Macros {
             }
         }
 
-        private static Pair<Integer, Integer> getSwimwear(String gender, String sub_cat) {
+        private static Pair<Integer, Integer> getSwimwear(String sub_cat) {
             switch (sub_cat) {
                 case "bikini":
                     return new Pair<>(10117, 20);
@@ -588,7 +565,7 @@ public class Macros {
             }
         }
 
-        private static Pair<Integer, Integer> getBag(String gender, String sub_cat) {
+        private static Pair<Integer, Integer> getBag(String sub_cat) {
             switch (sub_cat) {
 
                 case "wallets":
@@ -650,7 +627,7 @@ public class Macros {
             }
         }
 
-        public static String translateSubCategoryToTerminalX(String gender, String item_sub_category) {
+        public static String translateSubCategoryToTerminalX(String item_sub_category) {
             switch (item_sub_category) {
                 case "mini":
                     return "mini";
@@ -1049,7 +1026,7 @@ public class Macros {
             }
         }
 
-        public static String translateCategoryToRenuar(String gender, String category) {
+        public static String translateCategoryToRenuar(String category) {
             switch (category) {
                 case BAG:
                     return "accessories/bags";
@@ -1264,6 +1241,8 @@ public class Macros {
                                 return "Maxi-Dresses-sc-00100346";
                             case "mini":
                                 return "Short-Dresses-sc-00100608";
+                            default:
+                                return null;
                         }
                     case SHIRT:
                         switch (item_sub_category){
@@ -1275,6 +1254,8 @@ public class Macros {
                                 return "Hooded-Sweatshirts-sc-00104082";
                             case "sweatshirts":
                                 return "Sweatshirts-c-1773";
+                            default:
+                                return null;
                         }
                     case JEANS:
                         return "Jeans-c-1934";
@@ -1294,14 +1275,14 @@ public class Macros {
                                 return "Pumps-c-1750";
                             case "sandals":
                                 return "Sandals-c-1751";
+                            default:
+                                return null;
                         }
                     case JACKETS:
-                        switch (item_sub_category){
-                            case "jacket":
-                                return "Jackets-c-1776";
-                            default:
-                                return "Coats-Jackets-c-2037";
+                        if ("jacket".equals(item_sub_category)) {
+                            return "Jackets-c-1776";
                         }
+                        return "Coats-Jackets-c-2037";
                     case JEWELLERY:
                         switch (item_sub_category) {
                             case "earrings":
@@ -1314,6 +1295,8 @@ public class Macros {
                                 return "Rings-c-1759";
                             case "bracelet":
                                 return "Bracelets-c-1758";
+                            default:
+                                return null;
                         }
                     case SUNGLASSES:
                         return "Sunglasses-c-1770";
@@ -1327,6 +1310,8 @@ public class Macros {
                                 return "Scarves-c-1872";
                             case "belts":
                                 return "Belts-c-1875";
+                            default:
+                                return null;
                         }
                     case LINGERIE:
                         switch (item_sub_category){
@@ -1336,6 +1321,8 @@ public class Macros {
                                 return "Bras-Bralettes-c-2203";
                             case "bra & panty":
                                 return"Bra-Panty-Sets-c-2270";
+                            default:
+                                return null;
                         }
                     default:
                         return null;
@@ -1420,7 +1407,7 @@ public class Macros {
             if (item_gender.equals(CustomerMacros.WOMEN)) {
                 switch (item_sub_category) {
                     case "bikini":
-                        return Pair.create("pdsearch/bikini/",false);
+                        return Pair.create("pdsearch/bikini",true);
                     case "one-piece":
                         return Pair.create("?&tag_ids=30002193",true);
                     case "swimwear":

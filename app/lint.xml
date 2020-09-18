@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="IconLocation">
+        <ignore path="src/main/res/drawable/bg3.jpg" />
+        <ignore path="src/main/res/drawable/default_cover_bg.jpg" />
+        <ignore path="src/main/res/drawable/percent.png" />
+        <ignore path="src/main/res/drawable/sale1.png" />
+        <ignore path="src/main/res/drawable/tooki.png" />
+    </issue>
+</lint>

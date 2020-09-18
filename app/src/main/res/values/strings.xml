@@ -7,18 +7,6 @@
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
     <string name="facebook_application_id" translatable="false">555191575133910</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb555191575133910</string>
-    <string name="action_settings">Settings</string>
-    <string name="server_client_id">260470087065–6p3h3eq7m1hikie7a7v08enqi05kd7vn.apps.googleusercontent.com</string>
-    <string name="items_run_out">Looks like you run out of items, please check again later…</string>
-    <string name="navigation_drawer_open">Navigation Open</string>
-    <string name="navigation_drawer_close">Navigation Close</string>
-    <string name="interstitial_ad_sample">Interstitial Ad Sample</string>
-    <string name="start_level">Level 1</string>
-    <string name="next_level">Next Level</string>
-    <string name="level_text">Level %1$d</string>
-
-    <string name="transition_photo">transition_photo</string>
-    <string name="transition_author">transition_text</string>
 
     <string name="open_drawer">open_drawer</string>
     <string name="close_drawer">close_drawer</string>
@@ -27,24 +15,20 @@
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
     -->
-    <string name="hello_world">Hello Square World!</string>
     <string name="loading">Loading…</string>
     <string name="hot_trending">Hot Trending</string>
     <string name="click">click</string>
     <string name="logo">logo</string>
     <string name="sub_category_image">sub_category_image</string>
     <string name="category_name">Category name</string>
-    <string name="pic">pic</string>
     <string name="image_slider">image_slider</string>
     <string name="shop">SHOP</string>
-    <string name="new_ic">new_ic</string>
     <string name="categories">categories</string>
     <string name="new_in">new in</string>
     <string name="favorite">favorite</string>
     <string name="dot">dot</string>
     <string name="image_item">image_item</string>
     <string name="your_info">Your Info</string>
-    <string name="my_orders">My Orders</string>
     <string name="my_profile">My Profile</string>
     <string name="log_out">Log Out</string>
     <string name="about">About</string>
@@ -52,12 +36,10 @@
     <string name="heart">heart</string>
     <string name="_0">0</string>
     <string name="sale">ON SALE!</string>
-    <string name="welcome_to_shopik">Welcome to Shopik</string>
     <string name="signin_with_google">Signin with Google</string>
     <string name="signin_with_facebook">Signin with Facebook</string>
     <string name="signin_with_email">Signin with Email</string>
     <string name="close">close</string>
-    <string name="dot1">dot1</string>
     <string name="like">like</string>
     <string name="about_us">Who we are</string>
     <string name="nav_drawer_bg">bg</string>
@@ -69,14 +51,7 @@
     <string name="youtube">youtube</string>
     <string name="instagram">instagram</string>
     <string name="site">site</string>
-    <string name="explore_more">explore more</string>
     <string name="more">more</string>
-    <string name="match">Match</string>
-    <string name="price">Price</string>
-    <string name="brand">Brand</string>
-    <string name="company">Company</string>
-    <string name="lets_start">Lets Start</string>
-    <string name="copyright">2020 Eitan Goren Israel Inc, All rights reserved</string>
     <string name="tfs">TFS</string>
     <string name="asos">ASOS</string>
     <string name="castro">Castro</string>
@@ -84,7 +59,6 @@
     <string name="renuar">Renuar</string>
     <string name="terminal_x">Terminal X</string>
     <string name="aldo">Aldo</string>
-    <string name="favorites">Favorites</string>
     <string name="Sale">Sale</string>
     <string name="all">All</string>
     <string name="welcome">Welcome to</string>
@@ -94,7 +68,6 @@
     <string name="sort_by">Sort:</string>
     <string name="channel_name">channel_test</string>
     <string name="channel_description">testing</string>
-    <string name="star">star</string>
     <string name="powered_by_eitan_goren">Developed &amp; Powered by Eitan Goren</string>
     <string name="city">City</string>
     <string name="home">Home</string>
@@ -105,5 +78,16 @@
     <string name="address">Address</string>
     <string name="submit">submit</string>
     <string name="shein">Shein</string>
-    <string name="gender">Gender</string>
+    <string name="castro_new">castro new</string>
+    <string name="aldo_new">aldo new</string>
+    <string name="swipe">Swipe</string>
+    <string name="favorites">Favorites</string>
+    <string name="all_items">All items</string>
+    <string name="match">Match</string>
+    <string name="price">Price</string>
+    <string name="company">Company</string>
+    <string name="brand">Brand</string>
+    <string name="user_name">User Name</string>
+    <string name="visit">VISIT</string>
+    <string name="search">Search</string>
 </resources>

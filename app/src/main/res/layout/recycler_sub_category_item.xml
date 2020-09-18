@@ -16,17 +16,14 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/sub_category_image"
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:clickable="true"
             android:contentDescription="@string/sub_category_image"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:layout_alignParentTop="true"
-            android:focusable="true"
+            android:background="#ffffff"
             android:scaleType="centerCrop" />
 
         <TextView

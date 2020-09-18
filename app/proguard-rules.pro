@@ -20,4 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keepclassmembers class com.eitan.shopik.ViewModels.*
+-keepclassmembers class com.eitan.shopik.viewModels.*

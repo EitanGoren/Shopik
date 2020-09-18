@@ -17,6 +17,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:theme="@style/MainStyle">
 
         <activity
@@ -28,19 +29,19 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-5843605953860340~8335398516" />
 
-        <activity android:name=".Company.CompanyProfileActivity" />
+        <activity android:name=".company.CompanyProfileActivity" />
         <activity
-            android:name=".Customer.CustomerSettingsActivity"
+            android:name=".customer.CustomerSettingsActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".Customer.GenderFilteringActivity"
+            android:name=".customer.GenderFilteringActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleTop" />
         <activity
-            android:name=".Customer.FullscreenImageActivity"
+            android:name=".customer.FullscreenImageActivity"
             android:theme="@style/AppTheme.Fullscreen" />
         <activity
-            android:name=".Customer.CustomerMainActivity"
+            android:name=".customer.CustomerMainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleTop"/>
         <activity

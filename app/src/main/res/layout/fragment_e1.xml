@@ -5,10 +5,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     android:id="@+id/root"
+    android:background="#ffffff"
     android:animateLayoutChanges="true"
-    tools:context=".GenderFilteringPages.HotTrendingFragment"
+    tools:context=".genderFilteringPages.HotTrendingFragment"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
+        android:background="#ffffff"
         app:liftOnScroll="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -51,12 +52,13 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
+        android:background="#ffffff"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#ffffff"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -64,6 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="315dp"
                 android:layout_marginTop="10dp"
+                android:background="#ffffff"
                 android:animateLayoutChanges="true"
                 app:layout_collapseMode="parallax">
 
@@ -72,6 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@id/best_sellers"
+                    android:background="#ffffff"
                     android:scrollbars="none"
                     app:layout_collapseMode="parallax"/>
 
@@ -81,7 +85,6 @@
                     android:layout_height="40dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginBottom="5dp"
-                    android:drawableStart="@drawable/ic_loyalty_red"
                     android:drawablePadding="10dp"
                     android:letterSpacing="0.1"
                     android:fontFamily="@font/nunito_bold"
@@ -89,6 +92,7 @@
                     android:text="@string/hot_trending"
                     android:textColor="#000000"
                     android:textSize="24sp"
+                    android:drawableStart="@drawable/ic_loyalty_red"
                     android:textStyle="bold" />
 
                 <TextView
@@ -128,6 +132,7 @@
                     android:layout_marginBottom="2.3dp"
                     android:gravity="center"
                     android:scaleType="centerCrop"
+                    android:contentDescription="@string/castro_new"
                     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
                 <TextView
@@ -153,12 +158,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="40dp"
                 android:background="@drawable/textview_border_line"
                 android:clickable="true"
                 android:elevation="10dp"
                 android:focusable="true"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
-                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+                android:foreground="?attr/selectableItemBackgroundBorderless">
 
                 <ImageView
                     android:id="@+id/text_btn2"
@@ -169,7 +174,7 @@
                     android:layout_marginBottom="2.3dp"
                     android:gravity="center"
                     android:scaleType="centerCrop"
-                    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
+                    android:contentDescription="@string/aldo_new" />
 
                 <TextView
                     android:id="@+id/text_header2"
