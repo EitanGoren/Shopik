@@ -103,28 +103,6 @@ public class CustomerMainActivity extends AppCompatActivity
     private ArrayList<AsyncTask <Integer, Integer, Void>> asyntask;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private static void getCompanyInfo(final ShoppingItem shoppingItem) {
-
-        final String company_id = shoppingItem.getSellerId();
-        if (Objects.requireNonNull(mainModel.getCompanies_info().getValue()).containsKey(company_id)) {
-
-            shoppingItem.setSeller((Objects.requireNonNull(Objects.requireNonNull(mainModel.getCompanies_info().
-                    getValue().get(company_id)).get("seller"))).toString());
-
-            shoppingItem.setSellerLogoUrl((Objects.requireNonNull(Objects.requireNonNull(mainModel.getCompanies_info().
-                    getValue().get(company_id)).get("logo_url"))).toString());
-
-            mainModel.addItem(shoppingItem);
-            ++item_count;
-            mainModel.getCurrentItem().postValue(Pair.create(item_count, total_items));
-
-            if (favorites.containsKey(shoppingItem.getId())){
-                mainModel.addFavorite(shoppingItem);
-            }
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private static void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String, String> liked_users,
                                                Map<String, String> unliked_users) {
 
@@ -132,8 +110,7 @@ public class CustomerMainActivity extends AppCompatActivity
         for (String customer_id : list) {
             FirebaseFirestore.getInstance().
                     collection(Macros.CUSTOMERS)
-                    .whereEqualTo("id", customer_id).
-                    get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    .whereEqualTo("id", customer_id).get().addOnSuccessListener(queryDocumentSnapshots -> {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
                     for (DocumentSnapshot doc : documentSnapshots) {
@@ -161,315 +138,6 @@ public class CustomerMainActivity extends AppCompatActivity
         else
             getUnlikedUserInfo(shoppingItem, unliked_users);
     }
-    private void getCoverPic() {
-
-        String userid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-
-        FirebaseFirestore.getInstance().
-                collection(Macros.CUSTOMERS).
-                document(userid).get().
-                addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        cover = documentSnapshot.get("cover_photo") != null ?
-                                Objects.requireNonNull(documentSnapshot.get("cover_photo")).toString() :
-                                Macros.DEFAULT_COVER_PHOTO;
-                    }
-                }).addOnCompleteListener(task ->
-                    Macros.Functions.GlidePicture(getApplicationContext(), cover, nav_bg)
-                );
-    }
-
-    private void getCustomerFavorites() {
-
-        for(String company : Macros.CompanyNames){
-           FirebaseDatabase.getInstance().getReference().
-                    child(Macros.CUSTOMERS).
-                    child(userId).
-                    child(item_gender).
-                    child(Macros.Items.LIKED).
-                    child(company).
-                    child(item_type).
-                    child(item_sub_category).
-                    addListenerForSingleValueEvent(fav_single_listener);
-        }
-    }
-
-    private void getAllCompaniesInfo() {
-        FirebaseFirestore.getInstance().
-                collection(Macros.COMPANIES).get().
-                addOnSuccessListener(documentSnapshot -> {
-                    for(DocumentSnapshot doc : documentSnapshot){
-                        Map<String,Object> map = new HashMap<>();
-                        map.put("seller", doc.get("seller"));
-                        map.put("logo_url", doc.get("logo_url"));
-                        mainModel.setCompanies_info(Objects.requireNonNull(doc.get("id")).toString(), map);
-                    }
-                });
-    }
-
-    private void setViewPager() {
-
-        MainPagerAdapter mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
-        mainPager = findViewById(R.id.customer_container);
-        mainPager.setAdapter(mainPagerAdapter);
-        mainPager.setPageTransformer(false, new ZoomOutPageTransformer());
-        mainPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
-
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onPageSelected(int position) {
-                animateLogo();
-                switch(position) {
-                    case 0:
-                        bottomNavigationView.getMenu().findItem(R.id.bottom_swipe).setChecked(true);
-                        break;
-                    case 1:
-                        bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setNumber(0);
-                        bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setVisible(false);
-                        bottomNavigationView.getMenu().findItem(R.id.bottom_favorites).setChecked(true);
-                        break;
-                    case 2:
-                        bottomNavigationView.getMenu().findItem(R.id.bottom_search).setChecked(true);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected Value "+ position);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {}
-        });
-    }
-
-    private void animateLogo(){
-        if(findViewById(R.id.logo_image) != null)
-            YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.logo_image));
-    }
-
-    private void setNavigationBarButtonsColor(int navigationBarColor) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            View decorView = getWindow().getDecorView();
-            int flags = decorView.getSystemUiVisibility();
-            if (isColorLight(navigationBarColor)) {
-                flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-            } else {
-                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-            }
-            decorView.setSystemUiVisibility(flags);
-        }
-    }
-
-    private boolean isColorLight(int color) {
-        double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
-        return darkness < 0.5;
-    }
-
-    private void init() {
-
-        setNavigationBarButtonsColor(getWindow().getNavigationBarColor());
-        GenderModel genderModel = new ViewModelProvider(this).get(GenderModel.class);
-
-        progressIndicator = findViewById(R.id.top_progress_bar);
-        bottomNavigationView = findViewById(R.id.bottom_nav);
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        hView = navigationView.getHeaderView(0);
-
-        favorites = new HashMap<>();
-
-        Bundle bundle = getIntent().getBundleExtra("bundle");
-
-        assert bundle != null;
-        String extra_type = bundle.getString("type");
-
-        cover = bundle.getString("cover",null);
-
-        if (extra_type != null)
-            item_type = extra_type;
-        else
-            item_type = Macros.BAG;
-
-        String extra_gender = bundle.getString("gender");
-        if (extra_gender != null)
-            item_gender = extra_gender;
-        else
-            item_gender = Macros.CustomerMacros.WOMEN;
-
-        String extra_sub_category = bundle.getString("sub_category");
-        if (extra_sub_category != null) {
-            item_sub_category = extra_sub_category;
-        } else item_sub_category = "";
-
-        genderModel.setGender(item_gender);
-        genderModel.setType(item_type);
-        genderModel.setSub_category(item_sub_category);
-
-        customerDB = FirebaseDatabase.getInstance().getReference().
-                child(Macros.CUSTOMERS).
-                child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).
-                child(item_gender).
-                child(Macros.CustomerMacros.PREFERRED_ITEMS).
-                child(item_type).
-                child(item_sub_category);
-
-        customerFirstName = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName();
-        userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        imageUrl = bundle.getString("imageUrl");
-        mAuth = FirebaseAuth.getInstance();
-
-        pageListener = FirebaseDatabase.getInstance().getReference().
-                child(Macros.CUSTOMERS).
-                child(userId).
-                child(item_gender).
-                child(Macros.PAGE_NUM).
-                child(item_type).
-                child(item_sub_category);
-
-        drawerLayout = findViewById(R.id.drawerLayout);
-        Toolbar toolbar = findViewById(R.id.customer_toolbar);
-        setSupportActionBar(toolbar);
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                R.string.open_drawer,R.string.close_drawer);
-
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-    }
-
-    private static void getLikes(final ShoppingItem shoppingItem) {
-
-        FirebaseDatabase.getInstance().getReference().
-                child(Macros.ITEMS).
-                child(item_gender).
-                child(item_type).
-                child(shoppingItem.getSeller() + "-" + shoppingItem.getId()).
-                addListenerForSingleValueEvent(new ValueEventListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @SuppressWarnings("unchecked")
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            HashMap<String,String> unliked_users = new HashMap<>();
-                            HashMap<String,String> liked_users = new HashMap<>();
-
-                            //set likes num
-                            if (dataSnapshot.hasChild(Macros.Items.LIKED)) {
-                                shoppingItem.setLikes(dataSnapshot.child(Macros.Items.LIKED).getChildrenCount());
-                                liked_users = (HashMap<String,String>) dataSnapshot.child(Macros.Items.LIKED).getValue();
-                            }
-                            else {
-                                shoppingItem.setLikes(0);
-                                shoppingItem.setLikedUsers(null);
-                            }
-                            //set unlikes num
-                            if (dataSnapshot.hasChild(Macros.Items.UNLIKED)) {
-                                shoppingItem.setUnlikes(dataSnapshot.child(Macros.Items.UNLIKED).getChildrenCount());
-                                unliked_users = (HashMap<String,String>) dataSnapshot.child(Macros.Items.UNLIKED).getValue();
-                            }
-                            else {
-                                shoppingItem.setUnlikes(0);
-                                shoppingItem.setUnlikedUsers(null);
-                            }
-
-                            if (liked_users == null || liked_users.isEmpty()) {
-                                if (unliked_users == null || unliked_users.isEmpty())
-                                    getCompanyInfo(shoppingItem);
-                                else
-                                    getUnlikedUserInfo(shoppingItem, unliked_users);
-                            }
-                            else
-                                getInteractedUsersInfo(shoppingItem, liked_users, unliked_users);
-                        }
-                        else {
-                            shoppingItem.setLikes(0);
-                            shoppingItem.setUnlikes(0);
-                            shoppingItem.setLikedUsers(null);
-                            shoppingItem.setUnlikedUsers(null);
-                            getCompanyInfo(shoppingItem);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {}
-                });
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private static void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list) {
-
-        assert unlikes_list != null;
-        ArrayList<String> list = new ArrayList<>(unlikes_list.keySet());
-
-        for (String customer_id : list) {
-            FirebaseFirestore.getInstance().
-                    collection(Macros.CUSTOMERS)
-                    .whereEqualTo("id", customer_id).
-                    get().addOnSuccessListener(queryDocumentSnapshots -> {
-                if (!queryDocumentSnapshots.isEmpty()) {
-                    List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
-                    for (DocumentSnapshot doc : documentSnapshots) {
-                        LikedUser likedUser = new LikedUser(
-                                doc.get("imageUrl") != null ? Objects.requireNonNull(doc.get("imageUrl")).toString() : null,
-                                doc.get("first_name") != null ? Objects.requireNonNull(doc.get("first_name")).toString() : null,
-                                doc.get("last_name") != null ? Objects.requireNonNull(doc.get("last_name")).toString() : null
-                        );
-
-                        if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
-                            likedUser.setLast_name(likedUser.getLast_name() + " (You)");
-                            shoppingItem.setSeen(true);
-                        }
-
-                        mainModel.setCustomers_info(customer_id, likedUser);
-                        shoppingItem.addUnlikedUser(likedUser);
-                    }
-                }
-            });
-        }
-        getCompanyInfo(shoppingItem);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Intent selectedIntent = null;
-        switch (item.getItemId()) {
-            case R.id.nav_logout:
-                mAuth.signOut();
-                if (mAuth.getCurrentUser() == null) {
-                    selectedIntent = new Intent(CustomerMainActivity.this, LandingPageActivity.class);
-                    selectedIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(selectedIntent);
-                    finish();
-                }
-                break;
-            case R.id.nav_profile:
-                selectedIntent = new Intent(CustomerMainActivity.this, CustomerSettingsActivity.class);
-                selectedIntent.putExtra("from_activity", "CustomerMainActivity");
-                selectedIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                ActivityOptions options = ActivityOptions.
-                        makeSceneTransitionAnimation(this, Pair.create(findViewById(R.id.nav_profile),"profile_pic"));
-                startActivity(selectedIntent, options.toBundle());
-                return true;
-            case R.id.nav_home:
-                Intent intent = new Intent(CustomerMainActivity.this, GenderFilteringActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("gender", item_gender);
-                bundle.putString("name", customerFirstName);
-                bundle.putString("imageUrl", imageUrl);
-                intent.putExtra("bundle", bundle);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                return true;
-             case R.id.nav_website:
-                Macros.Functions.buy(CustomerMainActivity.this,"https://eitangoren.github.io");
-        }
-        if (selectedIntent != null) {
-            startActivity(selectedIntent);
-            return true;
-        }
-        return false;
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -477,12 +145,14 @@ public class CustomerMainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         postponeEnterTransition();
-        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN );
+
         mainModel = new ViewModelProvider(this).get(MainModel.class);
         setInterstitialAd();
 
         createNotificationChannel();
-        // inside your activity (if you did not enable transitions in your theme)
+
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_main);
 
@@ -491,7 +161,9 @@ public class CustomerMainActivity extends AppCompatActivity
         navigationView.setOnClickListener(v -> getCoverPic());
 
         TextView copyright = findViewById(R.id.nav_copyright_text);
-        String text = "Shopik Version 1.0 " + System.lineSeparator() + getResources().getString(R.string.copy_right) ;
+        String text = "Shopik Version 1.0 " + System.lineSeparator() +
+                getResources().getString(R.string.copy_right) ;
+
         copyright.setText(text);
 
         getAllCompaniesInfo();
@@ -640,6 +312,338 @@ public class CustomerMainActivity extends AppCompatActivity
                 progressIndicator.setVisibility(View.GONE);
             }
         });
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private static void getCompanyInfo(final ShoppingItem shoppingItem) {
+
+        final String company_id = shoppingItem.getSellerId();
+        if (Objects.requireNonNull(mainModel.getCompanies_info().getValue()).containsKey(company_id)) {
+
+            shoppingItem.setSeller((Objects.requireNonNull(Objects.requireNonNull(mainModel.getCompanies_info().
+                    getValue().get(company_id)).get("seller"))).toString());
+
+            shoppingItem.setSellerLogoUrl((Objects.requireNonNull(Objects.requireNonNull(mainModel.getCompanies_info().
+                    getValue().get(company_id)).get("logo_url"))).toString());
+
+            mainModel.addItem(shoppingItem);
+            ++item_count;
+            mainModel.getCurrentItem().postValue(Pair.create(item_count, total_items));
+
+            if (favorites.containsKey(shoppingItem.getId())){
+                mainModel.addFavorite(shoppingItem);
+            }
+        }
+    }
+
+    private void init() {
+
+        setNavigationBarButtonsColor(getWindow().getNavigationBarColor());
+        GenderModel genderModel = new ViewModelProvider(this).get(GenderModel.class);
+
+        progressIndicator = findViewById(R.id.top_progress_bar);
+        bottomNavigationView = findViewById(R.id.bottom_nav);
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        hView = navigationView.getHeaderView(0);
+
+        favorites = new HashMap<>();
+
+        Bundle bundle = getIntent().getBundleExtra("bundle");
+
+        assert bundle != null;
+        String extra_type = bundle.getString("type");
+
+        cover = bundle.getString("cover",null);
+
+        if (extra_type != null)
+            item_type = extra_type;
+        else
+            item_type = Macros.BAG;
+
+        String extra_gender = bundle.getString("gender");
+        if (extra_gender != null)
+            item_gender = extra_gender;
+        else
+            item_gender = Macros.CustomerMacros.WOMEN;
+
+        String extra_sub_category = bundle.getString("sub_category");
+        if (extra_sub_category != null) {
+            item_sub_category = extra_sub_category;
+        } else item_sub_category = "";
+
+        genderModel.setGender(item_gender);
+        genderModel.setType(item_type);
+        genderModel.setSub_category(item_sub_category);
+
+        customerDB = FirebaseDatabase.getInstance().getReference().
+                child(Macros.CUSTOMERS).
+                child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).
+                child(item_gender).
+                child(Macros.CustomerMacros.PREFERRED_ITEMS).
+                child(item_type).
+                child(item_sub_category);
+
+        customerFirstName = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName();
+        userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        imageUrl = bundle.getString("imageUrl");
+        mAuth = FirebaseAuth.getInstance();
+
+        pageListener = FirebaseDatabase.getInstance().getReference().
+                child(Macros.CUSTOMERS).
+                child(userId).
+                child(item_gender).
+                child(Macros.PAGE_NUM).
+                child(item_type).
+                child(item_sub_category);
+
+        drawerLayout = findViewById(R.id.drawerLayout);
+        Toolbar toolbar = findViewById(R.id.customer_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.open_drawer,R.string.close_drawer);
+
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+    private void getCoverPic() {
+
+        String userid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
+        FirebaseFirestore.getInstance().
+                collection(Macros.CUSTOMERS).
+                document(userid).get().
+                addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        cover = documentSnapshot.get("cover_photo") != null ?
+                                Objects.requireNonNull(documentSnapshot.get("cover_photo")).toString() :
+                                Macros.DEFAULT_COVER_PHOTO;
+                    }
+                }).addOnCompleteListener(task ->
+                    Macros.Functions.GlidePicture(getApplicationContext(), cover, nav_bg)
+                );
+    }
+
+    private void getCustomerFavorites() {
+
+        for(String company : Macros.CompanyNames){
+           FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(userId).
+                    child(item_gender).
+                    child(Macros.Items.LIKED).
+                    child(company).
+                    child(item_type).
+                    child(item_sub_category).
+                    addListenerForSingleValueEvent(fav_single_listener);
+        }
+    }
+
+    private void getAllCompaniesInfo() {
+        FirebaseFirestore.getInstance().
+                collection(Macros.COMPANIES).get().
+                addOnSuccessListener(documentSnapshot -> {
+                    for(DocumentSnapshot doc : documentSnapshot){
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("seller", doc.get("seller"));
+                        map.put("logo_url", doc.get("logo_url"));
+                        mainModel.setCompanies_info(Objects.requireNonNull(doc.get("id")).toString(), map);
+                    }
+                });
+    }
+
+    private void setViewPager() {
+
+        MainPagerAdapter mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+        mainPager = findViewById(R.id.customer_container);
+        mainPager.setAdapter(mainPagerAdapter);
+        mainPager.setPageTransformer(false, new ZoomOutPageTransformer());
+        mainPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onPageSelected(int position) {
+                animateLogo();
+                switch(position) {
+                    case 0:
+                        bottomNavigationView.getMenu().findItem(R.id.bottom_swipe).setChecked(true);
+                        break;
+                    case 1:
+                        bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setNumber(0);
+                        bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setVisible(false);
+                        bottomNavigationView.getMenu().findItem(R.id.bottom_favorites).setChecked(true);
+                        break;
+                    case 2:
+                        bottomNavigationView.getMenu().findItem(R.id.bottom_search).setChecked(true);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected Value "+ position);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
+    }
+
+    private void animateLogo(){
+        if(findViewById(R.id.logo_image) != null)
+            YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.logo_image));
+    }
+
+    private void setNavigationBarButtonsColor(int navigationBarColor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            View decorView = getWindow().getDecorView();
+            int flags = decorView.getSystemUiVisibility();
+            if (isColorLight(navigationBarColor)) {
+                flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            } else {
+                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            }
+            decorView.setSystemUiVisibility(flags);
+        }
+    }
+
+    private boolean isColorLight(int color) {
+        double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
+        return darkness < 0.5;
+    }
+
+    private static void getLikes(final ShoppingItem shoppingItem) {
+
+        FirebaseDatabase.getInstance().getReference().
+                child(Macros.ITEMS).
+                child(item_gender).
+                child(item_type).
+                child(shoppingItem.getSeller() + "-" + shoppingItem.getId()).
+                addListenerForSingleValueEvent(new ValueEventListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            HashMap<String,String> unliked_users = new HashMap<>();
+                            HashMap<String,String> liked_users = new HashMap<>();
+
+                            //set likes num
+                            if (dataSnapshot.hasChild(Macros.Items.LIKED)) {
+                                shoppingItem.setLikes(dataSnapshot.child(Macros.Items.LIKED).getChildrenCount());
+                                liked_users = (HashMap<String,String>) dataSnapshot.child(Macros.Items.LIKED).getValue();
+                            }
+                            else {
+                                shoppingItem.setLikes(0);
+                                shoppingItem.setLikedUsers(null);
+                            }
+                            //set unlikes num
+                            if (dataSnapshot.hasChild(Macros.Items.UNLIKED)) {
+                                shoppingItem.setUnlikes(dataSnapshot.child(Macros.Items.UNLIKED).getChildrenCount());
+                                unliked_users = (HashMap<String,String>) dataSnapshot.child(Macros.Items.UNLIKED).getValue();
+                            }
+                            else {
+                                shoppingItem.setUnlikes(0);
+                                shoppingItem.setUnlikedUsers(null);
+                            }
+
+                            if (liked_users == null || liked_users.isEmpty()) {
+                                if (unliked_users == null || unliked_users.isEmpty())
+                                    getCompanyInfo(shoppingItem);
+                                else
+                                    getUnlikedUserInfo(shoppingItem, unliked_users);
+                            }
+                            else
+                                getInteractedUsersInfo(shoppingItem, liked_users, unliked_users);
+                        }
+                        else {
+                            shoppingItem.setLikes(0);
+                            shoppingItem.setUnlikes(0);
+                            shoppingItem.setLikedUsers(null);
+                            shoppingItem.setUnlikedUsers(null);
+                            getCompanyInfo(shoppingItem);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private static void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list) {
+
+        assert unlikes_list != null;
+        ArrayList<String> list = new ArrayList<>(unlikes_list.keySet());
+
+        for (String customer_id : list) {
+            FirebaseFirestore.getInstance().
+                    collection(Macros.CUSTOMERS)
+                    .whereEqualTo("id", customer_id).
+                    get().addOnSuccessListener(queryDocumentSnapshots -> {
+                if (!queryDocumentSnapshots.isEmpty()) {
+                    List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
+                    for (DocumentSnapshot doc : documentSnapshots) {
+                        LikedUser likedUser = new LikedUser(
+                                doc.get("imageUrl") != null ? Objects.requireNonNull(doc.get("imageUrl")).toString() : null,
+                                doc.get("first_name") != null ? Objects.requireNonNull(doc.get("first_name")).toString() : null,
+                                doc.get("last_name") != null ? Objects.requireNonNull(doc.get("last_name")).toString() : null
+                        );
+
+                        if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
+                            likedUser.setLast_name(likedUser.getLast_name() + " (You)");
+                            shoppingItem.setSeen(true);
+                        }
+
+                        mainModel.setCustomers_info(customer_id, likedUser);
+                        shoppingItem.addUnlikedUser(likedUser);
+                    }
+                }
+            });
+        }
+        getCompanyInfo(shoppingItem);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Intent selectedIntent = null;
+        switch (item.getItemId()) {
+            case R.id.nav_logout:
+                mAuth.signOut();
+                if (mAuth.getCurrentUser() == null) {
+                    selectedIntent = new Intent(CustomerMainActivity.this, LandingPageActivity.class);
+                    selectedIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(selectedIntent);
+                    finish();
+                }
+                break;
+            case R.id.nav_profile:
+                selectedIntent = new Intent(CustomerMainActivity.this, CustomerSettingsActivity.class);
+                selectedIntent.putExtra("from_activity", "CustomerMainActivity");
+                selectedIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                ActivityOptions options = ActivityOptions.
+                        makeSceneTransitionAnimation(this, Pair.create(findViewById(R.id.nav_profile),"profile_pic"));
+                startActivity(selectedIntent, options.toBundle());
+                return true;
+            case R.id.nav_home:
+                Intent intent = new Intent(CustomerMainActivity.this, GenderFilteringActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("gender", item_gender);
+                bundle.putString("name", customerFirstName);
+                bundle.putString("imageUrl", imageUrl);
+                intent.putExtra("bundle", bundle);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                return true;
+             case R.id.nav_website:
+                Macros.Functions.buy(CustomerMainActivity.this,"https://eitangoren.github.io");
+        }
+        if (selectedIntent != null) {
+            startActivity(selectedIntent);
+            return true;
+        }
+        return false;
     }
 
     private void setInterstitialAd() {
@@ -953,6 +957,7 @@ public class CustomerMainActivity extends AppCompatActivity
             return null;
         }
     }
+
     private static class getAsos extends AsyncTask <Integer, Integer, Void> {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
@@ -966,7 +971,8 @@ public class CustomerMainActivity extends AppCompatActivity
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
 
-                        Document document = Jsoup.connect("https://www.asos.com/cat/?cid=" + cat_num.first + "&page=" + page).get();
+                        Document document = Jsoup.connect("https://www.asos.com/cat/?cid="
+                                + cat_num.first + "&page=" + page).get();
                         Elements products = document.getElementsByAttributeValue("data-auto-id", "productTile");
 
                         total_items += products.size();
@@ -979,7 +985,8 @@ public class CustomerMainActivity extends AppCompatActivity
                             Elements pook = prod.getElementsByAttributeValue("data-auto-id", "productTilePrice");
                             if(pook.size() == 1) {
                                 int las_ele_idx = pook.get(0).childNodes().size() - 1;
-                                String price = pook.get(0).childNode(las_ele_idx).childNode(0).toString().replace("£","");
+                                String price = pook.get(0).childNode(las_ele_idx).childNode(0).
+                                        toString().replace("£","");
                                 String final_price = String.valueOf(Double.parseDouble(price) * Macros.POUND_TO_ILS);
                                 shoppingItem.setPrice(final_price);
                             }
@@ -1035,7 +1042,7 @@ public class CustomerMainActivity extends AppCompatActivity
 
                             String[] name = description.split(" ");
 
-                            String seller_name = "ASOS";
+                            String seller_name = "Asos";
                             String seller_id = "odsIz0HNINevS2EP3mdIrryTIF72";
                             boolean isExclusive = description.toLowerCase().contains("exclusive");
 
@@ -1055,7 +1062,8 @@ public class CustomerMainActivity extends AppCompatActivity
 
                             iter++;
                             if (favorites.containsKey(shoppingItem.getId())) {
-                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()),
+                                        Macros.CustomerMacros.FAVOURITE));
                             }
                             getLikes(shoppingItem);
                         }
@@ -1805,4 +1813,5 @@ public class CustomerMainActivity extends AppCompatActivity
             return null;
         }
     }
+
 }

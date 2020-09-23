@@ -22,8 +22,8 @@
             app:expandedTitleGravity="left|bottom"
             app:collapsedTitleGravity="left"
             app:statusBarScrim="@color/fragmentBackground"
-            app:contentScrim="@color/SplashScreenBackground"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:contentScrim="@color/CompanyProfileScrim"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:expandedTitleMarginEnd="65dp"
             app:expandedTitleMarginStart="30dp">
 
@@ -43,7 +43,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
-                android:background="#2B000000"
                 app:layout_collapseMode="parallax"/>
 
             <androidx.appcompat.widget.Toolbar
@@ -66,11 +65,10 @@
                 android:id="@+id/logo"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:layout_marginEnd="15dp"
                 android:layout_gravity="end|bottom"
-                android:layout_marginBottom="15dp"
-                android:elevation="15dp"
-                android:translationZ="15dp"
+                android:layout_margin="25dp"
+                android:elevation="5dp"
+                android:translationZ="5dp"
                 app:layout_collapseMode="parallax"
                 android:transitionName="profile_pic"
                 app:civ_border_color="#FFFFFF"
@@ -106,10 +104,10 @@
                 android:hint="@string/first_name"
                 android:inputType="textCapWords"
                 android:textColorHint="@color/EditTextHintColor"
-                app:boxStrokeColor="@color/SplashScreenBackground"
+                app:boxStrokeColor="@color/CompanyProfileScrim"
                 android:textSize="16sp"
                 android:translationZ="5dp"
-                app:hintTextColor="@color/EditTextHintColor">
+                app:hintTextColor="@color/CompanyProfileScrim">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/first_name"
@@ -129,11 +127,11 @@
                 android:elevation="5dp"
                 android:hint="@string/last_name"
                 android:textColorHint="@color/EditTextHintColor"
-                app:boxStrokeColor="@color/SplashScreenBackground"
+                app:boxStrokeColor="@color/CompanyProfileScrim"
                 android:inputType="textCapWords"
                 android:textSize="16sp"
                 android:translationZ="5dp"
-                app:hintTextColor="@color/EditTextHintColor">
+                app:hintTextColor="@color/CompanyProfileScrim">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/last_name"
@@ -154,11 +152,11 @@
                 android:elevation="5dp"
                 android:hint="@string/phone"
                 android:textColorHint="@color/EditTextHintColor"
-                app:boxStrokeColor="@color/SplashScreenBackground"
+                app:boxStrokeColor="@color/CompanyProfileScrim"
                 android:inputType="textCapWords"
                 android:textSize="16sp"
                 android:translationZ="5dp"
-                app:hintTextColor="@color/EditTextHintColor">
+                app:hintTextColor="@color/CompanyProfileScrim">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/phone"
@@ -181,8 +179,8 @@
                 android:inputType="textCapWords"
                 android:textSize="16sp"
                 android:translationZ="5dp"
-                app:boxStrokeColor="@color/SplashScreenBackground"
-                app:hintTextColor="@color/EditTextHintColor">
+                app:boxStrokeColor="@color/CompanyProfileScrim"
+                app:hintTextColor="@color/CompanyProfileScrim">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/age"
@@ -196,12 +194,12 @@
 
             <Spinner
                 android:id="@+id/gender_switch"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:paddingStart="45dp"
-                android:paddingEnd="0dp"
-                android:textAlignment="center" />
+                android:paddingEnd="10dp"
+                android:textAlignment="viewStart" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -211,11 +209,11 @@
                 android:elevation="5dp"
                 android:hint="@string/address"
                 android:textColorHint="@color/EditTextHintColor"
-                app:boxStrokeColor="@color/SplashScreenBackground"
+                app:boxStrokeColor="@color/CompanyProfileScrim"
                 android:inputType="textCapWords"
                 android:textSize="16sp"
                 android:translationZ="5dp"
-                app:hintTextColor="@color/EditTextHintColor">
+                app:hintTextColor="@color/CompanyProfileScrim">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/address"
@@ -236,11 +234,11 @@
                 android:hint="@string/city"
                 android:textColorHint="@color/EditTextHintColor"
                 app:hintAnimationEnabled="true"
-                app:boxStrokeColor="@color/SplashScreenBackground"
+                app:boxStrokeColor="@color/CompanyProfileScrim"
                 android:inputType="textCapWords"
                 android:textSize="16sp"
                 android:translationZ="5dp"
-                app:hintTextColor="@color/EditTextHintColor">
+                app:hintTextColor="@color/CompanyProfileScrim">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/city"
@@ -260,6 +258,7 @@
                 android:includeFontPadding="true"
                 android:padding="5dp"
                 android:text="@string/submit"
+                android:backgroundTint="@color/CompanyProfileScrim"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
                 android:textSize="22sp"/>

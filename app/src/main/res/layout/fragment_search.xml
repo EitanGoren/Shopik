@@ -23,7 +23,7 @@
             android:fitsSystemWindows="true"
             android:minHeight="?actionBarSize"
             app:contentScrim="@drawable/multicolor_bg"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:statusBarScrim="@drawable/multicolor_bg">
 
             <androidx.appcompat.widget.Toolbar
@@ -380,6 +380,7 @@
         app:elevation="5dp"
         app:fabSize="mini"
         app:borderWidth="1.5dp"
+        tools:visibility="visible"
         />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton

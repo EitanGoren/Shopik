@@ -50,6 +50,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     private ImageView bgImage;
     private CircleImageView mProfileImage,toolbar_pic;
     private String UserId;
+    private DocumentReference customerFS;
     private String first_name;
     private String last_name;
     private String profileImageUrl;
@@ -59,7 +60,6 @@ public class CustomerSettingsActivity extends AppCompatActivity {
     private String city;
     private String phone;
     private String gender;
-    private DocumentReference customerFS;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout appBar;
 

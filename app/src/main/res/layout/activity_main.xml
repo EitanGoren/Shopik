@@ -17,7 +17,7 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
-            android:layout_height="69dp"
+            android:layout_height="68dp"
             android:layout_alignParentBottom="true"
             android:fitsSystemWindows="true"
             android:translationZ="5dp"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/customer_toolbar"
             android:indeterminate="false"
-            app:indicatorColor="#FF0056"
+            app:indicatorColor="#122595"
             app:indicatorWidth="5dp"
             tools:visibility="visible"/>
 
@@ -68,7 +68,7 @@
             android:fitsSystemWindows="true"
             app:navigationIcon="@drawable/ic_menu_34"
             app:titleTextAppearance="@style/MainTitle"
-            app:titleTextColor="@color/SplashScreenBackground">
+            app:titleTextColor="@color/ShopikLogo">
 
             <LinearLayout
                 android:layout_width="wrap_content"

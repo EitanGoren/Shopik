@@ -88,6 +88,7 @@ public class CustomerHomeFragment extends Fragment {
         swipesModel = new ViewModelProvider(requireActivity()).get(SwipesModel.class);
         arrayAdapter = new CardsAdapter(requireActivity(), R.layout.swipe_item,
                 swipesModel.getItems().getValue());
+
         onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
 
             @Override

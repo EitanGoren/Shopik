@@ -11,7 +11,7 @@
         android:id="@+id/company_appbar"
         android:layout_width="match_parent"
         android:fitsSystemWindows="true"
-        android:layout_height="270dp">
+        android:layout_height="250dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/company_collapsing_toolbar"
@@ -42,7 +42,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#45000000" />
+                android:contentDescription="@string/cover_picture"
+                android:padding="10dp"/>
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -51,9 +52,10 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/company_toolbar_pic"
-                    android:layout_width="50sp"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_width="45sp"
+                    android:layout_height="45dp"
+                    android:layout_margin="10dp"
+                    android:contentDescription="@string/company_logo"
                     app:layout_collapseMode="parallax"
                     android:layout_centerVertical="true"
                     app:civ_border_color="#ffffff"
@@ -63,11 +65,11 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_company_profile"
-                android:layout_width="85dp"
-                android:layout_height="85dp"
-                android:layout_marginEnd="20dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_margin="25dp"
                 android:layout_gravity="end|bottom"
-                android:layout_marginBottom="20dp"
+                android:contentDescription="@string/company_logo"
                 android:elevation="15dp"
                 android:translationZ="15dp"
                 android:alpha="45"
@@ -98,41 +100,42 @@
 
                 <ImageView
                     android:id="@+id/company_facebook"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="20dp"
                     android:contentDescription="@string/facebook" />
 
                 <ImageView
                     android:id="@+id/company_twitter"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="20dp"
                     android:contentDescription="@string/twitter" />
 
                 <ImageView
                     android:id="@+id/company_youtube"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="20dp"
                     android:contentDescription="@string/youtube" />
 
                 <ImageView
                     android:id="@+id/company_instagram"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:contentDescription="@string/instagram" />
 
                 <ImageView
                     android:id="@+id/company_site"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:contentDescription="@string/site" />
 
             </LinearLayout>

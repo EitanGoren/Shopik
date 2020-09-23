@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#ffffff"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="5dp"
@@ -12,6 +14,7 @@
         android:layout_height="45dp"
         android:layout_alignParentTop="true"
         android:letterSpacing="0.1"
+        android:background="#ffffff"
         android:fontFamily="@font/nunito_bold"
         android:drawablePadding="10dp"
         android:paddingTop="5dp"
@@ -46,28 +49,17 @@
         android:fontFamily="@font/nunito_bold"
         android:gravity="center_vertical"
         android:paddingTop="5dp"
+        android:background="#ffffff"
         android:textColor="#000000"
         android:textSize="14sp"
         android:textStyle="bold" />
-
-  <!--  <GridView
-        android:id="@+id/grid_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/items_count"
-        android:numColumns="2"
-        android:columnWidth="220dp"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:paddingTop="10dp"
-        android:stretchMode="columnWidth"
-        android:background="#00FFFFFF" /> -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/grid_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/items_count"
+        android:background="#ffffff"
         android:paddingStart="5dp"
         android:paddingTop="10dp"
         android:paddingEnd="5dp"/>

@@ -54,6 +54,7 @@
                 android:layout_alignEnd="@id/image_slider"
                 android:clickable="true"
                 android:background="@color/colorTransparentWhite"
+                android:contentDescription="@string/image_item"
                 android:layout_marginEnd="2dp"
                 android:layout_marginBottom="2dp"
                 android:focusable="true"/>

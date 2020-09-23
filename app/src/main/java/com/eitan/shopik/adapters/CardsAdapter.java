@@ -263,7 +263,8 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                     cur_price = new DecimalFormat("##.##").
                             format(Double.parseDouble(shoppingItem.getPrice()) * Macros.POUND_TO_ILS) +
                             Currency.getInstance("ILS").getSymbol();
-                } else {
+                }
+                else {
                     cur_price = new DecimalFormat("##.##").
                             format(Double.parseDouble(shoppingItem.getPrice())) +
                             Currency.getInstance("ILS").getSymbol();

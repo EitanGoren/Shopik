@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_centerInParent="true"
     tools:menu="@menu/menu_customer_toolbar">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="525dp"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
+        android:layout_width="370dp"
+        android:layout_height="505dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="35dp"
+        android:background="@drawable/top_border_line"
         android:elevation="10dp"
-        android:translationZ="8dp"
         android:padding="8dp"
+        android:translationZ="8dp"
         app:cardCornerRadius="15dp"
-        android:background="@drawable/top_border_line">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -39,7 +44,7 @@
                 android:textAlignment="center"
                 android:textColor="#ffffff"
                 android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/old_price"
@@ -55,7 +60,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:visibility="invisible"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/brand_name"
@@ -65,14 +70,14 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="13dp"
                 android:layout_marginTop="8dp"
-                android:transitionName="company_name"
                 android:fontFamily="@font/nunito_bold"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:textAlignment="center"
                 android:textColor="#ffffff"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:transitionName="company_name" />
 
             <TextView
                 android:id="@+id/like"
@@ -80,14 +85,14 @@
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true"
                 android:layout_toEndOf="@id/unlike"
+                android:drawableStart="@drawable/ic_thumb_up_seleste"
                 android:drawablePadding="5dp"
                 android:elevation="5dp"
                 android:gravity="center"
                 android:padding="8dp"
-                android:transitionName="like"
                 android:textColor="#ffffff"
                 android:theme="@style/Buttons"
-                android:drawableStart="@drawable/ic_thumb_up_seleste"
+                android:transitionName="like"
                 android:translationZ="5dp" />
 
             <TextView
@@ -96,13 +101,13 @@
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="10dp"
+                android:drawableStart="@drawable/ic_thumb_down_pink"
                 android:drawablePadding="5dp"
                 android:elevation="5dp"
                 android:gravity="center"
                 android:padding="8dp"
                 android:textColor="#ffffff"
                 android:theme="@style/Buttons"
-                android:drawableStart="@drawable/ic_thumb_down_pink"
                 android:translationZ="5dp" />
 
         </RelativeLayout>
@@ -110,17 +115,15 @@
         <RelativeLayout
             android:id="@+id/info_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/swipe_image"
                 android:layout_width="match_parent"
-                android:layout_height="430dp"
-                android:layout_centerVertical="true"
-                android:transitionName="@string/image_item"
+                android:layout_height="410dp"
                 android:contentDescription="@string/image_item"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:transitionName="@string/image_item" />
 
             <TextView
                 android:id="@+id/exclusive"
@@ -130,26 +133,26 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="10dp"
                 android:background="@drawable/brand_background"
+                android:elevation="10dp"
                 android:fontFamily="@font/nunito_semibold"
                 android:paddingStart="15dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="15dp"
                 android:paddingBottom="5dp"
-                android:elevation="10dp"
-                android:translationZ="10dp"
                 android:textAlignment="center"
                 android:textColor="#ffffff"
                 android:textSize="21sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:translationZ="10dp" />
 
             <ImageButton
                 android:id="@+id/fullscreen_button"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_alignBottom="@id/swipe_image"
                 android:layout_alignEnd="@id/swipe_image"
-                android:layout_marginBottom="8dp"
+                android:layout_alignBottom="@id/swipe_image"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:background="@drawable/ic_fullscreen_black"
                 android:contentDescription="@string/fullscreen_button" />
 
@@ -157,16 +160,16 @@
                 android:id="@+id/swipe_discount"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="5dp"
+                android:layout_toStartOf="@id/customer_toolbar"
+                android:background="@color/colorTransparentWhite"
+                android:elevation="5dp"
                 android:fontFamily="@font/baloo"
                 android:padding="5dp"
-                android:layout_marginTop="5dp"
                 android:textColor="#FF0000"
                 android:textSize="25sp"
-                android:layout_alignParentTop="true"
-                android:layout_toStartOf="@id/customer_toolbar"
                 android:translationZ="5dp"
-                android:elevation="5dp"
-                android:background="@color/colorTransparentWhite"
                 tools:ignore="RelativeOverlap" />
 
             <View
@@ -202,14 +205,14 @@
             android:id="@+id/card_seller_logo"
             android:layout_width="85dp"
             android:layout_height="85dp"
-            android:layout_marginEnd="50dp"
             android:layout_gravity="bottom|end"
+            android:layout_marginEnd="50dp"
             android:layout_marginBottom="55dp"
-            android:transitionName="company_logo"
-            app:civ_border_color="@color/borderLine"
-            android:translationZ="10dp"
-            android:contentDescription="@string/image_item"
+            android:contentDescription="@string/company_logo"
             android:elevation="10dp"
+            android:transitionName="company_logo"
+            android:translationZ="10dp"
+            app:civ_border_color="@color/borderLine"
             app:civ_border_width="2dp" />
 
         <ImageView
@@ -219,12 +222,12 @@
             android:layout_gravity="end|bottom"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:scaleType="centerCrop"
-            android:elevation="5dp"
-            android:translationZ="5dp"
             android:contentDescription="@string/favorite"
-            android:src="@drawable/ic_favorite_black_24dp" />
+            android:elevation="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_favorite_black_24dp"
+            android:translationZ="5dp" />
 
     </androidx.cardview.widget.CardView>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,7 +16,7 @@
     values-round/strings.xml for round devices.
     -->
     <string name="loading">Loading…</string>
-    <string name="hot_trending">Hot Trending</string>
+    <string name="hot_trending">Users\' Choice </string>
     <string name="click">click</string>
     <string name="logo">logo</string>
     <string name="sub_category_image">sub_category_image</string>
@@ -90,4 +90,9 @@
     <string name="user_name">User Name</string>
     <string name="visit">VISIT</string>
     <string name="search">Search</string>
+    <string name="cover_picture">cover picture</string>
+    <string name="company_logo">company logo</string>
+    <string name="user_picture" />
+    <string name="user_picture_">User Picture</string>
+    <string name="users_choice">users choice</string>
 </resources>

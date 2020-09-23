@@ -25,6 +25,10 @@ import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +36,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
-import static com.facebook.ads.AdSettings.IntegrationErrorMode.INTEGRATION_ERROR_CRASH_DEBUG_MODE;
+import static com.facebook.ads.AdSettings.IntegrationErrorMode.INTEGRATION_ERROR_CALLBACK_MODE;
 import static com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_LEFT;
 @Keep
 public class ShopikApplicationActivity extends Application {
@@ -42,18 +46,15 @@ public class ShopikApplicationActivity extends Application {
     private static ArrayList<ShoppingItem> shoppingAdsArray;
     private static com.facebook.ads.InterstitialAdListener adListener;
     private static int categoryClicks = 0;
+    private static ReviewInfo reviewInfo;
+    private static ReviewManager manager;
 
     public ShopikApplicationActivity() {
         instance = this;
         shoppingAdsArray = new ArrayList<>();
     }
-
     public static Context getContext() {
         return instance;
-    }
-
-    public static void LoadAds(int num){
-        new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num);
     }
 
     //FACEBOOK INTERSTITIAL AD
@@ -76,6 +77,10 @@ public class ShopikApplicationActivity extends Application {
     }
 
     //GOOGLE NATIVE ADS
+    public static void LoadAds(int num){
+        new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num);
+    }
+
     private static void clearAds(){
         for(ShoppingItem item : shoppingAdsArray) {
             item.destroyAd();
@@ -93,69 +98,17 @@ public class ShopikApplicationActivity extends Application {
             return null;
     }
 
-    //TIMES CLICKED ON MAIN CUSTOMER
-    public static int getCategoryClicks() {
-        return categoryClicks;
-    }
-
-    public static void increaseCategoryClicks() {
-        categoryClicks++;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        //Google Ads
-        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
-        RequestConfiguration configuration = new RequestConfiguration.Builder().
-                setTestDeviceIds(testDeviceIds).build();
-        MobileAds.setRequestConfiguration(configuration);
-
-        //Facebook Ads
-        AdSettings.setIntegrationErrorMode(INTEGRATION_ERROR_CRASH_DEBUG_MODE);
-        AudienceNetworkAds.initialize(this);
-
-        interstitialAd = new com.facebook.ads.InterstitialAd(this, Macros.FB_PLACEMENT_ID);
-
-        // Load a new interstitial.
-        adListener = new InterstitialAdListener() {
-            @Override
-            public void onInterstitialDisplayed(Ad ad) {}
-
-            @Override
-            public void onInterstitialDismissed(Ad ad) {
-                setInterstitialAd();
-            }
-
-            @Override
-            public void onError(Ad ad, AdError adError) {}
-
-            @Override
-            public void onAdLoaded(Ad ad) {}
-
-            @Override
-            public void onAdClicked(Ad ad) {}
-
-            @Override
-            public void onLoggingImpression(Ad ad) {}
-        };
-
-        InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
-                .withAdListener(adListener)
-                .withCacheFlags(EnumSet.of(CacheFlag.VIDEO))
-                .build();
-
-        interstitialAd.loadAd(LoadAdConfig);
-    }
-
     public static void RefreshAds(int num_of_ads){
-        if(categoryClicks % 2 == 0) {
+        if(categoryClicks % 3 == 0) {
             clearAds();
             LoadAds(num_of_ads);
         }
     }
 
+    //TIMES CLICKED ON MAIN CUSTOMER
+    public static void increaseCategoryClicks() {
+        categoryClicks++;
+    }
     private static class getAds extends AsyncTask<Integer, Void, Void> {
 
         private UnifiedNativeAd tempAd;
@@ -214,4 +167,74 @@ public class ShopikApplicationActivity extends Application {
             tempAd = null;
         }
     }
+
+    public static ReviewInfo getReviewInfo(){
+        return reviewInfo;
+    }
+
+    public static ReviewManager getReviewManager(){
+        return manager;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        requestReview();
+
+        //Google Ads
+        List<String> testDeviceIds = Collections.singletonList(Macros.TEST_DEVICE_ID);
+        RequestConfiguration configuration = new RequestConfiguration.Builder().
+                setTestDeviceIds(testDeviceIds).build();
+        MobileAds.setRequestConfiguration(configuration);
+
+        //Facebook Ads
+        AdSettings.setIntegrationErrorMode(INTEGRATION_ERROR_CALLBACK_MODE);
+        AudienceNetworkAds.initialize(this);
+
+        interstitialAd = new com.facebook.ads.InterstitialAd(this, Macros.FB_PLACEMENT_ID);
+
+        // Load a new interstitial.
+        adListener = new InterstitialAdListener() {
+            @Override
+            public void onInterstitialDisplayed(Ad ad) {}
+
+            @Override
+            public void onInterstitialDismissed(Ad ad) {
+                setInterstitialAd();
+            }
+
+            @Override
+            public void onError(Ad ad, AdError adError) {}
+
+            @Override
+            public void onAdLoaded(Ad ad) {}
+
+            @Override
+            public void onAdClicked(Ad ad) {}
+
+            @Override
+            public void onLoggingImpression(Ad ad) {}
+        };
+
+        InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
+                .withAdListener(adListener)
+                .withCacheFlags(EnumSet.of(CacheFlag.VIDEO))
+                .build();
+
+        interstitialAd.loadAd(LoadAdConfig);
+    }
+
+    //REVIEW APP
+    private void requestReview(){
+        manager = ReviewManagerFactory.create(this);
+        Task<ReviewInfo> request = manager.requestReviewFlow();
+        request.addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // We can get the ReviewInfo object
+                reviewInfo = task.getResult();
+            }
+        });
+    }
+
 }

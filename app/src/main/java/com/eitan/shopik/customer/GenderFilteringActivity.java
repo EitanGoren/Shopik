@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -28,6 +29,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.LandingPageActivity;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
+import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.adapters.ExplanationPagerViewAdapter;
 import com.eitan.shopik.items.RecyclerItem;
 import com.eitan.shopik.items.ShoppingItem;
@@ -35,11 +37,14 @@ import com.eitan.shopik.viewModels.EntranceViewModel;
 import com.eitan.shopik.viewModels.GenderModel;
 import com.eitan.shopik.viewModels.OutletsModel;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.play.core.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
@@ -52,6 +57,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -72,6 +78,9 @@ public class GenderFilteringActivity extends AppCompatActivity {
     private static OutletsModel outletsModel;
     private static EntranceViewModel entranceModel;
     private ArrayList<AsyncTask <Void, Void, Void>> asyntask;
+    private static long entriesNum = 0;
+    private static DocumentReference customerFS;
+    private static MutableLiveData<Long> entries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +107,8 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
 
         init();
+
+        new appEntriesNum().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
         setToolbarColor();
 
@@ -167,6 +178,10 @@ public class GenderFilteringActivity extends AppCompatActivity {
         });
 
         setMarquee();
+
+        entries.observe(this, integer -> {
+            launchReview();
+        });
     }
 
     private void setViewPager() {
@@ -223,7 +238,8 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
     private void setSpinner() {
         ArrayAdapter<CharSequence> gender_adapter = ArrayAdapter.
-                createFromResource(GenderFilteringActivity.this, R.array.gender, R.layout.gender_item_drop_down);
+                createFromResource(GenderFilteringActivity.this,
+                        R.array.gender, R.layout.gender_item_drop_down);
         gender_adapter.setDropDownViewResource(R.layout.gender_item_drop_down);
         gender_spinner.setAdapter(gender_adapter);
     }
@@ -245,6 +261,14 @@ public class GenderFilteringActivity extends AppCompatActivity {
             color = getColor(R.color.menColor);
     }
 
+    private void launchReview() {
+        if( ShopikApplicationActivity.getReviewInfo() != null ) {
+            Task<Void> flow = ShopikApplicationActivity.getReviewManager().
+                    launchReviewFlow(this, ShopikApplicationActivity.getReviewInfo());
+            flow.addOnCompleteListener(task -> {});
+        }
+    }
+
     private void init() {
 
         setNavigationBarButtonsColor(getWindow().getNavigationBarColor());
@@ -260,11 +284,17 @@ public class GenderFilteringActivity extends AppCompatActivity {
         //Array of task
         asyntask = new ArrayList<>();
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+        customerFS = FirebaseFirestore.getInstance().collection(Macros.CUSTOMERS).document(userId);
+
         toolbar = findViewById(R.id.gender_toolbar);
         tabLayout = findViewById(R.id.gender_top_nav);
         mMainPager = findViewById(R.id.gender_pager);
         gender_spinner = findViewById(R.id.gender_spinner);
         marquee = findViewById(R.id.marquee);
+
+        entries = new MutableLiveData<>();
 
         if (bundle.getString("gender") != null) {
             gender_spinner.setSelection(Objects.equals(bundle.getString("gender"),
@@ -771,5 +801,37 @@ public class GenderFilteringActivity extends AppCompatActivity {
     private void animateLogo(){
         if(findViewById(R.id.company_img_logo) != null)
             YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.company_img_logo));
+    }
+
+    private static class appEntriesNum extends AsyncTask<Integer, Long, Void> {
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Integer... integers) {
+
+            Map<String, Object> map = new HashMap<>();
+            customerFS.get().addOnSuccessListener(documentSnapshot -> {
+
+                if(documentSnapshot.exists()) {
+                    entriesNum = documentSnapshot.get("app_entries") != null ?
+                            (long) documentSnapshot.get("app_entries") : 0;
+                }
+
+                entriesNum++;
+                map.put("app_entries",entriesNum);
+                customerFS.update(map);
+
+                if(entriesNum == 5){
+                    publishProgress(entriesNum);
+                }
+            });
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Long... values) {
+            super.onProgressUpdate(values);
+            entries.postValue(values[0]);
+        }
     }
 }

@@ -41,7 +41,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CompanyProfileActivity extends AppCompatActivity {
 
     private DocumentReference companyFS;
-    private String companyId,imageUrl,name,facebook,twitter,youtube,instagram,site,cover,description;
+    private String companyId,imageUrl,name,facebook,twitter,
+                    youtube,instagram,site,cover,description;
     private CircleImageView mProfile_image,toolbar_pic;
     private ImageView mFacebook,mTwitter,mSite,mInstagram,mYoutube,bgimage;
     private TextView mDescription;
@@ -153,16 +154,16 @@ public class CompanyProfileActivity extends AppCompatActivity {
                     Objects.requireNonNull(data.get("logo_url")).toString() : null;
             name = data.get("seller") != null ?
                     Objects.requireNonNull(data.get("seller")).toString() : "company Name";
-            facebook = data.get("facebook_link") != null ?
-                    Objects.requireNonNull(data.get("facebook_link")).toString() : null;
+            facebook = data.get("fb") != null ?
+                    Objects.requireNonNull(data.get("fb")).toString() : null;
             twitter = data.get("twitter") != null ?
                     Objects.requireNonNull(data.get("twitter")).toString() : null;
-            instagram = data.get("instagram_link") != null ?
-                    Objects.requireNonNull(data.get("instagram_link")).toString() : null;
+            instagram = data.get("ig") != null ?
+                    Objects.requireNonNull(data.get("ig")).toString() : null;
             youtube = data.get("yt_link") != null ?
-                    Objects.requireNonNull(data.get("yt_link")).toString() : null;
-            site = data.get("site_link") != null ?
-                    Objects.requireNonNull(data.get("site_link")).toString() : null;
+                    Objects.requireNonNull(data.get("yt")).toString() : null;
+            site = data.get("web") != null ?
+                    Objects.requireNonNull(data.get("web")).toString() : null;
             cover = data.get("cover_image_url") != null ?
                     Objects.requireNonNull(data.get("cover_image_url")).toString() : null;
             description = data.get("description") != null ?

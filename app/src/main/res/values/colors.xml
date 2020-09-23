@@ -11,8 +11,9 @@
     <color name="womenColor">#C82A60</color>
     <color name="menColor">#17578A</color>
     <color name="SplashScreenBackground">#2469DF</color>  <!--489A93-->
+    <color name="ShopikLogo">#555555</color>
     <color name="GenderScreenTheme">#555555</color>
-    <color name="CompanyProfileScrim">#47A9FF</color>
+    <color name="CompanyProfileScrim">#0E497C</color>
     <color name="EditTextHintColor">#EF3232</color>
     <color name="SnackbarBackground">#FFFAD7</color>
     <color name="FavoritesInfoLine">#D8D8D8</color>

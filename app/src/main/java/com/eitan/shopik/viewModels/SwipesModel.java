@@ -42,6 +42,4 @@ public class SwipesModel extends AndroidViewModel implements Serializable {
     public void addToItems(ShoppingItem shoppingItem) {
         Objects.requireNonNull(this.items.getValue()).add(shoppingItem);
     }
-
-
 }
