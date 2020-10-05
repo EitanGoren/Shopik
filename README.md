@@ -1,5 +1,5 @@
 # Shopik
-The tinder of Fashion!
+The Tinder of Fashion!
 
 E-commerce application for Android. 
 Where you can explore thousands of fashion items and save your favorites.
