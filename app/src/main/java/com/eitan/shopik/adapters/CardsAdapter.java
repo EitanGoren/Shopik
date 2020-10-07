@@ -5,13 +5,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Build;
 import android.util.Pair;
 import android.view.Gravity;
@@ -36,10 +33,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.LikedUser;
@@ -48,21 +41,15 @@ import com.eitan.shopik.R;
 import com.eitan.shopik.customer.FullscreenImageActivity;
 import com.eitan.shopik.items.ShoppingItem;
 import com.facebook.CallbackManager;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
-import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.ads.formats.UnifiedNativeAdView;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -223,7 +210,7 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
             StringBuilder description = new StringBuilder();
             for(String word : shoppingItem.getName()){
-                description.append(word);
+                description.append(word).append(" ");
             }
 
             YoYo.with(Techniques.Shake).duration(1000).playOn(likes);
@@ -236,14 +223,14 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
                 if (shoppingItem.getLikedUsers() != null)
                     showLikesListDialog(shoppingItem.getLikedUsers());
                 else
-                    Toast.makeText(getContext(), "No Likes yet :)", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "No Likes yet", Toast.LENGTH_SHORT).show();
                 return true;
             });
             unlikes.setOnLongClickListener(v -> {
                 if (shoppingItem.getUnlikedUsers() != null)
                     showUnlikesListDialog(shoppingItem.getUnlikedUsers());
                 else
-                    Toast.makeText(getContext(), "No Unlikes yet :)", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "No Unlikes yet", Toast.LENGTH_SHORT).show();
                 return true;
             });
 

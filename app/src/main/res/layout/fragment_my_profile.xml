@@ -85,24 +85,27 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/bg14"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:id="@+id/social"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="15dp">
+                android:layout_margin="15dp"
+                android:background="#BEFFFFFF"
+                android:gravity="center"
+                android:padding="5dp">
 
                 <ImageView
                     android:id="@+id/company_facebook"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:layout_marginStart="10dp"
                     android:layout_marginEnd="20dp"
                     android:contentDescription="@string/facebook" />
 
@@ -135,32 +138,45 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
                     android:contentDescription="@string/site" />
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:labelFor="@id/description"
-                android:layout_marginStart="25dp"
-                android:textStyle="bold"
-                android:textSize="30sp"
-                android:text="@string/about_us"
-                android:layout_below="@id/social"
-                android:layout_marginTop="25dp"/>
-
-            <TextView
-                android:id="@+id/description"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="textStart"
-                android:layout_below="@id/label"
-                android:layout_marginBottom="5dp"
-                android:textSize="18sp"
-                android:padding="18dp"/>
+                android:layout_below="@id/social"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_margin="15dp"
+                android:layout_marginTop="90dp"
+                android:background="#BEFFFFFF"
+                android:padding="5dp">
+
+                <TextView
+                    android:id="@+id/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:labelFor="@id/description"
+                    android:text="@string/about_us"
+                    android:textColor="#000000"
+                    android:textSize="34sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/label"
+                    android:layout_marginBottom="5dp"
+                    android:padding="18dp"
+                    android:textAlignment="textStart"
+                    android:textColor="#000000"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 

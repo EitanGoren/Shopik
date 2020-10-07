@@ -29,7 +29,8 @@ import java.util.ArrayList;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder> implements Serializable {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder>
+        implements Serializable {
 
     private final ArrayList<RecyclerItem> items;
     private final String type;
@@ -123,7 +124,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                             }
                         }
                         intent.putExtra("seller_logo", item.getSellerLogoUrl());
-                        intent.putExtra("description", item.toString());
+                        intent.putExtra("description", item.getText());
                         intent.putExtra("seller", item.getSeller());
 
                         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) getContext(),

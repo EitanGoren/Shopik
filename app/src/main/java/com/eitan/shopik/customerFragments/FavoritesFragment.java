@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -99,17 +99,21 @@ public class FavoritesFragment extends Fragment {
         };
         scroll_Up.setOnClickListener(v -> {
             //scroll down
-            if(items_num > 100)
+            if (items_num > 100)
                 mLayoutManager.scrollToPosition(recyclerGridAdapter.getItemCount() - 1);
+            else if (items_num > 0)
+                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, recyclerGridAdapter.getItemCount() - 1);
             else
-                mLayoutManager.smoothScrollToPosition(mRecyclerView,null,recyclerGridAdapter.getItemCount() - 1);
+                Toast.makeText(getContext(), "No Favorites Yet", Toast.LENGTH_SHORT).show();
         });
         scroll_Down.setOnClickListener(v -> {
             //scroll up
-            if(items_num > 100)
+            if (items_num > 100)
                 mLayoutManager.scrollToPosition(0);
+            else if (items_num > 0)
+                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
             else
-                mLayoutManager.smoothScrollToPosition(mRecyclerView,null,0);
+                Toast.makeText(getContext(), "No Favorites Yet", Toast.LENGTH_SHORT).show();
         });
 
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(0);
@@ -228,15 +232,14 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
-        // Retrieve the SearchView and plug it into SearchManager
         MenuItem search = menu.findItem(R.id.nav_search);
         searchView = (SearchView) search.getActionView();
 
-        String queryHint = "What's On Your Mind?";
+        String queryHint = "Talk To Me...";
         searchView.setQueryHint(queryHint);
         searchView.setOnClickListener(v -> searchView.onActionViewExpanded());
         searchView.setOnQueryTextListener(queryTextListener);
 
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="20dp">
+    android:elevation="20dp"
+    android:translationZ="5dp">
 
     <RelativeLayout
         android:id="@+id/image_viewPager"
         android:layout_width="wrap_content"
-        android:layout_height="415dp"
+        android:layout_height="435dp"
         android:background="#1E737373">
 
         <ImageView
@@ -180,9 +180,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_toStartOf="@id/likes_layout"
                 android:fontFamily="@font/nobile"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="5dp"
+                android:padding="5dp"
                 android:textAlignment="viewStart"
                 android:textColor="#000000"
                 android:textSize="18sp"
@@ -243,9 +241,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:orientation="horizontal"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/updated_price"
@@ -263,6 +259,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/nunito_semibold"
                 android:textAlignment="viewStart"
+                android:layout_marginStart="5dp"
                 android:textColor="#000000"
                 android:textSize="17sp" />
 
@@ -273,10 +270,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
             android:fontFamily="@font/nobile"
             android:gravity="center"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
             android:text="@string/sale"
             android:textColor="#FF0000"
             android:textSize="17sp"
@@ -288,10 +284,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
             android:fontFamily="@font/nobile"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
             android:textAlignment="textStart"
             android:textSize="14sp" />
 

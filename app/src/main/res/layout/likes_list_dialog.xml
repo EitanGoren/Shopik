@@ -16,29 +16,37 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/likes_header"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:fontFamily="@font/nunito_semibold"
-            android:layout_marginTop="15dp"
-            android:transitionName="like"
-            android:layout_marginBottom="15dp"
-            android:layout_gravity="center"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:padding="5dp" />
+            android:background="@drawable/multicolor3"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/likes_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_semibold"
+                android:padding="5dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:transitionName="like" />
+
+        </LinearLayout>
 
         <ListView
             android:id="@+id/likes_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:dividerHeight="0.7dp"
+            android:divider="@drawable/multicolor2"
             android:clickable="true"
             android:footerDividersEnabled="true"
             android:headerDividersEnabled="true"
-            android:divider="#8F8F8F"
+            android:dividerHeight="0.9dp"
             android:focusable="true"/>
 
     </LinearLayout>

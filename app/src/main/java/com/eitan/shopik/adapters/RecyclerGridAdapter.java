@@ -1,6 +1,5 @@
 package com.eitan.shopik.adapters;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +20,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,8 +28,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.eitan.shopik.LikedUser;
@@ -261,9 +257,9 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         else if( viewType == TYPE_NEW_ITEM){
             View view = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.e3_grid_item, parent,false);
+                    inflate(R.layout.grid_clean_item, parent, false);
 
-            return new NewItemViewHolder(view);
+            return new ItemViewHolder(view);
         }
         else {
             UnifiedNativeAdView view = (UnifiedNativeAdView) LayoutInflater.from(parent.getContext()).
@@ -284,7 +280,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         else if (getItemViewType(position) == TYPE_FAVORITES_AD)
             ((ADViewHolder) holder).setAd(items.get(position));
         else if (getItemViewType(position) == TYPE_NEW_ITEM)
-            ((NewItemViewHolder) holder).setItem(items.get(position));
+            ((ItemViewHolder) holder).setItem(items.get(position));
     }
 
     @Override
@@ -487,12 +483,11 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             String cur_price;
             try {
-                if (item.getSeller().equals("ASOS")) {
+                if (item.getSeller().toLowerCase().equals("asos")) {
                     cur_price = new DecimalFormat("##.##").
                             format(Double.parseDouble(item.getPrice()) * Macros.POUND_TO_ILS) +
                             Currency.getInstance("ILS").getSymbol();
-                }
-                else {
+                } else {
                     cur_price = new DecimalFormat("##.##").
                             format(Double.parseDouble(item.getPrice())) +
                             Currency.getInstance("ILS").getSymbol();
@@ -502,9 +497,9 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 cur_price = "Unknown";
             }
 
-            if ( item.isOn_sale()) {
+            if (item.isOn_sale()) {
                 String new_price;
-                if (item.getSeller().equals("ASOS"))
+                if (item.getSeller().toLowerCase().equals("asos"))
                     new_price = new DecimalFormat("##.##").
                             format(Double.parseDouble(item.getReduced_price()) * Macros.POUND_TO_ILS) +
                             Currency.getInstance("ILS").getSymbol();
@@ -522,7 +517,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             else {
                 price.setTextColor(Color.BLACK);
-                old_price.setVisibility(View.INVISIBLE);
+                old_price.setVisibility(View.GONE);
                 price.setText(cur_price);
             }
 
@@ -539,11 +534,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 percentage_header.setVisibility(View.GONE);
             }
 
-            brand_name.setOnClickListener(v ->
-                    Macros.Functions.sellerProfile(getContext(), item.getSellerId(),null));
-
             if(item.isOn_sale()){
-
                 int discount = (int) ( 100 - Math.ceil( 100 * ( Double.parseDouble(item.getReduced_price())
                         / Double.parseDouble(item.getPrice()))));
                 String text = "ON SALE";
@@ -551,22 +542,24 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 sale.setTextColor(Color.RED);
                 sale.setVisibility(View.VISIBLE);
 
-                String percent =  " -" + discount + "%";
+                String percent = " -" + discount + "%";
                 sale_percentage.setText(percent);
                 sale_percentage.setVisibility(View.VISIBLE);
                 sale_percentage.setTextColor(Color.RED);
-            }
-            else {
+            } else {
                 sale.setVisibility(View.GONE);
                 sale_percentage.setVisibility(View.GONE);
             }
+
+            brand_name.setOnClickListener(v ->
+                    Macros.Functions.sellerProfile(getContext(), item.getSellerId(), null));
+
             String brand = item.getBrand();
             String seller = item.getSeller();
 
             if (brand != null && brand.length() <= 45) {
                 brand_name.setText(brand);
-            }
-            else
+            } else
                 brand_name.setText(seller);
 
             final int[] index = {0};
@@ -613,11 +606,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 intent.putExtra("description", item_description.toString());
                 intent.putExtra("seller", item.getSeller());
 
-                ArrayList<Pair<View,String>> pairs = new ArrayList<>();
-                pairs.add(Pair.create(logo,"company_logo"));
-                pairs.add(Pair.create(brand_name,"company_name"));
-
-                Macros.Functions.fullscreen( getContext(), intent, pairs );
+                Macros.Functions.fullscreen(getContext(), intent, null);
             });
         }
 
@@ -1028,105 +1017,5 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
-    }
-    private class NewItemViewHolder extends RecyclerView.ViewHolder {
-
-        final ImageView imageView;
-        final Button link;
-        final TextView price;
-        final TextView reduced_price;
-        final TextView sale;
-        final TextView brand;
-        final TextView description;
-
-        public NewItemViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            imageView = itemView.findViewById(R.id.image_slider);
-            link = itemView.findViewById(R.id.store_link);
-            price = itemView.findViewById(R.id.slider_brand);
-            reduced_price = itemView.findViewById(R.id.reduced_price);
-            sale = itemView.findViewById(R.id.sale);
-            brand = itemView.findViewById(R.id.brand);
-            description = itemView.findViewById(R.id.description);
-        }
-
-        public void setItem(final ShoppingItem item) {
-
-            ItemsList = items;
-
-            link.setOnClickListener(v -> {
-                assert item != null;
-                Macros.Functions.buy(getContext(), item.getSite_link());
-            });
-
-            assert item != null;
-            final ArrayList<String> imagesUrl = item.getImages();
-
-            if(item.getBrand() != null){
-                brand.setVisibility(View.VISIBLE);
-                brand.setText(item.getBrand().toUpperCase());
-            }
-            else
-                brand.setVisibility(View.GONE);
-
-            if(item.getName() != null){
-                StringBuilder desc = new StringBuilder();
-                for(String word : item.getName()){
-                    desc.append(word).append(" ");
-                }
-                description.setVisibility(View.VISIBLE);
-                description.setText(desc);
-            }
-            else
-                description.setVisibility(View.GONE);
-
-            if(imagesUrl.size() > 0)
-                Macros.Functions.GlidePicture(getContext(),imagesUrl.get(0),imageView);
-
-            if(item.isOn_sale())
-                sale.setVisibility(View.VISIBLE);
-            else
-                sale.setVisibility(View.GONE);
-
-            if(item.isOn_sale()){
-                Currency shekel = Currency.getInstance("ILS");
-                String currency_symbol = shekel.getSymbol();
-                Double old = Double.parseDouble(item.getReduced_price()) * Macros.POUND_TO_ILS;
-                String cur_price = new DecimalFormat("##.##").format(old) + currency_symbol;
-
-                reduced_price.setVisibility(View.VISIBLE);
-                reduced_price.setText(cur_price);
-                reduced_price.setTextColor(Color.RED);
-                reduced_price.setTextSize(16);
-
-                price.setPaintFlags(price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                price.setText(item.getPrice());
-                price.setTextSize(12);
-            }
-            else {
-                reduced_price.setVisibility(View.GONE);
-                price.setText(item.getPrice());
-                price.setTextSize(16);
-            }
-
-            imageView.setOnClickListener(v -> {
-                Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
-                intent.putExtra("isFav", false);
-                intent.putExtra("brand", item.getSeller());
-                intent.putExtra("id", item.getId());
-                intent.putExtra("img1", item.getImages().get(0));
-                intent.putExtra("img2", item.getImages().get(1));
-                intent.putExtra("img3", item.getImages().get(2));
-                intent.putExtra("img4", item.getImages().get(3));
-                intent.putExtra("seller_logo", item.getSellerLogoUrl());
-                intent.putExtra("description", item.toString());
-                intent.putExtra("type", item.getType());
-
-                Macros.Functions.fullscreen(getContext(), intent, null);
-            });
-        }
-
-        public Context getContext() { return itemView.getContext(); }
     }
 }

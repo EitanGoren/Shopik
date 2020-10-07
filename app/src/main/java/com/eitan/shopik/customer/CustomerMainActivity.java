@@ -160,8 +160,8 @@ public class CustomerMainActivity extends AppCompatActivity
         navigationView.setOnClickListener(v -> getCoverPic());
 
         TextView copyright = findViewById(R.id.nav_copyright_text);
-        String text = "Shopik Version 1.0 " + System.lineSeparator() +
-                getResources().getString(R.string.copy_right) ;
+        String text = getResources().getString(R.string.version) + System.lineSeparator() +
+                getResources().getString(R.string.copy_right);
 
         copyright.setText(text);
 
@@ -1150,138 +1150,6 @@ public class CustomerMainActivity extends AppCompatActivity
             return null;
         }
     }
-    private static class getTFS extends AsyncTask <Integer, Integer, Void> {
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected Void doInBackground(Integer... page_num) {
-
-            String cat = Macros.Functions.translateCategoryTo247(item_type,item_gender);
-            String sub_cat = Macros.Functions.translateSubCategoryTo247(item_sub_category,item_gender);
-
-            int iter = 0;
-            int total = 0;
-            if(cat != null && sub_cat != null) {
-                try {
-                    for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
-                        Document document = Jsoup.connect("https://www.twentyfourseven.co.il/he/" +
-                                item_gender.toLowerCase() + "/" + cat + "/" + sub_cat + ".html?p=" + page).get();
-
-                        Element element = document.getElementsByClass("products-grid").get(0);
-                        Elements items = element.getElementsByClass("item");
-
-                        total_items += items.size();
-                        mainModel.getTotalItems().postValue(total_items);
-                        total = items.size();
-                        for (Node item_node : items) {
-
-                            ShoppingItem shoppingItem = new ShoppingItem();
-
-                            String link = item_node.childNode(3).childNode(0).attr("href");
-
-                            Document document1;
-                            try {
-                                document1 = Jsoup.connect(link).get();
-                            }
-                            catch (org.jsoup.HttpStatusException ex){
-                                total_items--;
-                                total--;
-                                mainModel.getTotalItems().postValue(total_items);
-                                continue;
-                            }
-                            Elements elements1 = document1.
-                                    getElementsByClass("product-image product-image-zoom");
-
-                            Elements old_prices = document1.getElementsByClass("old-price");
-                            Elements special_prices = document1.getElementsByClass("special-price");
-
-                            String price;
-                            if (old_prices.size() > 0 && special_prices.size() > 0) {
-
-                                String old_p = old_prices.get(0).
-                                        childNode(3).childNode(0).
-                                        toString().replace("&nbsp;₪", "");
-                                shoppingItem.setPrice(old_p);
-
-                                shoppingItem.setOn_sale(true);
-                                String reduced_p = special_prices.get(0).
-                                        childNode(3).childNode(0).
-                                        toString().replace("&nbsp;₪", "");
-
-                                shoppingItem.setReduced_price(reduced_p);
-                            } else {
-                                price = item_node.
-                                        childNode(7).childNode(1).
-                                        childNode(1).childNode(0).
-                                        toString().replace("&nbsp;₪", "");
-
-                                shoppingItem.setPrice(price);
-                            }
-
-                            Elements sku = document1.getElementsByClass("sku");
-
-                            String id = sku.get(0).childNode(3).childNode(0).toString();
-
-                            Elements elements2 = document1.getElementsByClass("std shortDescription");
-                            String description = elements2.get(0).childNode(0).toString().replace("\n", "");
-                            ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
-
-                            String imageUrl;
-
-                            try {
-                                imageUrl = elements1.get(0).
-                                        childNode(7).childNode(1).
-                                        childNode(1).childNode(1).attr("src");
-                            } catch (IndexOutOfBoundsException ex) {
-                                imageUrl = elements1.get(0).
-                                        childNode(7).childNode(1).
-                                        childNode(3).childNode(1).attr("src");
-                            }
-
-                            ArrayList<String> images = new ArrayList<>();
-                            int num = elements1.get(0).childNode(7).childNodeSize();
-                            int images_num = (num - 3) / 2;
-
-                            for (int i = 1; i < images_num + 1; ++i) {
-                                if (i > 4) break;
-                                String image = imageUrl.split("-")[0] + "-" + i + ".jpg";
-                                images.add(image);
-                            }
-                            if (images.size() < 4) {
-                                for (int i = images.size(); i < 4; ++i) {
-                                    images.add(imageUrl);
-                                }
-                            }
-
-                            shoppingItem.setImages(images);
-                            shoppingItem.setBrand("TwentyFourSeven");
-                            shoppingItem.setType(item_type);
-                            shoppingItem.setGender(item_gender);
-                            shoppingItem.setSeller("TwentyFourSeven");
-                            shoppingItem.setSub_category(item_sub_category);
-                            shoppingItem.setSellerId("SjSqx6h2ZFd2CSW8HjIDhLejNza2");
-                            shoppingItem.setId(id);
-                            shoppingItem.setName(name);
-                            shoppingItem.setSite_link(link);
-                            shoppingItem.setExclusive(name.contains("exclusive"));
-                            shoppingItem.setSeen(mainModel.isSwiped(id));
-                            shoppingItem.setPage_num(page);
-                            iter++;
-                            if (favorites.containsKey(shoppingItem.getId())) {
-                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
-                            }
-                            getLikes(shoppingItem);
-                        }
-                    }
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    total_items = Math.max(total_items - (total - iter), 0);
-                    mainModel.getTotalItems().postValue(total_items);
-                }
-            }
-            return null;
-        }
-    }
     private static class getCastro extends AsyncTask <Integer, Integer, Void> {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
@@ -1521,6 +1389,138 @@ public class CustomerMainActivity extends AppCompatActivity
 
                             iter++;
 
+                            if (favorites.containsKey(shoppingItem.getId())) {
+                                shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
+                            }
+                            getLikes(shoppingItem);
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    total_items = Math.max(total_items - (total - iter), 0);
+                    mainModel.getTotalItems().postValue(total_items);
+                }
+            }
+            return null;
+        }
+    }
+    private static class getTFS extends AsyncTask <Integer, Integer, Void> {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Integer... page_num) {
+
+            String cat = Macros.Functions.translateCategoryTo247(item_type,item_gender);
+            String sub_cat = Macros.Functions.translateSubCategoryTo247(item_sub_category,item_gender);
+
+            int iter = 0;
+            int total = 0;
+            if(cat != null && sub_cat != null) {
+                try {
+                    for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
+                        Document document = Jsoup.connect("https://www.twentyfourseven.co.il/he/" +
+                                item_gender.toLowerCase() + "/" + cat + "/" + sub_cat + ".html?p=" + page).get();
+
+                        Element element = document.getElementsByClass("products-grid").get(0);
+                        Elements items = element.getElementsByClass("item");
+
+                        total_items += items.size();
+                        mainModel.getTotalItems().postValue(total_items);
+                        total = items.size();
+                        for (Node item_node : items) {
+
+                            ShoppingItem shoppingItem = new ShoppingItem();
+
+                            String link = item_node.childNode(3).childNode(0).attr("href");
+
+                            Document document1;
+                            try {
+                                document1 = Jsoup.connect(link).get();
+                            }
+                            catch (org.jsoup.HttpStatusException ex){
+                                total_items--;
+                                total--;
+                                mainModel.getTotalItems().postValue(total_items);
+                                continue;
+                            }
+                            Elements elements1 = document1.
+                                    getElementsByClass("product-image product-image-zoom");
+
+                            Elements old_prices = document1.getElementsByClass("old-price");
+                            Elements special_prices = document1.getElementsByClass("special-price");
+
+                            String price;
+                            if (old_prices.size() > 0 && special_prices.size() > 0) {
+
+                                String old_p = old_prices.get(0).
+                                        childNode(3).childNode(0).
+                                        toString().replace("&nbsp;₪", "");
+                                shoppingItem.setPrice(old_p);
+
+                                shoppingItem.setOn_sale(true);
+                                String reduced_p = special_prices.get(0).
+                                        childNode(3).childNode(0).
+                                        toString().replace("&nbsp;₪", "");
+
+                                shoppingItem.setReduced_price(reduced_p);
+                            } else {
+                                price = item_node.
+                                        childNode(7).childNode(1).
+                                        childNode(1).childNode(0).
+                                        toString().replace("&nbsp;₪", "");
+
+                                shoppingItem.setPrice(price);
+                            }
+
+                            Elements sku = document1.getElementsByClass("sku");
+
+                            String id = sku.get(0).childNode(3).childNode(0).toString();
+
+                            Elements elements2 = document1.getElementsByClass("std shortDescription");
+                            String description = elements2.get(0).childNode(0).toString().replace("\n", "");
+                            ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
+
+                            String imageUrl;
+
+                            try {
+                                imageUrl = elements1.get(0).
+                                        childNode(7).childNode(1).
+                                        childNode(1).childNode(1).attr("src");
+                            } catch (IndexOutOfBoundsException ex) {
+                                imageUrl = elements1.get(0).
+                                        childNode(7).childNode(1).
+                                        childNode(3).childNode(1).attr("src");
+                            }
+
+                            ArrayList<String> images = new ArrayList<>();
+                            int num = elements1.get(0).childNode(7).childNodeSize();
+                            int images_num = (num - 3) / 2;
+
+                            for (int i = 1; i < images_num + 1; ++i) {
+                                if (i > 4) break;
+                                String image = imageUrl.split("-")[0] + "-" + i + ".jpg";
+                                images.add(image);
+                            }
+                            if (images.size() < 4) {
+                                for (int i = images.size(); i < 4; ++i) {
+                                    images.add(imageUrl);
+                                }
+                            }
+
+                            shoppingItem.setImages(images);
+                            shoppingItem.setBrand("TwentyFourSeven");
+                            shoppingItem.setType(item_type);
+                            shoppingItem.setGender(item_gender);
+                            shoppingItem.setSeller("TwentyFourSeven");
+                            shoppingItem.setSub_category(item_sub_category);
+                            shoppingItem.setSellerId("SjSqx6h2ZFd2CSW8HjIDhLejNza2");
+                            shoppingItem.setId(id);
+                            shoppingItem.setName(name);
+                            shoppingItem.setSite_link(link);
+                            shoppingItem.setExclusive(name.contains("exclusive"));
+                            shoppingItem.setSeen(mainModel.isSwiped(id));
+                            shoppingItem.setPage_num(page);
+                            iter++;
                             if (favorites.containsKey(shoppingItem.getId())) {
                                 shoppingItem.setFavorite(Objects.equals(favorites.get(shoppingItem.getId()), Macros.CustomerMacros.FAVOURITE));
                             }

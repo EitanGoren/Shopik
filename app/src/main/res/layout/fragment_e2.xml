@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@null"
+        android:background="@drawable/bg111"
         android:dividerHeight="0dp"
-        android:background="#ffffff"
         android:groupIndicator="@null"
         android:paddingTop="7dp"
         android:scrollbars="none"/>

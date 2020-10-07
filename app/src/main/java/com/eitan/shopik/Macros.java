@@ -51,10 +51,14 @@ public class Macros {
     public static final String JACKETS = "Jackets";
     public static final String JEWELLERY = "Jewellery";
     public static final String WATCH = "Watch";
-    public static final String WOMEN_FIRST_PIC = "https://img.freepik.com/free-photo/portrait-beautiful-caucasian-sunbathed-woman-model-transparent-white-blouse-sitting-summer-beach-blue-ocean-background_158538-9730.jpg?size=626&ext=jpg";
-    public static final String WOMEN_SECOND_PIC = "https://media.gettyimages.com/photos/female-hands-lacing-running-shoes-closeup-picture-id531912454?b=1&k=6&m=531912454&s=612x612&w=0&h=U0OPbVWYvR4XkM_0uOslKgx8yg3TWGUP_99j-KOMUHk=";
-    public static final String MEN_FIRST_PIC = "https://www.thefashionisto.com/wp-content/uploads/2015/07/Matt-Trethe-Matches-Fashion-Summer-Swimwear-Shoot-2015-Mens-Style-007.jpg";
-    public static final String MEN_SECOND_PIC = "https://cdn.hiconsumption.com/wp-content/uploads/2019/08/Best-Mens-Sneakers-For-Summer-0-Hero.jpg";
+    public static final String FIRST_PIC = "https://lh3.googleusercontent.com/6zlRdjaz9XWvbywzvyctdRFFIwSUBmnkvsd3wLJ8w3X-u5auwtZSl418Vb8VPTIZqkEA";
+    public static final String SECOND_PIC = "https://www.renanim.co.il/wp-content/uploads/2018/03/cube-550-550.jpg";
+    public static final String THIRD_PIC = "https://lh3.googleusercontent.com/AOIrDWZ7ckxFyiQBNVuzN1CwKb7_O07euOgxMzqLs4nPpbJCztWz9-8tvy3vfICWi7k";
+    public static final String FOURTH_PIC = "https://thejewishvoice.com/wp-content/uploads/2020/05/New-York-Canadian-Retailer-article.jpg";
+    public static final String FIFTH_PIC = "https://www.shaar-hatsafon.co.il/wp-content/uploads/2018/12/%D7%A8%D7%A0%D7%95%D7%90%D7%A8-1.jpg";
+    public static final String SIXTH_PIC = "https://www.daitd.com/wp-content/uploads/2020/04/retminla_X_9.jpg";
+    public static final String SEVENTH_PIC = "https://seamall.co.il/wp-content/uploads/2019/05/%D7%91%D7%90%D7%A0%D7%A8-%D7%98%D7%95%D7%95%D7%A0%D7%98%D7%99-%D7%A4%D7%95%D7%A8-%D7%A1%D7%91%D7%9F.jpg";
+    public static final String EIGHTH_PIC = "https://www.alon-ein-shemer.co.il/wp-content/uploads/2016/10/%D7%94%D7%95%D7%93%D7%99%D7%A1-%D7%A2%D7%99%D7%9F-%D7%A9%D7%9E%D7%A8.jpg";
     public static final String YOUTUBE_IC = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1200px-YouTube_full-color_icon_%282017%29.svg.png";
     public static final String TWITTER_IC = "https://www.aps.edu/sapr/images/pnglot.comtwitterbirdlogopng139932.png/image";
     public static final String FACEBOOK_IC = "https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png";

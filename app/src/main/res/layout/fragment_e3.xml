@@ -2,65 +2,65 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#ffffff"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="5dp"
+    android:background="@drawable/bg111"
     tools:context=".genderFilteringPages.OutletsFragment">
-
-    <TextView
-        android:id="@+id/best_sellers2"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_alignParentTop="true"
-        android:background="#ffffff"
-        android:fontFamily="@font/nunito_bold"
-        android:drawablePadding="7dp"
-        android:layout_marginStart="10dp"
-        android:paddingTop="5dp"
-        android:textSize="23sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        android:drawableEnd="@drawable/ic_whatshot_red"
-        android:gravity="top" />
-
-    <TextView
-        android:id="@+id/items_count"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@id/best_sellers2"
-        android:layout_alignBottom="@id/best_sellers2"
-        android:gravity="center"
-        android:fontFamily="@font/nunito_bold"
-        android:paddingTop="9dp"
-        android:textSize="14sp"
-        android:textColor="#000000"
-        android:layout_marginStart="5dp"/>
-
-    <TextView
-        android:id="@+id/items_total"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="5dp"
-        android:layout_alignBottom="@id/best_sellers2"
-        android:gravity="center"
-        android:layout_toEndOf="@id/items_count"
-        android:fontFamily="@font/nunito_bold"
-        android:paddingTop="9dp"
-        android:background="#ffffff"
-        android:textColor="#000000"
-        android:textSize="14sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/grid_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/items_count"
-        android:background="#ffffff"
-        android:paddingStart="5dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="5dp"/>
+        android:layout_below="@id/outlet_layout"
+        android:layout_alignParentStart="true" />
+
+    <LinearLayout
+        android:id="@+id/outlet_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/multicolor2"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/best_sellers2"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_marginStart="10dp"
+            android:background="#00ffffff"
+            android:drawableEnd="@drawable/ic_whatshot_red"
+            android:drawablePadding="7dp"
+            android:fontFamily="@font/nunito_bold"
+            android:gravity="top"
+            android:paddingTop="5dp"
+            android:textColor="#000000"
+            android:textSize="23sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/items_count"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_marginStart="5dp"
+            android:background="#00ffffff"
+            android:fontFamily="@font/nunito_bold"
+            android:gravity="center"
+            android:paddingTop="9dp"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/items_total"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_marginStart="5dp"
+            android:background="#00ffffff"
+            android:fontFamily="@font/nunito_bold"
+            android:gravity="center"
+            android:paddingTop="9dp"
+            android:textColor="#000000"
+            android:textSize="14sp" />
+
+    </LinearLayout>
 
 </RelativeLayout>

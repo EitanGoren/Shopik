@@ -21,9 +21,7 @@
             android:layout_alignParentBottom="true"
             android:fitsSystemWindows="true"
             android:translationZ="5dp"
-            style="@style/Widget.Design.BottomNavigationView"
             android:paddingVertical="2dp"
-            android:theme="@style/Widget.Design.BottomNavigationView"
             app:elevation="20dp"
             app:itemIconSize="28sp"
             app:itemRippleColor="@color/SplashScreenBackground"
@@ -51,7 +49,6 @@
             android:layout_below="@id/customer_toolbar"
             android:indeterminate="false"
             app:indicatorColor="#122595"
-            app:indicatorWidth="5dp"
             tools:visibility="visible"/>
 
         <androidx.appcompat.widget.Toolbar
@@ -147,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="cursive"
                 android:text="@string/app_name"
-                android:textColor="@color/SplashScreenBackground"
+                android:textColor="#1E1E1E"
                 android:textSize="35sp"
                 android:textStyle="bold"/>
 

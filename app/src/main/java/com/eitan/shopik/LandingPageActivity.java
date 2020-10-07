@@ -1,16 +1,12 @@
 package com.eitan.shopik;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Pair;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -129,12 +125,7 @@ public class LandingPageActivity extends AppCompatActivity {
     private void init() {
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
-
         shopik = findViewById(R.id.shopik);
-        tooki = findViewById(R.id.imageView);
-
-        Animation blink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink_anim);
-        shopik.startAnimation(blink);
     }
 
     private void registerNewUser() {
@@ -194,13 +185,9 @@ public class LandingPageActivity extends AppCompatActivity {
         bundle.putString("name", user.getDisplayName());
         intent.putExtra("bundle", bundle);
 
-        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this,
-                Pair.create(tooki,"tooki"),
-                Pair.create(shopik,"Shopik"));
-
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            startActivity(intent, options.toBundle());
+            startActivity(intent);
             supportFinishAfterTransition();
         },1000 * 4 );
     }

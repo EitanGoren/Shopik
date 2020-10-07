@@ -5,31 +5,25 @@ import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.R;
 import com.eitan.shopik.adapters.FullscreenAdapter;
 
 import java.util.ArrayList;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FullscreenImageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         postponeEnterTransition();
         View decorView = getWindow().getDecorView();
-        int uiOptions =
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE;
         decorView.setSystemUiVisibility(uiOptions);
@@ -39,31 +33,17 @@ public class FullscreenImageActivity extends AppCompatActivity {
 
         init();
 
-        Button mClose = findViewById(R.id.fullscreen_close_x);
+        ImageView mClose = findViewById(R.id.fullscreen_close_x);
         mClose.setOnClickListener(v -> this.supportFinishAfterTransition());
     }
 
     private void init() {
 
         ImageView mFavorite = findViewById(R.id.favorite_sign);
-        CircleImageView company = findViewById(R.id.comp_logo);
-        TextView name = findViewById(R.id.comp_name);
 
-        String brand = getIntent().getStringExtra("brand");
-        name.setText(brand);
-        String seller_logo = getIntent().getStringExtra("seller_logo");
-
-        if(seller_logo != null )
-            Glide.with(this).load(seller_logo).into(company);
-
-        String seller_name = getIntent().getStringExtra("seller");
         boolean isFavorite = getIntent().getBooleanExtra("isFav", false);
-        String description = getIntent().getStringExtra("description");
-
-        if(seller_logo == null && seller_name == null){
-            CardView comp_info = findViewById(R.id.comp_info);
-            comp_info.setVisibility(View.GONE);
-        }
+        String description = getIntent().getStringExtra("description") != null ?
+                getIntent().getStringExtra("description") : "No Info";
 
         ArrayList<String> imagesUrl = new ArrayList<>();
         imagesUrl.add(getIntent().getStringExtra("img1"));

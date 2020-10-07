@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -235,17 +236,21 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         };
         scrollUpFAB.setOnClickListener(v -> {
             //scroll down
-            if(items_num > 100)
+            if (items_num > 100)
                 mLayoutManager.scrollToPosition(recyclerGridAdapter.getItemCount() - 1);
+            else if (items_num > 0)
+                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, recyclerGridAdapter.getItemCount() - 1);
             else
-                mLayoutManager.smoothScrollToPosition(mRecyclerView,null,recyclerGridAdapter.getItemCount() - 1);
+                Toast.makeText(getContext(), "No Favorites Yet", Toast.LENGTH_SHORT).show();
         });
         scrollDownFAB.setOnClickListener(v -> {
             //scroll up
-            if(items_num > 100)
+            if (items_num > 100)
                 mLayoutManager.scrollToPosition(0);
+            else if (items_num > 0)
+                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
             else
-                mLayoutManager.smoothScrollToPosition(mRecyclerView,null,0);
+                Toast.makeText(getContext(), "No Favorites Yet", Toast.LENGTH_SHORT).show();
         });
         return view;
     }

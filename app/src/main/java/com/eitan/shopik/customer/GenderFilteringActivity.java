@@ -21,7 +21,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -47,6 +46,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
@@ -57,7 +58,6 @@ import org.jsoup.select.Elements;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -168,10 +168,22 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 asyntask.add(new fetchOutlet().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
                 // LIKED ITEMS
                 asyntask.add(new fetchLikedItems().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
-                // SHOES ITEMS
-                asyntask.add(new getAldoShoes().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
-                // CLOTHING ITEMS
-                asyntask.add(new getCastroClothing().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
+                // ALDO ITEMS
+                asyntask.add(new getAldo().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
+                // CASTRO ITEMS
+                asyntask.add(new getCastro().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
+                // ASOS ITEMS
+                asyntask.add(new getAsos().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
+                // SHEIN ITEMS
+                asyntask.add(new getShein().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
+                // RENUAR ITEMS
+                asyntask.add(new getRenuar().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
+                // TERMINAL X ITEMS
+                asyntask.add(new getTerminalX().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
+                // TFS ITEMS
+                asyntask.add(new getTFS().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
+                // HOODIES ITEMS
+                asyntask.add(new getHoodies().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
             }
 
             @Override
@@ -537,15 +549,12 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         Elements poki = brand_ele.get(0).getElementsByTag("strong");
                         brand = poki.get(0).text();
                         shoppingItem.setBrand(brand);
-                    }
-                    catch (IndexOutOfBoundsException ex) {
+                    } catch (IndexOutOfBoundsException ex) {
                         shoppingItem.setBrand("ASOS");
                     }
 
-                    Currency shekel = Currency.getInstance("ILS");
-                    String currency_symbol = shekel.getSymbol();
-                    Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
-                    String _price = new DecimalFormat("##.##").format(current) + currency_symbol;
+                    Double current = Double.parseDouble(price);
+                    String _price = new DecimalFormat("##.##").format(current);
 
                     shoppingItem.setSeller("ASOS");
                     shoppingItem.setImages(images);
@@ -607,7 +616,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
         }
     }
 
-    private static class getAldoShoes extends AsyncTask <Void, Void, Void> {
+    private static class getAldo extends AsyncTask <Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -618,77 +627,65 @@ public class GenderFilteringActivity extends AppCompatActivity {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected Void doInBackground(Void... page_num) {
-
             int iter = 0;
-                try {
-                    Document temp;
-                    if(gender.equals(Macros.CustomerMacros.WOMEN)) {
-                        temp = Jsoup.connect("https://www.aldoshoes.co.il/" +
-                                gender.toLowerCase() + "/w-best-sellers.html").get();
+            try {
+                Document temp;
+                temp = Jsoup.connect("https://www.aldoshoes.co.il/"+ gender.toLowerCase()
+                        +"/new-arrivals.html").get();
+
+                Elements list_items = temp.getElementsByAttributeValue("id", "prod-list-cat");
+                Elements products = list_items.get(0).getElementsByClass("cat-product");
+
+                for(Element prod : products){
+
+                    iter++;
+                    String link = prod.childNode(7).attributes().get("href");
+                    String price = prod.childNode(7).attributes().get("data-price");
+                    String id = prod.childNode(7).attributes().get("data-id");
+                    String description = prod.childNode(7).attributes().get("data-name");
+                    ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
+
+
+                    Document prod_page;
+                    try {
+                        prod_page = Jsoup.connect(link).get();
                     }
-                    else{
-                        temp = Jsoup.connect("https://www.aldoshoes.co.il/" +
-                                gender.toLowerCase() + "/m-best-sellers.html").get();
+                    catch (org.jsoup.HttpStatusException ex){
+                        continue;
                     }
 
-                    Elements list_items = temp.getElementsByAttributeValue("id", "prod-list-cat");
-                    Elements products = list_items.get(0).getElementsByClass("cat-product");
+                    Elements prod_info = prod_page.getElementsByClass("gallery-image");
+                    if(prod_info.size() == 0) continue;
 
-                    for(Element prod : products){
-
-                        iter++;
-                        String link = prod.childNode(7).attributes().get("href");
-                        String price = prod.childNode(7).attributes().get("data-price");
-                        String description = prod.childNode(7).attributes().get("data-name");
-                        ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
-                        String id = prod.childNode(7).attributes().get("data-id");
-
-                        Document prod_page;
-                        try {
-                            prod_page = Jsoup.connect(link).get();
-                        }
-                        catch (org.jsoup.HttpStatusException ex){
-                            continue;
-                        }
-
-                        Elements prod_info = prod_page.getElementsByClass("product-image-gallery");
-                        Elements images_elements = prod_info.get(0).getElementsByClass("gallery-image-link");
-
-                        ShoppingItem shoppingItem = new ShoppingItem();
-                        ArrayList<String> images = new ArrayList<>();
-                        for(Node img : images_elements){
-                            images.add(img.attr("data-source"));
-                        }
-                        if(images.size() < 4){
-                            for(int j = images.size(); j<4; j++){
-                                images.add(images.get(0));
-                            }
-                        }
-
-                        shoppingItem.setPrice(price);
-                        shoppingItem.setImages(images);
-                        shoppingItem.setBrand("Aldo");
-                        shoppingItem.setGender(gender);
-                        shoppingItem.setSeller("Aldo");
-                        shoppingItem.setId(id);
-                        shoppingItem.setName(name);
-                        shoppingItem.setSite_link(link);
-
-                        if(gender.equals(Macros.CustomerMacros.WOMEN))
-                            entranceModel.addWomenShoesItem(shoppingItem);
-                        else
-                            entranceModel.addMenShoesItem(shoppingItem);
-
-                        entranceModel.setCurrentShoesItem(iter);
+                    ShoppingItem shoppingItem = new ShoppingItem();
+                    ArrayList<String> images = new ArrayList<>();
+                    for(Node img : prod_info){
+                        images.add(img.attr("src"));
                     }
+                    if(images.size() < 4){
+                        for(int j = images.size(); j<4; j++){
+                            images.add(images.get(0));
+                        }
+                    }
+
+                    shoppingItem.setPrice(price);
+                    shoppingItem.setImages(images);
+                    shoppingItem.setGender(gender);
+                    shoppingItem.setSeller("Aldo");
+                    shoppingItem.setSite_link(link);
+                    shoppingItem.setName(name);
+
+                    entranceModel.addItem(shoppingItem);
+                    entranceModel.setCurrentShoesItem(iter);
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
             return null;
         }
     }
-    private static class getCastroClothing extends AsyncTask <Void, Void, Void> {
+    private static class getCastro extends AsyncTask <Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -774,25 +771,629 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     ArrayList<String> description = new ArrayList<>(Arrays.asList(name.split(" ")));
 
                     shoppingItem.setImages(images);
-                    shoppingItem.setBrand("Castro");
                     shoppingItem.setGender(gender);
                     shoppingItem.setSeller("Castro");
-                    shoppingItem.setId(id);
                     shoppingItem.setName(description);
                     shoppingItem.setSite_link(link);
 
                     iter++;
-                    if(gender.equals(Macros.CustomerMacros.WOMEN))
-                        entranceModel.addWomenClothingItem(shoppingItem);
-                    else
-                        entranceModel.addMenClothingItem(shoppingItem);
-
+                    entranceModel.addItem(shoppingItem);
                     entranceModel.setCurrentClothingItem(iter);
                 }
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
+            return null;
+        }
+    }
+    private static class getTerminalX extends AsyncTask <Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            entranceModel.clearAllTxItems();
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Void... page_num) {
+
+            int iter = 0;
+
+            try {
+                Document temp = Jsoup.connect("https://www.terminalx.com/justlanded/" +
+                        gender.toLowerCase()).get();
+
+                Elements list_items = temp.getElementsByClass("products list items product-items");
+                Elements items_photo = list_items.get(0).getElementsByClass("product-item-photo-shop");
+                Elements items_details = list_items.get(0).getElementsByClass("product details product-item-details");
+
+                for (int i = 0; i < items_photo.size(); ++i) {
+
+                    String link = items_photo.get(i).childNode(1).attr("href");
+                    String title = items_photo.get(i).childNode(1).
+                            childNode(1).childNode(1).
+                            childNode(1).attributes().get("alt");
+
+                    Document doc;
+                    try {
+                        doc = Jsoup.connect(link).get();
+                    }
+                    catch (org.jsoup.HttpStatusException ex){
+                        continue;
+                    }
+
+                    Elements info = doc.getElementsByClass( "product-info-main");
+                    Elements media = doc.getElementsByClass( "product media");
+
+                    String img_url = media.get(0).
+                            childNode(6).childNode(1).
+                            childNode(1).childNode(3).
+                            childNode(1).childNode(5).
+                            childNode(1).childNode(1).
+                            attr("src");
+
+                    ArrayList<String> images = new ArrayList<>();
+
+                    images.add(img_url);
+                    images.add(img_url.replace("-1", "-2"));
+                    images.add(img_url.replace("-1", "-3"));
+                    images.add(img_url.replace("-1", "-4"));
+
+                    Elements product_item_brand = info.get(0).getElementsByClass( "product-item-brand");
+                    ShoppingItem shoppingItem = new ShoppingItem();
+
+                    String price;  //by ILS
+                    String id;
+                    if (product_item_brand.size() == 0) {
+
+                        id = items_details.get(i).
+                                childNode(1).childNode(5).
+                                attr("data-id");
+
+                        price = items_details.get(i).
+                                childNode(1).childNode(3).
+                                childNode(0).childNode(1).
+                                childNode(1).childNode(1).
+                                childNode(0).
+                                toString().replace("&nbsp;₪", "");
+                    } else {
+                        Elements final_price = info.get(0).getElementsByAttributeValue("class", "price-box price-final_price");
+                        id = final_price.get(0).attr("data-product-id");
+
+                        if (final_price.get(0).childNodeSize() == 5) {
+                            String reduced_price = final_price.get(0).
+                                    childNode(1).childNode(1).
+                                    childNode(3).attr("data-price-amount");
+
+                            price = final_price.get(0).
+                                    childNode(3).childNode(1).
+                                    childNode(3).attr("data-price-amount");
+
+                            shoppingItem.setOn_sale(true);
+                            shoppingItem.setReduced_price(reduced_price);
+                        } else
+                            price = final_price.get(1).childNode(0).childNode(1).childNode(3).attr("data-price-amount");
+                    }
+
+                    shoppingItem.setId(id);
+                    shoppingItem.setPrice(price);
+                    shoppingItem.setSite_link(link);
+                    shoppingItem.setType("New In");
+                    shoppingItem.setGender(gender);
+                    ArrayList<String> name = new ArrayList<>(Arrays.asList(title.split(" ")));
+                    shoppingItem.setName(name);
+                    shoppingItem.setSeller("Terminal X");
+                    shoppingItem.setSellerId("KhrLuCxBoKc0DLAL8dA6WAbOFXT2");
+                    shoppingItem.setImages(images);
+
+                    iter++;
+                    entranceModel.addItem(shoppingItem);
+                    entranceModel.setCurrentTerminalXItem(iter);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+    private static class getAsos extends AsyncTask <Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            entranceModel.clearAllAsosItems();
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Void... page_num) {
+            int iter = 0;
+            try {
+                String url = gender.equals(Macros.CustomerMacros.MEN) ?
+                        "https://www.asos.com/men/new-in/cat/?cid=27110" :
+                        "https://www.asos.com/women/new-in/cat/?cid=27108";
+
+                Document document = Jsoup.connect(url).get();
+                Elements products = document.getElementsByAttributeValue("data-auto-id", "productTile");
+
+                for(Element prod : products.subList(0,40)) {
+
+                    ShoppingItem shoppingItem = new ShoppingItem();
+
+                    Elements pook = prod.getElementsByAttributeValue("data-auto-id", "productTilePrice");
+                    if(pook.size() == 1) {
+                        int las_ele_idx = pook.get(0).childNodes().size() - 1;
+                        String price = pook.get(0).childNode(las_ele_idx).childNode(0).
+                                toString().replace("£", "");
+                        String final_price = String.valueOf(Double.parseDouble(price));
+                        shoppingItem.setPrice(final_price);
+                    }
+
+                    Elements pook2 = prod.getElementsByAttributeValue( "data-auto-id", "productTileSaleAmount");
+                    if(pook2.size() > 0){
+                        String red = pook2.get(0).childNode(0).toString().replace("£", "");
+                        String final_price = String.valueOf(Double.parseDouble(red));
+                        shoppingItem.setOn_sale(true);
+                        shoppingItem.setReduced_price(final_price);
+                    }
+
+                    Attributes attributes = prod.childNode(0).attributes();
+                    String link = attributes.get("href");
+                    String description = attributes.get("aria-label").split(",")[0];
+                    String[] _name = description.split(" ");
+
+                    Document document2;
+                    try {
+                        document2 = Jsoup.connect(link).get();
+                    } catch (org.jsoup.HttpStatusException ex) {
+                        continue;
+                    }
+                    Elements images_ele = document2.getElementsByClass("image-thumbnail");
+                    ArrayList<String> images = new ArrayList<>();
+                    for(Element img : images_ele){
+                        String _img = img.childNode(1).childNode(1).attr("src").
+                                split("\\?")[0] + "?$XXL$&wid=513&fit=constrain";
+                        images.add(_img);
+                    }
+                    if (images.size() < 4) {
+                        for (int j = images.size(); j < 4; j++) {
+                            images.add(images.get(0));
+                        }
+                    }
+
+                    String seller_name = "Asos";
+
+                    //BRAND
+                    String brand;
+                    Elements brand_ele;
+                    try {
+                        brand_ele = document2.getElementsByClass("brand-description");
+                        Elements poki = brand_ele.get(0).getElementsByTag("strong");
+                        brand = poki.get(0).text();
+                        shoppingItem.setBrand(brand);
+                    } catch (IndexOutOfBoundsException ex) {
+                        shoppingItem.setBrand("");
+                    }
+
+                    shoppingItem.setSeller(seller_name);
+                    shoppingItem.setSite_link(link);
+                    shoppingItem.setGender(gender);
+                    shoppingItem.setImages(images);
+                    shoppingItem.setName(new ArrayList<>(Arrays.asList(_name)));
+
+                    iter++;
+                    entranceModel.addItem(shoppingItem);
+                    entranceModel.setCurrentAsosItem(iter);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+    private static class getRenuar extends AsyncTask <Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            entranceModel.clearAllRenuarItems();
+        }
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Void... page_num) {
+
+            int iter = 0;
+            try {
+                Document document = Jsoup.connect(
+                        "https://www.renuar.co.il/he/" + gender.toLowerCase() + "/hdw.html").get();
+
+                Elements elements = document.getElementsByClass("products-grid");
+                Elements products = elements.get(0).getElementsByClass("item");
+
+                for (Element element : products) {
+                    ShoppingItem shoppingItem = new ShoppingItem();
+                    String id = element.attr("data-sku");
+
+                    String name = element.childNode(3).childNode(3).childNode(0).attr("title");
+                    String link = element.childNode(3).childNode(3).childNode(0).attr("href");
+
+                    Document item_doc;
+                    try {
+                        item_doc = Jsoup.connect(link).get();
+                    }
+                    catch (org.jsoup.HttpStatusException ex){
+                        continue;
+                    }
+
+                    Elements item_elements = item_doc.getElementsByClass("images-slideshow");
+                    Elements images_elements = item_elements.get(0).getElementsByClass("item");
+
+                    ArrayList<String> images = new ArrayList<>();
+                    for (Element img : images_elements) {
+                        Elements pook = img.getElementsByClass("zoom");
+                        images.add(pook.get(0).attr("src"));
+                    }
+                    if(images.size() < 4){
+                        for(int j = images.size(); j<4; j++){
+                            images.add(images.get(0));
+                        }
+                    }
+
+                    ArrayList<String> description = new ArrayList<>(Arrays.asList(name.split(" ")));
+
+                    Element price_box = item_doc.getElementsByClass("price-box").get(0);
+                    Elements old_price = price_box.getElementsByClass("old-price");
+
+                    if( old_price.size() > 0 ) {
+                        Elements _price = old_price.get(0).getElementsByClass("price");
+                        String price = _price.get(0).childNode(0).toString().replace("&nbsp;₪ ","");
+
+                        Elements _reduced_price = price_box.getElementsByClass("special-price").get(0).
+                                getElementsByClass("price");
+                        String reduced_price = _reduced_price.get(0).childNode(0).toString().replace("&nbsp;₪ ","");
+
+                        shoppingItem.setPrice(price);
+                        shoppingItem.setReduced_price(reduced_price);
+                        shoppingItem.setOn_sale(true);
+                    }
+                    else {
+                        String _price = price_box.childNode(1).childNode(1).childNode(0).toString().replace("&nbsp;₪", "");
+                        shoppingItem.setPrice(_price);
+                    }
+
+                    shoppingItem.setImages(images);
+                    shoppingItem.setGender(gender);
+                    shoppingItem.setSeller("Renuar");
+                    shoppingItem.setName(description);
+                    shoppingItem.setSite_link(link);
+
+                    iter++;
+                    entranceModel.addItem(shoppingItem);
+                    entranceModel.setCurrentRenuarItem(iter);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+    private static class getShein extends AsyncTask <Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            entranceModel.clearAllSheinItems();
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Void... page_num) {
+
+            int iter = 0;
+            try {
+                Document document;
+                String women_url = "https://il.shein.com/daily-new.html";
+                String men_url = "https://il.shein.com/new/Men-new-in-sc-00200410.html";
+                String url = gender.equals(Macros.CustomerMacros.WOMEN) ? women_url : men_url;
+                document = Jsoup.connect(url).get();
+
+                assert document != null;
+                Elements elements = document.getElementsByClass("j-goodsli");
+
+                if(elements.isEmpty()){
+                    elements = document.getElementsByClass("j-expose__content-goodsls");
+                }
+
+                for(Element element : elements.subList(0,40)){
+                    ShoppingItem shoppingItem = new ShoppingItem();
+
+                    String link = "";
+                    try {
+                        String link2 = element.getElementsByClass("c-goodsitem__goods-name").
+                                get(1).attr("href");
+                        link = "https://il.shein.com" + link2;
+                    }
+                    catch (IndexOutOfBoundsException ex){
+                        System.out.println(ex.getMessage());
+                    }
+                    Document prod_elements;
+                    try {
+                        prod_elements = Jsoup.connect(link).get();
+                    }
+                    catch (org.jsoup.HttpStatusException ex){
+                        continue;
+                    }
+                    String json_prepare = "";
+                    try {
+                        json_prepare = prod_elements.
+                                childNode(2).childNode(3).
+                                childNode(15).childNode(17).
+                                childNode(0).toString();
+                    }
+                    catch (IndexOutOfBoundsException iobe){
+                        System.out.println(iobe.getMessage());
+                    }
+                    String productIntroData = json_prepare.
+                            split("productIntroData:")[1].
+                            split("abt: ")[0];
+
+                    String json = "[" + productIntroData + "]";
+
+                    JSONArray jsonArray = new JSONArray(json);
+                    JSONArray imagesArray = jsonArray.getJSONObject(0).
+                            getJSONObject("goods_imgs").
+                            getJSONArray("detail_image");
+
+                    ArrayList<String> images = new ArrayList<>();
+                    for(int i = 0; i < imagesArray.length(); ++i){
+                        String img = imagesArray.getJSONObject(i).getString("origin_image");
+                        images.add("http:" + img);
+                    }
+                    if(images.size() < 4){
+                        for(int j = images.size(); j<4; j++){
+                            images.add(images.get(0));
+                        }
+                    }
+                    JSONObject details = jsonArray.getJSONObject(0).
+                            getJSONObject("detail");
+
+                    String price = details.
+                            getJSONObject("retailPrice").
+                            getString("amount");
+
+                    String salePrice = details.
+                            getJSONObject("salePrice").
+                            getString("amount");
+
+                    if(!salePrice.equals(price)){
+                        shoppingItem.setReduced_price(salePrice);
+                        shoppingItem.setOn_sale(true);
+                    }
+
+                    String _name = details.getString("goods_url_name");
+
+                    shoppingItem.setPrice(price);
+                    shoppingItem.setImages(images);
+                    shoppingItem.setGender(gender);
+                    shoppingItem.setSeller("Shein");
+                    shoppingItem.setSite_link(link);
+                    ArrayList<String> description = new ArrayList<>(Arrays.asList(_name.split(" ")));
+                    shoppingItem.setName(description);
+
+                    iter++;
+                    entranceModel.addItem(shoppingItem);
+                    entranceModel.setCurrentSheinItem(iter);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+    private static class getTFS extends AsyncTask <Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            entranceModel.clearAllTfsItems();
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Void... page_num) {
+
+            int iter = 0;
+                try {
+                    Document document = Jsoup.connect("https://www.twentyfourseven.co.il/he/" +
+                            gender.toLowerCase() +"/new.html").get();
+
+                    Element element = document.getElementsByClass("products-grid").get(0);
+                    Elements items = element.getElementsByClass("item");
+
+                    for (Node item_node : items) {
+
+                        ShoppingItem shoppingItem = new ShoppingItem();
+
+                        String link = item_node.childNode(3).childNode(0).attr("href");
+
+                        Document document1;
+                        try {
+                            document1 = Jsoup.connect(link).get();
+                        }
+                        catch (org.jsoup.HttpStatusException ex){
+                            continue;
+                        }
+                        Elements elements1 = document1.
+                                getElementsByClass("product-image product-image-zoom");
+
+                        Elements old_prices = document1.getElementsByClass("old-price");
+                        Elements special_prices = document1.getElementsByClass("special-price");
+
+                        String price;
+                        if (old_prices.size() > 0 && special_prices.size() > 0) {
+
+                            String old_p = old_prices.get(0).
+                                    childNode(3).childNode(0).
+                                    toString().replace("&nbsp;₪", "");
+                            shoppingItem.setPrice(old_p);
+
+                            shoppingItem.setOn_sale(true);
+                            String reduced_p = special_prices.get(0).
+                                    childNode(3).childNode(0).
+                                    toString().replace("&nbsp;₪", "");
+
+                            shoppingItem.setReduced_price(reduced_p);
+                        } else {
+                            price = item_node.
+                                    childNode(7).childNode(1).
+                                    childNode(1).childNode(0).
+                                    toString().replace("&nbsp;₪", "");
+
+                            shoppingItem.setPrice(price);
+                        }
+
+                        Elements sku = document1.getElementsByClass("sku");
+
+                        String id = sku.get(0).childNode(3).childNode(0).toString();
+
+                        Elements elements2 = document1.getElementsByClass("std shortDescription");
+                        String description = elements2.get(0).childNode(0).toString().replace("\n", "");
+                        ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
+
+                        String imageUrl;
+
+                        try {
+                            imageUrl = elements1.get(0).
+                                    childNode(7).childNode(1).
+                                    childNode(1).childNode(1).attr("src");
+                        } catch (IndexOutOfBoundsException ex) {
+                            imageUrl = elements1.get(0).
+                                    childNode(7).childNode(1).
+                                    childNode(3).childNode(1).attr("src");
+                        }
+
+                        ArrayList<String> images = new ArrayList<>();
+                        int num = elements1.get(0).childNode(7).childNodeSize();
+                        int images_num = (num - 3) / 2;
+
+                        for (int i = 1; i < images_num + 1; ++i) {
+                            if (i > 4) break;
+                            String image = imageUrl.split("-")[0] + "-" + i + ".jpg";
+                            images.add(image);
+                        }
+                        if (images.size() < 4) {
+                            for (int i = images.size(); i < 4; ++i) {
+                                images.add(imageUrl);
+                            }
+                        }
+
+                        shoppingItem.setImages(images);
+                        shoppingItem.setGender(gender);
+                        shoppingItem.setSeller("TwentyFourSeven");
+                        shoppingItem.setName(name);
+                        shoppingItem.setSite_link(link);
+
+                        iter++;
+                        entranceModel.addItem(shoppingItem);
+                        entranceModel.setCurrentTfsItem(iter);
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            return null;
+        }
+    }
+    private static class getHoodies extends AsyncTask <Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            entranceModel.clearAllHoodiesItems();
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected Void doInBackground(Void... page_num) {
+
+            int iter = 0;
+
+                try {
+                    String url = gender.equals(Macros.CustomerMacros.WOMEN) ?
+                            "https://www.hoodies.co.il/new?p=1" :
+                            "https://www.hoodies.co.il/men/newm";
+                    Document document = Jsoup.connect(url).get();
+                    Elements elements = document.getElementsByClass("product-item-photo-shop");
+
+                    for(Element element : elements){
+
+                        ShoppingItem shoppingItem = new ShoppingItem();
+                        String link = element.childNode(1).attr("href");
+
+                        Document prod_elements;
+                        try {
+                            prod_elements = Jsoup.connect(link).get();
+                        }
+                        catch (org.jsoup.HttpStatusException ex){
+                            continue;
+                        }
+
+                        ArrayList<String> images = new ArrayList<>();
+                        Elements pook6 = prod_elements.getElementsByAttributeValue("data-gallery-role", "gallery-placeholder");
+                        Elements pook7 = pook6.get(0).getElementsByClass("idus-slider-slide-img");
+
+                        for (int i=0; i < pook7.size()/2; ++i){
+                            images.add(pook7.get(i).attr("src"));
+                        }
+                        if(images.size() < 4){
+                            for(int j = images.size(); j<4; j++){
+                                images.add(images.get(0));
+                            }
+                        }
+
+                        Elements elements1 = prod_elements.getElementsByAttributeValue("type", "application/ld+json");
+                        Node json_node = elements1.get(0).childNode(0);
+                        String pook = json_node.toString();
+                        JSONObject jpook = new JSONObject(pook);
+                        String description = jpook.get("description").toString();
+                        ArrayList<String> description_array = new ArrayList<>(Arrays.asList(description.split(" ")));
+
+                        String id = jpook.get("sku").toString();
+                        JSONObject offers = new JSONObject(jpook.get("offers").toString());
+                        String price = offers.getString("price");
+
+                        String o_price;
+                        Elements old_price = prod_elements.getElementsByAttributeValue("data-price-type", "oldPrice");
+                        if(old_price.size() > 0) {
+                            o_price = old_price.get(0).childNode(0).childNode(0).toString().replace("&nbsp;₪", "");
+                            shoppingItem.setPrice(o_price);
+                            shoppingItem.setReduced_price(price);
+                            shoppingItem.setOn_sale(true);
+                        }
+                        else{
+                            shoppingItem.setPrice(price);
+                        }
+
+                        shoppingItem.setImages(images);
+                        shoppingItem.setGender(gender);
+                        shoppingItem.setSeller("Hoodies");
+                        shoppingItem.setName(description_array);
+                        shoppingItem.setSite_link(link);
+
+                        iter++;
+                        entranceModel.addItem(shoppingItem);
+                        entranceModel.setCurrentHoodiesItem(iter);
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             return null;
         }
     }
