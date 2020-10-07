@@ -52,7 +52,6 @@
                     android:layout_centerVertical="true"
                     android:layout_toStartOf="@id/next"
                     android:layout_toEndOf="@id/previous"
-
                     android:padding="5dp">
 
                     <ImageView
@@ -172,7 +171,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="45dp">
 
             <TextView
                 android:id="@+id/brand_name"
@@ -293,7 +292,7 @@
             android:fontFamily="@font/nobile"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
-            android:textAlignment="viewStart"
+            android:textAlignment="textStart"
             android:textSize="14sp" />
 
     </LinearLayout>

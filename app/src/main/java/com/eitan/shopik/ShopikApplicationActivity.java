@@ -61,7 +61,6 @@ public class ShopikApplicationActivity extends Application {
     public static InterstitialAd getInterstitialAd() {
         return interstitialAd;
     }
-
     public static void setInterstitialAd() {
         if (interstitialAd != null) {
             interstitialAd.destroy();
@@ -80,14 +79,12 @@ public class ShopikApplicationActivity extends Application {
     public static void LoadAds(int num){
         new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num);
     }
-
     private static void clearAds(){
         for(ShoppingItem item : shoppingAdsArray) {
             item.destroyAd();
         }
         shoppingAdsArray.clear();
     }
-
     public static Object getNextAd() {
         Random random = new Random();
         if( shoppingAdsArray.size() > 0) {
@@ -97,7 +94,6 @@ public class ShopikApplicationActivity extends Application {
         else
             return null;
     }
-
     public static void RefreshAds(int num_of_ads){
         if(categoryClicks % 3 == 0) {
             clearAds();
@@ -168,12 +164,22 @@ public class ShopikApplicationActivity extends Application {
         }
     }
 
+    //REVIEW APP
     public static ReviewInfo getReviewInfo(){
         return reviewInfo;
     }
-
     public static ReviewManager getReviewManager(){
         return manager;
+    }
+    private void requestReview(){
+        manager = ReviewManagerFactory.create(this);
+        Task<ReviewInfo> request = manager.requestReviewFlow();
+        request.addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // We can get the ReviewInfo object
+                reviewInfo = task.getResult();
+            }
+        });
     }
 
     @Override
@@ -224,17 +230,4 @@ public class ShopikApplicationActivity extends Application {
 
         interstitialAd.loadAd(LoadAdConfig);
     }
-
-    //REVIEW APP
-    private void requestReview(){
-        manager = ReviewManagerFactory.create(this);
-        Task<ReviewInfo> request = manager.requestReviewFlow();
-        request.addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                // We can get the ReviewInfo object
-                reviewInfo = task.getResult();
-            }
-        });
-    }
-
 }

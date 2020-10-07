@@ -2,20 +2,35 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="65dp"
+    android:padding="4dp"
     android:layout_marginBottom="5dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_icon"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/user_picture_"
         android:layout_marginStart="15dp"
-        android:elevation="4dp"
+        android:elevation="3dp"
         android:scaleType="centerCrop"
-        android:translationZ="4dp" />
+        android:translationZ="3dp" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="5dp"
+        android:textAlignment="viewStart"
+        android:fontFamily="@font/comfortaa"
+        android:text="@string/user_name"
+        android:layout_toEndOf="@id/user_icon"
+        android:layout_centerVertical="true"
+        android:textColor="#1E1E1E"
+        android:textSize="14sp" />
 
     <ImageView
         android:id="@+id/fav_sign"
@@ -26,36 +41,9 @@
         android:layout_marginBottom="-6dp"
         android:layout_marginEnd="-6dp"
         android:visibility="invisible"
-        android:elevation="4dp"
         android:scaleType="centerCrop"
         android:contentDescription="@string/favorite"
-        android:translationZ="4dp" />
-
-    <TextView
-        android:id="@+id/user_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_toStartOf="@id/visit_profile"
-        android:layout_marginEnd="5dp"
-        android:textAlignment="viewStart"
-        android:fontFamily="@font/comfortaa"
-        android:text="@string/user_name"
-        android:layout_toEndOf="@id/user_icon"
-        android:layout_centerVertical="true"
-        android:textColor="#1E1E1E"
-        android:textSize="14sp" />
-
-    <Button
-        android:id="@+id/visit_profile"
-        android:layout_width="70dp"
-        android:layout_height="40dp"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center_vertical"
-        android:layout_marginEnd="15dp"
-        android:textAllCaps="true"
-        android:textSize="12sp"
-        android:layout_alignParentEnd="true"
-        android:text="@string/visit"/>
+        android:elevation="5dp"
+        android:translationZ="5dp" />
 
 </RelativeLayout>

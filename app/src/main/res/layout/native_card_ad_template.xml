@@ -8,15 +8,27 @@
     android:layout_centerInParent="true"
     tools:menu="@menu/menu_customer_toolbar">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:menu="@menu/menu_customer_toolbar">
+
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="525dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:elevation="8dp"
+        android:layout_width="370dp"
+        android:layout_height="505dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="35dp"
+        android:background="@drawable/top_border_line"
+        android:elevation="10dp"
+        android:padding="8dp"
         android:translationZ="8dp"
-        app:cardCornerRadius="15dp">
+        app:cardCornerRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
             android:id="@+id/info_layout"
@@ -24,40 +36,33 @@
             android:layout_height="match_parent"
             android:background="#FFFFFF">
 
-
             <com.google.android.gms.ads.formats.MediaView
                 android:id="@+id/ad_media"
                 android:layout_width="match_parent"
-                android:layout_height="190dp"
+                android:layout_height="match_parent"
                 android:layout_above="@id/ad_bottom_info_layout"
-                android:layout_marginBottom="60dp"
                 android:background="#ffffff"
+                android:layout_below="@id/ad_card_seller_logo"
                 android:scaleType="centerCrop" />
 
             <TextView
-                android:id="@+id/ad_card_seller_name"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
+                android:id="@+id/Ad"
+                style="@style/AppTheme.AdAttributionLarge"
                 android:layout_alignParentTop="true"
-                android:fontFamily="@font/martel_sans"
-                android:padding="5dp"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="top|end"
+                android:layout_margin="10dp"/>
 
             <RatingBar
                 android:id="@+id/ad_stars"
-                style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/ad_card_seller_name"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:layout_gravity="center"
+                android:layout_toEndOf="@id/ad_card_seller_logo"
+                android:layout_toStartOf="@id/Ad"
                 android:isIndicator="true"
                 android:numStars="5"
-                android:padding="5dp"
+                android:padding="4dp"
                 android:stepSize="0.5"
                 tools:visibility="visible"/>
 
@@ -76,7 +81,26 @@
                     android:padding="3dp"
                     android:textAlignment="viewStart"
                     android:textColor="#000000"
-                    android:textSize="17sp"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/ad_store"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/ad_card_seller_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/martel_sans"
+                    android:padding="5dp"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -87,7 +111,7 @@
                     android:padding="5dp"
                     android:textAlignment="viewStart"
                     android:textColor="#000000"
-                    android:textSize="15sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/ad_price"
@@ -99,15 +123,6 @@
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/ad_store"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:textAlignment="viewStart"
-                    android:textColor="#000000"
-                    android:textSize="18sp" />
-
                 <Button
                     android:id="@+id/ad_action_button"
                     style="@style/GridBuyButtons"
@@ -116,7 +131,8 @@
                     android:fontFamily="@font/martel_sans"
                     android:gravity="center"
                     android:text="@string/check_it_now"
-                    android:textColor="#ffffff" />
+                    android:backgroundTint="#EFEFEF"
+                    android:textColor="#000000" />
 
             </LinearLayout>
 
@@ -125,7 +141,8 @@
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:layout_gravity="top|start"
-                android:layout_margin="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
                 app:civ_border_color="@color/borderLine"
                 android:elevation="15dp"
                 android:translationZ="15dp"
@@ -150,13 +167,7 @@
             android:alpha="0"
             android:fontFamily="@font/nunito_semibold" />
 
-        <TextView
-            style="@style/AppTheme.AdAttributionLarge"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="top|end"
-            android:layout_margin="10dp"/>
-
     </androidx.cardview.widget.CardView>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.gms.ads.formats.UnifiedNativeAdView>

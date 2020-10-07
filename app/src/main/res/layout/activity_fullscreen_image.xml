@@ -163,25 +163,26 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/close_card"
-        android:layout_width="85dp"
-        android:layout_height="35dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         app:cardCornerRadius="15dp"
-        android:padding="5dp"
-        android:background="@color/colorTransparentWhite">
+        android:padding="5dp">
 
         <Button
             android:id="@+id/fullscreen_close_x"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/close"
-            android:textAlignment="center"
-            android:textColor="#ffffff"
             android:background="#80000000"
             android:elevation="5dp"
+            android:text="@string/x"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="#ffffff"
+            android:textSize="30sp"
             android:translationZ="5dp" />
 
     </androidx.cardview.widget.CardView>

@@ -21,6 +21,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -87,7 +88,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         postponeEnterTransition();
-        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                 WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
@@ -179,9 +180,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
         setMarquee();
 
-        entries.observe(this, integer -> {
-            launchReview();
-        });
+        entries.observe(this, aLong -> launchReview());
     }
 
     private void setViewPager() {
@@ -821,7 +820,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                 map.put("app_entries",entriesNum);
                 customerFS.update(map);
 
-                if(entriesNum == 5){
+                if(entriesNum == 5 || entriesNum == 20){
                     publishProgress(entriesNum);
                 }
             });

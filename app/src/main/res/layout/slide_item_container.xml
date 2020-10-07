@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="165dp"
+    android:layout_width="160dp"
     android:layout_height="wrap_content"
     android:layout_margin="15dp"
     android:elevation="10dp"
@@ -26,7 +26,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="235dp"
+        android:layout_height="245dp"
         android:layout_below="@id/category"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="7dp"
@@ -64,14 +64,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_alignParentBottom="true"
-                android:background="#EDEDED"
+                android:background="#222222"
                 android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="15dp"
                     android:layout_marginBottom="2dp"
                     android:contentDescription="@string/like"
                     android:scaleType="centerCrop"
@@ -86,7 +86,7 @@
                     android:paddingStart="5dp"
                     android:paddingEnd="0dp"
                     android:textAlignment="center"
-                    android:textColor="#000000"
+                    android:textColor="#FFFFFF"
                     android:textSize="16sp" />
 
             </LinearLayout>

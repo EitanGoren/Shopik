@@ -46,7 +46,6 @@ public class LikesListAdapter extends ArrayAdapter<LikedUser> implements Seriali
 
         CircleImageView user_icon = convertView.findViewById(R.id.user_icon);
         TextView seller_name = convertView.findViewById(R.id.user_name);
-        Button visit = convertView.findViewById(R.id.visit_profile);
         ImageView fav_icon = convertView.findViewById(R.id.fav_sign);
 
         assert user != null;
@@ -56,7 +55,7 @@ public class LikesListAdapter extends ArrayAdapter<LikedUser> implements Seriali
         else
             Glide.with(getContext()).load(Macros.DEFAULT_PROFILE_IMAGE).into(user_icon);
 
-        visit.setOnClickListener(v -> Toast.makeText(getContext(),"Will Be Added...", Toast.LENGTH_SHORT ).show());
+        user_icon.setOnClickListener(v -> Toast.makeText(getContext(),"Will Be Added...", Toast.LENGTH_SHORT ).show());
         fav_icon.setImageDrawable(ContextCompat.getDrawable(getContext(),R.drawable.ic_favorite_black_24dp));
 
         if (user.isFavorite()) {

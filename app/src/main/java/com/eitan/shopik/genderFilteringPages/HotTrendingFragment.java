@@ -93,6 +93,7 @@ public class HotTrendingFragment extends Fragment {
         observer = s -> {
             if(!gender.equals(s)) {
                 gender = s;
+
                 recyclerAdapter.notifyDataSetChanged();
                 liked_counter.setText(R.string.loading);
 

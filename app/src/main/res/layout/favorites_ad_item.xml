@@ -85,6 +85,16 @@
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
+                <RatingBar
+                    android:id="@+id/ad_stars"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:padding="5dp"
+                    android:stepSize="0.5"/>
+
                 <Button
                     android:id="@+id/ad_action_button"
                     android:layout_width="match_parent"
@@ -94,24 +104,9 @@
                     android:textAlignment="center"
                     android:theme="@style/GridBuyButtons"
                     android:textColor="#6A6A6A"
-                    android:textSize="16sp"
-                    tools:visibility="visible" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
-
-            <RatingBar
-                android:id="@+id/ad_stars"
-                style="?android:attr/ratingBarStyleSmall"
-                android:layout_width="95dp"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/ad_logo"
-                android:layout_alignStart="@id/ad_logo"
-                android:layout_marginStart="-10dp"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:padding="5dp"
-                android:stepSize="0.5"
-                tools:visibility="visible"/>
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ad_logo"

@@ -420,16 +420,19 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final TextView percentage_header;
         private final TextView seller_name;
         private final TextView liked_text;
-        private final ViewPager viewPager;
-        private final Button fullscreen;
         private final CircleImageView logo;
+        private final Button mPrev,mNext,fullscreen;
+        private final ImageView imageView;
+        private final ImageView mDot1;
+        private final ImageView mDot2;
+        private final ImageView mDot3;
+        private final ImageView mDot4;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
             brand_name = itemView.findViewById(R.id.brand_name);
             buy = itemView.findViewById(R.id.list_item_buy_button);
-            fullscreen = itemView.findViewById(R.id.fullscreen_button);
             price = itemView.findViewById(R.id.price);
             old_price = itemView.findViewById(R.id.old_price);
             seller_name = itemView.findViewById(R.id.seller_name);
@@ -438,16 +441,30 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             description = itemView.findViewById(R.id.description);
             percentage_header = itemView.findViewById(R.id.percentage_header);
             percentage = itemView.findViewById(R.id.percent);
-            viewPager = itemView.findViewById(R.id.image_viewPager);
             sale_percentage = itemView.findViewById(R.id.sale_percentage);
             liked_text = itemView.findViewById(R.id.liked_item);
+            imageView = itemView.findViewById(R.id.image_item);
+            mNext = itemView.findViewById(R.id.next);
+            mPrev = itemView.findViewById(R.id.previous);
+            fullscreen = itemView.findViewById(R.id.fullscreen);
+            mDot1 = itemView.findViewById(R.id.fullscreen_dot_1);
+            mDot2 = itemView.findViewById(R.id.fullscreen_dot_2);
+            mDot3 = itemView.findViewById(R.id.fullscreen_dot_3);
+            mDot4 = itemView.findViewById(R.id.fullscreen_dot_4);
         }
 
         public void setItem(final ShoppingItem item) {
 
             ItemsList = items;
 
-            itemPicsAdapter arrayAdapter = new itemPicsAdapter(item.getImages());
+            mDot1.setBackground(ContextCompat.
+                    getDrawable(getContext(),R.drawable.ic_lens_black));
+            mDot2.setBackground(ContextCompat.
+                    getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+            mDot3.setBackground(ContextCompat.
+                    getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+            mDot4.setBackground(ContextCompat.
+                    getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
 
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(), item.getSite_link()));
 
@@ -455,7 +472,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             for(String word: item.getName()) {
                 item_description.append(word).append(" ");
             }
-
             description.setText(item_description);
 
             if(item.isFavorite()){
@@ -483,8 +499,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             }
             catch (NumberFormatException ex){
-                cur_price = "--";
-                System.out.println(item.getSeller() + " " + item.getName());
+                cur_price = "Unknown";
             }
 
             if ( item.isOn_sale()) {
@@ -524,7 +539,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 percentage_header.setVisibility(View.GONE);
             }
 
-            brand_name.setOnClickListener(v -> Macros.Functions.sellerProfile(getContext(), item.getSellerId(),null));
+            brand_name.setOnClickListener(v ->
+                    Macros.Functions.sellerProfile(getContext(), item.getSellerId(),null));
 
             if(item.isOn_sale()){
 
@@ -553,12 +569,37 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             else
                 brand_name.setText(seller);
 
-            viewPager.setAdapter(arrayAdapter);
+            final int[] index = {0};
+
+            Glide.with(getContext()).load(item.getImages().get(index[0])).
+                    transition(withCrossFade(650)).
+                    into(imageView);
+
+            mNext.setOnClickListener(v -> {
+                if(index[0]%4 < 3) {
+                    index[0]++;
+                    Glide.with(getContext()).
+                            load(item.getImages().get(index[0]%4)).
+                            transition(withCrossFade(500)).
+                            into(imageView);
+                    changeTabs(index[0]%4);
+                }
+            });
+            mPrev.setOnClickListener(v -> {
+                if(index[0]%4 > 0) {
+                    index[0]--;
+                    Glide.with(getContext()).
+                            load(item.getImages().get(index[0]%4)).
+                            transition(withCrossFade(500)).
+                            into(imageView);
+                    changeTabs(index[0] % 4 );
+                }
+            });
 
             fullscreen.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
                 intent.putExtra("isFav", item.isFavorite());
-                intent.putExtra("brand", brand);
+                intent.putExtra("brand", item.getBrand());
                 intent.putExtra("id", item.getId());
                 for(int i=0;i<item.getImages().size(); i++) {
                     intent.putExtra("img"+(i+1), item.getImages().get(i));
@@ -576,86 +617,32 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 pairs.add(Pair.create(logo,"company_logo"));
                 pairs.add(Pair.create(brand_name,"company_name"));
 
-                Macros.Functions.fullscreen(getContext(),intent,pairs);
+                Macros.Functions.fullscreen( getContext(), intent, pairs );
             });
-
         }
 
         public Context getContext() { return itemView.getContext(); }
 
-        private class itemPicsAdapter extends PagerAdapter {
-
-            private final ArrayList<String> imagesUrl;
-
-            public itemPicsAdapter(ArrayList<String> images){
-                this.imagesUrl = images;
-            }
-
-            @Override
-            public int getCount() {
-                return imagesUrl.size();
-            }
-
-            @Override
-            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-                return view == object;
-            }
-
-            @SuppressLint("ClickableViewAccessibility")
-            @NonNull
-            @Override
-            public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
-
-                LayoutInflater layoutInflater = (LayoutInflater) container.getContext().
-                        getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                final int[] index = {0};
-                assert layoutInflater != null;
-                View view = layoutInflater.inflate(R.layout.grid_images_item, container,false);
-                ImageView imageView = view.findViewById(R.id.image_item);
-
-                Glide.with(getContext()).load(imagesUrl.get(index[0])).
-                        transition(withCrossFade(650)).
-                        into(imageView);
-
-                container.addView(view);
-
-                Button mNext = view.findViewById(R.id.next);
-                Button mPrev = view.findViewById(R.id.previous);
-
-                mNext.setOnClickListener(v -> {
-                    if(index[0] >=0 && index[0] < 3) {
-                        index[0]++;
-                        container.removeView(view);
-
-                        Glide.with(getContext()).
-                                load(imagesUrl.get(index[0])).
-                                transition(withCrossFade(900)).
-                                into(imageView);
-
-                        container.addView(view);
-                    }
-                });
-                mPrev.setOnClickListener(v -> {
-                    if(index[0] > 0 && index[0] <= 3) {
-                        index[0]--;
-                        container.removeView(view);
-
-                        Glide.with(getContext()).
-                                load(imagesUrl.get(index[0])).
-                                transition(withCrossFade(900)).
-                                into(imageView);
-
-                        container.addView(view);
-                    }
-                });
-
-                return view;
-            }
-
-            @Override
-            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-                container.removeView((RelativeLayout)object);
+        private void changeTabs(int position) {
+            switch (position){
+                case 0:
+                    mDot1.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_lens_black));
+                    mDot2.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+                    break;
+                case 1:
+                    mDot1.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot2.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_lens_black));
+                    mDot3.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+                    break;
+                case 2:
+                    mDot2.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot3.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_lens_black));
+                    mDot4.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+                    break;
+                case 3:
+                    mDot3.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_panorama_fish_eye_black_24dp));
+                    mDot4.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.ic_lens_black));
+                    break;
             }
         }
     }
@@ -940,9 +927,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private void updateCustomerDB(String item_id,String item_type, String item_gender,
                                       String item_sub_category,String seller) {
 
-          //  Map<String,Object> map = new HashMap<>();
-          //  map.put(item_id, null);
-            // remove from liked
             FirebaseDatabase.getInstance().getReference().
                     child(Macros.CUSTOMERS).
                     child(user_id).
@@ -952,7 +936,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     child(item_type).
                     child(item_sub_category).
                     child(item_id).removeValue();
-                    //updateChildren(map);
 
             Map<String,Object> map = new HashMap<>();
             map.put(item_id,Macros.Items.UNLIKED);

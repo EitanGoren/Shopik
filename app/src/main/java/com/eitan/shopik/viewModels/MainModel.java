@@ -89,8 +89,8 @@ public class MainModel extends ViewModel implements Serializable {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addItem(ShoppingItem shoppingItem) {
         Objects.requireNonNull(this.all_items.getValue()).add(shoppingItem);
-        //update observers every 3 items block
-        if(this.all_items.getValue().size()%7 == 0){
+        //update observers every 7 items block
+        if(this.all_items.getValue().size() % 15 == 0){
             postAllItems();
         }
     }

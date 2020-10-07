@@ -147,12 +147,12 @@
 
             <ImageButton
                 android:id="@+id/fullscreen_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_alignEnd="@id/swipe_image"
                 android:layout_alignBottom="@id/swipe_image"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="4dp"
                 android:background="@drawable/ic_fullscreen_black"
                 android:contentDescription="@string/fullscreen_button" />
 
@@ -217,13 +217,14 @@
 
         <ImageView
             android:id="@+id/swipe_favorite_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="end|bottom"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/favorite"
             android:elevation="5dp"
+            android:padding="2dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_favorite_black_24dp"
             android:translationZ="5dp" />

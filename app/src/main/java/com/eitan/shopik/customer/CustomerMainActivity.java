@@ -77,6 +77,13 @@ public class CustomerMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String CHANNEL_ID = "channel_id";
+    private static int item_count = 0;
+    private static int total_items = 0;
+    private static Map<String,String> favorites;
+    private static MainModel mainModel;
+    private static String item_type;
+    private static String item_gender;
+    private static String item_sub_category;
     private DatabaseReference customerDB, pageListener;
     private ProgressIndicator progressIndicator;
     private FirebaseAuth mAuth;
@@ -93,13 +100,6 @@ public class CustomerMainActivity extends AppCompatActivity
     private String cover;
     private ValueEventListener valueEventListener;
     private ValueEventListener favoriteValueEventListener;
-    private static int item_count = 0;
-    private static int total_items = 0;
-    private static Map<String,String> favorites;
-    private static MainModel mainModel;
-    private static String item_type;
-    private static String item_gender;
-    private static String item_sub_category;
     private ArrayList<AsyncTask <Integer, Integer, Void>> asyntask;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -138,7 +138,6 @@ public class CustomerMainActivity extends AppCompatActivity
         else
             getUnlikedUserInfo(shoppingItem, unliked_users);
     }
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -314,7 +313,6 @@ public class CustomerMainActivity extends AppCompatActivity
         });
 
     }
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static void getCompanyInfo(final ShoppingItem shoppingItem) {
 
@@ -336,7 +334,6 @@ public class CustomerMainActivity extends AppCompatActivity
             }
         }
     }
-
     private void init() {
 
         setNavigationBarButtonsColor(getWindow().getNavigationBarColor());
@@ -425,7 +422,6 @@ public class CustomerMainActivity extends AppCompatActivity
                     Macros.Functions.GlidePicture(getApplicationContext(), cover, nav_bg)
                 );
     }
-
     private void getCustomerFavorites() {
 
         for(String company : Macros.CompanyNames){
@@ -440,7 +436,6 @@ public class CustomerMainActivity extends AppCompatActivity
                     addListenerForSingleValueEvent(fav_single_listener);
         }
     }
-
     private void getAllCompaniesInfo() {
         FirebaseFirestore.getInstance().
                 collection(Macros.COMPANIES).get().
@@ -453,7 +448,6 @@ public class CustomerMainActivity extends AppCompatActivity
                     }
                 });
     }
-
     private void setViewPager() {
 
         MainPagerAdapter mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
@@ -489,12 +483,10 @@ public class CustomerMainActivity extends AppCompatActivity
             public void onPageScrollStateChanged(int state) {}
         });
     }
-
     private void animateLogo(){
         if(findViewById(R.id.logo_image) != null)
             YoYo.with(Techniques.Bounce).duration(1000).playOn(findViewById(R.id.logo_image));
     }
-
     private void setNavigationBarButtonsColor(int navigationBarColor) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             View decorView = getWindow().getDecorView();
@@ -507,12 +499,10 @@ public class CustomerMainActivity extends AppCompatActivity
             decorView.setSystemUiVisibility(flags);
         }
     }
-
     private boolean isColorLight(int color) {
         double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
         return darkness < 0.5;
     }
-
     private static void getLikes(final ShoppingItem shoppingItem) {
 
         FirebaseDatabase.getInstance().getReference().
@@ -570,7 +560,6 @@ public class CustomerMainActivity extends AppCompatActivity
                     public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
     }
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list) {
 
@@ -604,7 +593,6 @@ public class CustomerMainActivity extends AppCompatActivity
         }
         getCompanyInfo(shoppingItem);
     }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Intent selectedIntent = null;
@@ -645,7 +633,6 @@ public class CustomerMainActivity extends AppCompatActivity
         }
         return false;
     }
-
     private void setInterstitialAd() {
 
         if(ShopikApplicationActivity.getInterstitialAd() != null){
@@ -655,7 +642,6 @@ public class CustomerMainActivity extends AppCompatActivity
         }
         ShopikApplicationActivity.increaseCategoryClicks();
     }
-
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -672,7 +658,6 @@ public class CustomerMainActivity extends AppCompatActivity
             notificationManager.createNotificationChannel(channel);
         }
     }
-
     private void loadCustomerInfo() {
 
         getCoverPic();
@@ -714,7 +699,6 @@ public class CustomerMainActivity extends AppCompatActivity
         String text = greeting + System.lineSeparator() + first_name;
         name.setText(text);
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -765,7 +749,6 @@ public class CustomerMainActivity extends AppCompatActivity
             asyncTask.cancel(true);
         }
     }
-
     @Override
     public void onBackPressed() {
         item_count = 0;
@@ -774,7 +757,6 @@ public class CustomerMainActivity extends AppCompatActivity
             drawerLayout.closeDrawer(GravityCompat.START);
         super.onBackPressed();
     }
-
     @Override
     public void finish() {
         overridePendingTransition(R.anim.fadein,R.anim.fadeout);
@@ -957,7 +939,6 @@ public class CustomerMainActivity extends AppCompatActivity
             return null;
         }
     }
-
     private static class getAsos extends AsyncTask <Integer, Integer, Void> {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
@@ -1813,5 +1794,4 @@ public class CustomerMainActivity extends AppCompatActivity
             return null;
         }
     }
-
 }

@@ -11,52 +11,41 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/gender_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         app:menu="@menu/menu_customer_toolbar"
         android:background="@color/fragmentBackground"
+        app:title="@string/app_name"
+        app:titleTextAppearance="@style/MainTitle"
+        android:paddingTop="7dp"
+        android:paddingStart="7dp"
+        android:paddingEnd="7dp"
         android:elevation="5dp"
-        android:translationZ="5dp"
-        android:paddingBottom="7dp"
-        android:paddingTop="7dp">
+        android:translationZ="5dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingTop="5dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="cursive"
-                android:layout_gravity="center"
-                android:text="@string/app_name"
-                android:textAllCaps="false"
-                android:textColor="@color/ShopikLogo"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                android:transitionName="@string/app_name"
-                android:textAlignment="center"/>
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/company_img_logo"
-                android:layout_width="40dp"
-                android:layout_height="50dp"
-                android:layout_gravity="bottom"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
                 android:layout_marginStart="12dp"
+                android:layout_marginTop="2dp"
                 android:contentDescription="@string/logo"
                 android:transitionName="@string/tooki"
                 android:src="@drawable/tooki" />
 
             <Spinner
                 android:id="@+id/gender_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
+                android:layout_width="145dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_marginStart="15dp"
-                android:gravity="center"
-                android:padding="2dp"
-                android:textAlignment="center"/>
+                android:textAlignment="viewStart"/>
 
         </LinearLayout>
 
