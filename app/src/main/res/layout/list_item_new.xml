@@ -177,10 +177,9 @@
                 android:id="@+id/brand_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="15dp"
                 android:layout_toStartOf="@id/likes_layout"
                 android:fontFamily="@font/nobile"
-                android:padding="5dp"
                 android:textAlignment="viewStart"
                 android:textColor="#000000"
                 android:textSize="18sp"
@@ -193,7 +192,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_margin="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -240,7 +240,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="15dp"
             android:orientation="horizontal">
 
             <TextView
@@ -269,7 +269,7 @@
             android:id="@+id/discount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/nobile"
             android:gravity="center"
@@ -283,7 +283,7 @@
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/nobile"
             android:textAlignment="textStart"
