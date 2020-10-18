@@ -365,7 +365,16 @@ public class GenderFilteringActivity extends AppCompatActivity {
         model.getSub_category().removeObservers(this);
     }
 
-    private boolean isConnectedToInternet(){
+    //ADDED LATER - NEED CHECKING
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        for (AsyncTask<Void, Void, Void> asyncTask : asyntask) {
+            asyncTask.cancel(true);
+        }
+    }
+
+    private boolean isConnectedToInternet() {
         ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         assert cm != null;
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();

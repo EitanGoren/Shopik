@@ -25,7 +25,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.adapters.CardsAdapter;
 import com.eitan.shopik.items.ShoppingItem;
 import com.eitan.shopik.viewModels.GenderModel;
@@ -144,7 +143,7 @@ public class CustomerHomeFragment extends Fragment {
                     swipesModel.addToItems(shoppingItem);
                     arrayAdapter.notifyDataSetChanged();
                 }
-                if ((Objects.requireNonNull(swipesModel.getItems().getValue()).size() % Macros.SWIPES_TO_AD == 0)
+              /*  if ((Objects.requireNonNull(swipesModel.getItems().getValue()).size() % Macros.SWIPES_TO_AD == 0)
                         && swipesModel.getItems().getValue().size() > 0) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
                     if (shoppingItemAd != null) {
@@ -154,7 +153,7 @@ public class CustomerHomeFragment extends Fragment {
                         swipesModel.addToItems(shoppingItemAd);
                         arrayAdapter.notifyDataSetChanged();
                     }
-                }
+                }*/
             }
             flingContainer.setAdapter(arrayAdapter);
             arrayAdapter.notifyDataSetChanged();

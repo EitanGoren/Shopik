@@ -5,7 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_centerInParent="true"
     tools:menu="@menu/menu_customer_toolbar">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,7 +13,7 @@
         tools:menu="@menu/menu_customer_toolbar">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="370dp"
+        android:layout_width="match_parent"
         android:layout_height="505dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="50dp"
@@ -51,27 +50,30 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_gravity="top|end"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp" />
 
-            <RatingBar
-                android:id="@+id/ad_stars"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/ad_card_seller_name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:padding="5dp"
                 android:layout_toEndOf="@id/ad_card_seller_logo"
                 android:layout_toStartOf="@id/Ad"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:padding="4dp"
-                android:stepSize="0.5"
-                tools:visibility="visible"/>
+                android:textAlignment="viewStart"
+                android:textColor="#000000"
+                android:textSize="22sp" />
 
             <LinearLayout
                 android:id="@+id/ad_bottom_info_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/fav_info_background"
                 android:layout_alignParentBottom="true"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingStart="7dp"
+                android:paddingEnd="7dp">
 
                 <TextView
                     android:id="@+id/ad_brand_name"
@@ -80,26 +82,30 @@
                     android:fontFamily="@font/martel_sans"
                     android:padding="3dp"
                     android:textAlignment="viewStart"
-                    android:textColor="#000000"
+                    android:textColor="#ffffff"
                     android:textSize="16sp"
                     android:textStyle="bold" />
+
+                <RatingBar
+                    android:id="@+id/ad_stars"
+                    style="@style/Widget.AppCompat.RatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
+                    android:layout_gravity="center"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:padding="4dp"
+                    android:stepSize="0.5"
+                    android:theme="@style/Widget.AppCompat.RatingBar"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/ad_store"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:textAlignment="viewStart"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/ad_card_seller_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:fontFamily="@font/martel_sans"
                     android:padding="5dp"
-                    android:textColor="#000000"
+                    android:textColor="#ffffff"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -110,7 +116,7 @@
                     android:fontFamily="@font/martel_sans"
                     android:padding="5dp"
                     android:textAlignment="viewStart"
-                    android:textColor="#000000"
+                    android:textColor="#ffffff"
                     android:textSize="14sp" />
 
                 <TextView
@@ -119,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/martel_sans"
                     android:padding="5dp"
-                    android:textColor="#FFFFFF"
+                    android:textColor="#ffffff"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -127,12 +133,13 @@
                     android:id="@+id/ad_action_button"
                     style="@style/GridBuyButtons"
                     android:layout_width="match_parent"
-                    android:layout_height="42dp"
+                    android:layout_height="45dp"
                     android:fontFamily="@font/martel_sans"
                     android:gravity="center"
                     android:text="@string/check_it_now"
-                    android:backgroundTint="#EFEFEF"
-                    android:textColor="#000000" />
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -144,9 +151,9 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 app:civ_border_color="@color/borderLine"
-                android:elevation="15dp"
-                android:translationZ="15dp"
-                app:civ_border_width="2dp"/>
+                android:elevation="5dp"
+                android:translationZ="5dp"
+                app:civ_border_width="2dp" />
 
         </RelativeLayout>
 
