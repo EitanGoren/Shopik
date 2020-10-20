@@ -177,7 +177,6 @@ public class CustomerMainActivity extends AppCompatActivity
                             mainModel.addSwipedItemId(item_id.toString());
                         }
                     }
-
                 }
             }
 

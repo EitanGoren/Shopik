@@ -7,20 +7,20 @@
     android:background="@drawable/bgauth">
 
     <TextView
-        android:layout_width="240dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="15dp"
+        android:layout_above="@id/signin"
+        android:layout_centerHorizontal="true"
         android:fontFamily="@font/cambay_bold"
-        android:text="@string/let_s_connect"
+        android:text="Let's \nconnect"
         android:textAlignment="textStart"
         android:textAllCaps="true"
         android:textColor="#713ED8"
-        android:textSize="40sp"
-        android:textStyle="bold"/>
+        android:textSize="38sp"
+        android:textStyle="bold" />
 
     <LinearLayout
+        android:id="@+id/signin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

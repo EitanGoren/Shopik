@@ -36,9 +36,9 @@
     <string name="heart">heart</string>
     <string name="_0">0</string>
     <string name="sale">ON SALE!</string>
-    <string name="signin_with_google">Sign In with Google</string>
-    <string name="signin_with_facebook">Sign In with Facebook</string>
-    <string name="signin_with_email">Sign In with Email</string>
+    <string name="signin_with_google">Google Sign-in</string>
+    <string name="signin_with_facebook">Facebook Sign-in</string>
+    <string name="signin_with_email">Email Sign-in</string>
     <string name="close">close</string>
     <string name="like">like</string>
     <string name="about_us">Who we are</string>
@@ -97,6 +97,7 @@
     <string name="users_choice">users choice</string>
     <string name="x">X</string>
     <string name="make_shopping_great_again">Make Shopping Great Again!</string>
-    <string name="let_s_connect">LET\'S CONNECT</string>
     <string name="version">"Shopik Version 1.6.5 "</string>
+    <string name="scroll_to_bottom">scroll_to_bottom</string>
+    <string name="scroll_to_top">scroll_to_top</string>
 </resources>

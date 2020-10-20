@@ -246,19 +246,21 @@ public class CustomerHomeFragment extends Fragment {
                 updateBadge();
 
                 new updateDatabase().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        item_type,item_gender,item_id,action,seller,link,imageUrl,item_sub_category);
+                        item_type, item_gender, item_id, action, seller, link, imageUrl, item_sub_category);
 
                 //TODO add parameters like color,brand,price,etc..
 
                 for (String attr : shoppingItem.getName()) {
                     increasePreferredFieldByOneRTDB(attr, item_type, item_gender, item_sub_category);
                 }
-                if (mainModel.getPreferred().getValue() != null) {
-                    int match_per = Objects.requireNonNull(mainModel.getPreferred().getValue()).
-                            calculateMatchingPercentage(shoppingItem);
-                    if(match_per >= 95){
-                        dialog = new Dialog(requireContext());
-                        showMatchDialog(imageUrl,match_per);
+                if (mainModel.swipedItemsCount() > 25) {
+                    if (mainModel.getPreferred().getValue() != null) {
+                        int match_per = Objects.requireNonNull(mainModel.getPreferred().getValue()).
+                                calculateMatchingPercentage(shoppingItem);
+                        if (match_per >= 95) {
+                            dialog = new Dialog(requireContext());
+                            showMatchDialog(imageUrl, match_per);
+                        }
                     }
                 }
             }

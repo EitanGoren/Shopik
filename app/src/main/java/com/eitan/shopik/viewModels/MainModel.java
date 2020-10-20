@@ -89,8 +89,8 @@ public class MainModel extends ViewModel implements Serializable {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addItem(ShoppingItem shoppingItem) {
         Objects.requireNonNull(this.all_items.getValue()).add(shoppingItem);
-        //update observers every 7 items block
-        if(this.all_items.getValue().size() % 15 == 0){
+        // Update observers every ___ items block
+        if (this.all_items.getValue().size() % 5 == 0) {
             postAllItems();
         }
     }
@@ -108,19 +108,25 @@ public class MainModel extends ViewModel implements Serializable {
     }
 
     //SWIPED
-    public void addSwipedItemId(String id){
+    public void addSwipedItemId(String id) {
         swipedItems.add(id);
         markItemAsSeen(id);
     }
-    public boolean isSwiped(String id){
+
+    public boolean isSwiped(String id) {
         return swipedItems.contains(id);
     }
 
+    public int swipedItemsCount() {
+        return swipedItems.size();
+    }
+
     //PREFERRED
-    public LiveData<PreferredItem> getPreferred(){
+    public LiveData<PreferredItem> getPreferred() {
         return preferred;
     }
-    public void setPreferred(PreferredItem preferredItem){
+
+    public void setPreferred(PreferredItem preferredItem) {
         this.preferred.postValue(preferredItem);
     }
 
