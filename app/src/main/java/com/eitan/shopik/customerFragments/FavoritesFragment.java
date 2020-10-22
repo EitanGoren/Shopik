@@ -116,12 +116,14 @@ public class FavoritesFragment extends Fragment {
                 Toast.makeText(getContext(), "No Favorites Yet", Toast.LENGTH_SHORT).show();
         });
 
-        VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(0);
+        VerticalSpaceItemDecoration verticalSpaceItemDecoration =
+                new VerticalSpaceItemDecoration(0);
+
         mRecyclerView.addItemDecoration(verticalSpaceItemDecoration);
         mRecyclerView.setItemAnimator(new CustomItemAnimator());
 
         fav_list = new CopyOnWriteArrayList<>();
-        recyclerGridAdapter = new RecyclerGridAdapter(fav_list,"favorites");
+        recyclerGridAdapter = new RecyclerGridAdapter(fav_list, "favorites");
 
         return view;
     }
@@ -164,7 +166,8 @@ public class FavoritesFragment extends Fragment {
             if(shoppingItems.size() > 0) {
                 String cat = shoppingItems.get(0).getType();
                 String sub_cat = shoppingItems.get(0).getSub_category();
-                text = cat.toUpperCase() + " | " + sub_cat.toUpperCase() + " | " + (fav_list.size() - count_ads) + " ITEMS";
+                text = cat.toUpperCase() + " | " + sub_cat.toUpperCase() + " | "
+                        + (fav_list.size() - count_ads) + " ITEMS";
             }
             else
                 text = "NO FAVORITES YET";

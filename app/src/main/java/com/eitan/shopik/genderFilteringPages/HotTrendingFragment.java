@@ -263,23 +263,23 @@ public class HotTrendingFragment extends Fragment {
        recyclerView.setAdapter(clothingGridAdapter);
        recyclerView.setLayoutManager(mLayoutManager);
 
-       entranceViewModel.getCurrentClothingItem().observe(getViewLifecycleOwner(), castroCountObserver);
+        entranceViewModel.getCurrentClothingItem().observe(getViewLifecycleOwner(), castroCountObserver);
 
-       if(gender.equals(Macros.CustomerMacros.WOMEN))
-           entranceViewModel.getWomen_clothing_items().observe(getViewLifecycleOwner(), clothingObserver);
-       else
-           entranceViewModel.getMen_clothing_items().observe(getViewLifecycleOwner(), clothingObserver);
+        if (gender.equals(Macros.CustomerMacros.WOMEN))
+            entranceViewModel.getWomen_clothing_items().observe(getViewLifecycleOwner(), clothingObserver);
+        else
+            entranceViewModel.getMen_clothing_items().observe(getViewLifecycleOwner(), clothingObserver);
 
-       String text_header;
-       TextView header = dialog.findViewById(R.id.new_items_header);
+        String text_header;
+        TextView header = dialog.findViewById(R.id.new_items_header);
         header.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
         text_header = "New In Castro";
         header.setText(text_header);
 
-       Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-       dialog.getWindow().setGravity(Gravity.BOTTOM);
-       dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-       dialog.show();
+        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.show();
     }
     private void ShoesDialog() {
         stopAllObservers();

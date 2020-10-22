@@ -74,20 +74,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         return items.size();
     }
 
-    class RecyclerViewHolder extends RecyclerView.ViewHolder{
+    class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView imageView;
         private ImageButton imageButton;
-        private TextView sub_cat, brand,category;
+        private TextView sub_cat, brand, category;
         private Button full_screen;
 
         public RecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
-            if(type.equals("SubCategory")){
+            if (type.equals("SubCategory")) {
                 imageButton = itemView.findViewById(R.id.sub_category_image);
                 sub_cat = itemView.findViewById(R.id.sub_category_button);
-            }
-            else if(type.equals("Item") || type.equals("New-Item")) {
+            } else if (type.equals("Item") || type.equals("New-Item")) {
                 imageView = itemView.findViewById(R.id.image_slider);
                 brand = itemView.findViewById(R.id.slider_brand);
                 full_screen = itemView.findViewById(R.id.fullscreen_button);

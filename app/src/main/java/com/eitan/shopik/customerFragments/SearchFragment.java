@@ -241,7 +241,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             else if (items_num > 0)
                 mLayoutManager.smoothScrollToPosition(mRecyclerView, null, recyclerGridAdapter.getItemCount() - 1);
             else
-                Toast.makeText(getContext(), "No Favorites Yet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "NO ITEMS FOUND", Toast.LENGTH_SHORT).show();
         });
         scrollDownFAB.setOnClickListener(v -> {
             //scroll up
@@ -250,7 +250,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             else if (items_num > 0)
                 mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
             else
-                Toast.makeText(getContext(), "No Favorites Yet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "NO ITEMS FOUND", Toast.LENGTH_SHORT).show();
         });
         return view;
     }

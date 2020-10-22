@@ -982,9 +982,9 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         brand_ele = document2.getElementsByClass("brand-description");
                         Elements poki = brand_ele.get(0).getElementsByTag("strong");
                         brand = poki.get(0).text();
-                        shoppingItem.setBrand(brand);
+                        shoppingItem.setBrand(brand != null ? brand : seller_name);
                     } catch (IndexOutOfBoundsException ex) {
-                        shoppingItem.setBrand("");
+                        shoppingItem.setBrand(seller_name);
                     }
 
                     shoppingItem.setSeller(seller_name);
@@ -1025,7 +1025,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
                 for (Element element : products) {
                     ShoppingItem shoppingItem = new ShoppingItem();
-                    String id = element.attr("data-sku");
 
                     String name = element.childNode(3).childNode(3).childNode(0).attr("title");
                     String link = element.childNode(3).childNode(3).childNode(0).attr("href");
@@ -1266,10 +1265,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
                             shoppingItem.setPrice(price);
                         }
 
-                        Elements sku = document1.getElementsByClass("sku");
-
-                        String id = sku.get(0).childNode(3).childNode(0).toString();
-
                         Elements elements2 = document1.getElementsByClass("std shortDescription");
                         String description = elements2.get(0).childNode(0).toString().replace("\n", "");
                         ArrayList<String> name = new ArrayList<>(Arrays.asList(description.split(" ")));
@@ -1372,7 +1367,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         String description = jpook.get("description").toString();
                         ArrayList<String> description_array = new ArrayList<>(Arrays.asList(description.split(" ")));
 
-                        String id = jpook.get("sku").toString();
                         JSONObject offers = new JSONObject(jpook.get("offers").toString());
                         String price = offers.getString("price");
 

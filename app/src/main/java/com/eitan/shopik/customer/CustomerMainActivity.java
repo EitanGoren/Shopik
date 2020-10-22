@@ -103,33 +103,38 @@ public class CustomerMainActivity extends AppCompatActivity
     private ArrayList<AsyncTask <Integer, Integer, Void>> asyntask;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private static void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String, String> liked_users,
-                                               Map<String, String> unliked_users) {
+    private static void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String,
+            String> liked_users, Map<String, String> unliked_users) {
 
         ArrayList<String> list = new ArrayList<>(liked_users.keySet());
         for (String customer_id : list) {
             FirebaseFirestore.getInstance().
                     collection(Macros.CUSTOMERS)
-                    .whereEqualTo("id", customer_id).get().addOnSuccessListener(queryDocumentSnapshots -> {
-                if (!queryDocumentSnapshots.isEmpty()) {
-                    List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
-                    for (DocumentSnapshot doc : documentSnapshots) {
-                        LikedUser likedUser = new LikedUser (
-                                doc.get("imageUrl") != null ? Objects.requireNonNull(doc.get("imageUrl")).toString() : null,
-                                doc.get("first_name") != null ? Objects.requireNonNull(doc.get("first_name")).toString() : null,
-                                doc.get("last_name") != null ? Objects.requireNonNull(doc.get("last_name")).toString() : null
-                        );
+                    .whereEqualTo("id", customer_id).get().
+                    addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
+                            for (DocumentSnapshot doc : documentSnapshots) {
+                                LikedUser likedUser = new LikedUser(
+                                        doc.get("imageUrl") != null ? Objects.requireNonNull(doc.
+                                                get("imageUrl")).toString() : null,
+                                        doc.get("first_name") != null ? Objects.requireNonNull(doc.
+                                                get("first_name")).toString() : null,
+                                        doc.get("last_name") != null ? Objects.requireNonNull(doc.
+                                                get("last_name")).toString() : null
+                                );
 
-                        //if current user liked this item
-                        if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
-                            likedUser.setLast_name(likedUser.getLast_name() + " (You)");
-                            shoppingItem.setSeen(true);
-                        }
+                                //if current user liked this item
+                                if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.
+                                        getInstance().getCurrentUser()).getUid())) {
+                                    likedUser.setLast_name(likedUser.getLast_name() + " (You)");
+                                    shoppingItem.setSeen(true);
+                                }
 
-                        mainModel.setCustomers_info(customer_id, likedUser);
-                        likedUser.setFavorite(Objects.equals(liked_users.get(doc.getId()), Macros.CustomerMacros.FAVOURITE));
-                        shoppingItem.addLikedUser(likedUser);
-                    }
+                                mainModel.setCustomers_info(customer_id, likedUser);
+                                likedUser.setFavorite(Objects.equals(liked_users.get(doc.getId()), Macros.CustomerMacros.FAVOURITE));
+                                shoppingItem.addLikedUser(likedUser);
+                            }
                 }
             });
         }
