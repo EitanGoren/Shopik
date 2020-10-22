@@ -3,7 +3,6 @@ package com.eitan.shopik.company;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
 import com.bumptech.glide.Glide;
 import com.eitan.shopik.Macros;
@@ -279,9 +277,6 @@ public class CompanyProfileActivity extends AppCompatActivity {
         collapsingToolbar.setTitle(name);
         collapsingToolbar.setExpandedTitleColor(Color.WHITE);
         collapsingToolbar.setCollapsedTitleTextColor(Color.WHITE);
-        final Typeface typeface = ResourcesCompat.getFont(this, R.font.roboto_medium);
-        collapsingToolbar.setCollapsedTitleTypeface(typeface);
-        collapsingToolbar.setExpandedTitleTypeface(typeface);
         collapsingToolbar.setContentScrimColor(getColor(R.color.CompanyProfileScrim));
 
         Glide.with(getApplicationContext()).asBitmap().load(cover).into(bgimage);
@@ -304,23 +299,24 @@ public class CompanyProfileActivity extends AppCompatActivity {
         mDescription = findViewById(R.id.description);
         bgimage = findViewById(R.id.company_bgImage);
 
-        Glide.with(this).load( Macros.TWITTER_IC ).into(mTwitter);
-        Glide.with(this).load( Macros.FACEBOOK_IC ).into(mFacebook);
-        Glide.with(this).load( Macros.WEB_IC ).into(mSite);
-        Glide.with(this).load( Macros.INSTAGRAM_IC ).into(mInstagram);
-        Glide.with(this).load( Macros.YOUTUBE_IC ).into(mYoutube);
+        Glide.with(this).load(Macros.TWITTER_IC).into(mTwitter);
+        Glide.with(this).load(Macros.FACEBOOK_IC).into(mFacebook);
+        Glide.with(this).load(Macros.WEB_IC).into(mSite);
+        Glide.with(this).load(Macros.INSTAGRAM_IC).into(mInstagram);
+        Glide.with(this).load(Macros.YOUTUBE_IC).into(mYoutube);
 
-        companyId = getIntent().getStringExtra("id");
-
-        assert companyId != null;
-        isCompany = companyId.equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
-
-        companyFS = FirebaseFirestore.getInstance().collection(Macros.COMPANIES).document(companyId);
+        try {
+            companyId = getIntent().getStringExtra("id");
+            isCompany = companyId.equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+            companyFS = FirebaseFirestore.getInstance().collection(Macros.COMPANIES).document(companyId);
+        } catch (NullPointerException npex) {
+            npex.printStackTrace();
+        }
     }
 
     @Override
-    public void onBackPressed() {       super.onBackPressed();
+    public void onBackPressed() {
+        super.onBackPressed();
         this.supportFinishAfterTransition();
     }
-
 }

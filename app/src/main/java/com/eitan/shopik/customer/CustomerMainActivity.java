@@ -313,6 +313,7 @@ public class CustomerMainActivity extends AppCompatActivity
             if(progress == 100 || pair.first >= total_items){
                 progressIndicator.setProgress(0);
                 progressIndicator.setVisibility(View.GONE);
+
             }
         });
 

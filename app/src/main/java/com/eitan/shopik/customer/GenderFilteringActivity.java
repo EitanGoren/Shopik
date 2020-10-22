@@ -571,6 +571,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
                     shoppingItem.setReduced_price(red);
                     shoppingItem.setSite_link(link);
                     shoppingItem.setId(id);
+                    shoppingItem.setSellerId("odsIz0HNINevS2EP3mdIrryTIF72");
                     shoppingItem.setName(new ArrayList<>(Arrays.asList(description.split(" "))));
                     shoppingItem.setType("OUTLET");
 

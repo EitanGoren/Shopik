@@ -160,7 +160,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                         shoppingItem.setPercentage(match_per);
                         allItemsModel.addItem(shoppingItem);
                     }
-                    if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.SEARCH_TO_AD == 0)) {
+                    if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.ITEMS_TO_AD == 0)) {
                         ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
                         if (shoppingItemAd != null) {
                             ShoppingItem adItem = new ShoppingItem();

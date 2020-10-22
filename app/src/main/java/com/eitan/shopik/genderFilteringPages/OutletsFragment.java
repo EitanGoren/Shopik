@@ -95,5 +95,4 @@ public class OutletsFragment extends Fragment {
         outletsModel.getTotalItems().removeObservers(getViewLifecycleOwner());
         outletsModel.getCurrentItem().removeObservers(getViewLifecycleOwner());
     }
-
 }

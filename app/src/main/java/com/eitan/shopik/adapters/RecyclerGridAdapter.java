@@ -136,7 +136,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
                 ItemsList.add(item);
                 count++;
-                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
+                if ((count % Macros.ITEMS_TO_AD == 0) && count > 0) {
                     ItemsList.add((ShoppingItem) ShopikApplicationActivity.getNextAd());
                 }
                 notifyDataSetChanged();
@@ -195,7 +195,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             for(ShoppingItem item : (Collection<? extends ShoppingItem>) results.values) {
                 ItemsList.add(item);
                 count++;
-                if ((count % Macros.SUGGESTED_TO_AD == 0) && count > 0) {
+                if ((count % Macros.ITEMS_TO_AD == 0) && count > 0) {
                     ItemsList.add((ShoppingItem) ShopikApplicationActivity.getNextAd());
                 }
                 notifyDataSetChanged();
@@ -205,7 +205,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     };
     private final List<ShoppingItem> items;
     private final String type;
-    int prog = 0;
+    private int prog = 0;
+    private boolean isFinishedFetchingData = false;
 
     public RecyclerGridAdapter(CopyOnWriteArrayList<ShoppingItem> items, @Nullable String type) {
         this.items = items;
@@ -240,8 +241,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        RecyclerView recyclerView = parent.findViewById(R.id.list_recycler_view);
 
         if(viewType == TYPE_AD) {
             UnifiedNativeAdView view = (UnifiedNativeAdView) LayoutInflater.from(parent.getContext()).
@@ -298,7 +297,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public Filter getFilter() {
         return filter;
     }
-
     public Filter getSortingFilter() {
         return sorting;
     }
@@ -310,6 +308,32 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 this.AllItemsList.add(item);
             }
         }
+    }
+    private void changeTabs(int position, ImageView[] imageViews, Context context) {
+        switch (position) {
+            case 0:
+                imageViews[0].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_lens_black));
+                imageViews[1].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
+                break;
+            case 1:
+                imageViews[0].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
+                imageViews[1].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_lens_black));
+                imageViews[2].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
+                break;
+            case 2:
+                imageViews[1].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
+                imageViews[2].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_lens_black));
+                imageViews[3].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
+                break;
+            case 3:
+                imageViews[2].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
+                imageViews[3].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_lens_black));
+                break;
+        }
+    }
+
+    public void setFinishedFetchingData(boolean finishedFetchingData) {
+        isFinishedFetchingData = finishedFetchingData;
     }
 
     private static class ADViewHolder extends RecyclerView.ViewHolder {
@@ -331,70 +355,68 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public void setAd(ShoppingItem item) {
 
-            if (item.getNativeAd() != null){
+            if (item.getNativeAd() != null) {
 
                 item.setAd(true);
                 UnifiedNativeAd temp_ad = item.getNativeAd();
 
                 // The headline and mediaContent are guaranteed to be in every UnifiedNativeAd.
-                ((TextView) ((UnifiedNativeAdView)itemView).getHeadlineView()).setText(temp_ad.getHeadline());
-                ((UnifiedNativeAdView)itemView).getMediaView().setMediaContent(temp_ad.getMediaContent());
+                ((TextView) ((UnifiedNativeAdView) itemView).getHeadlineView()).setText(temp_ad.getHeadline());
+                ((UnifiedNativeAdView) itemView).getMediaView().setMediaContent(temp_ad.getMediaContent());
 
                 // These assets aren't guaranteed to be in every UnifiedNativeAd, so it's important to
                 // check before trying to display them.
                 if (temp_ad.getBody() == null) {
-                    ((UnifiedNativeAdView)itemView).getBodyView().setVisibility(View.GONE);
+                    ((UnifiedNativeAdView) itemView).getBodyView().setVisibility(View.GONE);
                 } else {
-                    ((UnifiedNativeAdView)itemView).getBodyView().setVisibility(View.VISIBLE);
-                    ((TextView) ((UnifiedNativeAdView)itemView).getBodyView()).setText(temp_ad.getBody());
+                    ((UnifiedNativeAdView) itemView).getBodyView().setVisibility(View.VISIBLE);
+                    ((TextView) ((UnifiedNativeAdView) itemView).getBodyView()).setText(temp_ad.getBody());
                 }
 
                 if (temp_ad.getCallToAction() == null) {
-                    ((UnifiedNativeAdView)itemView).getCallToActionView().setVisibility(View.GONE);
+                    ((UnifiedNativeAdView) itemView).getCallToActionView().setVisibility(View.GONE);
                 } else {
-                    ((UnifiedNativeAdView)itemView).getCallToActionView().setVisibility(View.VISIBLE);
-                    ((TextView) ((UnifiedNativeAdView)itemView).getCallToActionView()).setText(temp_ad.getCallToAction());
+                    ((UnifiedNativeAdView) itemView).getCallToActionView().setVisibility(View.VISIBLE);
+                    ((TextView) ((UnifiedNativeAdView) itemView).getCallToActionView()).setText(temp_ad.getCallToAction());
                 }
 
                 if (temp_ad.getIcon() == null) {
-                    ((UnifiedNativeAdView)itemView).getIconView().setVisibility(View.GONE);
-                }
-                else {
-                    ((UnifiedNativeAdView)itemView).getIconView().setVisibility(View.VISIBLE);
-                    ((CircleImageView)((UnifiedNativeAdView)itemView).
+                    ((UnifiedNativeAdView) itemView).getIconView().setVisibility(View.GONE);
+                } else {
+                    ((UnifiedNativeAdView) itemView).getIconView().setVisibility(View.VISIBLE);
+                    ((CircleImageView) ((UnifiedNativeAdView) itemView).
                             getIconView()).
                             setImageDrawable(temp_ad.getIcon().
-                            getDrawable());
+                                    getDrawable());
                 }
 
                 if (temp_ad.getPrice() == null || temp_ad.getPrice().equals("")) {
-                    ((UnifiedNativeAdView)itemView).getPriceView().setVisibility(View.GONE);
+                    ((UnifiedNativeAdView) itemView).getPriceView().setVisibility(View.GONE);
                 } else {
-                    ((UnifiedNativeAdView)itemView).getPriceView().setVisibility(View.VISIBLE);
-                    ((TextView) ((UnifiedNativeAdView)itemView).getPriceView()).setText(temp_ad.getPrice());
+                    ((UnifiedNativeAdView) itemView).getPriceView().setVisibility(View.VISIBLE);
+                    ((TextView) ((UnifiedNativeAdView) itemView).getPriceView()).setText(temp_ad.getPrice());
                 }
 
                 if (temp_ad.getStore() == null) {
-                    ((UnifiedNativeAdView)itemView).getStoreView().setVisibility(View.GONE);
+                    ((UnifiedNativeAdView) itemView).getStoreView().setVisibility(View.GONE);
                 } else {
-                    ((UnifiedNativeAdView)itemView).getStoreView().setVisibility(View.VISIBLE);
-                    ((TextView) ((UnifiedNativeAdView)itemView).getStoreView()).setText(temp_ad.getStore());
+                    ((UnifiedNativeAdView) itemView).getStoreView().setVisibility(View.VISIBLE);
+                    ((TextView) ((UnifiedNativeAdView) itemView).getStoreView()).setText(temp_ad.getStore());
                 }
 
                 if (temp_ad.getStarRating() == null) {
-                    ((UnifiedNativeAdView)itemView).getStarRatingView().setVisibility(View.GONE);
+                    ((UnifiedNativeAdView) itemView).getStarRatingView().setVisibility(View.GONE);
                 } else {
-                    ((RatingBar) ((UnifiedNativeAdView)itemView).getStarRatingView())
+                    ((RatingBar) ((UnifiedNativeAdView) itemView).getStarRatingView())
                             .setRating(temp_ad.getStarRating().floatValue());
-                    ((UnifiedNativeAdView)itemView).getStarRatingView().setVisibility(View.VISIBLE);
+                    ((UnifiedNativeAdView) itemView).getStarRatingView().setVisibility(View.VISIBLE);
                 }
 
                 if (temp_ad.getAdvertiser() == null) {
-                    ((UnifiedNativeAdView)itemView).getAdvertiserView().setVisibility(View.GONE);
-                }
-                else {
-                    ((TextView) ((UnifiedNativeAdView)itemView).getAdvertiserView()).setText(temp_ad.getAdvertiser());
-                    ((UnifiedNativeAdView)itemView).getAdvertiserView().setVisibility(View.VISIBLE);
+                    ((UnifiedNativeAdView) itemView).getAdvertiserView().setVisibility(View.GONE);
+                } else {
+                    ((TextView) ((UnifiedNativeAdView) itemView).getAdvertiserView()).setText(temp_ad.getAdvertiser());
+                    ((UnifiedNativeAdView) itemView).getAdvertiserView().setVisibility(View.VISIBLE);
                 }
 
                 // This method tells the Google Mobile Ads SDK that you have finished populating your
@@ -406,29 +428,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 itemView.setLayoutParams(params);
             }
-        }
-    }
-
-    private void changeTabs(int position, ImageView[] imageViews, Context context) {
-        switch (position) {
-            case 0:
-                imageViews[0].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_lens_black));
-                imageViews[1].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
-                break;
-            case 1:
-                imageViews[0].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
-                imageViews[1].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_lens_black));
-                imageViews[2].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
-                break;
-            case 2:
-                imageViews[1].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
-                imageViews[2].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_lens_black));
-                imageViews[3].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
-                break;
-            case 3:
-                imageViews[2].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_panorama_fish_eye_black_24dp));
-                imageViews[3].setBackground(ContextCompat.getDrawable(context, R.drawable.ic_lens_black));
-                break;
         }
     }
 
@@ -565,7 +564,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 sale_percentage.setVisibility(View.GONE);
             }
 
-            brand_name.setOnClickListener(v ->
+            logo.setOnClickListener(v ->
                     Macros.Functions.sellerProfile(getContext(), item.getSellerId(), null));
 
             String brand = item.getBrand() == null ? item.getSeller() : item.getBrand();
@@ -708,20 +707,12 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             });
             unlikes.setOnLongClickListener(v -> {
-                // TODO: ALERT DIALOG BEFORE DELETING IT.
-                setAlertDialog(item);
-                /*
-                String item_id = item.getId();
-                String item_type = item.getType();
-                String item_gender = item.getGender();
-                updateCustomerDB(item_id,item_type,item_gender,item.getSub_category(),item.getSeller());
-                updateItemsDB(item_id,item_type,item_gender);
-
-                removeItem(item.getId());
-                Macros.Functions.showSnackbar(recyclerView,"Removed Successfully",
-                        Objects.requireNonNull(getContext()),R.drawable.ic_thumb_down_pink);
-
-                 */
+                if (isFinishedFetchingData)
+                    setAlertDialog(item);
+                else
+                    Toast.makeText(getContext(),
+                            "Please wait until all items collected",
+                            Toast.LENGTH_SHORT).show();
                 return true;
             });
 
@@ -735,29 +726,18 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Macros.Functions.GlidePicture(getContext(), image, imageView);
 
             buy.setOnClickListener(v -> Macros.Functions.buy(getContext(), item.getSite_link()));
-
             Glide.with(getContext()).load(item.getSellerLogoUrl()).into(logo);
-
-            ImageView[] imageViews = {mDot1, mDot2, mDot3, mDot4};
 
             mNext.setOnClickListener(v -> {
                 if (index[0] >= 0 && index[0] < 3) {
                     index[0]++;
-                    changeTabs(index[0], imageViews, itemView.getContext());
-                    Glide.with(getContext()).
-                            load(item.getImages().get(index[0])).
-                            transition(withCrossFade(900)).
-                            into(imageView);
+                    changeImage(item.getImages().get(index[0]), index[0]);
                 }
             });
             mPrev.setOnClickListener(v -> {
                 if(index[0] > 0 && index[0] <= 3) {
                     index[0]--;
-                    changeTabs(index[0], imageViews, itemView.getContext());
-                    Glide.with(getContext()).
-                            load(item.getImages().get(index[0])).
-                            transition(withCrossFade(900)).
-                            into(imageView);
+                    changeImage(item.getImages().get(index[0]), index[0]);
                 }
             });
 
@@ -862,12 +842,24 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             description.setText(desc);
         }
 
-        public Context getContext() { return itemView.getContext(); }
+        public Context getContext() {
+            return itemView.getContext();
+        }
 
-        private void updateItemsDB(String item_id,String item_type, String item_gender) {
+        private void changeImage(String image, int idx) {
+            ImageView[] imageViews = {mDot1, mDot2, mDot3, mDot4};
+            Context context = getContext();
+            changeTabs(idx, imageViews, itemView.getContext());
+            Glide.with(context).
+                    load(image).
+                    transition(withCrossFade(900)).
+                    into(imageView);
+        }
 
-            Map<String,Object> unliked = new HashMap<>();
-            unliked.put(user_id,null);
+        private void updateItemsDB(String item_id, String item_type, String item_gender) {
+
+            Map<String, Object> unliked = new HashMap<>();
+            unliked.put(user_id, null);
 
             // remove user_id from liked list
             FirebaseDatabase.getInstance().getReference().
@@ -967,13 +959,15 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         private void removeItem() {
             try {
-                AllItemsList.remove(getAdapterPosition());
-                ItemsList.remove(getAdapterPosition());
-                items.remove(getAdapterPosition());
-                notifyItemRemoved(getAdapterPosition());
-                notifyItemRangeChanged(getAdapterPosition(), items.size());
-            } catch (NullPointerException ex) {
+                AllItemsList.remove(getLayoutPosition() == AllItemsList.size() ? getLayoutPosition() - 1 : getLayoutPosition());
+                ItemsList.remove(getLayoutPosition() == ItemsList.size() ? getLayoutPosition() - 1 : getLayoutPosition());
+                items.remove(getLayoutPosition() == items.size() ? getLayoutPosition() - 1 : getLayoutPosition());
+                notifyItemRemoved(getLayoutPosition());
+            } catch (NullPointerException | IndexOutOfBoundsException ex) {
                 ex.printStackTrace();
+                Toast.makeText(getContext(), "Something went wrong ):"
+                        + System.lineSeparator()
+                        + "Please try again later", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -1011,7 +1005,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 recursiveCirculate(progressBar, checkIcon, textView);
 
                 prog = 0;
-                YoYo.with(Techniques.FadeInDown).delay(1050).duration(3600).
+                YoYo.with(Techniques.RollIn).delay(850).duration(3400).
                         onEnd(animator -> alertDialog.dismiss()).
                         playOn(checkIcon);
             });
@@ -1030,13 +1024,13 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     prog += 1;
                     progressBar.setProgress(prog);
                     if (prog < 100)
-                        handler.postDelayed(this, 10);
+                        handler.postDelayed(this, 8);
                     else if (prog == 100) {
                         checkIcon.setVisibility(View.VISIBLE);
                         textView.setVisibility(View.VISIBLE);
                     }
                 }
-            }, 10);
+            }, 8);
         }
     }
 }

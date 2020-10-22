@@ -28,7 +28,7 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 @Keep
 public class Macros {
 
-   // public static final String TAG = "com.eitan.shopik";
+    public static final String TAG = "com.eitan.shopik";
     public static final String COMPANIES = "Companies";
     public static final String DEFAULT_DESCRIPTION = "Write something here...";
     public static final String DEFAULT_COVER_PHOTO = "https://st2.depositphotos.com/1747568/8686/v/950/depositphotos_86864998-stock-illustration-abstract-background-consisting-of-small.jpg";
@@ -65,19 +65,17 @@ public class Macros {
     public static final String WEB_IC = "https://www.freepnglogos.com/uploads/logo-website-png/logo-website-world-wide-web-svg-png-icon-download-10.png";
     public static final String INSTAGRAM_IC = "https://www.kartisyarok.co.il/wp-content/uploads/2018/09/instagram-logo-png-7.png";
 
-    public static final double POUND_TO_ILS = 5.2485;
-    public static final int SWIPES_TO_AD = 16;
-    public static final int FAV_TO_AD = 16;
-    public static final int SEARCH_TO_AD = 16;
-    public static final int SUGGESTED_TO_AD = 16;
+    public static final double POUND_TO_ILS = 5.2495;
+    public static final int ITEMS_TO_AD = 16;
 
     public static class Providers {
         public static final String FACEBOOK = "facebook.com";
         public static final String GOOGLE = "google.com";
         public static final String PASSWORD = "password";
     }
+
     public static final String[] CompanyNames = {
-        "Castro", "Asos", "Terminal X", "TwentyFourSeven", "Renuar", "Aldo", "Hoodies", "Shein"
+            "Castro", "Asos", "Terminal X", "TwentyFourSeven", "Renuar", "Aldo", "Hoodies", "Shein"
     };
 
     public static class CustomerMacros {
@@ -299,7 +297,7 @@ public class Macros {
         public static void showSnackbar(View view, String text, Context context, int drawableRes) {
             Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
             View snackbarLayout = snackbar.getView();
-            TextView textView = snackbarLayout.findViewById(com.google.android.material.R.id.snackbar_text);
+            TextView textView = snackbarLayout.findViewById(R.id.snackbar_text);
             textView.setCompoundDrawablesWithIntrinsicBounds(0,0, drawableRes,0);
             textView.setAllCaps(true);
             textView.setBackgroundColor(Color.TRANSPARENT);

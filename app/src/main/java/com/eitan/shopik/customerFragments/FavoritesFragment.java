@@ -77,6 +77,15 @@ public class FavoritesFragment extends Fragment {
         scroll_Up = view.findViewById(R.id.scroll_up);
         scroll_Down = view.findViewById(R.id.scroll_down);
 
+        mainModel.getCurrentItem().observe(getViewLifecycleOwner(), pair -> {
+
+            int progress = (int) (((float) pair.first / (float) pair.second) * 100);
+
+            if (progress >= 100) {
+                recyclerGridAdapter.setFinishedFetchingData(true);
+            }
+        });
+
         onScrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -132,9 +141,7 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         init();
-
         queryTextListener = new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -154,9 +161,9 @@ public class FavoritesFragment extends Fragment {
             int count_ads = 0;
             for (ShoppingItem shoppingItem : shoppingItems) {
                 fav_list.add(shoppingItem);
-                if(( fav_list.size() % Macros.FAV_TO_AD == 0 ) && fav_list.size() > 0 ) {
+                if ((fav_list.size() % Macros.ITEMS_TO_AD == 0) && fav_list.size() > 0) {
                     ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
-                    if(shoppingItemAd != null) {
+                    if (shoppingItemAd != null) {
                         count_ads++;
                         fav_list.add(shoppingItemAd);
                     }
