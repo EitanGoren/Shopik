@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".customer.CustomerMainActivity">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="@string/home"/>
+            android:title="@string/home" />
     </group>
 
     <item android:title="@string/your_info">
@@ -12,19 +14,31 @@
             <item
                 android:id="@+id/nav_profile"
                 android:icon="@drawable/ic_person_black"
-                android:title="@string/my_profile"/>
+                android:title="@string/my_profile" />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_input_black_24dp"
-                android:title="@string/log_out"/>
+                android:title="@string/log_out" />
         </menu>
     </item>
+
+    <!--  <item android:title="@string/Theme">
+          <menu>
+              <item
+                  android:id="@+id/nav_dark"
+                  android:icon="@drawable/ic_twotone_bedtime_24"
+                  android:title="@string/dark_mode"
+                  app:actionViewClass="android.widget.Switch">
+              </item>
+          </menu>
+      </item> -->
+
     <item android:title="@string/about">
         <menu>
             <item
                 android:id="@+id/nav_website"
                 android:icon="@drawable/website"
-                android:title="@string/visit_me"/>
+                android:title="@string/visit_me" />
         </menu>
     </item>
 </menu>

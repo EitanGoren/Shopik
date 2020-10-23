@@ -913,10 +913,11 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         private void removeItem() {
-            int position = getLayoutPosition();
+            int position = getAdapterPosition();
             try {
                 AllItemsList.remove(position == AllItemsList.size() ? position - 1 : position);
-                ItemsList.remove(position == ItemsList.size() ? position - 1 : position);
+                items.remove(position == items.size() ? position - 1 : position);
+                notifyItemRemoved(position == items.size() ? position - 1 : position);
                 notifyDataSetChanged();
                 updateHeader();
             } catch (NullPointerException | IndexOutOfBoundsException ex) {
@@ -975,7 +976,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 recursiveCirculate(progressBar, checkIcon, textView);
 
                 prog = 0;
-                YoYo.with(Techniques.RollIn).delay(850).duration(3400).
+                YoYo.with(Techniques.RollIn).delay(550).duration(3000).
                         onEnd(animator -> alertDialog.dismiss()).
                         playOn(checkIcon);
             });
@@ -994,13 +995,13 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     prog += 1;
                     progressBar.setProgress(prog);
                     if (prog < 100)
-                        handler.postDelayed(this, 8);
+                        handler.postDelayed(this, 5);
                     else if (prog == 100) {
                         checkIcon.setVisibility(View.VISIBLE);
                         textView.setVisibility(View.VISIBLE);
                     }
                 }
-            }, 8);
+            }, 5);
         }
     }
 }

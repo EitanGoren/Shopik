@@ -12,7 +12,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFF">
+        android:background="@color/BGColor">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"
@@ -56,14 +56,15 @@
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_alignParentTop="true"
-            android:background="#ffffff"
+            android:background="@color/BGColor"
+            app:titleTextColor="@color/TextColor"
             android:clipToPadding="true"
             app:title="@string/app_name"
             app:titleTextAppearance="@style/MainTitle"
             android:elevation="15dp"
             android:minHeight="65dp"
             android:fitsSystemWindows="true"
-            app:navigationIcon="@drawable/ic_menu_34" >
+            app:navigationIcon="@drawable/ic_menu_34">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -91,7 +92,7 @@
                     android:paddingStart="5dp"
                     android:paddingEnd="5dp"
                     android:textAlignment="center"
-                    android:textColor="#000000"
+                    android:textColor="@color/TextColor"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -110,45 +111,55 @@
         app:menu="@menu/nav_view_menu"
         tools:visibility="visible">
 
-        <TextView
-            android:id="@+id/nav_copyright_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="center"
-            android:layout_marginEnd="25dp"
-            android:layout_marginStart="25dp"
-            android:textSize="12sp"
-            android:layout_marginBottom="115dp"
-            android:padding="15dp"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="15dp"
-            android:orientation="vertical"
-            android:padding="14dp"
-            tools:ignore="UseCompoundDrawables">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="35dp"
-                android:layout_marginBottom="-23dp"
-                android:contentDescription="@string/logo"
-                android:src="@drawable/tooki" />
+        <RelativeLayout
+            android:id="@+id/nav_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/nav_copyright_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="cursive"
-                android:text="@string/app_name"
-                android:textColor="#1E1E1E"
-                android:textSize="35sp"
-                android:textStyle="bold"/>
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="115dp"
+                android:gravity="center"
+                android:padding="15dp"
+                android:textColor="@color/TextColor"
+                android:textSize="12sp" />
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="15dp"
+                android:orientation="vertical"
+                android:padding="14dp"
+                tools:ignore="RelativeOverlap,UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="35dp"
+                    android:layout_marginBottom="-23dp"
+                    android:contentDescription="@string/logo"
+                    android:src="@drawable/tooki" />
+
+                <TextView
+                    android:id="@+id/logo_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="cursive"
+                    android:text="@string/app_name"
+                    android:textSize="35sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </com.google.android.material.navigation.NavigationView>
 

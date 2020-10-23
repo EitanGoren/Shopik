@@ -335,7 +335,7 @@ public class Macros {
 
             dialog.setContentView(R.layout.likes_list_dialog);
             TextView header = dialog.findViewById(R.id.likes_header);
-            String _header_text = "People who unliked this item";
+            String _header_text = "People who disliked this item";
             header.setText(_header_text);
 
             ListView listView = dialog.findViewById(R.id.likes_list);

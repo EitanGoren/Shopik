@@ -97,7 +97,7 @@
     <string name="users_choice">users choice</string>
     <string name="x">X</string>
     <string name="make_shopping_great_again">Make Shopping Great Again!</string>
-    <string name="version">"Shopik Version 1.6.6 "</string>
+    <string name="version">" Version 1.7.0 "</string>
     <string name="scroll_to_bottom">scroll_to_bottom</string>
     <string name="scroll_to_top">scroll_to_top</string>
     <string name="remove_from_favorites">Remove From Favorites?</string>
@@ -106,4 +106,6 @@
     <string name="check_sign">check sign</string>
     <string name="this_operation_is_irreversible">This operation is irreversible</string>
     <string name="removed_successfully">Removed Successfully</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="Theme">Theme</string>
 </resources>

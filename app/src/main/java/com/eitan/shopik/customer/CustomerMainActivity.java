@@ -103,222 +103,6 @@ public class CustomerMainActivity extends AppCompatActivity
     private ArrayList<AsyncTask <Integer, Integer, Void>> asyntask;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private static void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String,
-            String> liked_users, Map<String, String> unliked_users) {
-
-        ArrayList<String> list = new ArrayList<>(liked_users.keySet());
-        for (String customer_id : list) {
-            FirebaseFirestore.getInstance().
-                    collection(Macros.CUSTOMERS)
-                    .whereEqualTo("id", customer_id).get().
-                    addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
-                            for (DocumentSnapshot doc : documentSnapshots) {
-                                LikedUser likedUser = new LikedUser(
-                                        doc.get("imageUrl") != null ? Objects.requireNonNull(doc.
-                                                get("imageUrl")).toString() : null,
-                                        doc.get("first_name") != null ? Objects.requireNonNull(doc.
-                                                get("first_name")).toString() : null,
-                                        doc.get("last_name") != null ? Objects.requireNonNull(doc.
-                                                get("last_name")).toString() : null
-                                );
-
-                                //if current user liked this item
-                                if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.
-                                        getInstance().getCurrentUser()).getUid())) {
-                                    likedUser.setLast_name(likedUser.getLast_name() + " (You)");
-                                    shoppingItem.setSeen(true);
-                                }
-
-                                mainModel.setCustomers_info(customer_id, likedUser);
-                                likedUser.setFavorite(Objects.equals(liked_users.get(doc.getId()), Macros.CustomerMacros.FAVOURITE));
-                                shoppingItem.addLikedUser(likedUser);
-                            }
-                }
-            });
-        }
-        if (unliked_users == null || unliked_users.isEmpty())
-            getCompanyInfo(shoppingItem);
-        else
-            getUnlikedUserInfo(shoppingItem, unliked_users);
-    }
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        postponeEnterTransition();
-        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN );
-
-        mainModel = new ViewModelProvider(this).get(MainModel.class);
-        setInterstitialAd();
-
-        createNotificationChannel();
-
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        setContentView(R.layout.activity_main);
-
-        init();
-
-        navigationView.setOnClickListener(v -> getCoverPic());
-
-        TextView copyright = findViewById(R.id.nav_copyright_text);
-        String text = getResources().getString(R.string.version) + System.lineSeparator() +
-                getResources().getString(R.string.copy_right);
-
-        copyright.setText(text);
-
-        getAllCompaniesInfo();
-        favoriteValueEventListener = new ValueEventListener() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    if( dataSnapshot.getValue() instanceof Map ) {
-                        Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
-                        for ( Object item_id : map.keySet()) {
-                            mainModel.addSwipedItemId(item_id.toString());
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-
-        };
-
-        for(String company : Macros.CompanyNames) {
-
-            FirebaseDatabase.getInstance().getReference().
-                    child(Macros.CUSTOMERS).
-                    child(userId).
-                    child(item_gender).
-                    child(Macros.Items.UNLIKED).
-                    child(company).
-                    child(item_type).
-                    child(item_sub_category).
-                    addValueEventListener(favoriteValueEventListener);
-
-            FirebaseDatabase.getInstance().getReference().
-                    child(Macros.CUSTOMERS).
-                    child(userId).
-                    child(item_gender).
-                    child(Macros.Items.LIKED).
-                    child(company).
-                    child(item_type).
-                    child(item_sub_category).
-                    addValueEventListener(favoriteValueEventListener);
-        }
-
-        valueEventListener = new ValueEventListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    mainModel.setPreferred(new PreferredItem((Map<String,Long>) dataSnapshot.getValue()));
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        };
-        customerDB.addValueEventListener(valueEventListener);
-
-        fav_single_listener = new ValueEventListener() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()) {
-                    Map<String,String> likes = (Map<String, String>) snapshot.getValue();
-                    assert likes != null;
-                    favorites.putAll(likes);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        };
-        getCustomerFavorites();
-
-        pageEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    int page =  Integer.parseInt(String.valueOf(dataSnapshot.getValue()));
-                    mainModel.setCurrent_page(page);
-                }
-                else
-                    mainModel.setCurrent_page(1);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        };
-        pageListener.addValueEventListener(pageEventListener);
-
-        mainModel.getCurrent_page().observe(this, page -> {
-
-            //Array of task
-            asyntask = new ArrayList<>();
-
-            //Add task to your array
-            asyntask.add(new getAsos().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
-            asyntask.add(new getShein().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
-            asyntask.add(new getCastro().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
-            asyntask.add(new getTFS().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
-            asyntask.add(new getTX().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
-            asyntask.add(new getAldo().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
-            asyntask.add(new getRenuar().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
-            asyntask.add(new getHoodies().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
-
-        });
-
-        getCoverPic();
-
-        loadCustomerInfo();
-
-        setViewPager();
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            animateLogo();
-            switch(item.getItemId()) {
-                case R.id.bottom_swipe:
-                    mainPager.setCurrentItem(0);
-                    break;
-                case R.id.bottom_favorites:
-                    bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setNumber(0);
-                    bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setVisible(false);
-                    mainPager.setCurrentItem(1);
-                    break;
-                case R.id.bottom_search:
-                    mainPager.setCurrentItem(2);
-                    break;
-                default:
-                    throw new IllegalStateException( "Unexpected Value " + item.getItemId());
-            }
-            return true;
-        });
-
-        startPostponedEnterTransition();
-
-        mainModel.getCurrentItem().observe(this, pair -> {
-            progressIndicator.setVisibility(View.VISIBLE);
-            int progress = (int) (((float) pair.first / (float) pair.second) * 100);
-            progressIndicator.setProgress(progress);
-
-            if(progress == 100 || pair.first >= total_items){
-                progressIndicator.setProgress(0);
-                progressIndicator.setVisibility(View.GONE);
-
-            }
-        });
-
-    }
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private static void getCompanyInfo(final ShoppingItem shoppingItem) {
 
         final String company_id = shoppingItem.getSellerId();
@@ -334,11 +118,32 @@ public class CustomerMainActivity extends AppCompatActivity
             ++item_count;
             mainModel.getCurrentItem().postValue(Pair.create(item_count, total_items));
 
-            if (favorites.containsKey(shoppingItem.getId())){
+            if (favorites.containsKey(shoppingItem.getId())) {
                 mainModel.addFavorite(shoppingItem);
             }
         }
     }
+
+    /*private void setThemeCallback() {
+        MenuItem menuItem = navigationView.getMenu().findItem(R.id.nav_dark);
+        Switch switcher_ = (Switch) menuItem.getActionView();
+        // To listen for a switch's checked/unchecked state changes
+        switcher_.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            //Dark mode is set, change icon to Light mode
+            if (isChecked) {
+                menuItem.setIcon(R.drawable.ic_twotone_wb_sunny_24);
+                menuItem.setTitle("Light mode");
+                Toast.makeText(getApplicationContext(), "Set Dark mode please", Toast.LENGTH_SHORT).show();
+            }
+            //Light mode is set, change icon to Dark mode
+            else {
+                menuItem.setIcon(R.drawable.ic_twotone_bedtime_24);
+                menuItem.setTitle("Dark mode");
+                Toast.makeText(getApplicationContext(), "Set Light mode please", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }*/
+
     private void init() {
 
         setNavigationBarButtonsColor(getWindow().getNavigationBarColor());
@@ -508,6 +313,7 @@ public class CustomerMainActivity extends AppCompatActivity
         double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
         return darkness < 0.5;
     }
+
     private static void getLikes(final ShoppingItem shoppingItem) {
 
         FirebaseDatabase.getInstance().getReference().
@@ -565,6 +371,7 @@ public class CustomerMainActivity extends AppCompatActivity
                     public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list) {
 
@@ -585,7 +392,8 @@ public class CustomerMainActivity extends AppCompatActivity
                                 doc.get("last_name") != null ? Objects.requireNonNull(doc.get("last_name")).toString() : null
                         );
 
-                        if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
+                        if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.
+                                getInstance().getCurrentUser()).getUid())) {
                             likedUser.setLast_name(likedUser.getLast_name() + " (You)");
                             shoppingItem.setSeen(true);
                         }
@@ -598,6 +406,229 @@ public class CustomerMainActivity extends AppCompatActivity
         }
         getCompanyInfo(shoppingItem);
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private static void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String,
+            String> liked_users, Map<String, String> unliked_users) {
+
+        ArrayList<String> list = new ArrayList<>(liked_users.keySet());
+        for (String customer_id : list) {
+            FirebaseFirestore.getInstance().
+                    collection(Macros.CUSTOMERS)
+                    .whereEqualTo("id", customer_id).get().
+                    addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
+                            for (DocumentSnapshot doc : documentSnapshots) {
+                                LikedUser likedUser = new LikedUser(
+                                        doc.get("imageUrl") != null ? Objects.requireNonNull(doc.
+                                                get("imageUrl")).toString() : null,
+                                        doc.get("first_name") != null ? Objects.requireNonNull(doc.
+                                                get("first_name")).toString() : null,
+                                        doc.get("last_name") != null ? Objects.requireNonNull(doc.
+                                                get("last_name")).toString() : null
+                                );
+
+                                //if current user liked this item
+                                if (doc.getId().equals(Objects.requireNonNull(FirebaseAuth.
+                                        getInstance().getCurrentUser()).getUid())) {
+                                    likedUser.setLast_name(likedUser.getLast_name() + " (You)");
+                                    shoppingItem.setSeen(true);
+                                }
+
+                                mainModel.setCustomers_info(customer_id, likedUser);
+                                likedUser.setFavorite(Objects.equals(liked_users.get(doc.getId()), Macros.CustomerMacros.FAVOURITE));
+                                shoppingItem.addLikedUser(likedUser);
+                            }
+                        }
+                    });
+        }
+        if (unliked_users == null || unliked_users.isEmpty())
+            getCompanyInfo(shoppingItem);
+        else
+            getUnlikedUserInfo(shoppingItem, unliked_users);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        postponeEnterTransition();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        mainModel = new ViewModelProvider(this).get(MainModel.class);
+        setInterstitialAd();
+
+        createNotificationChannel();
+
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        setContentView(R.layout.activity_main);
+
+        init();
+
+        navigationView.setOnClickListener(v -> getCoverPic());
+
+        //setThemeCallback();
+
+        TextView copyright = findViewById(R.id.nav_copyright_text);
+        String text = getResources().getString(R.string.version) + System.lineSeparator() +
+                getResources().getString(R.string.copy_right);
+
+        copyright.setText(text);
+
+        getAllCompaniesInfo();
+        favoriteValueEventListener = new ValueEventListener() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.getValue() instanceof Map) {
+                        Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
+                        for (Object item_id : map.keySet()) {
+                            mainModel.addSwipedItemId(item_id.toString());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+
+        };
+
+        for (String company : Macros.CompanyNames) {
+
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(userId).
+                    child(item_gender).
+                    child(Macros.Items.UNLIKED).
+                    child(company).
+                    child(item_type).
+                    child(item_sub_category).
+                    addValueEventListener(favoriteValueEventListener);
+
+            FirebaseDatabase.getInstance().getReference().
+                    child(Macros.CUSTOMERS).
+                    child(userId).
+                    child(item_gender).
+                    child(Macros.Items.LIKED).
+                    child(company).
+                    child(item_type).
+                    child(item_sub_category).
+                    addValueEventListener(favoriteValueEventListener);
+        }
+
+        valueEventListener = new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    mainModel.setPreferred(new PreferredItem((Map<String, Long>) dataSnapshot.getValue()));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+        customerDB.addValueEventListener(valueEventListener);
+
+        fav_single_listener = new ValueEventListener() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Map<String, String> likes = (Map<String, String>) snapshot.getValue();
+                    assert likes != null;
+                    favorites.putAll(likes);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        };
+        getCustomerFavorites();
+
+        pageEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    int page = Integer.parseInt(String.valueOf(dataSnapshot.getValue()));
+                    mainModel.setCurrent_page(page);
+                } else
+                    mainModel.setCurrent_page(1);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+        pageListener.addValueEventListener(pageEventListener);
+
+        mainModel.getCurrent_page().observe(this, page -> {
+
+            //Array of task
+            asyntask = new ArrayList<>();
+
+            //Add task to your array
+            asyntask.add(new getAsos().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getShein().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getCastro().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getTFS().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getTX().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getAldo().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getRenuar().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+            asyntask.add(new getHoodies().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, page, page));
+
+        });
+
+        getCoverPic();
+
+        loadCustomerInfo();
+
+        setViewPager();
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            animateLogo();
+            switch (item.getItemId()) {
+                case R.id.bottom_swipe:
+                    mainPager.setCurrentItem(0);
+                    break;
+                case R.id.bottom_favorites:
+                    bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setNumber(0);
+                    bottomNavigationView.getOrCreateBadge(R.id.bottom_favorites).setVisible(false);
+                    mainPager.setCurrentItem(1);
+                    break;
+                case R.id.bottom_search:
+                    mainPager.setCurrentItem(2);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected Value " + item.getItemId());
+            }
+            return true;
+        });
+
+        startPostponedEnterTransition();
+
+        mainModel.getCurrentItem().observe(this, pair -> {
+            progressIndicator.setVisibility(View.VISIBLE);
+            int progress = (int) (((float) pair.first / (float) pair.second) * 100);
+            progressIndicator.setProgress(progress);
+
+            if (progress == 100 || pair.first >= total_items) {
+                progressIndicator.setProgress(0);
+                progressIndicator.setVisibility(View.GONE);
+
+            }
+        });
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Intent selectedIntent = null;
@@ -630,7 +661,7 @@ public class CustomerMainActivity extends AppCompatActivity
                 startActivity(intent);
                 return true;
              case R.id.nav_website:
-                Macros.Functions.buy(CustomerMainActivity.this,"https://eitangoren.github.io");
+                 Macros.Functions.buy(CustomerMainActivity.this, "https://eitangoren.com");
         }
         if (selectedIntent != null) {
             startActivity(selectedIntent);
@@ -704,6 +735,7 @@ public class CustomerMainActivity extends AppCompatActivity
         String text = greeting + System.lineSeparator() + first_name;
         name.setText(text);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

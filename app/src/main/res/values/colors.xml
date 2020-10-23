@@ -17,4 +17,8 @@
     <color name="EditTextHintColor">#EF3232</color>
     <color name="SnackbarBackground">#FFFAD7</color>
     <color name="FavoritesInfoLine">#000000</color> <!-- D8D8D8 -->
+    <color name="DarkThemeColor">#222222</color>
+    <color name="LightThemeColor">#FFFFFF</color>
+    <color name="TextColor">#000000</color>
+    <color name="BGColor">#FFFFFF</color>
 </resources>
