@@ -2,19 +2,24 @@ package com.eitan.shopik;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Keep;
+import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
+import com.eitan.shopik.adapters.LikesListAdapter;
 import com.eitan.shopik.company.CompanyProfileActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -294,11 +299,64 @@ public class Macros {
 
     public static class Functions {
 
+        public static void showLikesListDialog(Context context, ArrayList<LikedUser> liked_items) {
+
+            Dialog dialog = new Dialog(context);
+            LikesListAdapter likedListAdapter =
+                    new LikesListAdapter(dialog.getContext(), R.layout.likes_list_item, liked_items);
+            likedListAdapter.notifyDataSetChanged();
+
+            dialog.setContentView(R.layout.likes_list_dialog);
+            TextView header = dialog.findViewById(R.id.likes_header);
+            String _header_text = "People who liked this item";
+            header.setText(_header_text);
+
+            ListView listView = dialog.findViewById(R.id.likes_list);
+
+            header.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.
+                    getDrawable(dialog.getContext(), R.drawable.ic_thumb_up_seleste), null, null, null);
+            header.setCompoundDrawablePadding(20);
+
+            listView.setAdapter(likedListAdapter);
+
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setElevation(25);
+            dialog.getWindow().setAllowEnterTransitionOverlap(true);
+            dialog.getWindow().setAllowReturnTransitionOverlap(true);
+            dialog.show();
+        }
+
+        public static void showUnlikesListDialog(Context context, ArrayList<LikedUser> unliked_items) {
+
+            Dialog dialog = new Dialog(context);
+            LikesListAdapter unlikedListAdapter = new LikesListAdapter(dialog.getContext(),
+                    R.layout.likes_list_item, unliked_items);
+            unlikedListAdapter.notifyDataSetChanged();
+
+            dialog.setContentView(R.layout.likes_list_dialog);
+            TextView header = dialog.findViewById(R.id.likes_header);
+            String _header_text = "People who unliked this item";
+            header.setText(_header_text);
+
+            ListView listView = dialog.findViewById(R.id.likes_list);
+
+            header.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.
+                    getDrawable(dialog.getContext(),
+                            R.drawable.ic_thumb_down_pink), null, null, null);
+            header.setCompoundDrawablePadding(20);
+
+            listView.setAdapter(unlikedListAdapter);
+
+            Objects.requireNonNull(dialog.getWindow()).
+                    setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
+        }
+
         public static void showSnackbar(View view, String text, Context context, int drawableRes) {
             Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
             View snackbarLayout = snackbar.getView();
             TextView textView = snackbarLayout.findViewById(R.id.snackbar_text);
-            textView.setCompoundDrawablesWithIntrinsicBounds(0,0, drawableRes,0);
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, drawableRes, 0);
             textView.setAllCaps(true);
             textView.setBackgroundColor(Color.TRANSPARENT);
             snackbarLayout.setBackgroundColor(context.getColor(R.color.SnackbarBackground));

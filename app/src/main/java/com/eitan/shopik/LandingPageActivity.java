@@ -222,7 +222,7 @@ public class LandingPageActivity extends AppCompatActivity {
                             }
                         });
                         Bundle parameters = new Bundle();
-                        parameters.putString("fields", "picture.width(200).height(200),id");
+                        parameters.putString("fields", "picture.type(large),id");
                         request.setParameters(parameters);
                         request.executeAsync();
                        break;

@@ -204,14 +204,11 @@
                     android:layout_marginEnd="5dp"
                     android:drawableStart="@drawable/ic_thumb_down_pink"
                     android:drawablePadding="10dp"
-                    android:elevation="15dp"
                     android:gravity="center"
-                    android:padding="5dp"
+                    android:textColor="#303030"
                     android:text="@string/_0"
-                    android:textColor="#000000"
                     android:textSize="16sp"
                     android:theme="@style/Buttons"
-                    android:translationZ="15dp"
                     tools:ignore="UseCompatTextViewDrawableXml" />
 
                 <TextView
@@ -220,17 +217,13 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="0dp"
                     android:drawableStart="@drawable/ic_thumb_up_seleste"
                     android:drawablePadding="10dp"
-                    android:elevation="15dp"
                     android:gravity="center"
-                    android:padding="5dp"
                     android:text="@string/_0"
-                    android:textColor="#000000"
+                    android:textColor="#303030"
                     android:textSize="16sp"
                     android:theme="@style/Buttons"
-                    android:translationZ="15dp"
                     tools:ignore="UseCompatTextViewDrawableXml" />
 
             </LinearLayout>
@@ -268,7 +261,7 @@
             android:id="@+id/discount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="5dp"
             android:gravity="center"
             android:text="@string/sale"
             android:textColor="#FF0000"
@@ -281,11 +274,11 @@
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="5dp"
             android:textAlignment="textStart"
             android:layout_marginBottom="5dp"
             android:fontFamily="@font/raleway"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
 
     </LinearLayout>
 

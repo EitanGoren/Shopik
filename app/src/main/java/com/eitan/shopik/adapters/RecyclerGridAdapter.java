@@ -1,7 +1,6 @@
 package com.eitan.shopik.adapters;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,7 +20,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -36,7 +34,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.ShopikApplicationActivity;
@@ -207,6 +204,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final String type;
     private int prog = 0;
     private boolean isFinishedFetchingData = false;
+    private TextView header;
 
     public RecyclerGridAdapter(CopyOnWriteArrayList<ShoppingItem> items, @Nullable String type) {
         this.items = items;
@@ -257,7 +255,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         else if(viewType == TYPE_FAVORITES) {
             View view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.list_item_new, parent,false);
-
             return new FavoritesViewHolder(view);
         }
         else if( viewType == TYPE_NEW_ITEM){
@@ -430,7 +427,6 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
     }
-
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView brand_name;
@@ -625,7 +621,13 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             });
         }
 
-        public Context getContext() { return itemView.getContext(); }
+        public Context getContext() {
+            return itemView.getContext();
+        }
+    }
+
+    public void setHeaderView(TextView headerView) {
+        header = headerView;
     }
 
     private class FavoritesViewHolder extends RecyclerView.ViewHolder {
@@ -634,7 +636,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final Button mPrev;
         final ImageView imageView;
         final ImageView favorite;
-        final String user_id ;
+        final String user_id;
         private final TextView brand_name;
         private final TextView buy;
         private final TextView sale;
@@ -692,7 +694,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             likes.setOnClickListener(v -> {
                 if (item.getLikedUsers() != null) {
-                    showLikesListDialog(item.getLikedUsers());
+                    Macros.Functions.showLikesListDialog(getContext(), item.getLikedUsers());
                 }
                 else {
                     Toast.makeText(getContext(), "No Likes yet :)", Toast.LENGTH_SHORT).show();
@@ -700,7 +702,7 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             });
             unlikes.setOnClickListener(v -> {
                 if (item.getUnlikedUsers() != null) {
-                    showUnlikesListDialog(item.getUnlikedUsers());
+                    Macros.Functions.showUnlikesListDialog(getContext(), item.getUnlikedUsers());
                 }
                 else {
                     Toast.makeText(getContext(), "No Unlikes yet :)", Toast.LENGTH_SHORT).show();
@@ -711,8 +713,8 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     setAlertDialog(item);
                 else
                     Toast.makeText(getContext(),
-                            "Please wait until all items collected",
-                            Toast.LENGTH_SHORT).show();
+                            "Please wait for all items to be updated",
+                            Toast.LENGTH_LONG).show();
                 return true;
             });
 
@@ -910,65 +912,33 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     updateChildren(map);
         }
 
-        private void showLikesListDialog(List<LikedUser> liked_items){
-
-            Dialog dialog = new Dialog(getContext());
-            LikesListAdapter likedListAdapter = new LikesListAdapter(dialog.getContext(), R.layout.likes_list_item, liked_items);
-            likedListAdapter.notifyDataSetChanged();
-
-            dialog.setContentView(R.layout.likes_list_dialog);
-            TextView header = dialog.findViewById(R.id.likes_header);
-            String text = Macros.Items.LIKED + " this item";
-            header.setText(text);
-
-            ListView listView = dialog.findViewById(R.id.likes_list);
-
-            header.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.getDrawable(dialog.getContext(),
-                    R.drawable.ic_thumb_up_seleste),null,null,null);
-            header.setCompoundDrawablePadding(20);
-
-            listView.setAdapter(likedListAdapter);
-
-            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.show();
-        }
-
-        private void showUnlikesListDialog(List<LikedUser> unliked_items){
-
-            Dialog dialog = new Dialog(getContext());
-            LikesListAdapter unlikedListAdapter = new LikesListAdapter(dialog.getContext(),
-                    R.layout.likes_list_item, unliked_items);
-            unlikedListAdapter.notifyDataSetChanged();
-
-            dialog.setContentView(R.layout.likes_list_dialog);
-            TextView header = dialog.findViewById(R.id.likes_header);
-            String text =  Macros.Items.UNLIKED + " this item";
-            header.setText(text);
-
-            ListView listView = dialog.findViewById(R.id.likes_list);
-
-            header.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.
-                    getDrawable(dialog.getContext(),R.drawable.ic_thumb_down_pink),null,null,null);
-            header.setCompoundDrawablePadding(20);
-
-            listView.setAdapter(unlikedListAdapter);
-
-            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.show();
-        }
-
         private void removeItem() {
+            int position = getLayoutPosition();
             try {
-                AllItemsList.remove(getLayoutPosition() == AllItemsList.size() ? getLayoutPosition() - 1 : getLayoutPosition());
-                ItemsList.remove(getLayoutPosition() == ItemsList.size() ? getLayoutPosition() - 1 : getLayoutPosition());
-                items.remove(getLayoutPosition() == items.size() ? getLayoutPosition() - 1 : getLayoutPosition());
-                notifyItemRemoved(getLayoutPosition());
+                AllItemsList.remove(position == AllItemsList.size() ? position - 1 : position);
+                ItemsList.remove(position == ItemsList.size() ? position - 1 : position);
+                notifyDataSetChanged();
+                updateHeader();
             } catch (NullPointerException | IndexOutOfBoundsException ex) {
                 ex.printStackTrace();
                 Toast.makeText(getContext(), "Something went wrong ):"
                         + System.lineSeparator()
                         + "Please try again later", Toast.LENGTH_SHORT).show();
             }
+        }
+
+        private void updateHeader() {
+            String text;
+            if (ItemsList.size() > 0) {
+                String cat = ItemsList.get(0).getType();
+                String sub_cat = ItemsList.get(0).getSub_category();
+                text = cat.toUpperCase() + " | " + sub_cat.toUpperCase() + " | "
+                        + ItemsList.size() + " ITEMS";
+            } else
+                text = "NO FAVORITES FOUND";
+
+            if (header != null)
+                header.setText(text);
         }
 
         private void setAlertDialog(ShoppingItem item) {

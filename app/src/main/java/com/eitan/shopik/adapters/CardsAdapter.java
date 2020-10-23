@@ -2,12 +2,10 @@ package com.eitan.shopik.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.util.Pair;
@@ -22,7 +20,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +32,6 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
 import com.eitan.shopik.customer.FullscreenImageActivity;
@@ -221,14 +217,14 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
             likes.setOnLongClickListener(v -> {
                 if (shoppingItem.getLikedUsers() != null)
-                    showLikesListDialog(shoppingItem.getLikedUsers());
+                    Macros.Functions.showLikesListDialog(getContext(), shoppingItem.getLikedUsers());
                 else
                     Toast.makeText(getContext(), "No Likes yet", Toast.LENGTH_SHORT).show();
                 return true;
             });
             unlikes.setOnLongClickListener(v -> {
                 if (shoppingItem.getUnlikedUsers() != null)
-                    showUnlikesListDialog(shoppingItem.getUnlikedUsers());
+                    Macros.Functions.showUnlikesListDialog(getContext(), shoppingItem.getUnlikedUsers());
                 else
                     Toast.makeText(getContext(), "No Unlikes yet", Toast.LENGTH_SHORT).show();
                 return true;
@@ -376,59 +372,6 @@ public class CardsAdapter extends ArrayAdapter<ShoppingItem> {
 
     public boolean isFavorite(){
         return isFavorite[0];
-    }
-
-    private void showLikesListDialog(ArrayList<LikedUser> liked_items){
-
-        Dialog dialog = new Dialog(getContext());
-        LikesListAdapter likedListAdapter = new
-                LikesListAdapter(dialog.getContext(), R.layout.likes_list_item, liked_items);
-        likedListAdapter.notifyDataSetChanged();
-
-        dialog.setContentView(R.layout.likes_list_dialog);
-        TextView header = dialog.findViewById(R.id.likes_header);
-        String _header_text = Macros.Items.LIKED + " this item";
-        header.setText(_header_text);
-
-        ListView listView = dialog.findViewById(R.id.likes_list);
-
-        header.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.
-                getDrawable(dialog.getContext(), R.drawable.ic_thumb_up_seleste),null,null,null);
-        header.setCompoundDrawablePadding(20);
-
-        listView.setAdapter(likedListAdapter);
-
-        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().setElevation(25);
-        dialog.getWindow().setAllowEnterTransitionOverlap(true);
-        dialog.getWindow().setAllowReturnTransitionOverlap(true);
-        dialog.show();
-    }
-
-    private void showUnlikesListDialog(ArrayList<LikedUser> unliked_items){
-
-        Dialog dialog = new Dialog(getContext());
-        LikesListAdapter unlikedListAdapter = new LikesListAdapter(dialog.getContext(),
-                R.layout.likes_list_item, unliked_items);
-        unlikedListAdapter.notifyDataSetChanged();
-
-        dialog.setContentView(R.layout.likes_list_dialog);
-        TextView header = dialog.findViewById(R.id.likes_header);
-        String _header_text = Macros.Items.UNLIKED + " this item";
-        header.setText(_header_text);
-
-        ListView listView = dialog.findViewById(R.id.likes_list);
-
-        header.setCompoundDrawablesRelativeWithIntrinsicBounds(ContextCompat.
-                getDrawable(dialog.getContext(),
-                        R.drawable.ic_thumb_down_pink),null,null,null);
-        header.setCompoundDrawablePadding(20);
-
-        listView.setAdapter(unlikedListAdapter);
-
-        Objects.requireNonNull(dialog.getWindow()).
-                setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.show();
     }
 }
 

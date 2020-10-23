@@ -50,7 +50,7 @@ public class FavoritesFragment extends Fragment {
     private RecyclerGridAdapter recyclerGridAdapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private TextView header;
+    TextView header;
     private int items_num = 0;
     private CopyOnWriteArrayList<ShoppingItem> fav_list;
     private SearchView searchView;
@@ -78,9 +78,7 @@ public class FavoritesFragment extends Fragment {
         scroll_Down = view.findViewById(R.id.scroll_down);
 
         mainModel.getCurrentItem().observe(getViewLifecycleOwner(), pair -> {
-
             int progress = (int) (((float) pair.first / (float) pair.second) * 100);
-
             if (progress >= 100) {
                 recyclerGridAdapter.setFinishedFetchingData(true);
             }
@@ -133,6 +131,7 @@ public class FavoritesFragment extends Fragment {
 
         fav_list = new CopyOnWriteArrayList<>();
         recyclerGridAdapter = new RecyclerGridAdapter(fav_list, "favorites");
+        recyclerGridAdapter.setHeaderView(header);
 
         return view;
     }
@@ -177,12 +176,13 @@ public class FavoritesFragment extends Fragment {
                         + (fav_list.size() - count_ads) + " ITEMS";
             }
             else
-                text = "NO FAVORITES YET";
+                text = "NO FAVORITES FOUND";
 
             items_num = fav_list.size();
             header.setText(text);
             recyclerGridAdapter.setAllItems(fav_list);
             recyclerGridAdapter.notifyDataSetChanged();
+
         });
         mRecyclerView.addOnScrollListener(onScrollListener);
     }
