@@ -70,7 +70,7 @@ public class Macros {
     public static final String WEB_IC = "https://www.freepnglogos.com/uploads/logo-website-png/logo-website-world-wide-web-svg-png-icon-download-10.png";
     public static final String INSTAGRAM_IC = "https://www.kartisyarok.co.il/wp-content/uploads/2018/09/instagram-logo-png-7.png";
 
-    public static final double POUND_TO_ILS = 5.2484377;
+    public static final double POUND_TO_ILS = 5.2483333333;
     public static final int ITEMS_TO_AD = 16;
 
     public static class Providers {

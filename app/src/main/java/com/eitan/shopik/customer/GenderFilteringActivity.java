@@ -510,18 +510,22 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
                     // PRICE
                     String price = "", red = "";
-                    Elements pook = prod.getElementsByAttributeValue("data-auto-id", "productTilePrice");
-                    if (pook.size() == 1) {
+                    Elements productTilePrice = prod.
+                            getElementsByAttributeValue("data-auto-id", "productTilePrice");
+                    if (productTilePrice.size() == 1) {
                         try {
-                            price = pook.get(0).childNode(2).childNode(0).toString().replace("£", "");
-                        }
-                        catch (IndexOutOfBoundsException ex){
-                            price = pook.get(0).childNode(0).childNode(0).toString().replace("£", "");
+                            price = productTilePrice.get(0).childNode(2).childNode(0).
+                                    toString().replace("£", "");
+                        } catch (IndexOutOfBoundsException ex) {
+                            price = productTilePrice.get(0).childNode(0).childNode(0).
+                                    toString().replace("£", "");
                         }
                     }
-                    Elements pook2 = prod.getElementsByAttributeValue("data-auto-id", "productTileSaleAmount");
-                    if (pook2.size() > 0) {
-                        red = pook2.get(0).childNode(0).toString().replace("£", "");
+                    Elements productTileSaleAmount = prod.
+                            getElementsByAttributeValue("data-auto-id", "productTileSaleAmount");
+                    if (productTileSaleAmount.size() > 0) {
+                        red = productTileSaleAmount.get(0).childNode(0).
+                                toString().replace("£", "");
                         shoppingItem.setOn_sale(true);
                     }
 
