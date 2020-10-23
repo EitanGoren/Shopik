@@ -89,10 +89,10 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     double price2 = o2.getReduced_price() != null ? Double.parseDouble(o2.getReduced_price()) :
                             Double.parseDouble(o2.getPrice());
 
-                    if(o1.getSeller().equals("ASOS")) {
+                    if (o1.getSeller().toLowerCase().equals("asos")) {
                         price1 *= Macros.POUND_TO_ILS;
                     }
-                    if(o2.getSeller().equals("ASOS")) {
+                    if (o2.getSeller().toLowerCase().equals("asos")) {
                         price2 *= Macros.POUND_TO_ILS;
                     }
 

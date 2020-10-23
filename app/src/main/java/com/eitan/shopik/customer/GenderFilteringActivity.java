@@ -518,13 +518,11 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         catch (IndexOutOfBoundsException ex){
                             price = pook.get(0).childNode(0).childNode(0).toString().replace("£", "");
                         }
-                        shoppingItem.setPrice(price);
                     }
                     Elements pook2 = prod.getElementsByAttributeValue("data-auto-id", "productTileSaleAmount");
                     if (pook2.size() > 0) {
                         red = pook2.get(0).childNode(0).toString().replace("£", "");
                         shoppingItem.setOn_sale(true);
-                        shoppingItem.setReduced_price(red);
                     }
 
                     //ID
@@ -562,13 +560,16 @@ public class GenderFilteringActivity extends AppCompatActivity {
                         shoppingItem.setBrand("ASOS");
                     }
 
-                    Double current = Double.parseDouble(price);
+                    Double current = Double.parseDouble(price) * Macros.POUND_TO_ILS;
                     String _price = new DecimalFormat("##.##").format(current);
+
+                    Double reducedPrice = Double.parseDouble(red) * Macros.POUND_TO_ILS;
+                    String reducedPriceString = new DecimalFormat("##.##").format(reducedPrice);
 
                     shoppingItem.setSeller("ASOS");
                     shoppingItem.setImages(images);
                     shoppingItem.setPrice(_price);
-                    shoppingItem.setReduced_price(red);
+                    shoppingItem.setReduced_price(reducedPriceString);
                     shoppingItem.setSite_link(link);
                     shoppingItem.setId(id);
                     shoppingItem.setSellerId("odsIz0HNINevS2EP3mdIrryTIF72");
