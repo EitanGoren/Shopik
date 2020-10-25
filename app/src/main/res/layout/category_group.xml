@@ -11,7 +11,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="115dp"
+        android:layout_height="120dp"
         app:cardCornerRadius="10dp"
         app:cardElevation="7.5dp"
         app:cardPreventCornerOverlap="true"
@@ -32,7 +32,7 @@
                 android:text="@string/category_name"
                 android:textAlignment="viewStart"
                 android:textColor="#000000"
-                android:textSize="21sp"
+                android:textSize="19sp"
                 tools:ignore="RelativeOverlap" />
 
             <TextView
@@ -54,7 +54,7 @@
                 android:layout_height="75dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="25dp"
+                android:layout_marginEnd="18dp"
                 android:scaleType="centerCrop"/>
 
         </RelativeLayout>

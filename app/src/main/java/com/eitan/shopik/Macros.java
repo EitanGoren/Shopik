@@ -33,12 +33,14 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 @Keep
 public class Macros {
 
+    public static final String WEBSITE_URL = "https://eitangoren.com";
     public static final String TAG = "com.eitan.shopik";
     public static final String COMPANIES = "Companies";
     public static final String DEFAULT_DESCRIPTION = "Write something here...";
     public static final String DEFAULT_COVER_PHOTO = "https://st2.depositphotos.com/1747568/8686/v/950/depositphotos_86864998-stock-illustration-abstract-background-consisting-of-small.jpg";
     public static final String DEFAULT_PROFILE_IMAGE = "https://clipartart.com/images/account-profile-clipart-4.png";
     public static final String CUSTOMERS = "Customers";
+    public static final String MESSAGES = "Messages";
     public static final String ITEMS = "items";
     public static final String TEST_DEVICE_ID = "7255B1C36174A2C33091060576730302";
     public static final String PAGE_NUM = "page_num";

@@ -19,14 +19,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#99FFFFFF"
+        android:fontFamily="@font/raleway"
         android:gravity="bottom"
         android:paddingStart="12dp"
         android:paddingTop="7dp"
         android:paddingEnd="7dp"
         android:paddingBottom="7dp"
         android:textColor="#000000"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
+        android:textSize="17sp" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_pic"

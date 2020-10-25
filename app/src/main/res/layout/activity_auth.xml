@@ -12,11 +12,11 @@
         android:layout_above="@id/signin"
         android:layout_centerHorizontal="true"
         android:fontFamily="@font/cambay_bold"
-        android:text="Let's \nconnect"
+        android:text="Let's connect"
         android:textAlignment="textStart"
         android:textAllCaps="true"
         android:textColor="#713ED8"
-        android:textSize="38sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <LinearLayout

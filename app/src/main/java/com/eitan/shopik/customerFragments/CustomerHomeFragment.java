@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.eitan.shopik.LikedUser;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
+import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.adapters.CardsAdapter;
 import com.eitan.shopik.items.ShoppingItem;
 import com.eitan.shopik.viewModels.GenderModel;
@@ -57,13 +58,15 @@ public class CustomerHomeFragment extends Fragment {
     private SwipeFlingAdapterView flingContainer;
     private MainModel mainModel;
     private boolean isSwiped;
-    private TextView percentage,total;
+    private static int swipesCount = 0;
     private Observer<CopyOnWriteArrayList<ShoppingItem>> items_observer;
-    private Observer<Pair<Integer,Integer>> current_items_observer;
-    private final String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+    private final String userId = Objects.requireNonNull(FirebaseAuth.getInstance().
+            getCurrentUser()).getUid();
+    private TextView percentage, total;
     private SwipeFlingAdapterView.onFlingListener onFlingListener;
     private Observer<Integer> total_items_observer;
     private int total_items_num = 0;
+    private Observer<Pair<Integer, Integer>> current_items_observer;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -89,12 +92,14 @@ public class CustomerHomeFragment extends Fragment {
                 swipesModel.getItems().getValue());
 
         onFlingListener = new SwipeFlingAdapterView.onFlingListener() {
-
             @Override
             public void removeFirstObjectInAdapter() {
                 isSwiped = true;
+                swipesCount++;
                 arrayAdapter.remove(arrayAdapter.getItem(0));
                 arrayAdapter.notifyDataSetChanged();
+                if (swipesCount % 60 == 0)
+                    ShopikApplicationActivity.launchReview(getActivity());
             }
 
             @Override
@@ -135,25 +140,14 @@ public class CustomerHomeFragment extends Fragment {
         percentage.setVisibility(View.GONE);
 
         items_observer = shoppingItems -> {
-
             swipesModel.clearAllItems();
-            long size = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue();
-            for( ShoppingItem shoppingItem : shoppingItems ) {
-                if(shoppingItem.getPage_num() == size && !shoppingItem.isSeen()) {
+            long size = mainModel.getCurrent_page().getValue() == null ? 1 :
+                    mainModel.getCurrent_page().getValue();
+            for (ShoppingItem shoppingItem : shoppingItems) {
+                if (shoppingItem.getPage_num() == size && !shoppingItem.isSeen()) {
                     swipesModel.addToItems(shoppingItem);
                     arrayAdapter.notifyDataSetChanged();
                 }
-              /*  if ((Objects.requireNonNull(swipesModel.getItems().getValue()).size() % Macros.SWIPES_TO_AD == 0)
-                        && swipesModel.getItems().getValue().size() > 0) {
-                    ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
-                    if (shoppingItemAd != null) {
-                        ShoppingItem adItem = new ShoppingItem();
-                        adItem.setNativeAd(shoppingItemAd.getNativeAd());
-                        adItem.setAd(true);
-                        swipesModel.addToItems(shoppingItemAd);
-                        arrayAdapter.notifyDataSetChanged();
-                    }
-                }*/
             }
             flingContainer.setAdapter(arrayAdapter);
             arrayAdapter.notifyDataSetChanged();
@@ -164,17 +158,17 @@ public class CustomerHomeFragment extends Fragment {
             String text = pair.first + " /";
             percentage.setText(text);
 
-            if( pair.first > 1 && pair.first.equals(total_items_num) || pair.first > total_items_num ){
+            if (pair.first > 1 && pair.first.equals(total_items_num) || pair.first > total_items_num) {
                 percentage.setVisibility(View.GONE);
                 total.setVisibility(View.GONE);
             }
         };
 
-       total_items_observer = integer -> {
-           total.setVisibility(View.VISIBLE);
-           total.setText(String.valueOf(integer));
-           total_items_num = integer;
-       };
+        total_items_observer = integer -> {
+            total.setVisibility(View.VISIBLE);
+            total.setText(String.valueOf(integer));
+            total_items_num = integer;
+        };
 
         return view;
     }

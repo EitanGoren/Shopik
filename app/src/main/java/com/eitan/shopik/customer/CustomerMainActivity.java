@@ -1,19 +1,27 @@
 package com.eitan.shopik.customer;
 
 import android.app.ActivityOptions;
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +29,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -40,6 +49,7 @@ import com.eitan.shopik.items.ShoppingItem;
 import com.eitan.shopik.viewModels.GenderModel;
 import com.eitan.shopik.viewModels.MainModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.progressindicator.ProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,6 +71,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -100,7 +111,8 @@ public class CustomerMainActivity extends AppCompatActivity
     private String cover;
     private ValueEventListener valueEventListener;
     private ValueEventListener favoriteValueEventListener;
-    private ArrayList<AsyncTask <Integer, Integer, Void>> asyntask;
+    private ArrayList<AsyncTask<Integer, Integer, Void>> asyntask;
+    private int prog = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static void getCompanyInfo(final ShoppingItem shoppingItem) {
@@ -123,26 +135,6 @@ public class CustomerMainActivity extends AppCompatActivity
             }
         }
     }
-
-    /*private void setThemeCallback() {
-        MenuItem menuItem = navigationView.getMenu().findItem(R.id.nav_dark);
-        Switch switcher_ = (Switch) menuItem.getActionView();
-        // To listen for a switch's checked/unchecked state changes
-        switcher_.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            //Dark mode is set, change icon to Light mode
-            if (isChecked) {
-                menuItem.setIcon(R.drawable.ic_twotone_wb_sunny_24);
-                menuItem.setTitle("Light mode");
-                Toast.makeText(getApplicationContext(), "Set Dark mode please", Toast.LENGTH_SHORT).show();
-            }
-            //Light mode is set, change icon to Dark mode
-            else {
-                menuItem.setIcon(R.drawable.ic_twotone_bedtime_24);
-                menuItem.setTitle("Dark mode");
-                Toast.makeText(getApplicationContext(), "Set Light mode please", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }*/
 
     private void init() {
 
@@ -373,7 +365,8 @@ public class CustomerMainActivity extends AppCompatActivity
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private static void getUnlikedUserInfo(final ShoppingItem shoppingItem, Map<String, String> unlikes_list) {
+    private static void getUnlikedUserInfo(final ShoppingItem shoppingItem,
+                                           Map<String, String> unlikes_list) {
 
         assert unlikes_list != null;
         ArrayList<String> list = new ArrayList<>(unlikes_list.keySet());
@@ -467,6 +460,8 @@ public class CustomerMainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         init();
+
+        getCoverPic();
 
         navigationView.setOnClickListener(v -> getCoverPic());
 
@@ -588,8 +583,6 @@ public class CustomerMainActivity extends AppCompatActivity
 
         });
 
-        getCoverPic();
-
         loadCustomerInfo();
 
         setViewPager();
@@ -660,8 +653,16 @@ public class CustomerMainActivity extends AppCompatActivity
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 return true;
-             case R.id.nav_website:
-                 Macros.Functions.buy(CustomerMainActivity.this, "https://eitangoren.com");
+            case R.id.nav_website:
+                Macros.Functions.buy(CustomerMainActivity.this, Macros.WEBSITE_URL);
+                break;
+            case R.id.nav_rate:
+                Macros.Functions.buy(CustomerMainActivity.this,
+                        "https://play.google.com/store/apps/details?id=com.eitan.shopik");
+                break;
+            case R.id.nav_comment:
+                showContactDialog();
+                break;
         }
         if (selectedIntent != null) {
             startActivity(selectedIntent);
@@ -670,12 +671,7 @@ public class CustomerMainActivity extends AppCompatActivity
         return false;
     }
     private void setInterstitialAd() {
-
-        if(ShopikApplicationActivity.getInterstitialAd() != null){
-            if( ShopikApplicationActivity.getInterstitialAd().isAdLoaded()) {
-                ShopikApplicationActivity.getInterstitialAd().show();
-            }
-        }
+        ShopikApplicationActivity.showInterstitialAd();
         ShopikApplicationActivity.increaseCategoryClicks();
     }
     private void createNotificationChannel() {
@@ -694,6 +690,88 @@ public class CustomerMainActivity extends AppCompatActivity
             notificationManager.createNotificationChannel(channel);
         }
     }
+
+    private void showContactDialog() {
+        prog = 0;
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.contact_form_dialog);
+        CardView cardSheet = dialog.findViewById(R.id.card_sheet);
+        BottomSheetBehavior<CardView> bottomSheetBehavior = BottomSheetBehavior.from(cardSheet);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        bottomSheetBehavior.setHideable(true);
+        bottomSheetBehavior.setDraggable(true);
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    dialog.dismiss();
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+
+        TextView txt = dialog.findViewById(R.id.contact_form_header);
+        Button submit = dialog.findViewById(R.id.submit_message);
+        EditText message = dialog.findViewById(R.id.message);
+
+        DatabaseReference messagesFS = FirebaseDatabase.getInstance().getReference().
+                child(Macros.MESSAGES).child(userId);
+
+        ImageView checkIcon = dialog.findViewById(R.id.check_sign);
+        ProgressBar progressBar = dialog.findViewById(R.id.progressBar);
+        TextView textView = dialog.findViewById(R.id.success);
+
+        submit.setOnClickListener(v -> {
+            String messageText = message.getText().toString();
+            Date currentTime = Calendar.getInstance().getTime();
+            String datetime = DateFormat.getDateTimeInstance().format(currentTime);
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", messageText);
+            map.put("date", datetime);
+            messagesFS.setValue(map);
+
+            progressBar.setVisibility(View.VISIBLE);
+            recursiveCirculate(progressBar, checkIcon, textView);
+
+            message.setVisibility(View.INVISIBLE);
+            submit.setVisibility(View.INVISIBLE);
+
+            YoYo.with(Techniques.RollIn).delay(550).duration(3000).
+                    onEnd(animator -> dialog.dismiss()).playOn(checkIcon);
+        });
+
+        txt.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        txt.setText("Help Improve The App");
+
+        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.show();
+    }
+
+    private void recursiveCirculate(ProgressBar progressBar, ImageView checkIcon, TextView textView) {
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                prog += 1;
+                progressBar.setProgress(prog);
+                if (prog < 100)
+                    handler.postDelayed(this, 5);
+                else if (prog == 100) {
+                    checkIcon.setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.VISIBLE);
+                }
+            }
+        }, 5);
+    }
+
     private void loadCustomerInfo() {
 
         getCoverPic();
@@ -792,15 +870,30 @@ public class CustomerMainActivity extends AppCompatActivity
         total_items = 0;
         if(drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
+
         super.onBackPressed();
     }
+
     @Override
     public void finish() {
-        overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         ShopikApplicationActivity.RefreshAds(5);
         item_count = 0;
         total_items = 0;
         super.finish();
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START))
+                drawerLayout.closeDrawer(GravityCompat.START);
+
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START))
+                drawerLayout.openDrawer(GravityCompat.START);
+        }
     }
 
     public static class ZoomOutPageTransformer implements ViewPager.PageTransformer {
@@ -839,6 +932,7 @@ public class CustomerMainActivity extends AppCompatActivity
                 view.setAlpha(0f);
         }
     }
+
     private static class getTX extends AsyncTask <Integer, Integer, Void> {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
@@ -981,11 +1075,12 @@ public class CustomerMainActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Integer... page_num) {
 
-            Pair<Integer, Integer> cat_num = Macros.Functions.getCategoryNum(item_gender, item_sub_category, item_type);
+            Pair<Integer, Integer> cat_num = Macros.Functions.
+                    getCategoryNum(item_gender, item_sub_category, item_type);
 
             int iter = 0;
             int total = 0;
-            if(cat_num != null){
+            if (cat_num != null) {
                 try {
                     for (int page = page_num[0]; page < page_num[1] + 1; ++page) {
 

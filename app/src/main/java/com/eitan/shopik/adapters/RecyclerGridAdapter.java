@@ -59,7 +59,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
-public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements Filterable {
 
     private static final int TYPE_AD = 0;
     private static final int TYPE_ITEM = 1;
@@ -913,11 +914,10 @@ public class RecyclerGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         private void removeItem() {
-            int position = getAdapterPosition();
+            int position = getLayoutPosition();
             try {
                 AllItemsList.remove(position == AllItemsList.size() ? position - 1 : position);
                 items.remove(position == items.size() ? position - 1 : position);
-                notifyItemRemoved(position == items.size() ? position - 1 : position);
                 notifyDataSetChanged();
                 updateHeader();
             } catch (NullPointerException | IndexOutOfBoundsException ex) {

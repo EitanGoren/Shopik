@@ -1,5 +1,6 @@
 package com.eitan.shopik;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -53,18 +54,22 @@ public class ShopikApplicationActivity extends Application {
         instance = this;
         shoppingAdsArray = new ArrayList<>();
     }
+
     public static Context getContext() {
         return instance;
     }
 
     //FACEBOOK INTERSTITIAL AD
-    public static InterstitialAd getInterstitialAd() {
+    private static InterstitialAd getInterstitialAd() {
         return interstitialAd;
     }
-    public static void setInterstitialAd() {
+
+    private static void setInterstitialAd() {
+
         if (interstitialAd != null) {
             interstitialAd.destroy();
         }
+
         interstitialAd = new com.facebook.ads.InterstitialAd(getContext(), Macros.FB_PLACEMENT_ID);
 
         InterstitialAd.InterstitialLoadAdConfig LoadAdConfig = interstitialAd.buildLoadAdConfig()
@@ -75,19 +80,29 @@ public class ShopikApplicationActivity extends Application {
         interstitialAd.loadAd(LoadAdConfig);
     }
 
-    //GOOGLE NATIVE ADS
-    public static void LoadAds(int num){
-        new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,num);
+    public static void showInterstitialAd() {
+        if (getInterstitialAd() != null) {
+            if (getInterstitialAd().isAdLoaded()) {
+                getInterstitialAd().show();
+            }
+        }
     }
-    private static void clearAds(){
-        for(ShoppingItem item : shoppingAdsArray) {
+
+    //GOOGLE NATIVE ADS
+    public static void LoadAds(int num) {
+        new getAds().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, num);
+    }
+
+    private static void clearAds() {
+        for (ShoppingItem item : shoppingAdsArray) {
             item.destroyAd();
         }
         shoppingAdsArray.clear();
     }
+
     public static Object getNextAd() {
         Random random = new Random();
-        if( shoppingAdsArray.size() > 0) {
+        if (shoppingAdsArray.size() > 0) {
             int idx = (random.nextInt(shoppingAdsArray.size()));
             return shoppingAdsArray.get(idx);
         }
@@ -165,13 +180,24 @@ public class ShopikApplicationActivity extends Application {
     }
 
     //REVIEW APP
-    public static ReviewInfo getReviewInfo(){
+    private static ReviewInfo getReviewInfo() {
         return reviewInfo;
     }
-    public static ReviewManager getReviewManager(){
+
+    private static ReviewManager getReviewManager() {
         return manager;
     }
-    private void requestReview(){
+
+    public static void launchReview(Activity activity) {
+        if (ShopikApplicationActivity.getReviewInfo() != null) {
+            Task<Void> flow = ShopikApplicationActivity.getReviewManager().
+                    launchReviewFlow(activity, ShopikApplicationActivity.getReviewInfo());
+            flow.addOnCompleteListener(task -> {
+            });
+        }
+    }
+
+    private void requestReview() {
         manager = ReviewManagerFactory.create(this);
         Task<ReviewInfo> request = manager.requestReviewFlow();
         request.addOnCompleteListener(task -> {

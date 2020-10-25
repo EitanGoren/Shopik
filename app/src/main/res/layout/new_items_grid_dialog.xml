@@ -10,7 +10,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_sheet"
-        android:layout_width="420dp"
+        android:layout_width="405dp"
         android:layout_height="605dp"
         android:layout_gravity="center|bottom"
         android:layout_marginBottom="5dp"

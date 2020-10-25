@@ -37,7 +37,6 @@ import com.eitan.shopik.viewModels.EntranceViewModel;
 import com.eitan.shopik.viewModels.GenderModel;
 import com.eitan.shopik.viewModels.OutletsModel;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.play.core.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -192,7 +191,7 @@ public class GenderFilteringActivity extends AppCompatActivity {
 
         setMarquee();
 
-        entries.observe(this, aLong -> launchReview());
+        entries.observe(this, aLong -> ShopikApplicationActivity.launchReview(this));
     }
 
     private void setViewPager() {
@@ -270,14 +269,6 @@ public class GenderFilteringActivity extends AppCompatActivity {
             color = getColor(R.color.womenColor);
         else
             color = getColor(R.color.menColor);
-    }
-
-    private void launchReview() {
-        if( ShopikApplicationActivity.getReviewInfo() != null ) {
-            Task<Void> flow = ShopikApplicationActivity.getReviewManager().
-                    launchReviewFlow(this, ShopikApplicationActivity.getReviewInfo());
-            flow.addOnCompleteListener(task -> {});
-        }
     }
 
     private void init() {

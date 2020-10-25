@@ -31,7 +31,7 @@
     <string name="your_info">Your Info</string>
     <string name="my_profile">My Profile</string>
     <string name="log_out">Log Out</string>
-    <string name="about">About</string>
+    <string name="contact">Tell Me What You Think</string>
     <string name="visit_me">Visit Me</string>
     <string name="heart">heart</string>
     <string name="_0">0</string>
@@ -108,4 +108,9 @@
     <string name="removed_successfully">Removed Successfully</string>
     <string name="dark_mode">Dark mode</string>
     <string name="Theme">Theme</string>
+    <string name="rating">Rating</string>
+    <string name="please_rate_us">Rate The App</string>
+    <string name="help_improve_the_app">Help improve the app</string>
+    <string name="tell_me_what_you_think">Tell me what you think…</string>
+    <string name="message_sent">Got It! Thank you</string>
 </resources>

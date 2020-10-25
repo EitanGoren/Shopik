@@ -18,8 +18,9 @@
                 android:layout_height="265dp"
                 android:layout_above="@id/item_info_social"
                 android:layout_below="@id/ad_body"
-                android:background="#ffffff"
-                android:scaleType="centerCrop" />
+                android:background="@drawable/light_bg_top_line"
+                android:paddingTop="1dp"
+                android:scaleType="fitXY" />
 
             <TextView
                 android:id="@+id/ad_brand_name"
@@ -40,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ad_brand_name"
                 android:layout_alignParentStart="true"
-                android:background="#ffffff"
+                android:background="@drawable/light_bg_top_line"
                 android:fontFamily="@font/nunito_semibold"
                 android:padding="8dp"
                 android:textAlignment="center"
@@ -52,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="#FFFFFF"
+                android:background="@drawable/light_bg_top_line"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:orientation="vertical">
@@ -63,11 +64,12 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_semibold"
                     android:textAllCaps="true"
-                    android:padding="5dp"
+                    android:layout_marginTop="2dp"
+                    android:padding="7dp"
                     android:textAlignment="viewStart"
                     android:textColor="#000000"
-                    android:textSize="22sp"
-                    android:textStyle="bold"/>
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/ad_store"
@@ -112,17 +114,17 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ad_logo"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignBottom="@id/ad_media"
                 android:layout_gravity="bottom|end"
-                android:layout_marginEnd="50dp"
-                android:layout_marginBottom="-45dp"
-                android:elevation="10dp"
-                android:translationZ="10dp"
-                app:civ_border_color="@color/borderLine"
-                app:civ_border_width="2dp" />
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="-35dp"
+                android:elevation="5dp"
+                android:translationZ="5dp"
+                app:civ_border_color="@color/DarkThemeColor"
+                app:civ_border_width="1.6dp" />
 
             <TextView
                 style="@style/AppTheme.AdAttribution"
