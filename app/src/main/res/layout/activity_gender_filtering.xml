@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/company_img_logo"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -35,7 +35,8 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="2dp"
                 android:contentDescription="@string/logo"
-                android:transitionName="@string/tooki"
+                android:elevation="5dp"
+                android:translationZ="5dp"
                 android:src="@drawable/tooki" />
 
             <Spinner

@@ -26,7 +26,8 @@
         android:paddingEnd="7dp"
         android:paddingBottom="7dp"
         android:textColor="#000000"
-        android:textSize="17sp" />
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_pic"

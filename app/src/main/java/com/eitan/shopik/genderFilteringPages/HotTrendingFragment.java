@@ -59,7 +59,8 @@ public class HotTrendingFragment extends Fragment {
     private CopyOnWriteArrayList<ShoppingItem> new_shein_items;
     private CopyOnWriteArrayList<ShoppingItem> new_tfs_items;
     private CopyOnWriteArrayList<ShoppingItem> new_hoodies_items;
-    private RelativeLayout layout1, layout2, layout3, layout4, layout6, layout5, layout7, layout8;
+    private RelativeLayout layout1, layout2, layout3, layout4,
+            layout6, layout5, layout7, layout8;
     private TextView liked_counter;
     private RelativeLayout layout;
     private TextView header;
@@ -69,9 +70,12 @@ public class HotTrendingFragment extends Fragment {
     private Observer<String> observer;
     private Observer<ArrayList<RecyclerItem>> recentObserver;
     private Observer<ArrayList<ShoppingItem>> shoesObserver, clothingObserver,
-            asosObserver, txObserver, renuarObserver, sheinObserver, tfsObserver, hoodiesObserver;
-    private Observer<Integer> sheinCountObserver, asosCountObserver, castroCountObserver,
-            txCountObserver, renuarCountObserver, aldoCountObserver, tfsCountObserver, hoodiesCountObserver;
+            asosObserver, txObserver, renuarObserver, sheinObserver,
+            tfsObserver, hoodiesObserver;
+    private Observer<Integer> sheinCountObserver, asosCountObserver,
+            castroCountObserver,
+            txCountObserver, renuarCountObserver, aldoCountObserver,
+            tfsCountObserver, hoodiesCountObserver;
     private RecyclerGridAdapter shoesGridAdapter, clothingGridAdapter,
             TXGridAdapter, AsosGridAdapter, renuarGridAdapter, SheinGridAdapter,
             TfsGridAdapter, HoodiesGridAdapter;
@@ -111,10 +115,6 @@ public class HotTrendingFragment extends Fragment {
         layout = view.findViewById(R.id.layout1);
         header = view.findViewById(R.id.header);
         recyclerView = view.findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity(),
-                LinearLayoutManager.HORIZONTAL,false));
-        recyclerView.setScrollbarFadingEnabled(true);
-        recyclerView.setItemAnimator(new CustomItemAnimator());
 
         observer = s -> {
             if(!gender.equals(s)) {
@@ -124,15 +124,6 @@ public class HotTrendingFragment extends Fragment {
                 liked_counter.setText(R.string.loading);
             }
         };
-
-        layout1.setOnClickListener(v -> AsosDialog());
-        layout2.setOnClickListener(v -> ClothingDialog());
-        layout3.setOnClickListener(v -> SheinDialog());
-        layout4.setOnClickListener(v -> ShoesDialog());
-        layout5.setOnClickListener(v -> RenuarDialog());
-        layout6.setOnClickListener(v -> TXDialog());
-        layout7.setOnClickListener(v -> TFSDialog());
-        layout8.setOnClickListener(v -> HoodiesDialog());
 
         recentObserver = recyclerItems -> {
             if(recyclerItems.isEmpty())
@@ -186,15 +177,6 @@ public class HotTrendingFragment extends Fragment {
             TfsGridAdapter.notifyDataSetChanged();
         };
 
-        sheinCountObserver = this::setNumOfItems;
-        asosCountObserver = this::setNumOfItems;
-        aldoCountObserver = this::setNumOfItems;
-        castroCountObserver = this::setNumOfItems;
-        txCountObserver = this::setNumOfItems;
-        renuarCountObserver = this::setNumOfItems;
-        tfsCountObserver = this::setNumOfItems;
-        hoodiesCountObserver = this::setNumOfItems;
-
         return view;
     }
 
@@ -209,8 +191,32 @@ public class HotTrendingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         init();
+
         model.getGender().observe(getViewLifecycleOwner(), observer);
         entranceViewModel.getRecentLikedItems().observe(requireActivity(), recentObserver);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity(),
+                LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setScrollbarFadingEnabled(true);
+        recyclerView.setItemAnimator(new CustomItemAnimator());
+
+        layout1.setOnClickListener(v -> AsosDialog());
+        layout2.setOnClickListener(v -> ClothingDialog());
+        layout3.setOnClickListener(v -> SheinDialog());
+        layout4.setOnClickListener(v -> ShoesDialog());
+        layout5.setOnClickListener(v -> RenuarDialog());
+        layout6.setOnClickListener(v -> TXDialog());
+        layout7.setOnClickListener(v -> TFSDialog());
+        layout8.setOnClickListener(v -> HoodiesDialog());
+
+        sheinCountObserver = this::setNumOfItems;
+        asosCountObserver = this::setNumOfItems;
+        aldoCountObserver = this::setNumOfItems;
+        castroCountObserver = this::setNumOfItems;
+        txCountObserver = this::setNumOfItems;
+        renuarCountObserver = this::setNumOfItems;
+        tfsCountObserver = this::setNumOfItems;
+        hoodiesCountObserver = this::setNumOfItems;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

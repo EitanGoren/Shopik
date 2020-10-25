@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -399,7 +400,6 @@ public class CustomerMainActivity extends AppCompatActivity
         }
         getCompanyInfo(shoppingItem);
     }
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static void getInteractedUsersInfo(ShoppingItem shoppingItem, Map<String,
             String> liked_users, Map<String, String> unliked_users) {
@@ -728,21 +728,25 @@ public class CustomerMainActivity extends AppCompatActivity
 
         submit.setOnClickListener(v -> {
             String messageText = message.getText().toString();
-            Date currentTime = Calendar.getInstance().getTime();
-            String datetime = DateFormat.getDateTimeInstance().format(currentTime);
-            Map<String, Object> map = new HashMap<>();
-            map.put("message", messageText);
-            map.put("date", datetime);
-            messagesFS.setValue(map);
+            if (!messageText.isEmpty()) {
+                Date currentTime = Calendar.getInstance().getTime();
+                String datetime = DateFormat.getDateTimeInstance().format(currentTime);
+                Map<String, Object> map = new HashMap<>();
+                map.put("message", messageText);
+                map.put("date", datetime);
+                messagesFS.setValue(map);
 
-            progressBar.setVisibility(View.VISIBLE);
-            recursiveCirculate(progressBar, checkIcon, textView);
+                progressBar.setVisibility(View.VISIBLE);
+                recursiveCirculate(progressBar, checkIcon, textView);
 
-            message.setVisibility(View.INVISIBLE);
-            submit.setVisibility(View.INVISIBLE);
+                message.setVisibility(View.INVISIBLE);
+                submit.setVisibility(View.INVISIBLE);
 
-            YoYo.with(Techniques.RollIn).delay(550).duration(3000).
-                    onEnd(animator -> dialog.dismiss()).playOn(checkIcon);
+                YoYo.with(Techniques.RollIn).delay(550).duration(3000).
+                        onEnd(animator -> dialog.dismiss()).playOn(checkIcon);
+            } else {
+                Toast.makeText(this, "Please write something...", Toast.LENGTH_SHORT).show();
+            }
         });
 
         txt.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);

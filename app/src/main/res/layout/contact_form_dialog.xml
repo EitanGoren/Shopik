@@ -11,13 +11,10 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_sheet"
-        android:layout_width="405dp"
-        android:layout_height="wrap_content"
+        android:layout_width="400dp"
+        android:layout_height="370dp"
         android:layout_gravity="center|bottom"
         android:backgroundTint="#00FFFFFF"
-        android:backgroundTintMode="screen"
-        app:behavior_hideable="true"
-        app:behavior_skipCollapsed="true"
         app:cardBackgroundColor="#E6FFFFFF"
         app:cardCornerRadius="20dp"
         app:cardUseCompatPadding="true"
@@ -40,6 +37,7 @@
                     android:fontFamily="@font/nunito_bold"
                     android:gravity="center"
                     android:padding="5dp"
+                    android:background="#ffffff"
                     android:textAlignment="center"
                     android:textColor="#000000"
                     android:textSize="22sp" />
@@ -47,19 +45,20 @@
                 <EditText
                     android:id="@+id/message"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="260dp"
                     android:autofillHints=""
                     android:background="@drawable/light_bg_top_line"
                     android:gravity="bottom"
                     android:hint="@string/tell_me_what_you_think"
                     android:inputType="textLongMessage"
-                    android:padding="10dp" />
+                    android:padding="15dp" />
 
                 <Button
                     android:id="@+id/submit_message"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    style="@style/AccountKit.Button"
                     android:layout_gravity="bottom"
+                    android:layout_height="55dp"
                     android:backgroundTint="#ffffff"
                     android:text="@string/submit"
                     android:textColor="#000000"
@@ -105,6 +104,7 @@
                 android:text="@string/message_sent"
                 android:textAlignment="center"
                 android:textSize="30sp"
+                android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/progressBar"

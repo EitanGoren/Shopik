@@ -7,8 +7,6 @@ import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Keep;
@@ -40,11 +38,10 @@ import java.util.Objects;
 @Keep
 public class LandingPageActivity extends AppCompatActivity {
 
-    private static String provider,email,imageUrl,id_in_provider;
+    private static String provider, email, imageUrl, id_in_provider;
     private static FirebaseUser user;
     private FirebaseFirestore db;
-    private TextView shopik;
-    private ImageView tooki;
+    private final int index = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,9 +120,9 @@ public class LandingPageActivity extends AppCompatActivity {
     }
 
     private void init() {
+
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
-        shopik = findViewById(R.id.shopik);
     }
 
     private void registerNewUser() {
@@ -189,7 +186,7 @@ public class LandingPageActivity extends AppCompatActivity {
         handler.postDelayed(() -> {
             startActivity(intent);
             supportFinishAfterTransition();
-        },1000 * 4 );
+        }, 1000 * 2);
     }
 
     @SuppressLint("RestrictedApi")

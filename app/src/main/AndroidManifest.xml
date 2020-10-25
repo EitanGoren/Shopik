@@ -39,6 +39,7 @@
             android:launchMode="singleTop" />
         <activity
             android:name=".customer.FullscreenImageActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.Fullscreen" />
         <activity
             android:name=".customer.CustomerMainActivity"
