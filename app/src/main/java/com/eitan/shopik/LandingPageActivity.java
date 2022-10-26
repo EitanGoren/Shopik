@@ -12,15 +12,12 @@ import android.view.Window;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Keep;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 
 import com.eitan.shopik.customer.GenderFilteringActivity;
 import com.eitan.shopik.customer.ShopikUser;
 import com.eitan.shopik.database.Database;
 import com.eitan.shopik.database.ShopikRepository;
 import com.eitan.shopik.database.models.Company;
-import com.eitan.shopik.database.models.User;
-import com.eitan.shopik.viewModels.DatabaseViewModel;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
@@ -33,7 +30,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 
-import java.util.Map;
 import java.util.Objects;
 
 @Keep

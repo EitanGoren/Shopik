@@ -55,9 +55,6 @@ public class Macros {
     public static final String DEFAULT_PROFILE_IMAGE = "https://clipartart.com/images/account-profile-clipart-4.png";
     public static final String CUSTOMERS = "Customers";
     public static final String MESSAGES = "Messages";
-    public static final String ITEMS = "Items";
-    //"ca-app-pub-5843605953860340/3737677950";
-    public static final String FB_PLACEMENT_ID = "555191575133910_605556963430704";
     public static final String BAG = "Bags";
     public static final String SHOES = "Shoes";
     public static final String JEANS = "Jeans";
@@ -65,11 +62,8 @@ public class Macros {
     public static final String UNDERWEAR = "Underwear";
     public static final String DRESS = "Dresses";
     public static final String SHIRT = "Shirts";
-    public static final String SUNGLASSES = "Sunglasses";
     public static final String SWIMWEAR = "Swimwear";
     public static final String JACKETS = "Jackets";
-    public static final String JEWELLERY = "Jewellery";
-    public static final String WATCH = "Watches";
     public static final String YOUTUBE_IC = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1200px-YouTube_full-color_icon_%282017%29.svg.png";
     public static final String TWITTER_IC = "https://www.aps.edu/sapr/images/pnglot.comtwitterbirdlogopng139932.png/image";
     public static final String FACEBOOK_IC = "https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png";
