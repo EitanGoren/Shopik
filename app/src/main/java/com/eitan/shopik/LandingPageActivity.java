@@ -30,6 +30,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 
+import java.util.Locale;
 import java.util.Objects;
 
 @Keep
@@ -64,6 +65,7 @@ public class LandingPageActivity extends AppCompatActivity {
             // Successfully signed in
             assert response != null;
             mShopikUser.signIn();
+            mShopikUser.setProvider(Objects.requireNonNull(response.getProviderType()));
             if (response.isNewUser()) {
                 switch (mShopikUser.getProvider()) {
                     case Macros.Providers.FACEBOOK: {
@@ -163,7 +165,7 @@ public class LandingPageActivity extends AppCompatActivity {
         if(!mShopikUser.isAuthenticated())
             AuthenticateUser();
         else{
-            goToCustomer();
+            fetchExistingUserData();
         }
     }
 

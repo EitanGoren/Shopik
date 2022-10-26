@@ -166,6 +166,8 @@ public class Database {
                 .document(mUser.getId())
                 .set(mUser);
 
+        //TODO: ADD LOCAL DB USER DATA
+
         EventBus.getDefault().post(new UserDataUpdated());
     }
     public void fetchExistingUser(){

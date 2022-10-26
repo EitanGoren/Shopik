@@ -26,13 +26,14 @@
             android:name=".NoInternetActivity"
             android:launchMode="singleTop"
             android:noHistory="true"/>
+
         <activity
             android:name=".ShopikApplication"
             android:label="@string/title_activity_shopik_application" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="@string/google_ads_app_id" />
 
         <activity android:name=".company.CompanyProfileActivity"
             android:launchMode="singleTop" />
@@ -75,7 +76,7 @@
         <!--
         Set custom default icon. This is used when no icon is set for incoming notification messages.
         See README(https://goo.gl/l4GJaQ) for more.
-        -->
+        --> §
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_local_grocery_store_black_24dp" />
@@ -133,7 +134,7 @@
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider555191575133910"
+            android:authorities="@string/fb_auth"
             android:exported="false" />
     </application>
 
