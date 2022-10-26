@@ -12,6 +12,7 @@
 /app/google-services.json
 /app/credentials.json
 /app/src/main/res/values/strings.xml
+/key
 /captures
 .externalNativeBuild
 .cxx
