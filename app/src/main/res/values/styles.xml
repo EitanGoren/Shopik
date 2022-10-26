@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowActivityTransitions">true</item>
-        <item name="android:statusBarColor">#ffffff</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="android:windowLightStatusBar">true</item>
 
         <!-- navigation buttons etc.. -->
@@ -13,14 +13,13 @@
 
         <!-- to line of phone, clock... -->
         <item name="colorPrimaryDark"> #ffffff </item>
+        <item name="colorAccent">#ffffff</item>
 
-        <item name="colorAccent">#000000</item>
-        <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
     </style>
 
     <style name="MainStyle" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:statusBarColor">#ffffff</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:windowLightStatusBar">true</item>
 
         <!-- navigation buttons etc.. -->
         <item name="colorPrimary">#DC333333</item>
@@ -28,17 +27,19 @@
         <item name="colorControlActivated">#000000</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 
-        <!-- line of phone, clock... -->
-        <item name="colorPrimaryDark">#000000</item>
-        <item name="colorAccent">#000000</item>
     </style>
 
     <style name="AppTheme.Fullscreen">
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorPrimaryDark"> #ffffff </item>
+        <item name="colorAccent">#ffffff</item>
     </style>
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="color">#000000</item>
-        <item name="selectorSize">28dp</item>
+        <item name="selectorSize">24dp</item>
     </style>
 
     <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
@@ -56,7 +57,6 @@
 
     <style name="GridBuyButtons" parent="Theme.AppCompat">
         <item name="colorPrimary">#F4F4F4</item>
-        <item name="android:fontFamily">font/nobile</item>
         <item name="android:text">BUY NOW</item>
         <item name="android:textSize">16sp</item>
     </style>
@@ -115,12 +115,40 @@
     </style>
 
     <style name="MainTitle" >
-        <item name="android:textSize">30sp</item>
+        <item name="android:textSize">36sp</item>
         <item name="android:fontFamily">cursive</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:paddingStart">5sp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="MainSubtitle" >
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">cursive</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:paddingStart">5sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="MainGreeting" >
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">cursive</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:paddingStart">5sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Widget.App.Button.OutlinedButton.IconOnly" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
     </style>
 
 </resources>

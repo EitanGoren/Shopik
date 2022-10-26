@@ -2,7 +2,7 @@
 
 <resources>
     <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
     <color name="colorAccent">#BF000000</color>
     <color name="colorTransparentWhite">#00FFFFFF</color>
     <color name="fav_info_background">#5F5F5F</color>
@@ -14,11 +14,12 @@
     <color name="ShopikLogo">#555555</color>
     <color name="GenderScreenTheme">#555555</color>
     <color name="CompanyProfileScrim">#B4131313</color>
-    <color name="EditTextHintColor">#EF3232</color>
+    <color name="EditTextHintColor">#976C6C6C</color>
     <color name="SnackbarBackground">#FFFAD7</color>
     <color name="FavoritesInfoLine">#000000</color> <!-- D8D8D8 -->
     <color name="DarkThemeColor">#222222</color>
     <color name="LightThemeColor">#FFFFFF</color>
     <color name="TextColor">#000000</color>
     <color name="BGColor">#FFFFFF</color>
+    <color name="koko">#A1C2C6</color>
 </resources>

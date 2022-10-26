@@ -1,54 +1,50 @@
 repositories {
     maven { url 'https://maven.google.com' }
 }
-
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: "androidx.navigation.safeargs"
+// apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 32
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    dexOptions {
-        javaMaxHeapSize "2g"
+    buildFeatures {
+        viewBinding true
+    }
+
+    configurations {
+        all {
+            exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel-ktx'
+        }
     }
 
     defaultConfig {
         applicationId "com.eitan.shopik"
         minSdkVersion 26
-        targetSdkVersion 29
+        targetSdkVersion 32
         versionCode 20
         versionName "1.7.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         useLibrary 'android.test.base'
         useLibrary 'android.test.mock'
-
-        manifestPlaceholders = [
-                pushbots_app_id               : "5f594a1cc47d3748d20b5214",
-                pushbots_loglevel             : "DEBUG",
-                google_sender_id              : "260470087065"
-        ]
     }
     signingConfigs {
         release {
-            storeFile file("C:\\Users\\Meital\\.android\\debug.keystore")
+            //storeFile file("C:\\Users\\Meital\\.android\\debug.keystore")
             storePassword "E2tFlixel"
             keyAlias "AndroidDebugKey"
             keyPassword "E3tFlixel"
             v2SigningEnabled true
         }
     }
-    buildFeatures {
-        viewBinding true
-    }
+
     buildTypes {
         repositories {
             mavenCentral()
@@ -58,140 +54,131 @@ android {
 
 dependencies {
 
-    // This dependency is downloaded from the Google’s Maven repository.
-    // So, make sure you also include that repository in your project's build.gradle file.
-    implementation 'com.google.android.play:core:1.8.2'
-
-    // For Kotlin users also import the Kotlin extensions library for Play Core:
+    implementation 'com.google.android.play:core:1.10.3'
     implementation 'com.google.android.play:core-ktx:1.8.1'
-
     //noinspection GradleCompatible
     implementation 'com.android.support:support-compat:28.0.0'
+    implementation 'androidx.navigation:navigation-fragment:2.5.2'
+    implementation 'androidx.navigation:navigation-ui:2.5.2'
 
-    implementation 'androidx.navigation:navigation-fragment:2.3.0'
-    implementation 'androidx.navigation:navigation-ui:2.3.0'
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:30.1.0')
 
+    // Declare the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth'
+    // Also declare the dependency for the Google Play services library and specify its version
+    implementation 'com.google.android.gms:play-services-auth:20.3.0'
+    implementation 'com.firebaseui:firebase-ui-auth:8.0.1'
+
+    // Required only if Facebook login support is required
+    // Find the latest Facebook SDK releases here: https://goo.gl/Ce5L94
     // debugImplementation because LeakCanary should only run in debug builds.
-   // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
+    // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.firebase:firebase-firestore:21.7.0'
-
-    implementation 'com.google.firebase:firebase-ads:19.4.0'
-
-    def work_version = '2.4.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.firebase:firebase-firestore:24.4.0'
+    implementation 'com.google.firebase:firebase-ads:21.3.0'
     //noinspection GradleDependency
-    implementation "androidx.work:work-runtime:$work_version"
+    implementation "androidx.work:work-runtime:2.7.1"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleCompatible
-    implementation "androidx.constraintlayout:constraintlayout:2.0.1"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
     implementation 'com.lorentzos.swipecards:library:1.0.9'
     //noinspection GradleCompatible
     implementation 'com.android.support:support-core-utils:28.0.0'
     //noinspection GradleCompatible
     implementation 'com.android.support:cardview-v7:28.0.0'
-    implementation 'com.google.firebase:firebase-auth:19.4.0'
-    implementation 'com.google.firebase:firebase-database:19.5.0'
-    implementation 'com.google.firebase:firebase-storage:19.2.0'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.firebase:firebase-database:20.1.0'
+    implementation 'com.google.firebase:firebase-storage:20.1.0'
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     //noinspection GradleCompatible
-    implementation 'com.google.android.gms:play-services-location:17.1.0'
-    //noinspection GradleCompatible
-    implementation 'com.android.support:support-compat:28.0.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.0'
     implementation 'com.google.guava:guava:29.0-jre'
-    implementation 'com.google.android.material:material:1.3.0-alpha03'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.google.android.material:material:1.8.0-alpha01'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.google.firebase:firebase-functions:20.2.0'
     testImplementation 'junit:junit:4.13'
-    implementation 'com.braintreepayments.api:braintree:3.14.1'
     implementation 'com.loopj.android:android-async-http:1.4.9'
-    implementation 'com.firebaseui:firebase-ui-auth:6.2.1'
-
-    // Required only if Facebook login support is required
-    // Find the latest Facebook SDK releases here: https://goo.gl/Ce5L94
-    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
-    implementation 'com.facebook.android:facebook-core:5.15.3'
-    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
+    implementation 'com.facebook.android:facebook-login:15.0.1'
+    implementation 'com.facebook.android:facebook-android-sdk:15.0.1'
+    implementation 'com.facebook.android:facebook-core:15.0.1'
     implementation 'com.facebook.android:account-kit-sdk:5.4.0'
-    implementation 'com.facebook.android:facebook-share:5.15.3'
-
-    // Required only if Twitter login support is required
-    // Find the latest Twitter SDK releases here: https://goo.gl/E5wZvQ
-    // implementation 'com.twitter.sdk.android:twitter-core:3.x'
+    implementation 'com.facebook.android:facebook-share:15.0.1'
     //noinspection GradleCompatible
-    implementation 'com.android.support:percent:28.0.0'
-    implementation 'com.google.android.gms:play-services-auth:18.1.0'
-    implementation 'com.google.android.gms:play-services-ads:19.4.0'
-    implementation 'com.braintreepayments.api:braintree:'
-
+    implementation 'com.android.support:percent:26.1.0'
+    implementation 'com.google.android.gms:play-services-ads:21.3.0'
     //Youtube
     implementation files('libs/activation.jar')
     implementation files('libs/additionnal.jar')
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
-
-    def lifecycle_version = "2.2.0"
+    def lifecycle_version = "2.5.1"
     def arch_version = "2.1.0"
-
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
     // Lifecycles only (without ViewModel or LiveData)
     implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
-
     // Saved state module for ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
-
     // Annotation processor
     //noinspection LifecycleAnnotationProcessorWithJava8
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.5.1"
     // alternately - if using Java8, use the following instead of lifecycle-compiler
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
-
     // optional - helpers for implementing LifecycleOwner in a Service
     implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version"
-
     // optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
     implementation "androidx.lifecycle:lifecycle-process:$lifecycle_version"
-
     // optional - ReactiveStreams support for LiveData
     implementation "androidx.lifecycle:lifecycle-reactivestreams:$lifecycle_version"
-
     // optional - Test helpers for LiveData
     testImplementation "androidx.arch.core:core-testing:$arch_version"
-
     //noinspection GradleCompatible
     implementation 'com.android.support:design:28.0.0'
-
-    // Add the dependency for the Performance Monitoring library
-    implementation 'com.google.firebase:firebase-perf:19.0.9'
-
     implementation 'com.android.support:support-annotations:28.0.0'
-    implementation 'com.facebook.android:audience-network-sdk:5.11.0'
-
+    implementation 'com.facebook.android:audience-network-sdk:6.0.0'
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'org.riversun:okhttp3-cookie-helper:1.0.1'
-    implementation 'com.jakewharton:butterknife:10.2.3'
-
-    implementation 'com.agrawalsuneet.androidlibs:dotsloader:1.4'
-
-    def dynamicanimation_version = '1.0.0'
-    implementation "androidx.dynamicanimation:dynamicanimation:$dynamicanimation_version"
-
-    implementation 'com.daimajia.easing:library:2.4@aar'
+    implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
+    implementation 'com.google.firebase:firebase-messaging:23.1.0'
+    implementation 'com.google.firebase:firebase-functions:20.2.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava's latest version for bug fixes and new features.
+    // (see https://github.com/ReactiveX/RxJava/releases for latest 3.x.x version)
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    // EventBus for InApp PUB/SUB
+    implementation 'org.greenrobot:eventbus:3.3.1'
 
-    //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    //noinspection GradleCompatible
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.google.firebase:firebase-messaging:20.3.0'
-    implementation 'com.pushbots:pushbots-lib:3.3.3@aar'
+    def work_version = "2.7.1"
+    // (Java only)
+    implementation "androidx.work:work-runtime:$work_version"
+    // optional - GCMNetworkManager support
+    implementation "androidx.work:work-gcm:$work_version"
 
-    // Add the Firebase Crashlytics SDK.
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    //TOP SNACKBAR
+    implementation 'com.github.Redman1037:TSnackBar:V2.0.0'
+
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+
+    def room_version = "2.4.3"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    // optional - RxJava3 support for Room
+    implementation "androidx.room:room-rxjava3:$room_version"
+
+    // optional - Guava support for Room, including Optional and ListenableFuture
+    implementation "androidx.room:room-guava:$room_version"
 }

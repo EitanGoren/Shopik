@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
+import com.eitan.shopik.customer.ShopikUser;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -73,8 +74,8 @@ public class CompanyProfileActivity extends AppCompatActivity {
                     assert bitmap != null;
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 85, baos);
 
-                    Glide.with(getApplicationContext()).load(bitmap).into(mProfile_image);
-                    Glide.with(getApplicationContext()).load(bitmap).into(toolbar_pic);
+                    Macros.Functions.GlidePicture(getApplicationContext(), bitmap, mProfile_image, 0);
+                    Macros.Functions.GlidePicture(getApplicationContext(), bitmap, toolbar_pic, 0);
 
                     byte[] data2 = baos.toByteArray();
 
@@ -112,7 +113,7 @@ public class CompanyProfileActivity extends AppCompatActivity {
                     assert bitmap != null;
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 85, baos);
 
-                    Glide.with(getApplicationContext()).load(bitmap).into(bgimage);
+                    Macros.Functions.GlidePicture(getApplicationContext(), bitmap, bgimage, 0);
 
                     byte[] data2 = baos.toByteArray();
 
@@ -244,25 +245,23 @@ public class CompanyProfileActivity extends AppCompatActivity {
 
     private void setImages() {
         if( imageUrl != null ) {
-            Glide.with(getApplicationContext()).load(imageUrl).into(mProfile_image);
-            Glide.with(getApplicationContext()).load(imageUrl).into(toolbar_pic);
+            Macros.Functions.GlidePicture(getApplicationContext(), imageUrl, mProfile_image, 0);
+            Macros.Functions.GlidePicture(getApplicationContext(), imageUrl, toolbar_pic, 0);
         }
         if( cover != null ){
-            Macros.Functions.GlidePicture(getApplicationContext(),cover,bgimage);
+            Macros.Functions.GlidePicture(getApplicationContext(),cover,bgimage, 350);
         }
     }
 
     private void setNavigationBarButtonsColor(int navigationBarColor) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            View decorView = getWindow().getDecorView();
-            int flags = decorView.getSystemUiVisibility();
-            if (isColorLight(navigationBarColor)) {
-                flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-            } else {
-                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-            }
-            decorView.setSystemUiVisibility(flags);
+        View decorView = getWindow().getDecorView();
+        int flags = decorView.getSystemUiVisibility();
+        if (isColorLight(navigationBarColor)) {
+            flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+        } else {
+            flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
         }
+        decorView.setSystemUiVisibility(flags);
     }
 
     private boolean isColorLight(int color) {
@@ -307,7 +306,7 @@ public class CompanyProfileActivity extends AppCompatActivity {
 
         try {
             companyId = getIntent().getStringExtra("id");
-            isCompany = companyId.equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+            isCompany = companyId.equals(Objects.requireNonNull(ShopikUser.getInstance().getId()));
             companyFS = FirebaseFirestore.getInstance().collection(Macros.COMPANIES).document(companyId);
         } catch (NullPointerException npex) {
             npex.printStackTrace();

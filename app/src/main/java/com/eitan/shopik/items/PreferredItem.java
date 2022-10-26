@@ -1,11 +1,9 @@
 package com.eitan.shopik.items;
 
-import android.os.Build;
-
 import androidx.annotation.Keep;
-import androidx.annotation.RequiresApi;
 
 import com.eitan.shopik.Macros;
+import com.eitan.shopik.database.models.ShoppingItem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,7 +17,6 @@ public class PreferredItem implements Serializable {
     private Map<String, Long> preferred;
     private ArrayList<String> fields_list;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public PreferredItem(Map<String, Long> preferred){
         // set of item strings from items description(name)..
      if(preferred == null)
@@ -29,7 +26,6 @@ public class PreferredItem implements Serializable {
      fields_list = getAttributeSortedByPreferences2();
    }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private ArrayList<String> getAttributeSortedByPreferences2(){
 
         ArrayList<String> sorted_fields = new ArrayList<>(preferred.keySet());
@@ -64,7 +60,6 @@ public class PreferredItem implements Serializable {
         return sorted_fields;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public int calculateMatchingPercentage(ShoppingItem shoppingItem){
 
        if( shoppingItem == null ) return 0;
@@ -72,7 +67,7 @@ public class PreferredItem implements Serializable {
        float result = 0;
        int attr = 0;
 
-       for(String field : shoppingItem.getName()){
+       for(String field : shoppingItem.getConvertedName()){
            if(fields_list.contains(field)) {
                result += (getAttributeEvaluation(field));
                ++attr ;
@@ -81,7 +76,6 @@ public class PreferredItem implements Serializable {
        return (int) ((result * 100) / (attr == 0 ? 1 : attr));
    }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private float getAttributeEvaluation(String wanted_field) {
 
        int i = fields_list.indexOf(wanted_field);

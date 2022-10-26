@@ -1,17 +1,15 @@
 package com.eitan.shopik.viewModels;
 
 import android.app.Application;
-import android.os.Build;
 
 import androidx.annotation.Keep;
-import androidx.annotation.RequiresApi;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.items.RecyclerItem;
-import com.eitan.shopik.items.ShoppingItem;
+import com.eitan.shopik.database.models.ShoppingItem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -132,7 +130,6 @@ public class EntranceViewModel extends AndroidViewModel implements Serializable 
     public LiveData<ArrayList<RecyclerItem>> getRecentLikedItems(){
         return liked_items;
     }
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setNewLikedItems(MutableLiveData<ArrayList<RecyclerItem>> likedItems){
         clearLiked();
         Objects.requireNonNull(liked_items.getValue()).addAll(Objects.requireNonNull(likedItems.getValue()));
@@ -149,7 +146,6 @@ public class EntranceViewModel extends AndroidViewModel implements Serializable 
     public void addWomenLikedItem(RecyclerItem recyclerItem){
         Objects.requireNonNull(women_liked_items.getValue()).add(0, recyclerItem);
     }
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void setLiked_items(String gender){
         if(gender.equals(Macros.CustomerMacros.WOMEN))
             setNewLikedItems(this.women_liked_items);
@@ -157,7 +153,6 @@ public class EntranceViewModel extends AndroidViewModel implements Serializable 
             setNewLikedItems(this.men_liked_items);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void removeAllType(String type,String gender){
         if(gender.equals(Macros.CustomerMacros.MEN)) {
             Objects.requireNonNull(men_liked_items.getValue()).removeIf(item -> item.getType().equals(type));

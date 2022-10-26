@@ -30,20 +30,6 @@
             app:layout_collapseMode="parallax"
             app:statusBarScrim="@color/fragmentBackground">
 
-            <TextView
-                android:id="@+id/header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/martel_sans"
-                android:gravity="center"
-                android:padding="5dp"
-                android:background="@drawable/multicolor_bg"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="#ffffff"
-                android:textSize="16sp"
-                app:layout_collapseMode="parallax" />
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -62,7 +48,6 @@
                 android:id="@+id/layout1"
                 android:layout_width="match_parent"
                 android:layout_height="380dp"
-                android:layout_below="@id/grid_layout"
                 android:layout_marginBottom="20dp"
                 android:animateLayoutChanges="true"
                 app:layout_collapseMode="parallax">
@@ -110,21 +95,11 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/seperator_line1"
-                    android:layout_width="100dp"
-                    android:layout_height="1.2dp"
-                    android:layout_below="@id/header_layout"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/multicolor2" />
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@id/seperator_line1"
+                    android:layout_below="@id/header_layout"
                     android:layout_margin="7dp"
                     android:background="#00ffffff"
                     android:scrollbars="none"
@@ -132,459 +107,417 @@
 
             </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/new_in_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="5dp"
-                android:gravity="center"
-                android:orientation="horizontal">
+<!--            <GridLayout-->
+<!--                android:id="@+id/grid_layout"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_centerHorizontal="true"-->
+<!--                android:fitsSystemWindows="true"-->
+<!--                android:columnCount="2"-->
+<!--                android:rowCount="4">-->
 
-                <ImageView
-                    android:id="@+id/icon_new"
-                    android:layout_width="35dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="25dp"
-                    android:contentDescription="@string/users_choice"
-                    android:src="@drawable/ic_baseline_notifications_active_24" />
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="195dp"-->
+<!--                    android:layout_height="250dp"-->
+<!--                    android:layout_row="0"-->
+<!--                    android:layout_column="0"-->
+<!--                    android:layout_gravity="end|top"-->
+<!--                    android:backgroundTint="#25000000"-->
+<!--                    android:clickable="true"-->
+<!--                    android:elevation="10dp"-->
+<!--                    android:focusable="true"-->
+<!--                    app:cardCornerRadius="15dp"-->
+<!--                    app:cardElevation="5dp"-->
+<!--                    app:cardUseCompatPadding="true">-->
 
-                <TextView
-                    android:id="@+id/new_in"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:padding="5dp"
-                    android:text="@string/new_in"
-                    android:textColor="#000000"
-                    android:textSize="26sp"
-                    android:textStyle="bold" />
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/layout2"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:foreground="?attr/selectableItemBackgroundBorderless">-->
 
-            </LinearLayout>
+<!--                        <ImageView-->
+<!--                            android:id="@+id/text_btn1"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:contentDescription="@string/castro_new"-->
+<!--                            android:gravity="center"-->
+<!--                            android:scaleType="centerCrop"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-            <TextView
-                android:id="@+id/seperator_line"
-                android:layout_width="100dp"
-                android:layout_height="1.2dp"
-                android:layout_below="@id/new_in_card"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/multicolor2" />
+<!--                        <TextView-->
+<!--                            android:id="@+id/text_header1"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentBottom="true"-->
+<!--                            android:background="#66000000"-->
+<!--                            android:fontFamily="@font/roboto_thin"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textColor="#ffffff"-->
+<!--                            android:textSize="26sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-            <GridLayout
-                android:id="@+id/grid_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/seperator_line"
-                android:layout_centerHorizontal="true"
-                android:fitsSystemWindows="true"
-                android:columnCount="2"
-                android:rowCount="4">
+<!--                    </RelativeLayout>-->
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="195dp"
-                    android:layout_height="250dp"
-                    android:layout_row="0"
-                    android:layout_column="0"
-                    android:layout_gravity="end|top"
-                    android:backgroundTint="#25000000"
-                    android:clickable="true"
-                    android:elevation="10dp"
-                    android:focusable="true"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+<!--                </com.google.android.material.card.MaterialCardView>-->
 
-                    <RelativeLayout
-                        android:id="@+id/layout2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="195dp"-->
+<!--                    android:layout_height="250dp"-->
+<!--                    android:layout_row="0"-->
+<!--                    android:layout_rowWeight="1"-->
+<!--                    android:layout_column="1"-->
+<!--                    android:layout_columnWeight="1"-->
+<!--                    android:layout_gravity="start|top"-->
+<!--                    android:backgroundTint="#25000000"-->
+<!--                    android:clickable="true"-->
+<!--                    android:elevation="10dp"-->
+<!--                    android:focusable="true"-->
+<!--                    app:cardCornerRadius="15dp"-->
+<!--                    app:cardElevation="5dp"-->
+<!--                    app:cardUseCompatPadding="true">-->
 
-                        <ImageView
-                            android:id="@+id/text_btn1"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:contentDescription="@string/castro_new"
-                            android:gravity="center"
-                            android:scaleType="centerCrop"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/layout3"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:foreground="?attr/selectableItemBackgroundBorderless">-->
 
-                        <TextView
-                            android:id="@+id/text_header1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:background="#66000000"
-                            android:fontFamily="@font/roboto_thin"
-                            android:gravity="center"
-                            android:textAlignment="center"
-                            android:textColor="#ffffff"
-                            android:textSize="26sp"
-                            android:textStyle="bold"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                        <ImageView-->
+<!--                            android:id="@+id/text_btn2"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:contentDescription="@string/aldo_new"-->
+<!--                            android:gravity="center"-->
+<!--                            android:scaleType="centerCrop"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                    </RelativeLayout>
+<!--                        <TextView-->
+<!--                            android:id="@+id/text_header2"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentBottom="true"-->
+<!--                            android:background="#66000000"-->
+<!--                            android:fontFamily="@font/roboto_thin"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textColor="#ffffff"-->
+<!--                            android:textSize="26sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                </com.google.android.material.card.MaterialCardView>
+<!--                    </RelativeLayout>-->
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="195dp"
-                    android:layout_height="250dp"
-                    android:layout_row="0"
-                    android:layout_rowWeight="1"
-                    android:layout_column="1"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="start|top"
-                    android:backgroundTint="#25000000"
-                    android:clickable="true"
-                    android:elevation="10dp"
-                    android:focusable="true"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+<!--                </com.google.android.material.card.MaterialCardView>-->
 
-                    <RelativeLayout
-                        android:id="@+id/layout3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="195dp"-->
+<!--                    android:layout_height="250dp"-->
+<!--                    android:layout_row="1"-->
+<!--                    android:layout_rowWeight="1"-->
+<!--                    android:layout_column="0"-->
+<!--                    android:layout_columnWeight="1"-->
+<!--                    android:layout_gravity="end|top"-->
+<!--                    android:backgroundTint="#25000000"-->
+<!--                    android:clickable="true"-->
+<!--                    android:elevation="10dp"-->
+<!--                    android:focusable="true"-->
+<!--                    app:cardCornerRadius="15dp"-->
+<!--                    app:cardElevation="5dp"-->
+<!--                    app:cardUseCompatPadding="true">-->
 
-                        <ImageView
-                            android:id="@+id/text_btn2"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:contentDescription="@string/aldo_new"
-                            android:gravity="center"
-                            android:scaleType="centerCrop"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/layout4"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:foreground="?attr/selectableItemBackgroundBorderless">-->
 
-                        <TextView
-                            android:id="@+id/text_header2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:background="#66000000"
-                            android:fontFamily="@font/roboto_thin"
-                            android:gravity="center"
-                            android:textAlignment="center"
-                            android:textColor="#ffffff"
-                            android:textSize="26sp"
-                            android:textStyle="bold"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                        <ImageView-->
+<!--                            android:id="@+id/text_btn4"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:contentDescription="@string/castro_new"-->
+<!--                            android:gravity="center"-->
+<!--                            android:scaleType="centerCrop"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                    </RelativeLayout>
+<!--                        <TextView-->
+<!--                            android:id="@+id/text_header4"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentBottom="true"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:background="#66000000"-->
+<!--                            android:fontFamily="@font/roboto_thin"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textColor="#ffffff"-->
+<!--                            android:textSize="26sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                </com.google.android.material.card.MaterialCardView>
+<!--                    </RelativeLayout>-->
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="195dp"
-                    android:layout_height="250dp"
-                    android:layout_row="1"
-                    android:layout_rowWeight="1"
-                    android:layout_column="0"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="end|top"
-                    android:backgroundTint="#25000000"
-                    android:clickable="true"
-                    android:elevation="10dp"
-                    android:focusable="true"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+<!--                </com.google.android.material.card.MaterialCardView>-->
 
-                    <RelativeLayout
-                        android:id="@+id/layout4"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="195dp"-->
+<!--                    android:layout_height="250dp"-->
+<!--                    android:layout_row="1"-->
+<!--                    android:layout_rowWeight="1"-->
+<!--                    android:layout_column="1"-->
+<!--                    android:layout_columnWeight="1"-->
+<!--                    android:layout_gravity="start|top"-->
+<!--                    android:backgroundTint="#25000000"-->
+<!--                    android:clickable="true"-->
+<!--                    android:elevation="10dp"-->
+<!--                    android:focusable="true"-->
+<!--                    app:cardCornerRadius="15dp"-->
+<!--                    app:cardElevation="5dp"-->
+<!--                    app:cardUseCompatPadding="true">-->
 
-                        <ImageView
-                            android:id="@+id/text_btn4"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:contentDescription="@string/castro_new"
-                            android:gravity="center"
-                            android:scaleType="centerCrop"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/layout5"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:foreground="?attr/selectableItemBackgroundBorderless">-->
 
-                        <TextView
-                            android:id="@+id/text_header4"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerInParent="true"
-                            android:background="#66000000"
-                            android:fontFamily="@font/roboto_thin"
-                            android:gravity="center"
-                            android:textAlignment="center"
-                            android:textColor="#ffffff"
-                            android:textSize="26sp"
-                            android:textStyle="bold"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                        <ImageView-->
+<!--                            android:id="@+id/text_btn5"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:contentDescription="@string/aldo_new"-->
+<!--                            android:gravity="center"-->
+<!--                            android:scaleType="centerCrop" />-->
 
-                    </RelativeLayout>
+<!--                        <TextView-->
+<!--                            android:id="@+id/text_header5"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentBottom="true"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:background="#66000000"-->
+<!--                            android:fontFamily="@font/roboto_thin"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textColor="#ffffff"-->
+<!--                            android:textSize="26sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                </com.google.android.material.card.MaterialCardView>
+<!--                    </RelativeLayout>-->
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="195dp"
-                    android:layout_height="250dp"
-                    android:layout_row="1"
-                    android:layout_rowWeight="1"
-                    android:layout_column="1"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="start|top"
-                    android:backgroundTint="#25000000"
-                    android:clickable="true"
-                    android:elevation="10dp"
-                    android:focusable="true"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+<!--                </com.google.android.material.card.MaterialCardView>-->
 
-                    <RelativeLayout
-                        android:id="@+id/layout5"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="195dp"-->
+<!--                    android:layout_height="250dp"-->
+<!--                    android:layout_row="2"-->
+<!--                    android:layout_rowWeight="1"-->
+<!--                    android:layout_column="0"-->
+<!--                    android:layout_columnWeight="1"-->
+<!--                    android:layout_gravity="end|top"-->
+<!--                    android:backgroundTint="#26000000"-->
+<!--                    android:clickable="true"-->
+<!--                    android:elevation="10dp"-->
+<!--                    android:focusable="true"-->
+<!--                    app:cardCornerRadius="15dp"-->
+<!--                    app:cardElevation="5dp"-->
+<!--                    app:cardUseCompatPadding="true">-->
 
-                        <ImageView
-                            android:id="@+id/text_btn5"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:contentDescription="@string/aldo_new"
-                            android:gravity="center"
-                            android:scaleType="centerCrop" />
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/layout6"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:foreground="?attr/selectableItemBackgroundBorderless">-->
 
-                        <TextView
-                            android:id="@+id/text_header5"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerInParent="true"
-                            android:background="#66000000"
-                            android:fontFamily="@font/roboto_thin"
-                            android:gravity="center"
-                            android:textAlignment="center"
-                            android:textColor="#ffffff"
-                            android:textSize="26sp"
-                            android:textStyle="bold"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                        <ImageView-->
+<!--                            android:id="@+id/text_btn6"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:contentDescription="@string/castro_new"-->
+<!--                            android:gravity="center"-->
+<!--                            android:scaleType="centerCrop"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                    </RelativeLayout>
+<!--                        <TextView-->
+<!--                            android:id="@+id/text_header6"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentBottom="true"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:fontFamily="@font/roboto_thin"-->
+<!--                            android:gravity="center"-->
+<!--                            android:background="#66000000"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textColor="#ffffff"-->
+<!--                            android:textSize="26sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                </com.google.android.material.card.MaterialCardView>
+<!--                    </RelativeLayout>-->
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="195dp"
-                    android:layout_height="250dp"
-                    android:layout_row="2"
-                    android:layout_rowWeight="1"
-                    android:layout_column="0"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="end|top"
-                    android:backgroundTint="#26000000"
-                    android:clickable="true"
-                    android:elevation="10dp"
-                    android:focusable="true"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+<!--                </com.google.android.material.card.MaterialCardView>-->
 
-                    <RelativeLayout
-                        android:id="@+id/layout6"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="195dp"-->
+<!--                    android:layout_height="250dp"-->
+<!--                    android:layout_row="2"-->
+<!--                    android:layout_rowWeight="1"-->
+<!--                    android:layout_column="1"-->
+<!--                    android:layout_columnWeight="1"-->
+<!--                    android:layout_gravity="start|top"-->
+<!--                    android:backgroundTint="#26000000"-->
+<!--                    android:clickable="true"-->
+<!--                    android:elevation="10dp"-->
+<!--                    android:focusable="true"-->
+<!--                    app:cardCornerRadius="15dp"-->
+<!--                    app:cardElevation="5dp"-->
+<!--                    app:cardUseCompatPadding="true">-->
 
-                        <ImageView
-                            android:id="@+id/text_btn6"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:contentDescription="@string/castro_new"
-                            android:gravity="center"
-                            android:scaleType="centerCrop"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/layout7"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:foreground="?attr/selectableItemBackgroundBorderless">-->
 
-                        <TextView
-                            android:id="@+id/text_header6"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerInParent="true"
-                            android:fontFamily="@font/roboto_thin"
-                            android:gravity="center"
-                            android:background="#66000000"
-                            android:textAlignment="center"
-                            android:textColor="#ffffff"
-                            android:textSize="26sp"
-                            android:textStyle="bold"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                        <ImageView-->
+<!--                            android:id="@+id/text_btn7"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:contentDescription="@string/aldo_new"-->
+<!--                            android:gravity="center"-->
+<!--                            android:scaleType="centerCrop" />-->
 
-                    </RelativeLayout>
+<!--                        <TextView-->
+<!--                            android:id="@+id/text_header7"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentBottom="true"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:background="#66000000"-->
+<!--                            android:fontFamily="@font/roboto_thin"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textColor="#ffffff"-->
+<!--                            android:textSize="26sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                </com.google.android.material.card.MaterialCardView>
+<!--                    </RelativeLayout>-->
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="195dp"
-                    android:layout_height="250dp"
-                    android:layout_row="2"
-                    android:layout_rowWeight="1"
-                    android:layout_column="1"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="start|top"
-                    android:backgroundTint="#26000000"
-                    android:clickable="true"
-                    android:elevation="10dp"
-                    android:focusable="true"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+<!--                </com.google.android.material.card.MaterialCardView>-->
 
-                    <RelativeLayout
-                        android:id="@+id/layout7"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="195dp"-->
+<!--                    android:layout_height="250dp"-->
+<!--                    android:layout_row="3"-->
+<!--                    android:layout_rowWeight="1"-->
+<!--                    android:layout_column="0"-->
+<!--                    android:layout_columnWeight="1"-->
+<!--                    android:layout_gravity="end|top"-->
+<!--                    android:backgroundTint="#26000000"-->
+<!--                    android:clickable="true"-->
+<!--                    android:elevation="10dp"-->
+<!--                    android:focusable="true"-->
+<!--                    app:cardCornerRadius="15dp"-->
+<!--                    app:cardElevation="5dp"-->
+<!--                    app:cardUseCompatPadding="true">-->
 
-                        <ImageView
-                            android:id="@+id/text_btn7"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:contentDescription="@string/aldo_new"
-                            android:gravity="center"
-                            android:scaleType="centerCrop" />
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/layout8"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:foreground="?attr/selectableItemBackgroundBorderless">-->
 
-                        <TextView
-                            android:id="@+id/text_header7"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerInParent="true"
-                            android:background="#66000000"
-                            android:fontFamily="@font/roboto_thin"
-                            android:gravity="center"
-                            android:textAlignment="center"
-                            android:textColor="#ffffff"
-                            android:textSize="26sp"
-                            android:textStyle="bold"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                        <ImageView-->
+<!--                            android:id="@+id/text_btn8"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:contentDescription="@string/castro_new"-->
+<!--                            android:gravity="center"-->
+<!--                            android:scaleType="centerCrop"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                    </RelativeLayout>
+<!--                        <TextView-->
+<!--                            android:id="@+id/text_header8"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentBottom="true"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:background="#66000000"-->
+<!--                            android:fontFamily="@font/roboto_thin"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textColor="#ffffff"-->
+<!--                            android:textSize="26sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                </com.google.android.material.card.MaterialCardView>
+<!--                    </RelativeLayout>-->
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="195dp"
-                    android:layout_height="250dp"
-                    android:layout_row="3"
-                    android:layout_rowWeight="1"
-                    android:layout_column="0"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="end|top"
-                    android:backgroundTint="#26000000"
-                    android:clickable="true"
-                    android:elevation="10dp"
-                    android:focusable="true"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+<!--                </com.google.android.material.card.MaterialCardView>-->
 
-                    <RelativeLayout
-                        android:id="@+id/layout8"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="195dp"-->
+<!--                    android:layout_height="250dp"-->
+<!--                    android:layout_row="3"-->
+<!--                    android:layout_rowWeight="1"-->
+<!--                    android:layout_column="1"-->
+<!--                    android:layout_columnWeight="1"-->
+<!--                    android:layout_gravity="start|top"-->
+<!--                    android:backgroundTint="#26000000"-->
+<!--                    android:clickable="true"-->
+<!--                    android:elevation="10dp"-->
+<!--                    android:focusable="true"-->
+<!--                    app:cardCornerRadius="15dp"-->
+<!--                    app:cardElevation="5dp"-->
+<!--                    app:cardUseCompatPadding="true">-->
 
-                        <ImageView
-                            android:id="@+id/text_btn8"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:contentDescription="@string/castro_new"
-                            android:gravity="center"
-                            android:scaleType="centerCrop"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/layout9"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:foreground="?attr/selectableItemBackgroundBorderless">-->
 
-                        <TextView
-                            android:id="@+id/text_header8"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerInParent="true"
-                            android:background="#66000000"
-                            android:fontFamily="@font/roboto_thin"
-                            android:gravity="center"
-                            android:textAlignment="center"
-                            android:textColor="#ffffff"
-                            android:textSize="26sp"
-                            android:textStyle="bold"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+<!--                        <ImageView-->
+<!--                            android:id="@+id/text_btn9"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:contentDescription="@string/aldo_new"-->
+<!--                            android:gravity="center"-->
+<!--                            android:scaleType="centerCrop" />-->
 
-                    </RelativeLayout>
+<!--                        <TextView-->
+<!--                            android:id="@+id/text_header9"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentBottom="true"-->
+<!--                            android:layout_centerInParent="true"-->
+<!--                            android:background="#66000000"-->
+<!--                            android:fontFamily="@font/roboto_thin"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textColor="#ffffff"-->
+<!--                            android:textSize="26sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />-->
 
-                </com.google.android.material.card.MaterialCardView>
+<!--                    </RelativeLayout>-->
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="195dp"
-                    android:layout_height="250dp"
-                    android:layout_row="3"
-                    android:layout_rowWeight="1"
-                    android:layout_column="1"
-                    android:layout_columnWeight="1"
-                    android:layout_gravity="start|top"
-                    android:backgroundTint="#26000000"
-                    android:clickable="true"
-                    android:elevation="10dp"
-                    android:focusable="true"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+<!--                </com.google.android.material.card.MaterialCardView>-->
 
-                    <RelativeLayout
-                        android:id="@+id/layout9"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
-
-                        <ImageView
-                            android:id="@+id/text_btn9"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:contentDescription="@string/aldo_new"
-                            android:gravity="center"
-                            android:scaleType="centerCrop" />
-
-                        <TextView
-                            android:id="@+id/text_header9"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerInParent="true"
-                            android:background="#66000000"
-                            android:fontFamily="@font/roboto_thin"
-                            android:gravity="center"
-                            android:textAlignment="center"
-                            android:textColor="#ffffff"
-                            android:textSize="26sp"
-                            android:textStyle="bold"
-                            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
-
-                    </RelativeLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-            </GridLayout>
+<!--            </GridLayout>-->
 
         </RelativeLayout>
 

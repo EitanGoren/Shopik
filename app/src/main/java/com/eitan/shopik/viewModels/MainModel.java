@@ -1,143 +1,143 @@
 package com.eitan.shopik.viewModels;
 
-import android.os.Build;
-import android.util.ArraySet;
 import android.util.Pair;
 
 import androidx.annotation.Keep;
-import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.eitan.shopik.LikedUser;
+import com.eitan.shopik.PublicUser;
 import com.eitan.shopik.items.PreferredItem;
-import com.eitan.shopik.items.ShoppingItem;
+import com.eitan.shopik.database.models.ShoppingItem;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Keep
 public class MainModel extends ViewModel implements Serializable {
 
     private final MutableLiveData<Map<String,Map<String,Object>>> companies_info;
-    private final MutableLiveData<Map<String, LikedUser>> customers_info;
-    private final MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> all_items;
-    private final Set<String> swipedItems;
+    private final MutableLiveData<Map<String, PublicUser>> customers_info;
+    private final MutableLiveData<Set<ShoppingItem>> all_items;
+    private final Set<String> likedIds;
+    private final MutableLiveData<Set<ShoppingItem>> likedItems;
+    private final MutableLiveData<Set<ShoppingItem>> unlikedItems;
+    private final MutableLiveData<Set<ShoppingItem>> unseenItems;
     private final MutableLiveData<PreferredItem> preferred;
-    private final MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> favorites;
-    private final MutableLiveData<Integer> current_page;
     private final MutableLiveData<Pair<Integer,Integer>> currentItem;
     private final MutableLiveData<Integer> totalItems;
 
     public MainModel(){
-
         currentItem = new MutableLiveData<>();
         totalItems = new MutableLiveData<>();
 
         this.preferred = new MutableLiveData<>();
-        current_page = new MutableLiveData<>();
 
         Map<String,Map<String,Object>> companies_info_map = new HashMap<>();
-        this.companies_info = new MutableLiveData<>();
-        this.companies_info.setValue(companies_info_map);
+        this.companies_info = new MutableLiveData<>(companies_info_map);
 
-        Map<String,LikedUser> customers_info_map = new HashMap<>();
-        this.customers_info = new MutableLiveData<>();
-        this.customers_info.setValue(customers_info_map);
+        Map<String, PublicUser> customers_info_map = new HashMap<>();
+        this.customers_info = new MutableLiveData<>(customers_info_map);
 
-        CopyOnWriteArrayList<ShoppingItem> items = new CopyOnWriteArrayList<>();
-        this.all_items = new MutableLiveData<>();
-        all_items.setValue(items);
+        Set<ShoppingItem> items = new HashSet<>();
+        this.all_items = new MutableLiveData<>(items);
 
-        this.favorites = new MutableLiveData<>();
-        CopyOnWriteArrayList<ShoppingItem> favorites_list = new CopyOnWriteArrayList<>();
-        this.favorites.setValue(favorites_list);
+        likedIds = new HashSet<>();
 
-        swipedItems = new ArraySet<>();
+        Set<ShoppingItem> _likedItems = new HashSet<>();
+        likedItems = new MutableLiveData<>(_likedItems);
+
+        Set<ShoppingItem> _unlikedItems = new HashSet<>();
+        unlikedItems = new MutableLiveData<>(_unlikedItems);
+
+        Set<ShoppingItem> _unseenItems = new HashSet<>();
+        unseenItems = new MutableLiveData<>(_unseenItems);
     }
 
-    public LiveData<Map<String, LikedUser>> getCustomers_info() {
+    public LiveData<Map<String, PublicUser>> getCustomers_info() {
         return customers_info;
-    }
-    public void setCompanies_info(String id,Map<String,Object> value) {
-        Objects.requireNonNull(this.companies_info.getValue()).put(id,value);
     }
     public LiveData<Map<String,Map<String,Object>>> getCompanies_info() {
         return companies_info;
     }
-    public void setCustomers_info(String id, LikedUser likedUser) {
+    public void setCustomers_info(String id, PublicUser likedUser) {
         Objects.requireNonNull(this.customers_info.getValue()).put(id,likedUser);
     }
-
-    private void markItemAsSeen(String item_id){
-        for(ShoppingItem shoppingItem : Objects.requireNonNull(all_items.getValue())){
-            if(shoppingItem.getId().equals(item_id)) {
-                shoppingItem.setSeen(true);
-                return;
-            }
-        }
-    }
-
-    public LiveData<CopyOnWriteArrayList<ShoppingItem>> getAll_items() {
+    public LiveData<Set<ShoppingItem>> getAllItems() {
         return all_items;
     }
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void addItem(ShoppingItem shoppingItem) {
+    public void addItem(ShoppingItem shoppingItem, int fromTotal) {
         Objects.requireNonNull(this.all_items.getValue()).add(shoppingItem);
-        // Update observers every ___ items block
-        if (this.all_items.getValue().size() % 5 == 0) {
+        if (this.all_items.getValue().size() == fromTotal) {
             postAllItems();
         }
     }
+    private ShoppingItem getItemById(String id){
+        for(ShoppingItem shoppingItem : Objects.requireNonNull(all_items.getValue())){
+            String itemId = shoppingItem.getSeller().toLowerCase() + "-" + shoppingItem.getId();
+            if(itemId.equals(id)) {
+                return shoppingItem;
+            }
+        }
+        return null;
+    }
     public void postAllItems() {
-        CopyOnWriteArrayList<ShoppingItem> koko = this.all_items.getValue();
-        all_items.postValue(koko);
+        all_items.postValue(this.all_items.getValue());
     }
 
-    //PAGE NUM
-    public LiveData<Integer> getCurrent_page() {
-        return current_page;
+    //LIKED
+    public void addLikedItemId(String id, int totalLiked) {
+        likedIds.add(id);
+        Objects.requireNonNull(likedItems.getValue()).add(getItemById(id));
+        if(likedItems.getValue().size() == totalLiked)
+            likedItems.postValue(likedItems.getValue());
     }
-    public void setCurrent_page(Integer current_page) {
-        this.current_page.postValue(current_page);
-    }
-
-    //SWIPED
-    public void addSwipedItemId(String id) {
-        swipedItems.add(id);
-        markItemAsSeen(id);
+    public MutableLiveData<Set<ShoppingItem>> getLikedItems(){
+        return likedItems;
     }
 
-    public boolean isSwiped(String id) {
-        return swipedItems.contains(id);
+    //UNLIKED
+    public void addUnlikedItemId(String id, int totalUnliked) {
+        Objects.requireNonNull(unlikedItems.getValue()).add(getItemById(id));
+        if(unlikedItems.getValue().size() == totalUnliked)
+            unlikedItems.postValue(unlikedItems.getValue());
     }
 
-    public int swipedItemsCount() {
-        return swipedItems.size();
+    public MutableLiveData<Set<ShoppingItem>> getUnLikedItems(){
+        return unlikedItems;
+    }
+
+    public void updateUnseenItems(){
+        for(ShoppingItem item : Objects.requireNonNull(all_items.getValue())){
+            if(!Objects.requireNonNull(likedItems.getValue()).contains(item) &&
+                    !Objects.requireNonNull(unlikedItems.getValue()).contains(item))
+            {
+                Objects.requireNonNull(unseenItems.getValue()).add(item);
+            }
+        }
+        unseenItems.postValue(unseenItems.getValue());
+    }
+
+    public MutableLiveData<Set<ShoppingItem>> getUnseenItems(){
+        return unseenItems;
+    }
+
+    public void removeUnseenItem(ShoppingItem shoppingItem){
+        unseenItems.getValue().remove(shoppingItem);
+        unseenItems.postValue(unseenItems.getValue());
     }
 
     //PREFERRED
-    public LiveData<PreferredItem> getPreferred() {
+    public MutableLiveData<PreferredItem> getPreferred() {
         return preferred;
     }
-
     public void setPreferred(PreferredItem preferredItem) {
         this.preferred.postValue(preferredItem);
-    }
-
-    //FAVORITES
-    public LiveData<CopyOnWriteArrayList<ShoppingItem>> getFavorite() {
-        return favorites;
-    }
-    public void addFavorite(ShoppingItem shoppingItem){
-        Objects.requireNonNull(this.favorites.getValue()).add(shoppingItem );
-        CopyOnWriteArrayList<ShoppingItem> koko = this.favorites.getValue();
-        favorites.postValue(koko);
     }
 
     //CURRENT ITEM FETCH
@@ -149,5 +149,4 @@ public class MainModel extends ViewModel implements Serializable {
     public MutableLiveData<Integer> getTotalItems() {
         return totalItems;
     }
-
 }

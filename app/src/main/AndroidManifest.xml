@@ -1,35 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.eitan.shopik" >
+    package="com.eitan.shopik">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
 
     <application
-        android:name="com.eitan.shopik.ShopikApplicationActivity"
+        android:name=".ShopikApplication"
         android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher_shopik_round"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:fullBackupContent="@xml/backup_descriptor"
-        android:theme="@style/MainStyle">
+        android:theme="@style/MainStyle"
+        tools:targetApi="s">
 
         <activity
-            android:name=".ShopikApplicationActivity"
-            android:label="@string/title_activity_shopik_application">
-        </activity>
+            android:name=".NoInternetActivity"
+            android:launchMode="singleTop"
+            android:noHistory="true"/>
+        <activity
+            android:name=".ShopikApplication"
+            android:label="@string/title_activity_shopik_application" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5843605953860340~8335398516" />
+            android:value="ca-app-pub-3940256099942544~3347511713" />
 
-        <activity android:name=".company.CompanyProfileActivity" />
+        <activity android:name=".company.CompanyProfileActivity"
+            android:launchMode="singleTop" />
         <activity
             android:name=".customer.CustomerSettingsActivity"
             android:launchMode="singleTop" />
@@ -40,16 +46,18 @@
         <activity
             android:name=".customer.FullscreenImageActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.Fullscreen" />
+            android:noHistory="true"/>
         <activity
             android:name=".customer.CustomerMainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleTop"/>
         <activity
             android:name="com.facebook.ads.AudienceNetworkActivity"
-            android:hardwareAccelerated="true" />
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".LandingPageActivity"
+            android:exported="true"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -85,9 +93,7 @@
 
         <activity
             android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
-
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
@@ -125,10 +131,10 @@
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider555191575133910"
+        <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:exported="true"/>
-
+            android:authorities="com.facebook.app.FacebookContentProvider555191575133910"
+            android:exported="false" />
     </application>
 
 </manifest>

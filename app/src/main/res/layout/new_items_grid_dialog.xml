@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/multicolor2"
+                android:background="#65B5B5B5"
                 android:gravity="center"
                 android:orientation="horizontal">
 

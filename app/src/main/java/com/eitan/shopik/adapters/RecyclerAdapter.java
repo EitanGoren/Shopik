@@ -2,40 +2,74 @@ package com.eitan.shopik.adapters;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.eitan.shopik.customer.CustomerMainActivity;
 import com.eitan.shopik.customer.FullscreenImageActivity;
 import com.eitan.shopik.items.RecyclerItem;
+import com.eitan.shopik.viewHolders.RecyclerViewHolder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder>
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerViewHolder>
         implements Serializable {
 
     private final ArrayList<RecyclerItem> items;
-    private final String type;
+    private final ViewHolderType type;
 
-    public RecyclerAdapter(ArrayList<RecyclerItem> items, String type){
+    public enum ViewHolderType{
+        ITEM,
+        BRAND
+    }
+
+    private static class BrandRecyclerViewHolder extends RecyclerViewHolder{
+        public BrandRecyclerViewHolder(@NonNull View itemView) { super(itemView);}
+
+        @Override
+        public void setItem(RecyclerItem item) {
+            mBrand.setText(item.getText());
+        }
+    }
+    private static class ItemRecyclerViewHolder extends RecyclerViewHolder{
+
+        public ItemRecyclerViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.image_slider);
+            full_screen = itemView.findViewById(R.id.fullscreen_button);
+            category = itemView.findViewById(R.id.category);
+        }
+
+        @Override
+        public void setItem(RecyclerItem item) {
+            mBrand.setText(item.getText());
+            Macros.Functions.GlidePicture(getContext(), item.getImages().get(0), imageView,900);
+            full_screen.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
+                intent.putExtra("isFav",false);
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("images", item.getImages());
+                intent.putExtra("package", bundle);
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) getContext(),
+                        Pair.create(mBrand,"company_name"));
+                getContext().startActivity(intent, options.toBundle());
+            });
+            category.setText(item.getType());
+        }
+    }
+
+    public RecyclerAdapter(ArrayList<RecyclerItem> items, ViewHolderType type){
         this.items = items;
         this.type = type;
     }
@@ -44,20 +78,28 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     @Override
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        RecyclerAdapter.RecyclerViewHolder selected = null;
+        RecyclerViewHolder selected = null;
+
         switch (type){
-            case "New-Item":
-            case "Item" :
-                selected = new RecyclerAdapter.RecyclerViewHolder(LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.slide_item_container,parent,false));
+            case ITEM:
+                if(parent.getTag() == null || parent.getTag() instanceof BrandRecyclerViewHolder) {
+                    selected = new ItemRecyclerViewHolder(LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.slide_item_container, parent, false));
+                    parent.setTag(selected);
+                }
+                else if(parent.getTag() != null && parent.getTag() instanceof ItemRecyclerViewHolder) {
+                    selected = (RecyclerViewHolder) parent.getTag();
+                }
                 break;
-            case "Brand":
-                selected = new RecyclerAdapter.RecyclerViewHolder(LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.brand_recycler_item,parent,false));
-                break;
-            case "SubCategory":
-                selected = new RecyclerAdapter.RecyclerViewHolder(LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.recycler_sub_category_item,parent,false));
+            case BRAND:
+                if(parent.getTag() == null || parent.getTag() instanceof ItemRecyclerViewHolder) {
+                    selected = new BrandRecyclerViewHolder(LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.brand_recycler_item, parent, false));
+                    parent.setTag(selected);
+                }
+                else if(parent.getTag() != null && parent.getTag() instanceof BrandRecyclerViewHolder) {
+                    selected = (RecyclerViewHolder) parent.getTag();
+                }
                 break;
         }
         assert selected != null;
@@ -72,92 +114,5 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     @Override
     public int getItemCount() {
         return items.size();
-    }
-
-    class RecyclerViewHolder extends RecyclerView.ViewHolder {
-
-        private ImageView imageView;
-        private ImageButton imageButton;
-        private TextView sub_cat, brand, category;
-        private Button full_screen;
-
-        public RecyclerViewHolder(@NonNull View itemView) {
-            super(itemView);
-            if (type.equals("SubCategory")) {
-                imageButton = itemView.findViewById(R.id.sub_category_image);
-                sub_cat = itemView.findViewById(R.id.sub_category_button);
-            } else if (type.equals("Item") || type.equals("New-Item")) {
-                imageView = itemView.findViewById(R.id.image_slider);
-                brand = itemView.findViewById(R.id.slider_brand);
-                full_screen = itemView.findViewById(R.id.fullscreen_button);
-                category = itemView.findViewById(R.id.category);
-            }
-            else {
-                brand = itemView.findViewById(R.id.slider_brand);
-                full_screen = itemView.findViewById(R.id.fullscreen_button);
-            }
-        }
-
-        public void setItem(final RecyclerItem item) {
-
-            switch (type) {
-                case "Item":
-                case "New-Item":
-                    brand.setText(item.getText());
-
-                    Glide.with(getContext()).load(item.getImages().get(0)).
-                            transition(withCrossFade(900)).
-                            into(imageView);
-
-                    full_screen.setOnClickListener(v -> {
-                        Intent intent = new Intent(getContext(), FullscreenImageActivity.class);
-                        intent.putExtra("isFav",false);
-                        intent.putExtra("brand", item.getSeller());
-                        intent.putExtra("id", item.getId());
-                        for(int i=0;i<item.getImages().size(); i++) {
-                            intent.putExtra("img"+(i+1), item.getImages().get(i));
-                        }
-                        if(item.getImages().size() < 4){
-                            for(int i=item.getImages().size(); i<4; i++) {
-                                intent.putExtra("img"+(i), item.getImages().get(0));
-                            }
-                        }
-                        intent.putExtra("seller_logo", item.getSellerLogoUrl());
-                        intent.putExtra("description", item.getText());
-                        intent.putExtra("seller", item.getSeller());
-
-                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity) getContext(),
-                                        Pair.create(brand,"company_name"));
-                        getContext().startActivity(intent, options.toBundle());
-                    });
-
-                    category.setText(item.getType());
-
-                    break;
-                case "Brand":
-                    brand.setText(item.getText());
-                    break;
-                case "SubCategory":
-                    Macros.Functions.GlidePicture(getContext(), item.getImage_resource(), imageButton);
-                    sub_cat.setText(item.getText());
-                    imageButton.setOnClickListener(v -> {
-
-                        Intent intent = new Intent(getContext(), CustomerMainActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("gender", item.getGender());
-                        bundle.putString("type", item.getType());
-                        bundle.putString("imageUrl", item.getUserImageUrl());
-                        bundle.putString("sub_category", item.getItem_sub_category());
-                        intent.putExtra("bundle", bundle);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                        getContext().startActivity(intent);
-                        ((Activity) getContext()).overridePendingTransition(R.anim.fadein,R.anim.fadeout);
-                    });
-                    break;
-            }
-        }
-
-        public Context getContext() {return itemView.getContext();}
     }
 }

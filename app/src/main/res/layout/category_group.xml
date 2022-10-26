@@ -4,35 +4,36 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingStart="5dp"
     android:paddingEnd="5dp">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="7.5dp"
+        android:layout_height="135dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="7dp"
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true">
 
         <RelativeLayout
+            android:id="@+id/cat_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#4383CED8">
 
             <TextView
                 android:id="@+id/main_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@id/cat_icon"
+                android:layout_centerInParent="true"
                 android:layout_marginStart="15dp"
                 android:fontFamily="@font/comfortaa"
-                android:letterSpacing="0.1"
+                android:letterSpacing="0.15"
                 android:text="@string/category_name"
-                android:textAlignment="viewStart"
-                android:textColor="#000000"
-                android:textSize="19sp"
+                android:textColor="#C1000000"
+                android:textSize="25sp"
                 tools:ignore="RelativeOverlap" />
 
             <TextView
@@ -45,17 +46,9 @@
                 android:layout_marginBottom="10dp"
                 android:fontFamily="@font/comfortaa"
                 android:maxLines="1"
+                android:visibility="invisible"
                 android:textAlignment="viewStart"
                 android:textSize="14sp" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/cat_icon"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="18dp"
-                android:scaleType="centerCrop"/>
 
         </RelativeLayout>
 

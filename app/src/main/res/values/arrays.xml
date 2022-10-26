@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="gender">
+    <string-array name="SettingsGender">
+        <item>Female</item>
+        <item>Male</item>
+    </string-array>
+
+    <string-array name="ShoppingGender">
         <item>Women</item>
         <item>Men</item>
     </string-array>

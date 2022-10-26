@@ -80,7 +80,7 @@ public class OutletsFragment extends Fragment {
             String text = "/ " + integer;
             total.setText(text);
         });
-        outletsModel.getCurrentItem().observe(requireActivity(), integer ->{
+        outletsModel.getCurrentItem().observe(requireActivity(), integer -> {
             count.setText(String.valueOf(integer));
             recyclerGridAdapter.notifyDataSetChanged();
         });

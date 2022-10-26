@@ -8,32 +8,33 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.eitan.shopik.items.ShoppingItem;
+import com.eitan.shopik.database.models.ShoppingItem;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
 
 @Keep
 public class AllItemsModel extends AndroidViewModel implements Serializable {
 
-    private final MutableLiveData<CopyOnWriteArrayList<ShoppingItem>> all_items_list;
+    private final MutableLiveData<Set<ShoppingItem>> all_items_list;
 
     public AllItemsModel(@NonNull Application application) {
         super(application);
 
         this.all_items_list = new MutableLiveData<>();
-        CopyOnWriteArrayList<ShoppingItem> list = new CopyOnWriteArrayList<>();
+        Set<ShoppingItem> list = new HashSet<>();
         this.all_items_list.setValue(list);
     }
 
-    public LiveData<CopyOnWriteArrayList<ShoppingItem>> getItems() {
+    public LiveData<Set<ShoppingItem>> getItems() {
         return all_items_list;
     }
 
     public void addItem(ShoppingItem ShoppingItem){
         Objects.requireNonNull(this.all_items_list.getValue()).add(ShoppingItem);
-        CopyOnWriteArrayList<ShoppingItem> koko = this.all_items_list.getValue();
+        Set<ShoppingItem> koko = this.all_items_list.getValue();
         this.all_items_list.postValue(koko);
     }
 

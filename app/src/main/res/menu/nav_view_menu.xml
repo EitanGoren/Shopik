@@ -22,17 +22,6 @@
         </menu>
     </item>
 
-    <!--  <item android:title="@string/Theme">
-          <menu>
-              <item
-                  android:id="@+id/nav_dark"
-                  android:icon="@drawable/ic_twotone_bedtime_24"
-                  android:title="@string/dark_mode"
-                  app:actionViewClass="android.widget.Switch">
-              </item>
-          </menu>
-      </item> -->
-
     <item android:title="@string/contact">
         <menu>
             <item
@@ -49,4 +38,5 @@
                 android:title="@string/visit_me" />
         </menu>
     </item>
+
 </menu>

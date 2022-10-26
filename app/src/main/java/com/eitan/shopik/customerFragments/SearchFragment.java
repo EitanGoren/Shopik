@@ -1,7 +1,8 @@
 package com.eitan.shopik.customerFragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Pair;
@@ -11,13 +12,13 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -29,27 +30,31 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.eitan.shopik.CustomItemAnimator;
-import com.eitan.shopik.Macros;
 import com.eitan.shopik.R;
-import com.eitan.shopik.ShopikApplicationActivity;
 import com.eitan.shopik.adapters.RecyclerGridAdapter;
-import com.eitan.shopik.items.ShoppingItem;
-import com.eitan.shopik.viewModels.AllItemsModel;
+import com.eitan.shopik.customer.CustomerMainActivity;
+import com.eitan.shopik.customer.ShopikUser;
+import com.eitan.shopik.database.Database;
+import com.eitan.shopik.database.models.ShoppingItem;
+import com.eitan.shopik.viewModels.DatabaseViewModel;
 import com.eitan.shopik.viewModels.GenderModel;
 import com.eitan.shopik.viewModels.MainModel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.shape.ShapeAppearanceModel;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.HashSet;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
 
 public class SearchFragment extends Fragment implements View.OnClickListener{
 
-    private AllItemsModel allItemsModel;
     private MainModel mainModel;
-    private FloatingActionButton scrollUpFAB,scrollDownFAB;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerGridAdapter recyclerGridAdapter;
@@ -59,73 +64,61 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private TextView header;
     private SearchView searchView;
     private Toolbar toolbar;
-    String item_type;
-    String item_sub_category;
-    private int items_num = 0;
-    private Observer<CopyOnWriteArrayList<ShoppingItem>> listObserver;
+    private String item_type;
+    private Observer<Set<ShoppingItem>> listObserver;
     private ExtendedFloatingActionButton explore_items;
     private RelativeLayout relativeLayout;
     private Observer<Pair<Integer,Integer>> total_items_observer;
-    Chip price ;
-    Chip all ;
-    Chip sale ;
-    Chip match ;
-    Chip brand ;
-    Chip company ;
-    Chip asos_chip ;
-    Chip castro_chip ;
-    Chip renuar_chip ;
-    Chip tx_chip ;
-    Chip tfs_chip ;
-    Chip aldo_chip ;
-    Chip hoodies_chip ;
-    Chip shein_chip ;
-    Chip favorite ;
+    private ChipGroup chip_group_sub_cat;
+    private ChipGroup chip_group_filter;
+    private Set<String> all_sellers;
+    private Set<ShoppingItem> items = new HashSet<>();
+    private HorizontalScrollView fhsv, schsv;
     private boolean isFinishedFetching = false;
 
-    @RequiresApi( api = Build.VERSION_CODES.N )
+    public SearchFragment() {
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         GenderModel genderModel = new ViewModelProvider(requireActivity()).get(GenderModel.class);
         setHasOptionsMenu(true);
         item_type = genderModel.getType().getValue();
-        item_sub_category = genderModel.getSub_category().getValue();
+        all_sellers = new HashSet<>();//ShopikApplication.sellers;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @SuppressLint("NotifyDataSetChanged")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_search, container,false);
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         mainModel = new ViewModelProvider(requireActivity()).get(MainModel.class);
-        allItemsModel = new ViewModelProvider(requireActivity()).get(AllItemsModel.class);
         mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        recyclerGridAdapter = new RecyclerGridAdapter(allItemsModel.getItems().getValue(),null);
         appBarLayout = view.findViewById(R.id.appbar);
         mRecyclerView = view.findViewById(R.id.grid_recycler_view);
         mRecyclerView.setItemAnimator(new CustomItemAnimator());
 
-        scrollUpFAB = view.findViewById(R.id.scroll_up);
-        scrollDownFAB = view.findViewById(R.id.scroll_down);
+        fhsv = view.findViewById(R.id.filter_scroll);
+        schsv = view.findViewById(R.id.chip_group_sub_cat_layout);
         header = view.findViewById(R.id.text);
-        price = view.findViewById(R.id.price_chip);
-        all = view.findViewById(R.id.all_chip);
-        sale = view.findViewById(R.id.sale_chip);
-        match = view.findViewById(R.id.match_chip);
-        brand = view.findViewById(R.id.brand_chip);
-        company = view.findViewById(R.id.company_chip);
-        asos_chip = view.findViewById(R.id.asos_chip);
-        castro_chip = view.findViewById(R.id.castro_chip);
-        renuar_chip = view.findViewById(R.id.renuar_chip);
-        tx_chip = view.findViewById(R.id.tx_chip);
-        tfs_chip = view.findViewById(R.id.tfs_chip);
-        aldo_chip = view.findViewById(R.id.aldo_chip);
-        hoodies_chip = view.findViewById(R.id.hoodies_chip);
-        shein_chip = view.findViewById(R.id.shein_chip);
-        favorite = view.findViewById(R.id.favorites_chip);
+
+        Chip price = view.findViewById(R.id.price_chip);
+        Chip all = view.findViewById(R.id.all_chip);
+        Chip sale = view.findViewById(R.id.sale_chip);
+        Chip match = view.findViewById(R.id.match_chip);
+        Chip brand = view.findViewById(R.id.brand_chip);
+        Chip company1 = view.findViewById(R.id.company_chip);
+
+        chip_group_sub_cat = view.findViewById(R.id.chip_group_sub_cat);
+        chip_group_sub_cat.setSingleSelection(true);
+        ChipGroup chip_group_sort = view.findViewById(R.id.chip_group_sort);
+        chip_group_sort.setSingleSelection(true);
+        chip_group_filter = view.findViewById(R.id.chip_group_filter);
+        chip_group_filter.setSingleSelection(true);
+
+        Chip favorite = view.findViewById(R.id.favorites_chip);
         toolbar = view.findViewById(R.id.toolbar);
         explore_items = view.findViewById(R.id.explore_items);
         explore_items.setVisibility(View.GONE);
@@ -133,46 +126,43 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         price.setOnClickListener(this);
         sale.setOnClickListener(this);
-        company.setOnClickListener(this);
+        company1.setOnClickListener(this);
         brand.setOnClickListener(this);
         match.setOnClickListener(this);
-        asos_chip.setOnClickListener(this);
-        renuar_chip.setOnClickListener(this);
-        tx_chip.setOnClickListener(this);
-        tfs_chip.setOnClickListener(this);
-        hoodies_chip.setOnClickListener(this);
-        shein_chip.setOnClickListener(this);
-        aldo_chip.setOnClickListener(this);
-        castro_chip.setOnClickListener(this);
         favorite.setOnClickListener(this);
         all.setOnClickListener(this);
 
+        DatabaseViewModel databaseViewModel = DatabaseViewModel.getInstance();
+        ShopikUser shopikUser = ShopikUser.getInstance();
+        databaseViewModel.updateTopWords(item_type, shopikUser.getGender());
+
         listObserver = shoppingItems -> {
-            allItemsModel.clearItems();
-            for (ShoppingItem shoppingItem : shoppingItems) {
-                if(shoppingItem.getType().equals(item_type) && shoppingItem.getSub_category().equals(item_sub_category)) {
-                    if (!Objects.requireNonNull(allItemsModel.getItems().getValue()).contains(shoppingItem)) {
+            if(!shoppingItems.isEmpty()) {
+                items.clear();
+                items.addAll(shoppingItems);
+                if (recyclerGridAdapter == null) {
+                    recyclerGridAdapter = new RecyclerGridAdapter(items, null);
+                    mRecyclerView.setAdapter(recyclerGridAdapter);
+                }
+                all_sellers.clear();
+
+                for (ShoppingItem shoppingItem : shoppingItems) {
+                    if (!items.contains(shoppingItem)) {
                         int match_per = 0;
                         if (mainModel.getPreferred().getValue() != null) {
                             match_per = Objects.requireNonNull(mainModel.getPreferred().getValue()).
                                     calculateMatchingPercentage(shoppingItem);
                         }
                         shoppingItem.setPercentage(match_per);
-                        allItemsModel.addItem(shoppingItem);
                     }
-                    if ((Objects.requireNonNull(allItemsModel.getItems().getValue()).size() % Macros.ITEMS_TO_AD == 0)) {
-                        ShoppingItem shoppingItemAd = (ShoppingItem) ShopikApplicationActivity.getNextAd();
-                        if (shoppingItemAd != null) {
-                            ShoppingItem adItem = new ShoppingItem();
-                            adItem.setNativeAd(shoppingItemAd.getNativeAd());
-                            adItem.setAd(true);
-                            allItemsModel.addItem(adItem);
-                        }
-                    }
+                    all_sellers.add(shoppingItem.getSeller());
                 }
+
+                chip_group_filter.removeAllViews();
+                createChipByName(all_sellers);
+                recyclerGridAdapter.setAllItems(Objects.requireNonNull(items));
+                recyclerGridAdapter.notifyDataSetChanged();
             }
-            recyclerGridAdapter.setAllItems(Objects.requireNonNull(allItemsModel.getItems().getValue()));
-            recyclerGridAdapter.notifyDataSetChanged();
         };
         listener = (appBarLayout, verticalOffset) -> {
             // Collapsed
@@ -188,11 +178,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         };
         total_items_observer = pair -> {
             String text;
-            if (pair.first > 0) {
-                items_num = pair.first;
-                text = item_type.toUpperCase() + " | " + item_sub_category.toUpperCase() + " | " +
-                        pair.first + " ITEMS";
-            }
+            if (pair.first > 0)
+                text = item_type.toUpperCase() + " | " + pair.first + " ITEMS";
             else
                 text = "NO ITEMS FOUND";
 
@@ -200,20 +187,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
             isFinishedFetching = (pair.first.equals(pair.second));
         };
-        explore_items.setOnClickListener(v -> {
-            int page = mainModel.getCurrent_page().getValue() == null ? 1 : mainModel.getCurrent_page().getValue() + 1;
-            mainModel.setCurrent_page(page);
-        });
         onScrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 //NOT MOVING
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    scrollDownFAB.setVisibility(View.VISIBLE);
-                    scrollUpFAB.setVisibility(View.VISIBLE);
-                    YoYo.with(Techniques.FadeIn).playOn(scrollDownFAB);
-                    YoYo.with(Techniques.FadeIn).playOn(scrollUpFAB);
+                    EventBus.getDefault().post(new CustomerMainActivity.NotScrollingEvent());
                     if(!recyclerView.canScrollVertically(1) && isFinishedFetching) {
                         explore_items.setVisibility(View.VISIBLE);
                         YoYo.with(Techniques.FadeIn).playOn(explore_items);
@@ -221,10 +201,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 }
                 //MOVING
                 else {
-                    YoYo.with(Techniques.FadeOut).playOn(scrollDownFAB);
-                    YoYo.with(Techniques.FadeOut).playOn(scrollUpFAB);
-                    scrollDownFAB.setVisibility(View.GONE);
-                    scrollUpFAB.setVisibility(View.GONE);
+                    EventBus.getDefault().post(new CustomerMainActivity.ScrollingEvent());
                 }
                 if(explore_items.getVisibility() == View.VISIBLE){
                     Handler handler = new Handler();
@@ -234,69 +211,40 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                 }
             }
         };
-        scrollUpFAB.setOnClickListener(v -> {
-            //scroll down
-            if (items_num > 100)
-                mLayoutManager.scrollToPosition(recyclerGridAdapter.getItemCount() - 1);
-            else if (items_num > 0)
-                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, recyclerGridAdapter.getItemCount() - 1);
-            else
-                Toast.makeText(getContext(), "NO ITEMS FOUND", Toast.LENGTH_SHORT).show();
-        });
-        scrollDownFAB.setOnClickListener(v -> {
-            //scroll up
-            if (items_num > 100)
-                mLayoutManager.scrollToPosition(0);
-            else if (items_num > 0)
-                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
-            else
-                Toast.makeText(getContext(), "NO ITEMS FOUND", Toast.LENGTH_SHORT).show();
-        });
         return view;
     }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        EventBus.getDefault().register(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(recyclerGridAdapter);
-        mainModel.getAll_items().observe(requireActivity(), listObserver);
+        mainModel.getAllItems().observe(requireActivity(), listObserver);
         mainModel.getCurrentItem().observe(requireActivity(), total_items_observer);
         mRecyclerView.addOnScrollListener(onScrollListener);
         appBarLayout.addOnOffsetChangedListener(listener);
     }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
 
-        mainModel.getAll_items().removeObserver(listObserver);
+        EventBus.getDefault().unregister(this);
+        mainModel.getAllItems().removeObserver(listObserver);
         mainModel.getCurrentItem().removeObserver(total_items_observer);
         appBarLayout.removeOnOffsetChangedListener(listener);
         mLayoutManager = null;
         appBarLayout = null;
-        scrollDownFAB = null;
-        scrollUpFAB = null;
         toolbar = null;
         header = null;
         mRecyclerView.removeOnScrollListener(onScrollListener);
         mRecyclerView = null;
     }
 
-    private void closeKeyboard(){
-        View view = requireActivity().getCurrentFocus();
-        if( view != null ){
-            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            assert imm != null;
-            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
-        }
-    }
-
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
-        uncheckAll();
+        chip_group_sub_cat.clearCheck();
+        chip_group_filter.clearCheck();
+
         if(v instanceof Chip){
             ((Chip)v).setChecked(true);
         }
@@ -319,71 +267,95 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             case R.id.brand_chip:
                 sortItems("brand");
                 break;
-            case R.id.asos_chip:
-                filterItems("ASOS");
-                break;
-            case R.id.castro_chip:
-                filterItems("Castro");
-                break;
-            case R.id.tx_chip:
-                filterItems("Terminal X");
-                break;
-            case R.id.shein_chip:
-                filterItems("Shein");
-                break;
-            case R.id.renuar_chip:
-                filterItems("Renuar");
-                break;
-            case R.id.hoodies_chip:
-                filterItems("Hoodies");
-                break;
-            case R.id.aldo_chip:
-                filterItems("Aldo");
-                break;
-            case R.id.tfs_chip:
-                filterItems("TwentyFourSeven");
-                break;
             case R.id.all_chip:
                 sortItems("clear");
+            default:
+                filterSubCat(String.valueOf(v.getId()));
         }
     }
-
-    private void uncheckAll() {
-        price.setChecked(false);
-        all.setChecked(false);
-        sale.setChecked(false);
-        match.setChecked(false);
-        brand.setChecked(false);
-        company.setChecked(false);
-        asos_chip.setChecked(false);
-        castro_chip.setChecked(false);
-        renuar_chip.setChecked(false);
-        tx_chip.setChecked(false);
-        tfs_chip.setChecked(false);
-        aldo_chip.setChecked(false);
-        hoodies_chip.setChecked(false);
-        favorite.setChecked(false);
-        shein_chip.setChecked(false);
-    }
-
     private void sortItems(String sort_by){
         recyclerGridAdapter.getSortingFilter().filter(sort_by, count -> updateHeader(count,false));
     }
-
     private void filterItems(String filter_by){
         recyclerGridAdapter.getFilter().filter(filter_by, count -> updateHeader(count,true));
     }
-
+    private void filterSubCat(String sub_cat){
+        recyclerGridAdapter.getSubCatFilter().filter(sub_cat, count -> updateHeader(count,true));
+    }
     private void updateHeader(int count, boolean isFilter) {
         String text;
         if(isFilter) {
             text = count + " ITEMS ";
         }
         else{
-            text = item_type.toUpperCase() + " | " + item_sub_category.toUpperCase() + " | " +
-                       count + " ITEMS";
+            text = item_type.toUpperCase() + " | " + count + " ITEMS";
         }
         header.setText(text);
+    }
+    private void closeKeyboard(){
+        View view = requireActivity().getCurrentFocus();
+        if( view != null ){
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void CreateTopWordsChips(Set<String> words) {
+        if(words == null) {
+            schsv.setVisibility(View.GONE);
+            return;
+        }
+        for (String word: words) {
+            Chip chipy = new Chip(getContext());
+            chipy.setText(word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase());
+            chipy.setOnClickListener(view -> filterSubCat(word));
+            chipy.setTextColor(getResources().getColor(R.color.LightThemeColor));
+            chipy.setChipBackgroundColor(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+            ShapeAppearanceModel sam = new ShapeAppearanceModel().withCornerSize(70);
+            chipy.setShapeAppearanceModel(sam);
+            chipy.setTextSize(16);
+            chipy.setChipStartPadding(10);
+            chipy.setChipEndPadding(10);
+            chipy.setCheckable(true);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMarginStart(15);
+            layoutParams.setMarginEnd(15);
+            chipy.setLayoutParams(layoutParams);
+            chip_group_sub_cat.addView(chipy);
+        }
+        schsv.setVisibility(View.VISIBLE);
+    }
+    private void createChipByName(Set<String> sellers) {
+
+        if(sellers.isEmpty()){
+            fhsv.setVisibility(View.GONE);
+            return;
+        }
+        for (String seller: sellers) {
+            String _name = seller.substring(0, 1).toUpperCase() + seller.substring(1).toLowerCase();
+            Chip chipy = new Chip(getContext());
+            chipy.setText(_name);
+            chipy.setOnClickListener(view -> filterItems(_name));
+            chipy.setTextColor(getResources().getColor(R.color.LightThemeColor));
+            chipy.setChipBackgroundColor(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+            ShapeAppearanceModel sam = new ShapeAppearanceModel().withCornerSize(80);
+            chipy.setShapeAppearanceModel(sam);
+            chipy.setTextSize(15);
+            chipy.setChipStartPadding(10);
+            chipy.setChipEndPadding(10);
+            chipy.setCheckable(true);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            layoutParams.setMarginStart(12);
+            layoutParams.setMarginEnd(12);
+            chipy.setLayoutParams(layoutParams);
+            chip_group_filter.addView(chipy);
+        }
+        fhsv.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -411,5 +383,26 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         });
 
         super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Subscribe
+    public void onTopWordsEvent(Database.TopWordsEvent event){
+        CreateTopWordsChips(Objects.requireNonNull(event.topWords));
+    }
+
+    @Subscribe
+    public void onScrollUpEvent(CustomerMainActivity.ScrollUpEvent event){
+        if (recyclerGridAdapter.getItemCount() > 100)
+            mLayoutManager.scrollToPosition(recyclerGridAdapter.getItemCount() - 1);
+        else if (recyclerGridAdapter.getItemCount() > 0)
+            mLayoutManager.smoothScrollToPosition(mRecyclerView, null, recyclerGridAdapter.getItemCount() - 1);
+    }
+
+    @Subscribe
+    public void onTopWordsEvent(CustomerMainActivity.ScrollDownEvent event){
+        if (recyclerGridAdapter.getItemCount() > 100)
+            mLayoutManager.scrollToPosition(0);
+        else if (recyclerGridAdapter.getItemCount() > 0)
+            mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
     }
 }

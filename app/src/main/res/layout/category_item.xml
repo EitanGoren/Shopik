@@ -5,16 +5,16 @@
     android:background="#1A000000"
     android:paddingTop="5dp">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <ListView
         android:id="@+id/recycler"
-        android:background="#00ffffff"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#00ffffff"
         android:clickable="false"
         android:focusable="false"
         android:paddingStart="2.5dp"
         android:paddingEnd="2.5dp"
-        android:scrollbars="none"/>
+        android:scrollbars="none" />
 
 </RelativeLayout>
 

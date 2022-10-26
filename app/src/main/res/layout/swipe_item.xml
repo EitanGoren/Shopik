@@ -5,20 +5,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="top"
     tools:menu="@menu/menu_customer_toolbar">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="505dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="35dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
         android:background="@drawable/top_border_line"
         android:elevation="10dp"
         android:padding="8dp"
         android:translationZ="8dp"
-        app:cardCornerRadius="15dp"
+        app:cardCornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,207 +25,327 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="95dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/bottom_info_border_line">
-
-            <TextView
-                android:id="@+id/updated_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_toEndOf="@id/like"
-                android:fontFamily="@font/nunito_semibold"
-                android:padding="5dp"
-                android:textAlignment="center"
-                android:textColor="#ffffff"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/old_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="3dp"
-                android:layout_toEndOf="@id/updated_price"
-                android:fontFamily="@font/nunito_semibold"
-                android:padding="5dp"
-                android:textAlignment="center"
-                android:textColor="#ffffff"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:visibility="invisible"
-                tools:visibility="visible" />
-
-            <TextView
-                android:id="@+id/brand_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="13dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/nunito_bold"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:textAlignment="center"
-                android:textColor="#ffffff"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:transitionName="company_name" />
-
-            <TextView
-                android:id="@+id/like"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentBottom="true"
-                android:layout_toEndOf="@id/unlike"
-                android:drawableStart="@drawable/ic_thumb_up_seleste"
-                android:drawablePadding="5dp"
-                android:elevation="5dp"
-                android:gravity="center"
-                android:padding="8dp"
-                android:textColor="#ffffff"
-                android:theme="@style/Buttons"
-                android:transitionName="like"
-                android:translationZ="5dp" />
-
-            <TextView
-                android:id="@+id/unlike"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="10dp"
-                android:drawableStart="@drawable/ic_thumb_down_pink"
-                android:drawablePadding="5dp"
-                android:elevation="5dp"
-                android:gravity="center"
-                android:padding="8dp"
-                android:textColor="#ffffff"
-                android:theme="@style/Buttons"
-                android:translationZ="5dp" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/info_layout"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/swipe_image"
+            <RelativeLayout
+                android:id="@+id/desc2_layout"
                 android:layout_width="match_parent"
-                android:layout_height="410dp"
-                android:contentDescription="@string/image_item"
-                android:scaleType="centerCrop"
-                android:transitionName="@string/image_item" />
+                android:layout_height="185dp"
+                android:layout_gravity="bottom"
+                android:background="#79FFFFFF"
+                android:layout_below="@+id/info_layout">
 
-            <TextView
-                android:id="@+id/exclusive"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/desc_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_toStartOf="@+id/price_layout"
+                    android:layout_alignTop="@id/price_layout">
+
+                    <TextView
+                        android:id="@+id/company_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_semibold"
+                        android:padding="2dp"
+                        android:textAlignment="viewStart"
+                        android:textColor="#6E6E6E"
+                        android:textSize="15sp"
+                        android:text="kjhgkjhkjh"
+                        android:transitionName="company_name" />
+
+                    <TextView
+                        android:id="@+id/brand_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_bold"
+                        android:padding="2dp"
+                        android:textAlignment="viewStart"
+                        android:textColor="#000000"
+                        android:textSize="22sp"
+                        android:text="kjhkjh"
+                        android:transitionName="company_name" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <TextView
+                    android:id="@+id/swipe_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:textAlignment="viewStart"
+                    android:gravity="start"
+                    android:text="kjhkjhkjh"
+                    android:layout_below="@id/desc_layout"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_above="@id/toggleButton"
+                    android:textColor="#6E6E6E"
+                    android:textStyle="italic"
+                    android:textSize="14sp" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/price_layout"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/updated_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_toEndOf="@id/like"
+                        android:fontFamily="@font/nunito_bold"
+                        android:padding="5dp"
+                        android:textAlignment="center"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:text="89.90"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/old_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_toEndOf="@id/updated_price"
+                        android:fontFamily="@font/nunito_semibold"
+                        android:padding="5dp"
+                        android:textAlignment="center"
+                        android:textColor="#000000"
+                        android:text="112.89"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:visibility="invisible"
+                        tools:visibility="visible" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/toggleButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:weightSum="120"
+                    android:layout_alignStart="@+id/desc_layout"
+                    android:layout_alignEnd="@id/price_layout"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="6dp"
+                    app:iconGravity="start"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:showDividers="middle"
+                    android:layout_marginTop="5dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:id="@+id/unlike"
+                        app:icon="@drawable/ic_thumb_down_pink"
+                        app:iconSize="18dp"
+                        app:cornerRadius="18dp"
+                        app:iconTint="#FEA8FF"
+                        android:text="Dislike"
+                        android:textAllCaps="false"
+                        android:elevation="1dp"
+                        app:iconGravity="start"
+                        android:textSize="11sp"
+                        app:iconPadding="10dp"
+                        app:backgroundTint="#ffffff"
+                        android:textColor="#000000"
+                        android:textAlignment="textStart"
+                        android:layout_weight="40"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:id="@+id/like"
+                        app:icon="@drawable/ic_thumb_up_seleste"
+                        app:iconSize="18dp"
+                        android:text="Like"
+                        android:textSize="11sp"
+                        app:iconTint="#78AAFF"
+                        android:textAllCaps="false"
+                        android:elevation="1dp"
+                        app:iconPadding="10dp"
+                        app:iconGravity="start"
+                        android:textAlignment="textStart"
+                        app:backgroundTint="#ffffff"
+                        android:textColor="#000000"
+                        android:layout_weight="40"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:id="@+id/swipe_favorite_button"
+                        app:icon="@drawable/ic_favorite_black_24dp"
+                        app:iconSize="18dp"
+                        app:cornerRadius="18dp"
+                        app:iconGravity="start"
+                        android:text="Wow"
+                        app:backgroundTint="#ffffff"
+                        app:iconTint="#FF0004"
+                        android:elevation="1dp"
+                        app:iconPadding="10dp"
+                        android:textAllCaps="false"
+                        android:textSize="11sp"
+                        android:textAlignment="textStart"
+                        android:textColor="#000000"
+                        android:layout_weight="40"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"/>
+
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="0.3dp"
+                android:layout_above="@id/desc2_layout"
+                app:dividerColor="#979797"/>
+
+            <RelativeLayout
+                android:id="@+id/info_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmer_view_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:shimmer_clip_to_children="true"
+                    app:shimmer_auto_start="true">
+
+                    <ImageView
+                        android:id="@+id/swipe_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="280dp"
+                        android:contentDescription="@string/image_item"
+                        android:scaleType="centerCrop"
+                        android:transitionName="@string/image_item" />
+
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <TextView
+                    android:id="@+id/swipe_discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_toStartOf="@id/customer_toolbar"
+                    android:background="@color/colorTransparentWhite"
+                    android:elevation="5dp"
+                    android:fontFamily="@font/baloo"
+                    android:padding="5dp"
+                    android:textColor="#FF0000"
+                    android:textSize="25sp"
+                    android:translationZ="5dp"
+                    tools:ignore="RelativeOverlap" />
+
+                <View
+                    android:id="@+id/item_swipe_right_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="end"
+                    android:layout_margin="10dp"
+                    android:alpha="0" />
+
+                <View
+                    android:id="@+id/item_swipe_left_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:alpha="0"
+                    android:fontFamily="@font/nunito_semibold" />
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/customer_toolbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/shimmer_view_container"
+                    android:layout_alignEnd="@id/shimmer_view_container"
+                    android:background="#00FFFFFF"
+                    app:menu="@menu/menu_swipe_item"
+                    app:titleTextColor="#000000" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
+                android:layout_above="@+id/desc2_layout"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginStart="10dp"
-                android:background="@drawable/brand_background"
-                android:elevation="10dp"
-                android:fontFamily="@font/nunito_semibold"
-                android:paddingStart="15dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="15dp"
-                android:paddingBottom="5dp"
-                android:textAlignment="center"
-                android:textColor="#ffffff"
-                android:textSize="21sp"
-                android:textStyle="bold"
-                android:translationZ="10dp" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp">
 
-            <ImageButton
-                android:id="@+id/fullscreen_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignEnd="@id/swipe_image"
-                android:layout_alignBottom="@id/swipe_image"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:background="@drawable/ic_fullscreen_black"
-                android:contentDescription="@string/fullscreen_button" />
+                <TextView
+                    android:id="@+id/likes_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="new"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/swipe_discount"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="5dp"
-                android:layout_toStartOf="@id/customer_toolbar"
-                android:background="@color/colorTransparentWhite"
-                android:elevation="5dp"
-                android:fontFamily="@font/baloo"
-                android:padding="5dp"
-                android:textColor="#FF0000"
-                android:textSize="25sp"
-                android:translationZ="5dp"
-                tools:ignore="RelativeOverlap" />
+                <TextView
+                    android:id="@+id/likes_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="likes"
+                    android:layout_toEndOf="@id/likes_num"
+                    android:textSize="14sp"
+                    android:paddingStart="3dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:paddingEnd="5dp" />
 
-            <View
-                android:id="@+id/item_swipe_right_indicator"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="end"
-                android:layout_margin="10dp"
-                android:alpha="0" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img1"
+                    android:layout_width="21dp"
+                    android:layout_height="21dp"
+                    app:civ_border_width="0.5dp"
+                    app:civ_border_color="#ffffff"
+                    android:layout_toEndOf="@id/likes_txt"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/fb"
+                    android:scaleType="centerCrop"
+                    android:visibility="invisible"
+                    tools:visibility="visible"/>
 
-            <View
-                android:id="@+id/item_swipe_left_indicator"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="start"
-                android:layout_margin="10dp"
-                android:alpha="0"
-                android:fontFamily="@font/nunito_semibold" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img2"
+                    android:layout_width="21dp"
+                    android:layout_height="21dp"
+                    app:civ_border_width="1.2dp"
+                    app:civ_border_color="#ffffff"
+                    android:src="@drawable/google"
+                    android:layout_marginStart="-4.5dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/img1"
+                    android:scaleType="centerCrop"
+                    android:visibility="invisible"
+                    tools:visibility="visible"/>
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/customer_toolbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/swipe_image"
-                android:layout_alignEnd="@id/swipe_image"
-                android:background="#00FFFFFF"
-                app:menu="@menu/menu_swipe_item"
-                app:titleTextColor="#000000" />
+            </RelativeLayout>
 
         </RelativeLayout>
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/card_seller_logo"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="55dp"
-            android:contentDescription="@string/company_logo"
-            android:elevation="10dp"
-            android:transitionName="company_logo"
-            android:translationZ="10dp"
-            app:civ_border_color="@color/borderLine"
-            app:civ_border_width="2dp" />
-
-        <ImageView
-            android:id="@+id/swipe_favorite_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:contentDescription="@string/favorite"
-            android:elevation="5dp"
-            android:padding="2dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_favorite_black_24dp"
-            android:translationZ="5dp" />
 
     </androidx.cardview.widget.CardView>
 

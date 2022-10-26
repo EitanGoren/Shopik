@@ -3,15 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="200dp">
-
-    <ImageView
-        android:id="@+id/nav_bgImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/nav_drawer_bg"
-        android:src="@drawable/default_cover_bg"
-        android:scaleType="centerCrop" />
+    android:layout_height="215dp">
 
     <TextView
         android:id="@+id/greeting"
@@ -20,26 +12,55 @@
         android:layout_alignParentBottom="true"
         android:background="#99FFFFFF"
         android:fontFamily="@font/raleway"
-        android:gravity="bottom"
+        android:gravity="center_horizontal"
         android:paddingStart="12dp"
         android:paddingTop="7dp"
         android:paddingEnd="7dp"
         android:paddingBottom="7dp"
+        android:layout_marginBottom="10dp"
         android:textColor="#000000"
+        android:textAlignment="center"
         android:textSize="15sp"
         android:textStyle="bold" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_pic"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="82dp"
+        android:layout_height="82dp"
         android:layout_above="@id/greeting"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
-        android:transitionName="profile_pic"
         android:elevation="15dp"
-        app:civ_circle_background_color="#99FFFFFF"
-        app:civ_border_color="#ffffff"
-        app:civ_border_width="1dp"/>
+        android:transitionName="profile_pic"
+        app:civ_border_color="#000000"
+        app:civ_border_width="1dp"
+        app:civ_circle_background_color="#99FFFFFF" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_pic_provider"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignBottom="@id/profile_pic"
+        android:layout_marginStart="-20dp"
+        android:layout_toEndOf="@id/profile_pic"
+        android:elevation="15dp"
+        app:civ_border_color="#000000"
+        app:civ_border_width="1dp"
+        app:civ_circle_background_color="#99FFFFFF" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/profile_pic"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:text="@string/make_shopping_great_again"
+        android:textAppearance="@style/MainTitle"
+        android:textSize="18dp" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

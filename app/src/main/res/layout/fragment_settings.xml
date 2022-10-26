@@ -5,28 +5,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg14"
     tools:context=".customer.CustomerSettingsActivity" >
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:fitsSystemWindows="true"
-        android:layout_height="225dp">
+        android:layout_height="245dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:title="Name"
-            app:expandedTitleGravity="left|bottom"
+            app:titleCollapseMode="fade"
+            app:expandedTitleGravity="center|bottom"
             app:collapsedTitleGravity="left"
+            app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat"
             app:statusBarScrim="@color/fragmentBackground"
-            app:contentScrim="@color/CompanyProfileScrim"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:expandedTitleMarginEnd="65dp"
-            app:expandedTitleMarginStart="30dp">
+            app:contentScrim="@color/GenderScreenTheme"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap|enterAlways">
 
             <ImageView
                 android:id="@+id/bgImage"
@@ -35,46 +32,27 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@null"
                 android:minHeight="100dp"
-                android:background="@color/fragmentBackground"
                 android:scaleType="centerCrop"
+                android:fadingEdge="vertical"
                 app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0.5" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="bottom"
-                android:background="#43000000"
-                app:layout_collapseMode="parallax"/>
+                app:layout_collapseParallaxMultiplier="0.5"/>
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
-                android:layout_height="65dp"
-                android:minHeight="65dp"
+                android:layout_height="60dp"
+                android:minHeight="60dp"
                 app:titleMarginStart="10dp"
+                app:title="Info"
                 app:layout_collapseMode="pin">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/toolbar_pic"
-                    android:layout_width="45sp"
-                    android:layout_height="45dp"
+                    android:layout_width="40sp"
+                    android:layout_height="40dp"
                     app:layout_collapseMode="parallax"
                     android:layout_centerVertical="true"/>
 
             </androidx.appcompat.widget.Toolbar>
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/logo"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_gravity="end|bottom"
-                android:layout_margin="25dp"
-                android:elevation="5dp"
-                android:translationZ="5dp"
-                app:layout_collapseMode="parallax"
-                android:transitionName="profile_pic"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="1.5dp"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -84,16 +62,18 @@
         android:id="@+id/info_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="-60dp"
         android:minHeight="65dp"
-        android:background="#99FFFFFF"
+        android:background="@drawable/rounded_collapsing_toolbar"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="35dp"
             android:paddingTop="20dp"
-            android:paddingStart="25dp"
-            android:paddingEnd="25dp"
+            android:paddingStart="45dp"
+            android:paddingEnd="45dp"
             android:paddingBottom="20dp"
             android:orientation="vertical">
 
@@ -167,6 +147,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
+                    android:inputType="phone"
                     android:drawableStart="@drawable/ic_phone_black"
                     android:drawablePadding="10dp"
                     android:textSize="15sp" />
@@ -192,19 +173,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:drawableStart="@drawable/ic_home_black_24dp"
+                    android:inputType="numberDecimal"
+                    android:drawableStart="@drawable/ic_person_black"
                     android:drawablePadding="16dp"
                     android:textSize="15sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Spinner
-                android:id="@+id/gender_switch"
-                android:layout_width="150dp"
-                android:layout_height="45dp"
+            <TextView
+                android:id="@+id/gender_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_marginStart="10dp"
-                android:textAlignment="viewStart" />
+                android:elevation="5dp"
+                android:textSize="16sp"
+                android:translationZ="5dp"
+                android:padding="10dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -257,21 +241,26 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/submit_btn"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="20dp"
-                android:includeFontPadding="true"
-                android:padding="5dp"
-                android:text="@string/submit"
-                android:backgroundTint="@color/CompanyProfileScrim"
-                android:textAlignment="center"
-                android:textColor="#FFFFFF"
-                android:textSize="22sp"/>
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/submit_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_gravity="start|bottom"
+        android:gravity="center"
+        android:layout_margin="15dp"
+        android:fadingEdge="vertical"
+        android:fadingEdgeLength="20dp"
+        android:padding="10dp"
+        android:text="SAVE"
+        android:textSize="16sp"
+        android:textColor="#ffffff"
+        app:backgroundTint="#000000"
+        app:elevation="15dp"
+        app:useCompatPadding="true"
+        tools:visibility="visible"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -21,6 +21,7 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         tools:context=".customerFragments.CustomerHomeFragment">
 
@@ -47,10 +48,10 @@
             android:padding="3dp"
             android:paddingTop="5dp"
             android:textAlignment="center"
-            android:textColor="#122595"
+            android:textColor="#000000"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -66,10 +67,10 @@
             android:padding="3dp"
             android:paddingTop="5dp"
             android:textAlignment="center"
-            android:textColor="#122595"
+            android:textColor="#000000"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintStart_toEndOf="@+id/percentage"
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />

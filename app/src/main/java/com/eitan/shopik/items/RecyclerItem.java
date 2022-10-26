@@ -20,7 +20,7 @@ public class RecyclerItem implements Serializable {
     private long likes;
     private String image_resource;
 
-    public RecyclerItem(String text,String sellerImageUrl, String link){
+    public RecyclerItem(String text, String sellerImageUrl, String link){
 
         this.text = text;
         this.sellerImageUrl = sellerImageUrl;
@@ -109,5 +109,4 @@ public class RecyclerItem implements Serializable {
     public String getSellerLogoUrl() {
         return sellerImageUrl;
     }
-
 }

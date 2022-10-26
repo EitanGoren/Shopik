@@ -1,20 +1,15 @@
 <resources>
     <string name="app_name">Shopik</string>
-    <string name="copy_right">Copyright © 2020 Eitan Goren. All rights reserved.</string>
+    <string name="copy_right">Copyright © 2022 Eitan Goren. All rights reserved.</string>
     <string name="facebook_app_id">555191575133910</string>
     <string name="fb_login_protocol_scheme">fb555191575133910</string>
     <string name="ACCOUNT_KIT_CLIENT_TOKEN">2578292a9bb4ac35fe1a3427f11f842f</string>
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
     <string name="facebook_application_id" translatable="false">555191575133910</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb555191575133910</string>
-
     <string name="open_drawer">open_drawer</string>
     <string name="close_drawer">close_drawer</string>
     <string name="title_activity_shopik_application">ShopikApplicationActivity</string>
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
     <string name="loading">Loading…</string>
     <string name="hot_trending">Users\' Choice </string>
     <string name="click">click</string>
@@ -66,6 +61,7 @@
     <string name="check_it_now">Check it Now</string>
     <string name="filter_by">Filter:</string>
     <string name="sort_by">Sort:</string>
+    <string name="sub_cat">Sub Category:</string>
     <string name="channel_name">channel_test</string>
     <string name="channel_description">testing</string>
     <string name="powered_by_eitan_goren">Developed by Eitan Goren</string>
@@ -97,7 +93,7 @@
     <string name="users_choice">users choice</string>
     <string name="x">X</string>
     <string name="make_shopping_great_again">Make Shopping Great Again!</string>
-    <string name="version">" Version 1.7.0 "</string>
+    <string name="version">" Version 2.1.0 "</string>
     <string name="scroll_to_bottom">scroll_to_bottom</string>
     <string name="scroll_to_top">scroll_to_top</string>
     <string name="remove_from_favorites">Remove From Favorites?</string>
@@ -113,4 +109,8 @@
     <string name="help_improve_the_app">Help improve the app</string>
     <string name="tell_me_what_you_think">Tell me what you think…</string>
     <string name="message_sent">Got It! Thank you</string>
+    <string name="copyrights">Copyright</string>
+    <string name="lost_connection">Oops! \n It seems like we lost connection</string>
+    <string name="try_again">Try Again</string>
+    <string name="no_connection">no_connection</string>
 </resources>

@@ -10,7 +10,7 @@
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:contentDescription="@string/image_item"
-            android:transitionName="@string/image_item"
-            android:scaleType="fitXY" />
+            android:scaleType="fitCenter"
+            android:transitionName="@string/image_item" />
 
 </RelativeLayout>

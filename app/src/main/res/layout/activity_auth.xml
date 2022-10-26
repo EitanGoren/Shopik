@@ -3,21 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bgauth">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/signin"
-        android:layout_centerHorizontal="true"
-        android:fontFamily="@font/cambay_bold"
-        android:text="Let's connect"
-        android:textAlignment="textStart"
-        android:textAllCaps="true"
-        android:textColor="#713ED8"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/signin"
@@ -37,9 +23,10 @@
             android:padding="10dp">
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginEnd="25dp"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/google" />
 
             <androidx.cardview.widget.CardView
@@ -77,9 +64,11 @@
             android:padding="10dp">
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginEnd="25dp"
+                android:layout_gravity="center_vertical"
+
                 android:src="@drawable/fb" />
 
             <androidx.cardview.widget.CardView
@@ -103,7 +92,7 @@
                     android:paddingEnd="0dp"
                     android:text="@string/signin_with_facebook"
                     android:textAlignment="textStart"
-                    android:textColor="#FFFFFF"
+                    android:textColor="#000000"
                     android:textSize="14sp"
                     android:theme="@style/FirebaseUI.Button.AccountChooser.FacebookButton" />
 
@@ -118,9 +107,10 @@
             android:padding="10dp">
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginEnd="25dp"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/email" />
 
             <androidx.cardview.widget.CardView
@@ -142,7 +132,7 @@
                     android:paddingEnd="0dp"
                     android:text="@string/signin_with_email"
                     android:textAlignment="textStart"
-                    android:textColor="#FFFFFF"
+                    android:textColor="#000000"
                     android:textSize="14sp"
                     android:theme="@style/FirebaseUI.Button.AccountChooser.EmailButton" />
 

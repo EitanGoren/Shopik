@@ -11,46 +11,24 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/gender_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        app:menu="@menu/menu_customer_toolbar"
+        android:layout_height="72dp"
         android:background="@color/fragmentBackground"
-        app:title="@string/app_name"
-        app:titleTextAppearance="@style/MainTitle"
-        android:paddingTop="7dp"
-        android:paddingStart="7dp"
-        android:paddingEnd="7dp"
         android:elevation="5dp"
-        android:translationZ="5dp">
+        android:paddingStart="7dp"
+        android:paddingTop="7dp"
+        android:paddingEnd="7dp"
+        android:translationZ="5dp"
+        app:menu="@menu/menu_customer_toolbar"
+        app:title="@string/app_name"
+        app:contentInsetStart="25dp"
+        app:titleTextAppearance="@style/MainTitle"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/company_img_logo"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="2dp"
-                android:contentDescription="@string/logo"
-                android:elevation="5dp"
-                android:translationZ="5dp"
-                android:src="@drawable/tooki" />
-
-            <Spinner
-                android:id="@+id/gender_spinner"
-                android:layout_width="145dp"
-                android:layout_height="45dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="15dp"
-                android:textAlignment="center" />
-
-        </LinearLayout>
-
-    </androidx.appcompat.widget.Toolbar>
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.4dp"
+        app:dividerColor="#000000"
+        android:layout_below="@id/gender_toolbar"/>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/gender_top_nav"
@@ -58,7 +36,7 @@
         android:layout_height="wrap_content"
         android:background="@color/fragmentBackground"
         android:soundEffectsEnabled="true"
-        android:layout_below="@id/gender_toolbar"
+        android:layout_below="@id/divider"
         app:tabGravity="fill"
         android:scrollbars="horizontal"
         app:tabIndicatorHeight="2dp"
@@ -86,14 +64,21 @@
 
     </com.google.android.material.tabs.TabLayout>
 
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="0.4dp"
+        app:dividerColor="#000000"
+        android:layout_below="@id/gender_top_nav"/>
+
     <RelativeLayout
         android:id="@+id/brands_roller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#686868"
+        android:background="#E2FCFF"
         android:elevation="5dp"
         android:translationZ="5dp"
-        android:layout_below="@id/gender_top_nav">
+        android:layout_below="@id/divider2">
 
         <TextView
             android:id="@+id/marquee"
@@ -104,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             android:textStyle="bold"
             android:textSize="16sp"
             android:singleLine="true" />
@@ -115,7 +100,49 @@
         android:id="@+id/gender_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
-        android:layout_below="@id/brands_roller"/>
+        android:layout_below="@id/brands_roller"
+        android:background="#ffffff" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/snackbar_card"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@+id/brands_roller"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="10dp"
+        android:elevation="10dp"
+        app:cardElevation="10dp"
+        android:visibility="invisible">
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/myCoordinatorLayout"
+            android:background="#FFFDF0"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/gender_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="15dp"
+        android:fadingEdge="vertical"
+        android:fadingEdgeLength="20dp"
+        android:padding="10dp"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        android:textColor="#ffffff"
+        app:iconTint="#ffffff"
+        app:backgroundTint="#CE000000"
+        app:elevation="10dp"
+        app:iconPadding="10dp"
+        app:useCompatPadding="true"
+        tools:visibility="visible" />
 
 </RelativeLayout>
